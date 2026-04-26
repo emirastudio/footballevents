@@ -7,10 +7,7 @@ import { getCountry } from "@/lib/mock-data";
 import { getVenueBySlug, getVenueSlugs, getEventsByVenue } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
 
-export async function generateStaticParams() {
-  const slugs = await getVenueSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+export async function generateStaticParams() { return []; }
 
 export default async function StadiumDetailPage({
   params,

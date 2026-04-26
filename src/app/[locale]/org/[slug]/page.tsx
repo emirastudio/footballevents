@@ -9,10 +9,7 @@ import { getCountry } from "@/lib/mock-data";
 import { getOrganizerBySlug, getOrganizerSlugs, getEventsByOrganizer } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
 
-export async function generateStaticParams() {
-  const slugs = await getOrganizerSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+export async function generateStaticParams() { return []; }
 
 export default async function OrganizerDetailPage({
   params,

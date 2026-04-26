@@ -22,10 +22,8 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
-export async function generateStaticParams() {
-  const slugs = await getEventSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+// SSR-only: pages render at request time (DB not available at build).
+export async function generateStaticParams() { return []; }
 
 export default async function EventDetailPage({
   params,
