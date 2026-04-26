@@ -75,3 +75,7 @@ export async function signOutAction() {
   await signOut({ redirect: false });
   redirect("/");
 }
+
+export async function googleSignInAction() {
+  await signIn("google", { redirectTo: "/" });
+}

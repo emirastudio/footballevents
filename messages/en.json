@@ -18,7 +18,9 @@
     "signOut": "Sign out",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
-    "loading": "Please wait…"
+    "loading": "Please wait…",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or"
   },
   "organizer": {
     "becomeOrganizer": "Become an organizer",

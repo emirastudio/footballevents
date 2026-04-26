@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { SignInForm } from "@/components/auth/SignInForm";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 
 export default async function SignInPage({
   params,
@@ -20,7 +21,12 @@ export default async function SignInPage({
         </h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">{t("signInSubtitle")}</p>
 
-        <div className="mt-6">
+        <div className="mt-6 space-y-4">
+          <GoogleSignInButton label={t("continueWithGoogle")} />
+          <div className="relative text-center text-xs uppercase tracking-wider text-[var(--color-muted)]">
+            <span className="relative z-10 bg-[var(--color-surface)] px-3">{t("or")}</span>
+            <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--color-border)]" aria-hidden />
+          </div>
           <SignInForm
             labels={{
               email: t("email"),

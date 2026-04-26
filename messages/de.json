@@ -13,7 +13,9 @@
     "signOut": "Abmelden",
     "noAccount": "Noch kein Konto?",
     "haveAccount": "Schon ein Konto?",
-    "loading": "Bitte warten…"
+    "loading": "Bitte warten…",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "or": "oder"
   },
   "organizer": {
     "becomeOrganizer": "Veranstalter werden",

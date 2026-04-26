@@ -13,7 +13,9 @@
     "signOut": "Выйти",
     "noAccount": "Нет аккаунта?",
     "haveAccount": "Уже есть аккаунт?",
-    "loading": "Подождите…"
+    "loading": "Подождите…",
+    "continueWithGoogle": "Войти через Google",
+    "or": "или"
   },
   "organizer": {
     "becomeOrganizer": "Стать организатором",

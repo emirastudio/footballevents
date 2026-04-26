@@ -13,7 +13,9 @@
     "signOut": "Salir",
     "noAccount": "¿No tienes cuenta?",
     "haveAccount": "¿Ya tienes cuenta?",
-    "loading": "Espere…"
+    "loading": "Espere…",
+    "continueWithGoogle": "Continuar con Google",
+    "or": "o"
   },
   "organizer": {
     "becomeOrganizer": "Hazte organizador",
