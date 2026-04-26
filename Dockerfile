@@ -2,7 +2,7 @@
 # Multi-stage Next.js standalone build for production.
 
 ARG NODE_VERSION=22-alpine
-ARG PNPM_VERSION=9.15.4
+ARG PNPM_VERSION=10.4.1
 
 # ─── deps: install only production-ish deps with pnpm ────────────
 FROM node:${NODE_VERSION} AS deps
@@ -13,7 +13,8 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm fetch
 COPY . .
-RUN pnpm install --frozen-lockfile --prefer-offline
+# Allow native builds (sharp, prisma engines, esbuild, swc) — CI mode otherwise errors with ERR_PNPM_IGNORED_BUILDS
+RUN pnpm install --frozen-lockfile --prefer-offline --ignore-scripts && pnpm rebuild
 
 # ─── build: prisma generate + next build ─────────────────────────
 FROM node:${NODE_VERSION} AS builder
