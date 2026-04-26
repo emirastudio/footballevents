@@ -1,26 +1,156 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * footballevents.eu — Stadium Night palette (light-only)
+ * Primary navy + green accent + gold premium badges.
+ */
+
+@theme {
+  /* Brand */
+  --color-navy-50:  #F2F5FA;
+  --color-navy-100: #E5EAF2;
+  --color-navy-200: #C8D2E2;
+  --color-navy-300: #9DAEC8;
+  --color-navy-400: #6B82A6;
+  --color-navy-500: #475D85;
+  --color-navy-600: #2F4368;
+  --color-navy-700: #1B2D4D;
+  --color-navy-800: #0F1E36;
+  --color-navy-900: #0A1628;
+
+  --color-pitch-50:  #E6FBF0;
+  --color-pitch-100: #C2F5D9;
+  --color-pitch-200: #8AEBB8;
+  --color-pitch-300: #4FDD93;
+  --color-pitch-400: #1FCB72;
+  --color-pitch-500: #00D26A;
+  --color-pitch-600: #00B85B;
+  --color-pitch-700: #009548;
+  --color-pitch-800: #007339;
+  --color-pitch-900: #00552A;
+
+  --color-gold-300: #ECD179;
+  --color-gold-400: #DCBE56;
+  --color-gold-500: #D4AF37;
+  --color-gold-600: #B89221;
+
+  /* Semantic */
+  --color-background:    #FAFBFC;
+  --color-surface:       #FFFFFF;
+  --color-surface-muted: #F4F6FA;
+  --color-border:        #E5E9F0;
+  --color-border-strong: #CFD6E2;
+  --color-foreground:    #1A2540;
+  --color-muted:         #6E7C95;
+  --color-muted-strong:  #4A5775;
+
+  --color-primary:       #1A2540;
+  --color-primary-fg:    #FFFFFF;
+  --color-accent:        #00D26A;
+  --color-accent-fg:     #0A1628;
+  --color-premium:       #D4AF37;
+
+  --color-danger:        #DC2626;
+  --color-warning:       #F59E0B;
+  --color-success:       #00B85B;
+  --color-info:          #2563EB;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Manrope', 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+
+  /* Shadows — soft, premium */
+  --shadow-xs: 0 1px 2px rgba(26, 37, 64, 0.03);
+  --shadow-sm: 0 1px 2px rgba(26, 37, 64, 0.04), 0 1px 1px rgba(26, 37, 64, 0.03);
+  --shadow-md: 0 6px 20px rgba(26, 37, 64, 0.05), 0 2px 4px rgba(26, 37, 64, 0.03);
+  --shadow-lg: 0 16px 40px rgba(26, 37, 64, 0.06), 0 4px 8px rgba(26, 37, 64, 0.03);
+  --shadow-xl: 0 28px 56px rgba(26, 37, 64, 0.08);
+  --shadow-glow-accent: 0 0 0 4px rgba(0, 210, 106, 0.18);
+  --shadow-glow-premium: 0 0 0 4px rgba(212, 175, 55, 0.22);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-border);
   }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    color: var(--color-foreground);
+  }
+
+  ::selection {
+    background: var(--color-pitch-200);
+    color: var(--color-foreground);
+  }
+
+  /* Legal documents typography */
+  .legal-doc { color: var(--color-foreground); }
+  .legal-doc h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -0.02em; }
+  .legal-doc h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.75rem; letter-spacing: -0.01em; }
+  .legal-doc h3 { font-size: 1.125rem; font-weight: 700; margin-top: 1.75rem; margin-bottom: 0.5rem; }
+  .legal-doc p  { margin: 0.75rem 0; line-height: 1.7; color: var(--color-muted-strong); }
+  .legal-doc ul, .legal-doc ol { margin: 0.75rem 0; padding-left: 1.5rem; line-height: 1.7; color: var(--color-muted-strong); }
+  .legal-doc li { margin: 0.25rem 0; }
+  .legal-doc a  { color: var(--color-pitch-700); text-decoration: underline; text-underline-offset: 2px; }
+  .legal-doc strong { color: var(--color-foreground); font-weight: 600; }
+  .legal-doc table { border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  .legal-doc th, .legal-doc td { border: 1px solid var(--color-border); padding: 0.5rem 0.75rem; text-align: left; }
+  .legal-doc th { background: var(--color-bg-muted); font-weight: 600; }
+  .legal-doc hr { border: none; border-top: 1px solid var(--color-border); margin: 2rem 0; }
+  .legal-doc code { background: var(--color-bg-muted); padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty; }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(26, 37, 64, 0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 37, 64, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 80%);
+  }
+
+  .bg-radial-spotlight {
+    background: radial-gradient(circle at 50% 0%, rgba(0, 210, 106, 0.08), transparent 60%);
+  }
+
+  .bg-hero-stadium {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(0, 210, 106, 0.10), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 90% 25%, rgba(212, 175, 55, 0.06), transparent 60%),
+      radial-gradient(ellipse 50% 35% at 10% 25%, rgba(0, 210, 106, 0.05), transparent 60%),
+      linear-gradient(180deg, #FCFDFE 0%, #FFFFFF 100%);
+  }
+
+  .bg-soft-cream {
+    background:
+      radial-gradient(ellipse 60% 80% at 100% 0%, rgba(212, 175, 55, 0.06), transparent 50%),
+      radial-gradient(ellipse 60% 80% at 0% 100%, rgba(0, 210, 106, 0.06), transparent 50%),
+      #FCFDFE;
+  }
 }

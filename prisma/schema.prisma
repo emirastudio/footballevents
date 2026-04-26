@@ -1,0 +1,800 @@
+// footballevents.eu — premium football events catalog
+// Stack: PostgreSQL + Prisma. Light-only UI. i18n: EN base + RU/DE/ES fallback.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────
+
+enum Locale {
+  en
+  ru
+  de
+  es
+}
+
+enum UserRole {
+  USER
+  ORGANIZER
+  ADMIN
+}
+
+enum EventType {
+  TOURNAMENT
+  CAMP
+  FESTIVAL
+  MASTERCLASS
+  MATCH_TOUR
+  CLINIC
+  SHOWCASE
+}
+
+enum EventStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+  REJECTED
+}
+
+enum AgeGroup {
+  U6
+  U8
+  U10
+  U12
+  U14
+  U16
+  U18
+  U21
+  ADULT
+  ALL_AGES
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  MIXED
+}
+
+enum SkillLevel {
+  AMATEUR
+  SEMI_PRO
+  PROFESSIONAL
+  ALL_LEVELS
+}
+
+enum ReviewStatus {
+  PENDING        // awaiting organizer moderation
+  APPROVED
+  REJECTED
+  FLAGGED        // flagged to admin
+}
+
+enum BookingStatus {
+  NEW
+  ACCEPTED
+  DECLINED
+  CANCELLED
+  COMPLETED
+}
+
+enum BoostTier {
+  BASIC          // bump in listings
+  FEATURED       // category top + badge
+  PREMIUM        // homepage + featured + badge
+}
+
+enum SubscriptionTier {
+  FREE
+  PRO
+  PREMIUM
+  ENTERPRISE
+}
+
+enum AdPlacement {
+  HOMEPAGE_HERO
+  HOMEPAGE_BANNER
+  CATEGORY_TOP
+  SIDEBAR
+  EVENT_PAGE
+  STADIUM_PAGE
+  FOOTER
+}
+
+enum AdStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  PAUSED
+  COMPLETED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+// ─────────────────────────────────────────────────────────────
+// AUTH (NextAuth v5 compatible)
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id             String     @id @default(cuid())
+  email          String     @unique
+  emailVerified  DateTime?
+  name           String?
+  image          String?
+  passwordHash   String?
+  role           UserRole   @default(USER)
+  preferredLocale Locale    @default(en)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organizer      Organizer?
+  accounts       Account[]
+  sessions       Session[]
+  reviews        Review[]
+  bookings       Booking[]
+  messagesSent   Message[]  @relation("messageSender")
+  threadParticipations ThreadParticipant[]
+  organizerFollows OrganizerFollow[]
+  eventSaves     EventSave[]
+
+  @@index([email])
+}
+
+// Follow an organizer to get notified about their new events.
+model OrganizerFollow {
+  id          String   @id @default(cuid())
+  userId      String
+  organizerId String
+  createdAt   DateTime @default(now())
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizer   Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizerId])
+  @@index([organizerId])
+}
+
+// Save/wishlist an event (reminder before start, registration alerts).
+model EventSave {
+  id        String   @id @default(cuid())
+  userId    String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([eventId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─────────────────────────────────────────────────────────────
+// ORGANIZER
+// ─────────────────────────────────────────────────────────────
+
+model Organizer {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  slug            String   @unique
+  name            String
+  legalName       String?
+  email           String
+  phone           String?
+  website         String?
+  logoUrl         String?
+  coverUrl        String?
+  countryCode     String?
+  city            String?
+  isVerified      Boolean  @default(false)
+
+  // Social links (organizer-level, used as fallback for events)
+  instagramUrl    String?
+  facebookUrl     String?
+  xUrl            String?  // Twitter/X
+  tiktokUrl       String?
+  youtubeUrl      String?
+  whatsappUrl     String?  // wa.me / business
+
+  subscriptionTier SubscriptionTier @default(FREE)
+  stripeCustomerId   String?  @unique
+  subscriptionId   String?  // Stripe subscription id
+  subscriptionEndsAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  translations    OrganizerTranslation[]
+  events          Event[]
+  ads             AdCampaign[]
+  followers       OrganizerFollow[]
+
+  @@index([slug])
+  @@index([countryCode])
+}
+
+model OrganizerTranslation {
+  id          String  @id @default(cuid())
+  organizerId String
+  locale      Locale
+  about       String? @db.Text
+  tagline     String?
+
+  organizer   Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@unique([organizerId, locale])
+}
+
+// ─────────────────────────────────────────────────────────────
+// GEOGRAPHY
+// ─────────────────────────────────────────────────────────────
+
+model Country {
+  code       String  @id // ISO 3166-1 alpha-2
+  nameEn     String
+  flagEmoji  String?
+  cities     City[]
+  venues     Venue[]
+  events     Event[]
+
+  @@index([nameEn])
+}
+
+model City {
+  id          String  @id @default(cuid())
+  countryCode String
+  nameEn      String
+  slug        String
+  lat         Float?
+  lng         Float?
+
+  country     Country @relation(fields: [countryCode], references: [code])
+  venues      Venue[]
+  events      Event[]
+
+  @@unique([countryCode, slug])
+  @@index([nameEn])
+}
+
+// ─────────────────────────────────────────────────────────────
+// VENUE / STADIUM
+// ─────────────────────────────────────────────────────────────
+
+model Venue {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  name         String
+  countryCode  String
+  cityId       String?
+  address      String?
+  lat          Float?
+  lng          Float?
+  capacity     Int?
+  surfaceType  String?  // grass, artificial, hybrid
+  coverUrl     String?
+  galleryUrls  String[] @default([])
+  website      String?
+  isStadium    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  country      Country  @relation(fields: [countryCode], references: [code])
+  city         City?    @relation(fields: [cityId], references: [id])
+  translations VenueTranslation[]
+  events       Event[]
+
+  @@index([countryCode])
+  @@index([cityId])
+  @@index([slug])
+}
+
+model VenueTranslation {
+  id          String  @id @default(cuid())
+  venueId     String
+  locale      Locale
+  description String? @db.Text
+
+  venue       Venue   @relation(fields: [venueId], references: [id], onDelete: Cascade)
+
+  @@unique([venueId, locale])
+}
+
+// ─────────────────────────────────────────────────────────────
+// CATEGORIES & TAGS
+// ─────────────────────────────────────────────────────────────
+
+model Category {
+  id        String  @id @default(cuid())
+  slug      String  @unique
+  iconKey   String?
+  order     Int     @default(0)
+  type      EventType  // primary mapped event type
+  translations CategoryTranslation[]
+  events    Event[]
+}
+
+model CategoryTranslation {
+  id         String  @id @default(cuid())
+  categoryId String
+  locale     Locale
+  name       String
+  description String? @db.Text
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, locale])
+}
+
+model Tag {
+  id    String  @id @default(cuid())
+  slug  String  @unique
+  translations TagTranslation[]
+  events EventTag[]
+}
+
+model TagTranslation {
+  id     String @id @default(cuid())
+  tagId  String
+  locale Locale
+  name   String
+
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([tagId, locale])
+}
+
+// ─────────────────────────────────────────────────────────────
+// EVENT — core entity
+// ─────────────────────────────────────────────────────────────
+
+model Event {
+  id              String      @id @default(cuid())
+  slug            String      @unique
+  organizerId     String
+  categoryId      String
+  type            EventType
+  status          EventStatus @default(DRAFT)
+
+  // Dates
+  startDate       DateTime
+  endDate         DateTime
+  registrationDeadline DateTime?
+  timezone        String      @default("UTC")
+
+  // Location
+  countryCode     String
+  cityId          String?
+  venueId         String?
+  customLocation  String?     // free-text fallback
+
+  // Audience
+  ageGroups       AgeGroup[]  @default([])
+  gender          Gender      @default(MIXED)
+  skillLevel      SkillLevel  @default(ALL_LEVELS)
+  format          String?     // "5x5", "8x8", "11x11", custom
+  maxParticipants Int?
+
+  // Pricing
+  priceFrom       Decimal?    @db.Decimal(10, 2)
+  priceTo         Decimal?    @db.Decimal(10, 2)
+  currency        String      @default("EUR")
+  isFree          Boolean     @default(false)
+
+  // Media
+  logoUrl         String?     // event-specific logo (falls back to organizer's)
+  coverUrl        String?
+  galleryUrls     String[]    @default([])
+  videoUrl        String?
+
+  // External
+  externalUrl     String?     // organizer's signup page (used until tickets shipped)
+  contactEmail    String?
+  contactPhone    String?
+
+  // Rich content (organizer-fillable, all optional)
+  program         Json?       // [{ day: 1, title: "Arrival", items: ["Check-in 14:00", "Welcome dinner"] }]
+  included        String[]    @default([])  // what's included
+  notIncluded     String[]    @default([])
+  faq             Json?       // [{ q, a }]
+
+  // Booking via platform
+  acceptsBookings Boolean     @default(true)
+
+  // Future: ticketing (v3)
+  ticketsEnabled  Boolean     @default(false)
+
+  // Stats
+  viewsCount      Int         @default(0)
+  ratingAvg       Float       @default(0)
+  ratingCount     Int         @default(0)
+
+  // Boost / featured
+  isFeatured      Boolean     @default(false)
+  featuredUntil   DateTime?
+  boostTier       BoostTier?
+  boostUntil      DateTime?
+
+  publishedAt     DateTime?
+  isDemo          Boolean     @default(false)  // true for seed/demo events; hide on prod via env flag
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  organizer       Organizer   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  category        Category    @relation(fields: [categoryId], references: [id])
+  country         Country     @relation(fields: [countryCode], references: [code])
+  city            City?       @relation(fields: [cityId], references: [id])
+  venue           Venue?      @relation(fields: [venueId], references: [id])
+
+  translations    EventTranslation[]
+  tags            EventTag[]
+  reviews         Review[]
+  bookings        Booking[]
+  threads         Thread[]
+  boosts          Boost[]
+
+  // Future ticketing (schema reserved)
+  ticketTypes     TicketType[]
+
+  saves           EventSave[]
+  divisions       EventDivision[]
+
+  @@index([status, startDate])
+  @@index([countryCode, startDate])
+  @@index([categoryId, startDate])
+  @@index([organizerId])
+  @@index([isFeatured, boostTier])
+  @@index([slug])
+}
+
+// Division/bracket within a single tournament (optional; absent for simple events).
+// Aggregated price/ageGroup on Event are derived from divisions when present.
+model EventDivision {
+  id             String     @id @default(cuid())
+  eventId        String
+  name           String     // "Boys U10 5×5", "Girls U14 7×7"
+  ageGroup       AgeGroup
+  gender         Gender     @default(MIXED)
+  skillLevel     SkillLevel @default(ALL_LEVELS)
+  format         String     // "5x5", "7x7", "11x11"
+  priceFrom      Decimal?   @db.Decimal(10, 2)
+  priceTo        Decimal?   @db.Decimal(10, 2)
+  currency       String     @default("EUR")
+  isFree         Boolean    @default(false)
+  maxTeams       Int?
+  spotsLeft      Int?       // optional indicator
+  startDate      DateTime?  // override of parent if differs
+  endDate        DateTime?
+  registrationDeadline DateTime?
+  externalUrl    String?    // separate signup link per division
+  order          Int        @default(0)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  event          Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  bookings       Booking[]
+
+  @@index([eventId, order])
+}
+
+// i18n content — EN is required (validated at app layer), others optional with EN fallback
+model EventTranslation {
+  id              String  @id @default(cuid())
+  eventId         String
+  locale          Locale
+  title           String
+  shortDescription String? @db.Text
+  description     String   @db.Text
+
+  event           Event   @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, locale])
+  @@index([locale])
+}
+
+model EventTag {
+  eventId String
+  tagId   String
+
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, tagId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// REVIEWS — moderated by event's organizer (+ admin oversight)
+// ─────────────────────────────────────────────────────────────
+
+model Review {
+  id          String   @id @default(cuid())
+  eventId     String
+  authorId    String
+  rating      Int      // 1..5
+  title       String?
+  body        String   @db.Text
+  status      ReviewStatus @default(PENDING)
+  organizerReply String? @db.Text
+  organizerRepliedAt DateTime?
+  moderatedAt DateTime?
+  moderatedBy String?  // userId of organizer/admin
+  rejectedReason String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, authorId])
+  @@index([status])
+  @@index([eventId, status])
+}
+
+// ─────────────────────────────────────────────────────────────
+// BOOKING / APPLICATION
+// ─────────────────────────────────────────────────────────────
+
+model Booking {
+  id              String   @id @default(cuid())
+  eventId         String
+  divisionId      String?  // null when event has no divisions
+  userId          String
+  status          BookingStatus @default(NEW)
+
+  // Application data
+  participantName String
+  participantAge  Int?
+  teamName        String?
+  partySize       Int      @default(1)
+  contactPhone    String?
+  contactEmail    String
+  comment         String?  @db.Text
+  customFields    Json?
+
+  // Organizer notes
+  organizerNote   String?  @db.Text
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  respondedAt     DateTime?
+
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  division        EventDivision? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  thread          Thread?
+
+  @@index([eventId, status])
+  @@index([divisionId])
+  @@index([userId, status])
+}
+
+// ─────────────────────────────────────────────────────────────
+// MESSAGING — real-time chat between client & organizer (per booking)
+// ─────────────────────────────────────────────────────────────
+
+model Thread {
+  id         String   @id @default(cuid())
+  bookingId  String?  @unique
+  eventId    String
+  subject    String?
+  lastMessageAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  booking    Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  participants ThreadParticipant[]
+  messages   Message[]
+
+  @@index([lastMessageAt])
+}
+
+model ThreadParticipant {
+  id        String   @id @default(cuid())
+  threadId  String
+  userId    String
+  lastReadAt DateTime?
+  joinedAt  DateTime @default(now())
+
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([threadId, userId])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  threadId   String
+  senderId   String
+  body       String   @db.Text
+  attachments Json?    // [{url, name, mime, size}]
+  createdAt  DateTime @default(now())
+  editedAt   DateTime?
+
+  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender     User     @relation("messageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// MONETIZATION — Boost
+// ─────────────────────────────────────────────────────────────
+
+model Boost {
+  id         String    @id @default(cuid())
+  eventId    String
+  tier       BoostTier
+  startsAt   DateTime
+  endsAt     DateTime
+  priceCents Int
+  currency   String    @default("EUR")
+  paymentId  String?   // Payment.id
+  createdAt  DateTime  @default(now())
+
+  event      Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, endsAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// MONETIZATION — Banner ads
+// ─────────────────────────────────────────────────────────────
+
+model AdCampaign {
+  id            String   @id @default(cuid())
+  organizerId   String?  // null = direct/admin-placed
+  advertiserName String
+  contactEmail  String
+  status        AdStatus @default(DRAFT)
+  budget        Decimal? @db.Decimal(10, 2)
+  currency      String   @default("EUR")
+  startsAt      DateTime
+  endsAt        DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organizer     Organizer? @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+  slots         AdSlot[]
+}
+
+model AdSlot {
+  id          String   @id @default(cuid())
+  campaignId  String
+  placement   AdPlacement
+  imageUrl    String
+  targetUrl   String
+  altText     String?
+  weight      Int      @default(1) // for rotation
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+
+  // optional targeting
+  targetCountries String[] @default([])
+  targetLocales   Locale[] @default([])
+
+  campaign    AdCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([placement])
+}
+
+// ─────────────────────────────────────────────────────────────
+// MONETIZATION — Payments (covers boost, subs, future tickets)
+// ─────────────────────────────────────────────────────────────
+
+model Payment {
+  id            String   @id @default(cuid())
+  userId        String?
+  organizerId   String?
+  amountCents   Int
+  currency      String   @default("EUR")
+  status        PaymentStatus @default(PENDING)
+  provider      String   @default("stripe")
+  providerRef   String?  // stripe payment intent id
+  description   String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+  @@index([providerRef])
+}
+
+// ─────────────────────────────────────────────────────────────
+// FUTURE — TICKETING (v3 placeholder, not exposed in v1 UI)
+// ─────────────────────────────────────────────────────────────
+
+model TicketType {
+  id          String   @id @default(cuid())
+  eventId     String
+  name        String   // "Adult", "Child", "VIP"
+  description String?  @db.Text
+  priceCents  Int
+  currency    String   @default("EUR")
+  quantityTotal Int?
+  quantitySold  Int    @default(0)
+  salesStartAt DateTime?
+  salesEndAt   DateTime?
+  isActive     Boolean @default(true)
+  createdAt    DateTime @default(now())
+
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  orders       Order[]
+
+  @@index([eventId])
+}
+
+model Order {
+  id           String   @id @default(cuid())
+  ticketTypeId String
+  buyerEmail   String
+  buyerName    String?
+  quantity     Int      @default(1)
+  totalCents   Int
+  currency     String   @default("EUR")
+  paymentId    String?  // Payment.id
+  status       PaymentStatus @default(PENDING)
+  createdAt    DateTime @default(now())
+
+  ticketType   TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+  tickets      Ticket[]
+
+  @@index([buyerEmail])
+}
+
+model Ticket {
+  id        String   @id @default(cuid())
+  orderId   String
+  code      String   @unique // QR
+  isUsed    Boolean  @default(false)
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
