@@ -9,6 +9,9 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { CookieBanner } from "@/components/site/CookieBanner";
 import "../globals.css";
 
+// Force SSR for everything under /[locale] — pages talk to Prisma which is not available at build time.
+export const dynamic = "force-dynamic";
+
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
   variable: "--font-inter",
