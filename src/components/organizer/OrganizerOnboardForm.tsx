@@ -12,12 +12,17 @@ type Labels = {
   name: string; nameHint: string;
   slug: string; slugHint: string;
   country: string; city: string;
-  tagline: string; taglineHint: string;
-  about: string; aboutHint: string;
+  englishSection: string; englishSectionHint: string;
+  secondSection: string; secondSectionHint: string;
+  secondLanguagePicker: string;
+  taglineEn: string; aboutEn: string;
+  taglineSecond: string; aboutSecond: string;
+  taglineHint: string; aboutHint: string;
   logoUrl: string; coverUrl: string;
   website: string; phone: string;
   tier: string; tierFree: string; tierPro: string; tierPremium: string;
   submit: string; loading: string;
+  langRu: string; langDe: string; langEs: string; langNone: string;
 };
 
 function slugify(s: string) {
@@ -42,10 +47,12 @@ function SubmitBtn({ labels }: { labels: Labels }) {
 
 export function OrganizerOnboardForm({
   defaultName,
+  defaultSecondLocale,
   countries,
   labels,
 }: {
   defaultName: string;
+  defaultSecondLocale: "" | "ru" | "de" | "es";
   countries: { code: string; name: string; flag: string }[];
   labels: Labels;
 }) {
@@ -54,6 +61,7 @@ export function OrganizerOnboardForm({
   const [name, setName] = useState(defaultName);
   const [slug, setSlug] = useState(slugify(defaultName));
   const [slugTouched, setSlugTouched] = useState(false);
+  const [secondLocale, setSecondLocale] = useState<string>(defaultSecondLocale);
 
   useEffect(() => {
     if (!slugTouched) setSlug(slugify(name));
@@ -94,9 +102,43 @@ export function OrganizerOnboardForm({
         />
       </div>
 
-      <Field name="tagline" required label={labels.tagline} hint={labels.taglineHint} maxLength={120} error={fe.tagline} />
+      <fieldset className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 space-y-4">
+        <legend className="px-2">
+          <span className="text-sm font-bold text-[var(--color-foreground)]">{labels.englishSection}</span>
+          <span className="ml-2 rounded-full bg-[var(--color-pitch-50)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-pitch-700)]">EN</span>
+        </legend>
+        <p className="text-xs text-[var(--color-muted)]">{labels.englishSectionHint}</p>
+        <Field name="taglineEn" required label={labels.taglineEn} hint={labels.taglineHint} maxLength={120} error={fe.taglineEn} />
+        <TextareaField name="aboutEn" required label={labels.aboutEn} hint={labels.aboutHint} rows={4} error={fe.aboutEn} />
+      </fieldset>
 
-      <TextareaField name="about" required label={labels.about} hint={labels.aboutHint} rows={4} error={fe.about} />
+      <fieldset className="rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5 space-y-4">
+        <legend className="px-2">
+          <span className="text-sm font-bold text-[var(--color-foreground)]">{labels.secondSection}</span>
+          <span className="ml-2 rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">{secondLocale ? secondLocale.toUpperCase() : "—"}</span>
+        </legend>
+        <p className="text-xs text-[var(--color-muted)]">{labels.secondSectionHint}</p>
+        <label className="block">
+          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.secondLanguagePicker}</span>
+          <select
+            name="secondLocale"
+            value={secondLocale}
+            onChange={(e) => setSecondLocale(e.target.value)}
+            className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+          >
+            <option value="">{labels.langNone}</option>
+            <option value="ru">{labels.langRu}</option>
+            <option value="de">{labels.langDe}</option>
+            <option value="es">{labels.langEs}</option>
+          </select>
+        </label>
+        {secondLocale && (
+          <>
+            <Field name="taglineSecond" label={labels.taglineSecond} hint={labels.taglineHint} maxLength={120} error={fe.taglineSecond} />
+            <TextareaField name="aboutSecond" label={labels.aboutSecond} hint={labels.aboutHint} rows={4} error={fe.aboutSecond} />
+          </>
+        )}
+      </fieldset>
 
       <ImageUpload name="logoUrl" kind="organizer-logo" label={labels.logoUrl} />
       <ImageUpload name="coverUrl" kind="organizer-cover" label={labels.coverUrl} />

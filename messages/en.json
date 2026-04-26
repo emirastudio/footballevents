@@ -37,6 +37,19 @@
     "taglineHint": "One short sentence — appears under your name.",
     "about": "About",
     "aboutHint": "What you do, where, for whom. 2–4 sentences works best.",
+    "englishSection": "About in English",
+    "englishSectionHint": "English is required — it's the platform default and what international participants see by default.",
+    "secondSection": "About in your language",
+    "secondSectionHint": "Optional. Pick a second language — visitors with that locale will see this version instead of English.",
+    "secondLanguagePicker": "Second language",
+    "taglineEn": "Tagline (English)",
+    "aboutEn": "About (English)",
+    "taglineSecond": "Tagline",
+    "aboutSecond": "About",
+    "langNone": "— No second language",
+    "langRu": "Russian (Русский)",
+    "langDe": "German (Deutsch)",
+    "langEs": "Spanish (Español)",
     "logoUrl": "Logo URL",
     "coverUrl": "Cover image URL",
     "website": "Website",
@@ -75,7 +88,16 @@
       "PUBLISHED": "Published",
       "ARCHIVED": "Archived",
       "REJECTED": "Rejected"
-    }
+    },
+    "divisionsCount": "{count} divisions",
+    "settingsComingSoon": "Coming next — profile editing, logo/cover, social media, plan and billing (Stripe).",
+    "reviewsModComingSoon": "Coming next — review moderation: approve/hide/reply, escalate to admin.",
+    "boostThis": "Boost this event",
+    "boostThisHint": "One-time visibility upgrade. Pays for itself if it brings even one applicant.",
+    "boostBasicLabel": "Basic — €9 · 7d",
+    "boostFeaturedLabel": "Featured — €39 · 14d",
+    "boostPremiumLabel": "Premium — €119 · 7d homepage",
+    "yourReply": "Your reply"
   },
   "apply": {
     "title": "Apply to {eventTitle}",
@@ -98,6 +120,11 @@
     "ownEvent": "This is your own event — you can't apply to it."
   },
   "bookings": {
+    "labelEmail": "Email",
+    "labelPhone": "Phone",
+    "labelTeam": "Team",
+    "labelAge": "Age",
+    "labelParty": "Party",
     "pageTitle": "Applications",
     "filterAll": "All",
     "filterNew": "New",
@@ -210,6 +237,13 @@
     "tierLockTitle": "Available with Pro and Premium",
     "tierLockBody": "Upgrade to fill in this section. Drafts are not blocked — you can save and revisit.",
     "videoLockBody": "Video embeds are a Premium feature.",
+    "genderBoys": "Boys",
+    "genderGirls": "Girls",
+    "genderMixed": "Mixed",
+    "skillAllLevels": "All levels",
+    "skillAmateur": "Amateur",
+    "skillSemiPro": "Semi-pro",
+    "skillProfessional": "Professional",
     "errors": {
       "titleRequired": "English title is required",
       "descriptionRequired": "English description is required",
@@ -233,6 +267,9 @@
     "account": "Account"
   },
   "messages": {
+    "noMessagesYet": "No messages yet.",
+    "shortcutHint": "Cmd/Ctrl + Enter",
+    "noReviewsYet": "No reviews yet.",
     "inboxTitle": "Messages",
     "emptyInbox": "No conversations yet — apply to an event to start.",
     "emptyInboxOrganizer": "No conversations yet — they'll appear here once people apply to your events.",
@@ -258,6 +295,11 @@
     "signIn": "Sign in",
     "signUp": "Get started",
     "postEvent": "Post event"
+  },
+  "homeTop": {
+    "badge": "Top {count}",
+    "title": "Top football events worldwide",
+    "subtitle": "Ranked by reviews, bookings and editor picks from around the globe."
   },
   "home": {
     "hero": {
@@ -307,7 +349,51 @@
     "company": "Company",
     "legal": "Legal",
     "rights": "All rights reserved.",
-    "language": "Language"
+    "language": "Language",
+    "pricing": "Pricing",
+    "api": "API",
+    "about": "About",
+    "contact": "Contact",
+    "blog": "Blog",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "madeFor": "Made for football fans worldwide ⚽"
+  },
+  "cookieBanner": {
+    "text": "We use essential cookies for sign-in and security. We don't use tracking cookies — analytics is cookie-less.",
+    "policy": "Cookie policy",
+    "reject": "Reject non-essential",
+    "accept": "Accept",
+    "close": "Close"
+  },
+  "upload": {
+    "uploadImage": "Upload image",
+    "replace": "Replace",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "uploading": "Uploading…",
+    "saveCrop": "Save crop",
+    "errOnlyJpgPngWebp": "Only JPG, PNG or WebP",
+    "errFileTooBig": "File too big (max 10MB)",
+    "errImageTooSmall": "Image too small. Minimum {w}×{h}.",
+    "errPresignFailed": "Presign failed",
+    "errUploadFailed": "Upload failed",
+    "errEncodeFailed": "Encode failed",
+    "errCanvasUnsupported": "Canvas not supported",
+    "rec.organizer-logo": "Square 512×512+ · PNG with transparency or JPG · max 5MB",
+    "rec.organizer-cover": "Wide 1920×640 (3:1) · JPG/WebP · max 5MB",
+    "rec.event-logo": "Square 512×512+ · max 5MB",
+    "rec.event-cover": "16:9 · 1600×900+ · max 5MB",
+    "rec.event-gallery": "4:3 · 1600×1200+ · max 5MB"
+  },
+  "combobox": {
+    "noMatches": "No matches",
+    "searching": "Searching…",
+    "clear": "Clear",
+    "cityType": "Type city name…",
+    "cityPickCountry": "Pick a country first",
+    "cityNotFound": "No cities found"
   },
   "i18n": {
     "translatedFromEn": "Translated from English",
@@ -330,7 +416,24 @@
     "noResults": "No results found.",
     "tryDifferentFilters": "Try adjusting your filters or search terms.",
     "results": "results",
-    "result": "result"
+    "result": "result",
+    "home": "Home",
+    "all": "All",
+    "view": "View",
+    "edit": "Edit",
+    "archive": "Archive",
+    "delete": "Delete",
+    "viewPublic": "View public",
+    "status": "Status",
+    "close": "Close",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "save": "Save",
+    "noMatches": "No matches",
+    "searching": "Searching…",
+    "advertising": "Advertising",
+    "comingSoon": "Coming soon",
+    "website": "Website"
   },
   "filters": {
     "title": "Filters",
@@ -551,7 +654,13 @@
     "finalCtaTitle": "Ready to give it a try?",
     "finalCtaSubtitle": "Free for 30 days. First 50 organizers get 3 months of Premium. No card, no commitment.",
     "finalCta1": "Sign up",
-    "finalCta2": "See pricing"
+    "finalCta2": "See pricing",
+    "livePreview": "Live preview",
+    "adLabel": "Ad",
+    "pillTournaments": "Tournaments",
+    "pillCamps": "Camps",
+    "pillFestivals": "Festivals",
+    "pillMatchTours": "Match Tours"
   },
   "pricing": {
     "pageTitle": "Pricing",

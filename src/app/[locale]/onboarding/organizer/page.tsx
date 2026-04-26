@@ -33,6 +33,7 @@ export default async function OrganizerOnboardingPage({
         <div className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8 shadow-[var(--shadow-sm)]">
           <OrganizerOnboardForm
             defaultName={session.user.name ?? ""}
+            defaultSecondLocale={locale === "ru" || locale === "de" || locale === "es" ? locale : ""}
             countries={getCountries(locale).map((c) => ({ code: c.code, name: c.name, flag: c.flag }))}
             labels={{
               name: t("name"),
@@ -41,9 +42,16 @@ export default async function OrganizerOnboardingPage({
               slugHint: t("slugHint"),
               country: t("country"),
               city: t("city"),
-              tagline: t("tagline"),
+              englishSection: t("englishSection"),
+              englishSectionHint: t("englishSectionHint"),
+              secondSection: t("secondSection"),
+              secondSectionHint: t("secondSectionHint"),
+              secondLanguagePicker: t("secondLanguagePicker"),
+              taglineEn: t("taglineEn"),
+              aboutEn: t("aboutEn"),
+              taglineSecond: t("taglineSecond"),
+              aboutSecond: t("aboutSecond"),
               taglineHint: t("taglineHint"),
-              about: t("about"),
               aboutHint: t("aboutHint"),
               logoUrl: t("logoUrl"),
               coverUrl: t("coverUrl"),
@@ -55,6 +63,10 @@ export default async function OrganizerOnboardingPage({
               tierPremium: t("tierPremium"),
               submit: t("submit"),
               loading: t("loading"),
+              langRu: t("langRu"),
+              langDe: t("langDe"),
+              langEs: t("langEs"),
+              langNone: t("langNone"),
             }}
           />
         </div>
