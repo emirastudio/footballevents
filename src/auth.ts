@@ -27,6 +27,9 @@ const providers: NextAuthConfig["providers"] = [
 
       const user = await db.user.findUnique({ where: { email } });
       if (!user?.passwordHash) return null;
+      if (user.bannedAt) {
+        throw new Error("Account banned. Contact support.");
+      }
       const ok = await bcrypt.compare(password, user.passwordHash);
       if (!ok) return null;
 

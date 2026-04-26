@@ -3,7 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
-import { Shield, Layers, Users, Inbox } from "lucide-react";
+import { Shield, Layers, Users, Inbox, Building2, Star } from "lucide-react";
 
 export default async function AdminLayout({
   children,
@@ -20,10 +20,12 @@ export default async function AdminLayout({
   if (session.user.role !== "ADMIN") redirect("/");
 
   const nav = [
-    { href: "/admin/dashboard", icon: Shield, label: "Overview" },
-    { href: "/admin/events",    icon: Layers, label: "Events queue" },
-    { href: "/admin/bookings",  icon: Inbox,  label: "All bookings" },
-    { href: "/admin/users",     icon: Users,  label: "Users" },
+    { href: "/admin/dashboard",   icon: Shield,    label: "Overview" },
+    { href: "/admin/events",      icon: Layers,    label: "Events queue" },
+    { href: "/admin/bookings",    icon: Inbox,     label: "All bookings" },
+    { href: "/admin/organizers",  icon: Building2, label: "Organizers" },
+    { href: "/admin/reviews",     icon: Star,      label: "Reviews" },
+    { href: "/admin/users",       icon: Users,     label: "Users" },
   ];
 
   return (

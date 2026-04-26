@@ -494,7 +494,7 @@
       "title": "Subscription for active organizers",
       "desc": "Several events per year, or you're an agency? Pro and Premium remove the limits and give you proper tools.",
       "bullets": [
-        "Pro €29/mo — up to 25 events, analytics, support",
+        "Pro €9.90/mo (launch) — up to 25 events, analytics, support",
         "Premium €99/mo — unlimited, «Verified» badge",
         "Dedicated manager on Premium",
         "Discount on boosts and banner ads"
@@ -571,7 +571,7 @@
     },
     "tierPrice": {
       "free":     { "monthly": "€0",  "annual": "€0",   "annualEq": "" },
-      "pro":      { "monthly": "€29", "annual": "€290", "annualEq": "€24/mo" },
+      "pro":      { "monthly": "€9.90", "annual": "€99", "annualEq": "€8.25/mo" },
       "premium":  { "monthly": "€99", "annual": "€990", "annualEq": "€82/mo" },
       "enterprise": { "monthly": "Talk to us", "annual": "Talk to us", "annualEq": "" }
     },

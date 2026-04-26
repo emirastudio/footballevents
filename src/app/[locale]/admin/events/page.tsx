@@ -1,8 +1,8 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
-import { moderateEventAction } from "@/app/actions/admin";
-import { Check, X, ExternalLink } from "lucide-react";
+import { moderateEventAction, grantBoostAction } from "@/app/actions/admin";
+import { Check, X, ExternalLink, Rocket } from "lucide-react";
 
 const STATUSES = ["PENDING_REVIEW", "ALL", "PUBLISHED", "DRAFT", "REJECTED", "ARCHIVED"] as const;
 
@@ -83,6 +83,35 @@ export default async function AdminEventsPage({
                     >
                       <ExternalLink className="h-3.5 w-3.5" /> Preview
                     </Link>
+                    {e.status === "PUBLISHED" && (
+                      <form action={grantBoostAction} className="flex items-center gap-1.5">
+                        <input type="hidden" name="eventId" value={e.id} />
+                        <select
+                          name="kind"
+                          defaultValue="featured"
+                          className="rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 py-1 text-xs"
+                        >
+                          <option value="basic">Basic (7d)</option>
+                          <option value="featured">Featured (14d)</option>
+                          <option value="premium">Premium (7d)</option>
+                          <option value="bundle31">Bundle 3+1 (7d)</option>
+                          <option value="bundle52">Bundle 5+2 (7d)</option>
+                        </select>
+                        <input
+                          type="number"
+                          name="days"
+                          min={1}
+                          placeholder="days"
+                          className="w-16 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 py-1 text-xs"
+                        />
+                        <button
+                          type="submit"
+                          className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] bg-amber-500 px-2.5 py-1.5 text-xs font-bold text-white hover:bg-amber-600"
+                        >
+                          <Rocket className="h-3.5 w-3.5" /> Boost
+                        </button>
+                      </form>
+                    )}
                     {e.status === "PENDING_REVIEW" && (
                       <>
                         <form action={moderateEventAction}>

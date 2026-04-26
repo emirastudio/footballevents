@@ -1,27 +1,73 @@
 import { setRequestLocale } from "next-intl/server";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
-import { Layers, Users as UsersIcon, Inbox, Building2 } from "lucide-react";
+import {
+  Layers,
+  Users as UsersIcon,
+  Inbox,
+  Building2,
+  Star,
+  ShieldOff,
+  UserPlus,
+  BadgeCheck,
+} from "lucide-react";
 
 export default async function AdminDashboard({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const [pendingEvents, totalEvents, totalUsers, totalOrganizers, totalBookings, newBookings] = await Promise.all([
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const [
+    pendingEvents,
+    totalEvents,
+    totalUsers,
+    totalOrganizers,
+    totalBookings,
+    newBookings,
+    pendingReviews,
+    bannedUsers,
+    newUsers7d,
+    freeOrgs,
+    proOrgs,
+    premiumOrgs,
+    enterpriseOrgs,
+  ] = await Promise.all([
     db.event.count({ where: { status: "PENDING_REVIEW" } }),
     db.event.count(),
     db.user.count(),
     db.organizer.count(),
     db.booking.count(),
     db.booking.count({ where: { status: "NEW" } }),
+    db.review.count({ where: { status: "PENDING" } }),
+    db.user.count({ where: { bannedAt: { not: null } } }),
+    db.user.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+    db.organizer.count({ where: { subscriptionTier: "FREE" } }),
+    db.organizer.count({ where: { subscriptionTier: "PRO" } }),
+    db.organizer.count({ where: { subscriptionTier: "PREMIUM" } }),
+    db.organizer.count({ where: { subscriptionTier: "ENTERPRISE" } }),
   ]);
 
-  const stats = [
+  const stats: Array<{
+    label: string;
+    value: number;
+    hint?: string;
+    href?: string;
+    icon: typeof Layers;
+    urgent?: boolean;
+  }> = [
     { label: "Pending review",    value: pendingEvents, hint: "Events", href: "/admin/events?status=pending_review", icon: Layers, urgent: pendingEvents > 0 },
+    { label: "Pending reviews",   value: pendingReviews, hint: "Reviews", href: "/admin/reviews", icon: Star, urgent: pendingReviews > 0 },
     { label: "Events",            value: totalEvents,   icon: Layers, href: "/admin/events" },
-    { label: "Organizers",        value: totalOrganizers, icon: Building2 },
+    { label: "Organizers",        value: totalOrganizers, icon: Building2, href: "/admin/organizers" },
     { label: "Users",             value: totalUsers,    icon: UsersIcon, href: "/admin/users" },
+    { label: "New users · 7d",    value: newUsers7d,    icon: UserPlus },
+    { label: "Banned users",      value: bannedUsers,   icon: ShieldOff, href: "/admin/users", urgent: bannedUsers > 0 },
     { label: "Bookings (new)",    value: newBookings,   hint: `${totalBookings} total`, icon: Inbox, href: "/admin/bookings" },
+    { label: "Free organizers",       value: freeOrgs,        icon: BadgeCheck, href: "/admin/organizers?tier=free" },
+    { label: "Pro organizers",        value: proOrgs,         icon: BadgeCheck, href: "/admin/organizers?tier=pro" },
+    { label: "Premium organizers",    value: premiumOrgs,     icon: BadgeCheck, href: "/admin/organizers?tier=premium" },
+    { label: "Enterprise organizers", value: enterpriseOrgs,  icon: BadgeCheck, href: "/admin/organizers?tier=enterprise" },
   ];
 
   return (

@@ -386,7 +386,7 @@
     },
     "tierPrice": {
       "free":     { "monthly": "€0",  "annual": "€0",   "annualEq": "" },
-      "pro":      { "monthly": "€29", "annual": "€290", "annualEq": "€24/mes" },
+      "pro":      { "monthly": "€9.90", "annual": "€99", "annualEq": "€8.25/mes" },
       "premium":  { "monthly": "€99", "annual": "€990", "annualEq": "€82/mes" },
       "enterprise": { "monthly": "Consultar", "annual": "Consultar", "annualEq": "" }
     },
