@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
           data: {
             subscriptionTier: tier,
             subscriptionId: sub.id,
-            subscriptionEndsAt: sub.current_period_end ? new Date(sub.current_period_end * 1000) : null,
+            subscriptionEndsAt: item?.current_period_end ? new Date(item.current_period_end * 1000) : null,
           },
         });
         break;

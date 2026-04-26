@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { routing } from "@/i18n/routing";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 

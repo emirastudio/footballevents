@@ -1,4 +1,4 @@
-import NextAuth, { type DefaultSession } from "next-auth";
+import NextAuth, { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -6,12 +6,14 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
 
+type Role = "USER" | "ORGANIZER" | "ADMIN";
+
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
 
-const providers = [
+const providers: NextAuthConfig["providers"] = [
   Credentials({
     name: "Credentials",
     credentials: {
@@ -47,17 +49,14 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      role: "USER" | "ORGANIZER" | "ADMIN";
+      role: Role;
     } & DefaultSession["user"];
   }
   interface User {
-    role?: "USER" | "ORGANIZER" | "ADMIN";
+    role?: Role;
   }
-}
-
-declare module "next-auth/jwt" {
   interface JWT {
-    role?: "USER" | "ORGANIZER" | "ADMIN";
+    role?: Role;
     id?: string;
   }
 }
@@ -73,17 +72,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
+        (token as { id?: string }).id = user.id;
+        (token as { role?: Role }).role = (user as { role?: Role }).role;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token.id) {
-        session.user.id = token.id;
+      const tokenId = (token as { id?: string }).id;
+      const tokenRole = (token as { role?: Role }).role;
+      if (tokenId) {
+        session.user.id = tokenId;
         // Read role from DB so role flips (e.g. USER → ORGANIZER after onboarding) take effect immediately.
-        const fresh = await db.user.findUnique({ where: { id: token.id }, select: { role: true } });
-        session.user.role = fresh?.role ?? token.role ?? "USER";
+        const fresh = await db.user.findUnique({ where: { id: tokenId }, select: { role: true } });
+        session.user.role = fresh?.role ?? tokenRole ?? "USER";
       }
       return session;
     },

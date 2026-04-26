@@ -5,9 +5,6 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   output: "standalone", // produces a self-contained .next/standalone for Docker
-  // TODO: re-enable strict type checking after first deploy lands.
-  typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost" },
