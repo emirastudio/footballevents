@@ -6,6 +6,7 @@ ARG PNPM_VERSION=10.0.0
 
 # ─── deps: install only production-ish deps with pnpm ────────────
 FROM node:${NODE_VERSION} AS deps
+ENV CI=true
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
@@ -16,6 +17,7 @@ RUN pnpm install --frozen-lockfile --prefer-offline
 
 # ─── build: prisma generate + next build ─────────────────────────
 FROM node:${NODE_VERSION} AS builder
+ENV CI=true
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 COPY --from=deps /app /app
