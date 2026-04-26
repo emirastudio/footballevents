@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { countUnreadThreads } from "@/lib/messages";
 import { LayoutDashboard, Calendar, Inbox, MessageSquare, Star, Settings as Cog } from "lucide-react";
 
 export default async function OrganizerLayout({
@@ -26,14 +27,15 @@ export default async function OrganizerLayout({
   if (!organizer) redirect("/onboarding/organizer");
 
   const t = await getTranslations("organizer");
+  const unreadMessages = await countUnreadThreads(session.user.id);
 
   const nav = [
-    { href: "/organizer/dashboard", icon: LayoutDashboard, label: t("dashboard") },
-    { href: "/organizer/events", icon: Calendar, label: t("myEvents") },
-    { href: "/organizer/bookings", icon: Inbox, label: t("applications") },
-    { href: "/organizer/messages", icon: MessageSquare, label: t("messages") },
-    { href: "/organizer/reviews", icon: Star, label: t("reviewsMod") },
-    { href: "/organizer/settings", icon: Cog, label: t("settings") },
+    { href: "/organizer/dashboard", icon: LayoutDashboard, label: t("dashboard"), badge: 0 },
+    { href: "/organizer/events", icon: Calendar, label: t("myEvents"), badge: 0 },
+    { href: "/organizer/bookings", icon: Inbox, label: t("applications"), badge: 0 },
+    { href: "/organizer/messages", icon: MessageSquare, label: t("messages"), badge: unreadMessages },
+    { href: "/organizer/reviews", icon: Star, label: t("reviewsMod"), badge: 0 },
+    { href: "/organizer/settings", icon: Cog, label: t("settings"), badge: 0 },
   ];
 
   return (
@@ -61,7 +63,12 @@ export default async function OrganizerLayout({
                 className="flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium text-[var(--color-muted-strong)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-foreground)]"
               >
                 <n.icon className="h-4 w-4 text-[var(--color-pitch-600)]" />
-                {n.label}
+                <span className="flex-1">{n.label}</span>
+                {n.badge > 0 && (
+                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
+                    {n.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>

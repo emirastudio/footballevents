@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { countUnreadThreads } from "@/lib/messages";
 import { EventCard } from "@/components/cards/EventCard";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import type { MockEvent, MockOrganizer } from "@/lib/mock-data";
-import { Bookmark, Bell, Mail, Calendar } from "lucide-react";
+import { Bookmark, Bell, Mail, Calendar, MessageSquare } from "lucide-react";
 
 export default async function MePage({
   params,
@@ -24,8 +25,11 @@ export default async function MePage({
   const t = await getTranslations("me");
   const tCommon = await getTranslations("common");
   const tNav = await getTranslations("nav");
+  const tMessages = await getTranslations("messages");
 
   const userId = session.user.id;
+
+  const unreadMessages = await countUnreadThreads(userId);
 
   const [user, savedRows, followedRows] = await Promise.all([
     db.user.findUnique({ where: { id: userId } }),
@@ -156,6 +160,18 @@ export default async function MePage({
           <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-pitch-50)] px-3 py-1.5 text-sm font-semibold text-[var(--color-pitch-700)]">
             <Bell className="h-3.5 w-3.5" /> {followedOrganizers.length}
           </span>
+          <Link
+            href="/me/messages"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-pitch-50)] px-3 py-1.5 text-sm font-semibold text-[var(--color-pitch-700)] transition hover:bg-[var(--color-pitch-100)]"
+          >
+            <MessageSquare className="h-3.5 w-3.5" />
+            <span>{tMessages("inboxTitle")}</span>
+            {unreadMessages > 0 && (
+              <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
+                {unreadMessages}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
 

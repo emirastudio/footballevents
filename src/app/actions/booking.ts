@@ -56,7 +56,7 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
   const existing = await db.booking.findFirst({ where: { eventId: d.eventId, userId: session.user.id } });
   if (existing) return { ok: true };
 
-  await db.booking.create({
+  const booking = await db.booking.create({
     data: {
       eventId: d.eventId,
       userId: session.user.id,
@@ -73,6 +73,29 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
 
   // Notify organizer (fire-and-forget — graceful no-op if RESEND_API_KEY not set)
   const en = await db.eventTranslation.findFirst({ where: { eventId: d.eventId, locale: "en" } });
+
+  // Create messaging thread for this booking (best-effort; never blocks the booking).
+  try {
+    const applicantUserId = session.user.id;
+    const organizerUserId = event.organizer.userId;
+    if (applicantUserId !== organizerUserId) {
+      await db.thread.create({
+        data: {
+          eventId: event.id,
+          bookingId: booking.id,
+          subject: en?.title ?? event.slug,
+          participants: {
+            create: [
+              { userId: applicantUserId },
+              { userId: organizerUserId },
+            ],
+          },
+        },
+      });
+    }
+  } catch (e) {
+    console.error("[booking] thread create failed", e);
+  }
   void newApplicationEmail({
     organizerEmail: event.organizer.email,
     organizerName: event.organizer.name,
@@ -136,6 +159,33 @@ export async function respondBookingAction(formData: FormData) {
     note,
   });
 
+  // Post a system message into the booking's thread (best-effort).
+  try {
+    const thread = await db.thread.findUnique({
+      where: { bookingId: booking.id },
+      select: { id: true, participants: { select: { userId: true } } },
+    });
+    if (thread) {
+      const senderId = organizer.userId;
+      const isParticipant = thread.participants.some((p) => p.userId === senderId);
+      if (isParticipant) {
+        const body =
+          decision === "accept"
+            ? `Application accepted${note ? `: ${note}` : "."}`
+            : `Application declined${note ? `: ${note}` : "."}`;
+        const now = new Date();
+        await db.$transaction([
+          db.message.create({ data: { threadId: thread.id, senderId, body } }),
+          db.thread.update({ where: { id: thread.id }, data: { lastMessageAt: now } }),
+        ]);
+      }
+    }
+  } catch (e) {
+    console.error("[booking] system message failed", e);
+  }
+
   revalidatePath("/organizer/bookings");
   revalidatePath("/me/applications");
+  revalidatePath("/me/messages");
+  revalidatePath("/organizer/messages");
 }

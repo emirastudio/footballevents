@@ -114,6 +114,28 @@ export function bookingResponseEmail(opts: {
   });
 }
 
+export function newMessageNotification(opts: {
+  recipientEmail: string;
+  recipientName: string;
+  senderName: string;
+  eventTitle: string;
+  threadUrl: string;
+  bodyPreview: string;
+}) {
+  const html = shell(
+    `New message from ${opts.senderName}`,
+    `<p>Hi ${escape(opts.recipientName)},</p>
+     <p><strong>${escape(opts.senderName)}</strong> sent you a message about <strong>${escape(opts.eventTitle)}</strong>.</p>
+     <p style="background:#fafbfc;border-left:4px solid #00d26a;padding:12px;border-radius:4px;white-space:pre-wrap">${escape(opts.bodyPreview)}</p>
+     <p><a href="${opts.threadUrl}" style="display:inline-block;background:#0a1628;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Reply on FootballEvents.eu</a></p>`,
+  );
+  return sendEmail({
+    to: opts.recipientEmail,
+    subject: `New message from ${opts.senderName} on ${opts.eventTitle}`,
+    html,
+  });
+}
+
 export function eventModerationEmail(opts: {
   organizerEmail: string;
   organizerName: string;

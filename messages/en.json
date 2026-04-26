@@ -230,6 +230,19 @@
     "since": "Since",
     "account": "Account"
   },
+  "messages": {
+    "inboxTitle": "Messages",
+    "emptyInbox": "No conversations yet — apply to an event to start.",
+    "emptyInboxOrganizer": "No conversations yet — they'll appear here once people apply to your events.",
+    "send": "Send",
+    "sending": "Sending…",
+    "sendDisabled": "Type a message to send",
+    "replyPlaceholder": "Write a reply…",
+    "applicationAcceptedSystem": "Application accepted",
+    "applicationDeclinedSystem": "Application declined",
+    "newMessageEmailSubject": "New message from {senderName} on {eventTitle}",
+    "newMessageEmailBody": "{senderName} sent you a message about {eventTitle}."
+  },
   "nav": {
     "events": "Events",
     "tournaments": "Tournaments",
