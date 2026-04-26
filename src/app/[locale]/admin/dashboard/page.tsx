@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import {
@@ -15,6 +15,7 @@ import {
 export default async function AdminDashboard({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("admin");
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -56,23 +57,23 @@ export default async function AdminDashboard({ params }: { params: Promise<{ loc
     icon: typeof Layers;
     urgent?: boolean;
   }> = [
-    { label: "Pending review",    value: pendingEvents, hint: "Events", href: "/admin/events?status=pending_review", icon: Layers, urgent: pendingEvents > 0 },
-    { label: "Pending reviews",   value: pendingReviews, hint: "Reviews", href: "/admin/reviews", icon: Star, urgent: pendingReviews > 0 },
-    { label: "Events",            value: totalEvents,   icon: Layers, href: "/admin/events" },
-    { label: "Organizers",        value: totalOrganizers, icon: Building2, href: "/admin/organizers" },
-    { label: "Users",             value: totalUsers,    icon: UsersIcon, href: "/admin/users" },
-    { label: "New users · 7d",    value: newUsers7d,    icon: UserPlus },
-    { label: "Banned users",      value: bannedUsers,   icon: ShieldOff, href: "/admin/users", urgent: bannedUsers > 0 },
-    { label: "Bookings (new)",    value: newBookings,   hint: `${totalBookings} total`, icon: Inbox, href: "/admin/bookings" },
-    { label: "Free organizers",       value: freeOrgs,        icon: BadgeCheck, href: "/admin/organizers?tier=free" },
-    { label: "Pro organizers",        value: proOrgs,         icon: BadgeCheck, href: "/admin/organizers?tier=pro" },
-    { label: "Premium organizers",    value: premiumOrgs,     icon: BadgeCheck, href: "/admin/organizers?tier=premium" },
-    { label: "Enterprise organizers", value: enterpriseOrgs,  icon: BadgeCheck, href: "/admin/organizers?tier=enterprise" },
+    { label: t("dashboard.stats.pendingReview"),    value: pendingEvents, hint: t("dashboard.stats.pendingReviewHint"), href: "/admin/events?status=pending_review", icon: Layers, urgent: pendingEvents > 0 },
+    { label: t("dashboard.stats.pendingReviews"),   value: pendingReviews, hint: t("dashboard.stats.pendingReviewsHint"), href: "/admin/reviews", icon: Star, urgent: pendingReviews > 0 },
+    { label: t("dashboard.stats.events"),           value: totalEvents,   icon: Layers, href: "/admin/events" },
+    { label: t("dashboard.stats.organizers"),       value: totalOrganizers, icon: Building2, href: "/admin/organizers" },
+    { label: t("dashboard.stats.users"),            value: totalUsers,    icon: UsersIcon, href: "/admin/users" },
+    { label: t("dashboard.stats.newUsers7d"),       value: newUsers7d,    icon: UserPlus },
+    { label: t("dashboard.stats.bannedUsers"),      value: bannedUsers,   icon: ShieldOff, href: "/admin/users", urgent: bannedUsers > 0 },
+    { label: t("dashboard.stats.bookingsNew"),      value: newBookings,   hint: t("dashboard.stats.bookingsTotal", { count: totalBookings }), icon: Inbox, href: "/admin/bookings" },
+    { label: t("dashboard.stats.freeOrganizers"),       value: freeOrgs,        icon: BadgeCheck, href: "/admin/organizers?tier=free" },
+    { label: t("dashboard.stats.proOrganizers"),        value: proOrgs,         icon: BadgeCheck, href: "/admin/organizers?tier=pro" },
+    { label: t("dashboard.stats.premiumOrganizers"),    value: premiumOrgs,     icon: BadgeCheck, href: "/admin/organizers?tier=premium" },
+    { label: t("dashboard.stats.enterpriseOrganizers"), value: enterpriseOrgs,  icon: BadgeCheck, href: "/admin/organizers?tier=enterprise" },
   ];
 
   return (
     <div>
-      <h1 className="mb-6 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">Admin overview</h1>
+      <h1 className="mb-6 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{t("dashboard.title")}</h1>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {stats.map((s) => {
           const card = (

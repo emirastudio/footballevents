@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
@@ -19,13 +19,15 @@ export default async function AdminLayout({
   if (!session?.user?.id) redirect("/sign-in");
   if (session.user.role !== "ADMIN") redirect("/");
 
+  const t = await getTranslations("admin");
+
   const nav = [
-    { href: "/admin/dashboard",   icon: Shield,    label: "Overview" },
-    { href: "/admin/events",      icon: Layers,    label: "Events queue" },
-    { href: "/admin/bookings",    icon: Inbox,     label: "All bookings" },
-    { href: "/admin/organizers",  icon: Building2, label: "Organizers" },
-    { href: "/admin/reviews",     icon: Star,      label: "Reviews" },
-    { href: "/admin/users",       icon: Users,     label: "Users" },
+    { href: "/admin/dashboard",   icon: Shield,    label: t("nav.overview") },
+    { href: "/admin/events",      icon: Layers,    label: t("nav.eventsQueue") },
+    { href: "/admin/bookings",    icon: Inbox,     label: t("nav.allBookings") },
+    { href: "/admin/organizers",  icon: Building2, label: t("nav.organizers") },
+    { href: "/admin/reviews",     icon: Star,      label: t("nav.reviews") },
+    { href: "/admin/users",       icon: Users,     label: t("nav.users") },
   ];
 
   return (
@@ -33,7 +35,7 @@ export default async function AdminLayout({
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[var(--color-pitch-50)] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-pitch-700)]">
-            <Shield className="h-3.5 w-3.5" /> Admin
+            <Shield className="h-3.5 w-3.5" /> {t("badge")}
           </div>
           <nav className="flex flex-col gap-0.5">
             {nav.map((n) => (

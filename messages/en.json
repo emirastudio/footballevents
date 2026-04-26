@@ -670,5 +670,115 @@
       { "q": "How does the moderation SLA work?",               "a": "When you submit an event for review, our team approves or returns it within the SLA window for your tier (Free 48h, Pro 24h, Premium 4h)." },
       { "q": "Can I switch from monthly to annual later?",      "a": "Yes — switch anytime, the annual price kicks in next billing cycle, with the ~17% savings." }
     ]
+  },
+  "admin": {
+    "badge": "Admin",
+    "nav": {
+      "overview": "Overview",
+      "eventsQueue": "Events queue",
+      "allBookings": "All bookings",
+      "organizers": "Organizers",
+      "reviews": "Reviews",
+      "users": "Users"
+    },
+    "dashboard": {
+      "title": "Admin overview",
+      "stats": {
+        "pendingReview": "Pending review",
+        "pendingReviewHint": "Events",
+        "pendingReviews": "Pending reviews",
+        "pendingReviewsHint": "Reviews",
+        "events": "Events",
+        "organizers": "Organizers",
+        "users": "Users",
+        "newUsers7d": "New users · 7d",
+        "bannedUsers": "Banned users",
+        "bookingsNew": "Bookings (new)",
+        "bookingsTotal": "{count} total",
+        "freeOrganizers": "Free organizers",
+        "proOrganizers": "Pro organizers",
+        "premiumOrganizers": "Premium organizers",
+        "enterpriseOrganizers": "Enterprise organizers"
+      }
+    },
+    "users": {
+      "title": "Users",
+      "table": {
+        "email": "Email",
+        "name": "Name",
+        "role": "Role",
+        "organizer": "Organizer",
+        "created": "Created",
+        "ban": "Ban"
+      },
+      "bannedBadge": "Banned",
+      "save": "Save",
+      "ban": "Ban",
+      "unban": "Unban",
+      "reasonPlaceholder": "reason",
+      "confirmBan": "Ban {email}? They will be unable to sign in.",
+      "confirmUnban": "Unban {email}?"
+    },
+    "events": {
+      "title": "Events queue",
+      "filterAll": "All",
+      "empty": "Nothing to review.",
+      "preview": "Preview",
+      "approve": "Approve",
+      "reject": "Reject",
+      "boost": "Boost",
+      "boostKinds": {
+        "basic": "Basic (7d)",
+        "featured": "Featured (14d)",
+        "premium": "Premium (7d)",
+        "bundle31": "Bundle 3+1 (7d)",
+        "bundle52": "Bundle 5+2 (7d)"
+      },
+      "daysPlaceholder": "days",
+      "bookingsCount": "{count} bookings"
+    },
+    "organizers": {
+      "title": "Organizers",
+      "filters": {
+        "all": "All",
+        "free": "Free",
+        "pro": "Pro",
+        "premium": "Premium",
+        "enterprise": "Enterprise",
+        "verified": "Verified",
+        "unverified": "Unverified"
+      },
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "slug": "Slug",
+        "tier": "Tier",
+        "subEnds": "Sub ends",
+        "verified": "Verified",
+        "grantTier": "Grant tier"
+      },
+      "verifiedYes": "Verified ✓",
+      "verifyAction": "Verify",
+      "grant": "Grant"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "empty": "Nothing to moderate.",
+      "noReviews": "No reviews.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "ratingFmt": "{value}/5",
+      "by": "by {name}"
+    },
+    "bookings": {
+      "title": "All bookings",
+      "table": {
+        "applicant": "Applicant",
+        "event": "Event",
+        "organizer": "Organizer",
+        "status": "Status",
+        "submitted": "Submitted"
+      }
+    }
   }
 }

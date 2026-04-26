@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { moderateReviewAction } from "@/app/actions/admin";
@@ -13,6 +13,7 @@ export default async function AdminReviewsPage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("admin");
 
   const reviews = await db.review.findMany({
     orderBy: [{ createdAt: "desc" }],
@@ -33,18 +34,18 @@ export default async function AdminReviewsPage({
   return (
     <div>
       <h1 className="mb-6 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">
-        Reviews
+        {t("reviews.title")}
       </h1>
 
       {reviews.length === 0 ? (
         <p className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted)]">
-          No reviews.
+          {t("reviews.noReviews")}
         </p>
       ) : (
         <ul className="space-y-3">
           {reviews.map((r) => {
             const en =
-              r.event.translations.find((t) => t.locale === "en") ??
+              r.event.translations.find((tr) => tr.locale === "en") ??
               r.event.translations[0];
             return (
               <li
@@ -58,10 +59,10 @@ export default async function AdminReviewsPage({
                         {r.status}
                       </span>
                       <span className="inline-flex items-center gap-0.5 text-xs font-bold text-amber-600">
-                        <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" /> {r.rating}/5
+                        <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" /> {t("reviews.ratingFmt", { value: r.rating })}
                       </span>
                       <span className="text-xs text-[var(--color-muted)]">
-                        by {r.author.name ?? r.author.email}
+                        {t("reviews.by", { name: r.author.name ?? r.author.email ?? "" })}
                       </span>
                       <span className="text-xs text-[var(--color-muted)]">
                         · {r.createdAt.toISOString().slice(0, 10)}
@@ -93,7 +94,7 @@ export default async function AdminReviewsPage({
                           type="submit"
                           className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-pitch-500)] px-3 py-1.5 text-xs font-bold text-white hover:bg-[var(--color-pitch-600)]"
                         >
-                          <Check className="h-3.5 w-3.5" /> Approve
+                          <Check className="h-3.5 w-3.5" /> {t("reviews.approve")}
                         </button>
                       </form>
                       {r.status !== "REJECTED" && (
@@ -104,7 +105,7 @@ export default async function AdminReviewsPage({
                             type="submit"
                             className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-bold text-[var(--color-foreground)] hover:border-red-300 hover:text-red-700"
                           >
-                            <X className="h-3.5 w-3.5" /> Reject
+                            <X className="h-3.5 w-3.5" /> {t("reviews.reject")}
                           </button>
                         </form>
                       )}
@@ -118,7 +119,7 @@ export default async function AdminReviewsPage({
                         type="submit"
                         className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-bold text-[var(--color-foreground)] hover:border-red-300 hover:text-red-700"
                       >
-                        <X className="h-3.5 w-3.5" /> Reject
+                        <X className="h-3.5 w-3.5" /> {t("reviews.reject")}
                       </button>
                     </form>
                   )}

@@ -16,7 +16,8 @@ export default async function AdminEventsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const sp = await searchParams;
-  const t = await getTranslations("organizer");
+  const tOrg = await getTranslations("organizer");
+  const t = await getTranslations("admin");
 
   const activeStatus = (sp.status?.toUpperCase() ?? "PENDING_REVIEW") as (typeof STATUSES)[number];
 
@@ -30,7 +31,7 @@ export default async function AdminEventsPage({
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">Events queue</h1>
+        <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{t("events.title")}</h1>
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -47,7 +48,7 @@ export default async function AdminEventsPage({
                   : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)]"
               }`}
             >
-              {s === "ALL" ? "All" : t(`status.${s}`)}{count !== null && ` (${count})`}
+              {s === "ALL" ? t("events.filterAll") : tOrg(`status.${s}`)}{count !== null && ` (${count})`}
             </Link>
           );
         })}
@@ -55,7 +56,7 @@ export default async function AdminEventsPage({
 
       {events.length === 0 ? (
         <p className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-8 text-center text-sm text-[var(--color-muted)]">
-          Nothing to review.
+          {t("events.empty")}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -68,11 +69,11 @@ export default async function AdminEventsPage({
                     <div className="flex items-center gap-2">
                       <span className="font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">{en?.title ?? e.slug}</span>
                       <span className="rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-strong)]">
-                        {t(`status.${e.status}`)}
+                        {tOrg(`status.${e.status}`)}
                       </span>
                     </div>
                     <div className="mt-1 text-xs text-[var(--color-muted)]">
-                      <span className="font-semibold text-[var(--color-foreground)]">{e.organizer.name}</span> · {e.organizer.subscriptionTier} · {e.startDate.toISOString().slice(0, 10)} → {e.endDate.toISOString().slice(0, 10)} · {e.countryCode} · {e._count.bookings} bookings
+                      <span className="font-semibold text-[var(--color-foreground)]">{e.organizer.name}</span> · {e.organizer.subscriptionTier} · {e.startDate.toISOString().slice(0, 10)} → {e.endDate.toISOString().slice(0, 10)} · {e.countryCode} · {t("events.bookingsCount", { count: e._count.bookings })}
                     </div>
                     {en?.shortDescription && <p className="mt-2 text-sm text-[var(--color-muted-strong)]">{en.shortDescription}</p>}
                   </div>
@@ -81,7 +82,7 @@ export default async function AdminEventsPage({
                       href={`/events/${e.slug}`}
                       className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-300)]"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" /> Preview
+                      <ExternalLink className="h-3.5 w-3.5" /> {t("events.preview")}
                     </Link>
                     {e.status === "PUBLISHED" && (
                       <form action={grantBoostAction} className="flex items-center gap-1.5">
@@ -91,24 +92,24 @@ export default async function AdminEventsPage({
                           defaultValue="featured"
                           className="rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 py-1 text-xs"
                         >
-                          <option value="basic">Basic (7d)</option>
-                          <option value="featured">Featured (14d)</option>
-                          <option value="premium">Premium (7d)</option>
-                          <option value="bundle31">Bundle 3+1 (7d)</option>
-                          <option value="bundle52">Bundle 5+2 (7d)</option>
+                          <option value="basic">{t("events.boostKinds.basic")}</option>
+                          <option value="featured">{t("events.boostKinds.featured")}</option>
+                          <option value="premium">{t("events.boostKinds.premium")}</option>
+                          <option value="bundle31">{t("events.boostKinds.bundle31")}</option>
+                          <option value="bundle52">{t("events.boostKinds.bundle52")}</option>
                         </select>
                         <input
                           type="number"
                           name="days"
                           min={1}
-                          placeholder="days"
+                          placeholder={t("events.daysPlaceholder")}
                           className="w-16 rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 py-1 text-xs"
                         />
                         <button
                           type="submit"
                           className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] bg-amber-500 px-2.5 py-1.5 text-xs font-bold text-white hover:bg-amber-600"
                         >
-                          <Rocket className="h-3.5 w-3.5" /> Boost
+                          <Rocket className="h-3.5 w-3.5" /> {t("events.boost")}
                         </button>
                       </form>
                     )}
@@ -118,14 +119,14 @@ export default async function AdminEventsPage({
                           <input type="hidden" name="eventId" value={e.id} />
                           <input type="hidden" name="decision" value="approve" />
                           <button type="submit" className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-pitch-500)] px-3 py-1.5 text-xs font-bold text-white hover:bg-[var(--color-pitch-600)]">
-                            <Check className="h-3.5 w-3.5" /> Approve
+                            <Check className="h-3.5 w-3.5" /> {t("events.approve")}
                           </button>
                         </form>
                         <form action={moderateEventAction}>
                           <input type="hidden" name="eventId" value={e.id} />
                           <input type="hidden" name="decision" value="reject" />
                           <button type="submit" className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-bold text-[var(--color-foreground)] hover:border-red-300 hover:text-red-700">
-                            <X className="h-3.5 w-3.5" /> Reject
+                            <X className="h-3.5 w-3.5" /> {t("events.reject")}
                           </button>
                         </form>
                       </>

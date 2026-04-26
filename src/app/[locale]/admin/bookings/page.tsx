@@ -1,9 +1,10 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 
 export default async function AdminBookingsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const t = await getTranslations("admin");
 
   const bookings = await db.booking.findMany({
     orderBy: { createdAt: "desc" },
@@ -13,16 +14,16 @@ export default async function AdminBookingsPage({ params }: { params: Promise<{ 
 
   return (
     <div>
-      <h1 className="mb-6 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">All bookings</h1>
+      <h1 className="mb-6 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{t("bookings.title")}</h1>
       <div className="overflow-x-auto rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
         <table className="w-full min-w-[800px] text-sm">
           <thead>
             <tr className="border-b border-[var(--color-border)] bg-[var(--color-bg-muted)] text-xs uppercase tracking-wider text-[var(--color-muted)]">
-              <th className="px-4 py-2 text-left font-semibold">Applicant</th>
-              <th className="px-4 py-2 text-left font-semibold">Event</th>
-              <th className="px-4 py-2 text-left font-semibold">Organizer</th>
-              <th className="px-4 py-2 text-left font-semibold">Status</th>
-              <th className="px-4 py-2 text-left font-semibold">Submitted</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("bookings.table.applicant")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("bookings.table.event")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("bookings.table.organizer")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("bookings.table.status")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("bookings.table.submitted")}</th>
             </tr>
           </thead>
           <tbody>

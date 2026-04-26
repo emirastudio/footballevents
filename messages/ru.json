@@ -601,5 +601,115 @@
       { "q": "Как работает SLA модерации?",                               "a": "После отправки эвента на модерацию мы одобряем или возвращаем его в окне SLA вашего тарифа (Free 48ч, Pro 24ч, Premium 4ч)." },
       { "q": "Можно перейти с месячного на годовой?",                      "a": "Да — переключайтесь когда угодно, годовая цена применяется со следующего цикла, экономия ~17%." }
     ]
+  },
+  "admin": {
+    "badge": "Админка",
+    "nav": {
+      "overview": "Обзор",
+      "eventsQueue": "Очередь эвентов",
+      "allBookings": "Все заявки",
+      "organizers": "Организаторы",
+      "reviews": "Отзывы",
+      "users": "Пользователи"
+    },
+    "dashboard": {
+      "title": "Обзор",
+      "stats": {
+        "pendingReview": "На модерации",
+        "pendingReviewHint": "Эвенты",
+        "pendingReviews": "Отзывы на модерации",
+        "pendingReviewsHint": "Отзывы",
+        "events": "Эвенты",
+        "organizers": "Организаторы",
+        "users": "Пользователи",
+        "newUsers7d": "Новых · 7 дней",
+        "bannedUsers": "Забанено",
+        "bookingsNew": "Заявок (новых)",
+        "bookingsTotal": "всего {count}",
+        "freeOrganizers": "Бесплатных",
+        "proOrganizers": "Pro",
+        "premiumOrganizers": "Premium",
+        "enterpriseOrganizers": "Enterprise"
+      }
+    },
+    "users": {
+      "title": "Пользователи",
+      "table": {
+        "email": "Email",
+        "name": "Имя",
+        "role": "Роль",
+        "organizer": "Организатор",
+        "created": "Создан",
+        "ban": "Бан"
+      },
+      "bannedBadge": "Забанен",
+      "save": "Сохранить",
+      "ban": "Забанить",
+      "unban": "Разбанить",
+      "reasonPlaceholder": "причина",
+      "confirmBan": "Забанить {email}? Пользователь не сможет войти.",
+      "confirmUnban": "Разбанить {email}?"
+    },
+    "events": {
+      "title": "Очередь эвентов",
+      "filterAll": "Все",
+      "empty": "Нечего модерировать.",
+      "preview": "Просмотр",
+      "approve": "Одобрить",
+      "reject": "Отклонить",
+      "boost": "Boost",
+      "boostKinds": {
+        "basic": "Basic (7д)",
+        "featured": "Featured (14д)",
+        "premium": "Premium (7д)",
+        "bundle31": "Bundle 3+1 (7д)",
+        "bundle52": "Bundle 5+2 (7д)"
+      },
+      "daysPlaceholder": "дни",
+      "bookingsCount": "заявок: {count}"
+    },
+    "organizers": {
+      "title": "Организаторы",
+      "filters": {
+        "all": "Все",
+        "free": "Free",
+        "pro": "Pro",
+        "premium": "Premium",
+        "enterprise": "Enterprise",
+        "verified": "Подтверждённые",
+        "unverified": "Неподтверждённые"
+      },
+      "table": {
+        "name": "Имя",
+        "email": "Email",
+        "slug": "Slug",
+        "tier": "Тариф",
+        "subEnds": "Подписка до",
+        "verified": "Подтверждён",
+        "grantTier": "Выдать тариф"
+      },
+      "verifiedYes": "Подтверждён ✓",
+      "verifyAction": "Подтвердить",
+      "grant": "Выдать"
+    },
+    "reviews": {
+      "title": "Отзывы",
+      "empty": "Нечего модерировать.",
+      "noReviews": "Отзывов нет.",
+      "approve": "Одобрить",
+      "reject": "Отклонить",
+      "ratingFmt": "{value}/5",
+      "by": "от {name}"
+    },
+    "bookings": {
+      "title": "Все заявки",
+      "table": {
+        "applicant": "Заявитель",
+        "event": "Эвент",
+        "organizer": "Организатор",
+        "status": "Статус",
+        "submitted": "Отправлено"
+      }
+    }
   }
 }

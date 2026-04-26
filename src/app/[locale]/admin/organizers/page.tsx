@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import {
@@ -19,6 +19,7 @@ export default async function AdminOrganizersPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const sp = await searchParams;
+  const t = await getTranslations("admin");
 
   const tierFilter = sp.tier?.toUpperCase();
   const verifiedFilter = sp.verified;
@@ -37,21 +38,28 @@ export default async function AdminOrganizersPage({
     include: { user: { select: { email: true } } },
   });
 
+  const tierLabel: Record<(typeof TIERS)[number], string> = {
+    FREE: t("organizers.filters.free"),
+    PRO: t("organizers.filters.pro"),
+    PREMIUM: t("organizers.filters.premium"),
+    ENTERPRISE: t("organizers.filters.enterprise"),
+  };
+
   const filterChips: Array<{ label: string; href: string; active: boolean }> = [
-    { label: "All", href: "/admin/organizers", active: !tierFilter && !verifiedFilter },
-    ...TIERS.map((t) => ({
-      label: t,
-      href: `/admin/organizers?tier=${t.toLowerCase()}`,
-      active: tierFilter === t,
+    { label: t("organizers.filters.all"), href: "/admin/organizers", active: !tierFilter && !verifiedFilter },
+    ...TIERS.map((tier) => ({
+      label: tierLabel[tier],
+      href: `/admin/organizers?tier=${tier.toLowerCase()}`,
+      active: tierFilter === tier,
     })),
-    { label: "Verified", href: "/admin/organizers?verified=yes", active: verifiedFilter === "yes" },
-    { label: "Unverified", href: "/admin/organizers?verified=no", active: verifiedFilter === "no" },
+    { label: t("organizers.filters.verified"), href: "/admin/organizers?verified=yes", active: verifiedFilter === "yes" },
+    { label: t("organizers.filters.unverified"), href: "/admin/organizers?verified=no", active: verifiedFilter === "no" },
   ];
 
   return (
     <div>
       <h1 className="mb-6 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">
-        Organizers
+        {t("organizers.title")}
       </h1>
 
       <div className="mb-5 flex flex-wrap gap-2">
@@ -74,13 +82,13 @@ export default async function AdminOrganizersPage({
         <table className="w-full min-w-[1100px] text-sm">
           <thead>
             <tr className="border-b border-[var(--color-border)] bg-[var(--color-bg-muted)] text-xs uppercase tracking-wider text-[var(--color-muted)]">
-              <th className="px-4 py-2 text-left font-semibold">Name</th>
-              <th className="px-4 py-2 text-left font-semibold">Email</th>
-              <th className="px-4 py-2 text-left font-semibold">Slug</th>
-              <th className="px-4 py-2 text-left font-semibold">Tier</th>
-              <th className="px-4 py-2 text-left font-semibold">Sub ends</th>
-              <th className="px-4 py-2 text-left font-semibold">Verified</th>
-              <th className="px-4 py-2 text-left font-semibold">Grant tier</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.name")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.email")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.slug")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.tier")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.subEnds")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.verified")}</th>
+              <th className="px-4 py-2 text-left font-semibold">{t("organizers.table.grantTier")}</th>
             </tr>
           </thead>
           <tbody>
@@ -119,7 +127,7 @@ export default async function AdminOrganizersPage({
                           : "border border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-foreground)] hover:border-[var(--color-pitch-300)]"
                       }`}
                     >
-                      {o.isVerified ? "Verified ✓" : "Verify"}
+                      {o.isVerified ? t("organizers.verifiedYes") : t("organizers.verifyAction")}
                     </button>
                   </form>
                 </td>
@@ -131,9 +139,9 @@ export default async function AdminOrganizersPage({
                       defaultValue={o.subscriptionTier}
                       className="rounded-[var(--radius-sm)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 py-1 text-xs"
                     >
-                      {TIERS.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
+                      {TIERS.map((tier) => (
+                        <option key={tier} value={tier}>
+                          {tier}
                         </option>
                       ))}
                     </select>
@@ -148,7 +156,7 @@ export default async function AdminOrganizersPage({
                       type="submit"
                       className="rounded-[var(--radius-sm)] bg-[var(--color-pitch-500)] px-2 py-1 text-xs font-semibold text-white hover:bg-[var(--color-pitch-600)]"
                     >
-                      Grant
+                      {t("organizers.grant")}
                     </button>
                   </form>
                 </td>
