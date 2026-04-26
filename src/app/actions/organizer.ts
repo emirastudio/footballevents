@@ -54,6 +54,16 @@ export async function createOrganizerAction(_prev: OrganizerFormState, formData:
   const slugTaken = await db.organizer.findUnique({ where: { slug: data.slug } });
   if (slugTaken) return { error: "This URL slug is already taken — try another.", fieldErrors: { slug: "Already taken" } };
 
+  // Launch promo: first 50 organizers get PREMIUM free for 90 days.
+  const LAUNCH_PROMO_LIMIT = 50;
+  const LAUNCH_PROMO_DAYS = 90;
+  const totalOrganizers = await db.organizer.count();
+  const eligibleForLaunchPromo = totalOrganizers < LAUNCH_PROMO_LIMIT;
+  const subscriptionTier = eligibleForLaunchPromo ? "PREMIUM" : data.tier;
+  const subscriptionEndsAt = eligibleForLaunchPromo
+    ? new Date(Date.now() + LAUNCH_PROMO_DAYS * 24 * 60 * 60 * 1000)
+    : null;
+
   await db.$transaction(async (tx) => {
     await tx.organizer.create({
       data: {
@@ -67,7 +77,8 @@ export async function createOrganizerAction(_prev: OrganizerFormState, formData:
         coverUrl: data.coverUrl || null,
         website: data.website || null,
         phone: data.phone || null,
-        subscriptionTier: data.tier,
+        subscriptionTier,
+        subscriptionEndsAt,
         translations: {
           create: { locale: "en", tagline: data.tagline, about: data.about },
         },
