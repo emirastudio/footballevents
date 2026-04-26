@@ -506,6 +506,17 @@
   "organizers": {
     "pageTitle": "Organizers",
     "pageSubtitle": "Verified football organizers running premium events worldwide.",
+    "filters": {
+      "searchPlaceholder": "Search by name or city…",
+      "country": "Country",
+      "allCountries": "All countries",
+      "tier": "Plan",
+      "allTiers": "All plans",
+      "verifiedOnly": "Verified only",
+      "apply": "Apply",
+      "reset": "Reset",
+      "empty": "No organizers match your filters."
+    },
     "detail": {
       "about": "About",
       "contact": "Contact",
@@ -564,6 +575,7 @@
     },
 
     "audienceTitle": "A global football audience",
+    "countriesLabel": "Countries",
     "audience1": { "label": "Monthly visitors",     "value": "120k+" },
     "audience2": { "label": "Countries reached",    "value": "60+"   },
     "audience3": { "label": "Active organizers",    "value": "180+"  },

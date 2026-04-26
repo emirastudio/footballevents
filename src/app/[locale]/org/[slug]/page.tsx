@@ -9,7 +9,6 @@ import { getCountry } from "@/lib/mock-data";
 import { getOrganizerBySlug, getOrganizerSlugs, getEventsByOrganizer } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
 
-export const revalidate = 3600;
 export async function generateStaticParams() { return []; }
 
 export default async function OrganizerDetailPage({

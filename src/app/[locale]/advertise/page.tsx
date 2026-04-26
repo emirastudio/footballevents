@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { LaunchPromo } from "@/components/site/LaunchPromo";
+import { db } from "@/lib/db";
 import {
   ArrowRight, Users, Globe2, TrendingUp, Clock, Sparkles, Star, Crown,
   Megaphone, Layers, Newspaper, MapPin, Search, BadgeCheck,
@@ -10,6 +11,9 @@ import {
   Calendar, ChevronRight, Trophy, Smartphone, Building2, UserCircle2,
   Home, FileText, ListFilter,
 } from "lucide-react";
+
+const HIDE_DEMO = process.env.HIDE_DEMO === "1";
+const eventWhere = HIDE_DEMO ? { status: "PUBLISHED" as const, isDemo: false } : { status: "PUBLISHED" as const };
 
 export default async function CapabilitiesPage({
   params,
@@ -21,12 +25,20 @@ export default async function CapabilitiesPage({
   const t    = await getTranslations("advertise");
   const tNav = await getTranslations("nav");
 
-  const audience = [
-    { ...t.raw("audience1"), icon: Users },
-    { ...t.raw("audience2"), icon: Globe2 },
-    { ...t.raw("audience3"), icon: TrendingUp },
-    { ...t.raw("audience4"), icon: Clock },
-  ] as { value: string; label: string; icon: typeof Users }[];
+  const [eventCount, organizerCount, venueCount, countryRows] = await Promise.all([
+    db.event.count({ where: eventWhere }),
+    db.organizer.count(),
+    db.venue.count(),
+    db.event.findMany({ where: eventWhere, distinct: ["countryCode"], select: { countryCode: true } }),
+  ]);
+  const countryCount = countryRows.length;
+
+  type AudienceCard = { value: string; label: string; icon: typeof Users };
+  const audience: AudienceCard[] = [];
+  if (eventCount > 0)     audience.push({ value: String(eventCount),     label: tNav("events"),     icon: Calendar });
+  if (organizerCount > 0) audience.push({ value: String(organizerCount), label: tNav("organizers"), icon: Users });
+  if (venueCount > 0)     audience.push({ value: String(venueCount),     label: tNav("stadiums"),   icon: Building2 });
+  if (countryCount > 0)   audience.push({ value: String(countryCount),   label: t("countriesLabel"), icon: Globe2 });
 
   const channels = [
     { key: "channel1", icon: BadgeCheck, tone: "neutral" as const },
@@ -108,23 +120,25 @@ export default async function CapabilitiesPage({
         </Container>
       </section>
 
-      {/* AUDIENCE */}
-      <section className="py-16 sm:py-20">
-        <Container>
-          <h2 className="mb-8 font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)] sm:text-3xl">
-            {t("audienceTitle")}
-          </h2>
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {audience.map((a) => (
-              <div key={a.label} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-                <a.icon className="mb-3 h-5 w-5 text-[var(--color-pitch-600)]" />
-                <div className="font-[family-name:var(--font-manrope)] text-3xl font-bold text-[var(--color-foreground)]">{a.value}</div>
-                <div className="mt-1 text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">{a.label}</div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* AUDIENCE — real DB counts; section hidden until there's something to show */}
+      {audience.length > 0 && (
+        <section className="py-16 sm:py-20">
+          <Container>
+            <h2 className="mb-8 font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)] sm:text-3xl">
+              {t("audienceTitle")}
+            </h2>
+            <div className={`grid gap-4 ${audience.length >= 4 ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-2"}`}>
+              {audience.map((a) => (
+                <div key={a.label} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
+                  <a.icon className="mb-3 h-5 w-5 text-[var(--color-pitch-600)]" />
+                  <div className="font-[family-name:var(--font-manrope)] text-3xl font-bold text-[var(--color-foreground)]">{a.value}</div>
+                  <div className="mt-1 text-xs font-medium uppercase tracking-wider text-[var(--color-muted)]">{a.label}</div>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* VISION */}
       <section className="py-16 sm:py-20">

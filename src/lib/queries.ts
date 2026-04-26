@@ -181,9 +181,40 @@ export async function getEventsByVenue(slug: string): Promise<MockEvent[]> {
 }
 
 // ─── Organizers ───────────────────────────────────────
-export async function getOrganizers(): Promise<MockOrganizer[]> {
-  const rows = await db.organizer.findMany({ include: organizerInclude, orderBy: { name: "asc" } });
+export type OrganizerFilters = {
+  countryCode?: string;
+  tier?: "FREE" | "PRO" | "PREMIUM" | "ENTERPRISE";
+  verified?: boolean;
+  q?: string;
+};
+
+export async function getOrganizers(filters: OrganizerFilters = {}): Promise<MockOrganizer[]> {
+  const where: Prisma.OrganizerWhereInput = {};
+  if (filters.countryCode) where.countryCode = filters.countryCode;
+  if (filters.tier) where.subscriptionTier = filters.tier;
+  if (filters.verified) where.isVerified = true;
+  if (filters.q && filters.q.trim()) {
+    const q = filters.q.trim();
+    where.OR = [
+      { name: { contains: q, mode: "insensitive" } },
+      { city: { contains: q, mode: "insensitive" } },
+    ];
+  }
+  const rows = await db.organizer.findMany({ where, include: organizerInclude, orderBy: { name: "asc" } });
   return rows.map(toMockOrganizer);
+}
+
+/** Country codes that have at least one organizer in the DB. */
+export async function getOrganizerCountryCodes(): Promise<string[]> {
+  const rows = await db.organizer.findMany({
+    where: { countryCode: { not: null } },
+    distinct: ["countryCode"],
+    select: { countryCode: true },
+  });
+  return rows
+    .map((r) => r.countryCode)
+    .filter((c): c is string => !!c)
+    .sort();
 }
 
 export async function getOrganizerBySlug(slug: string): Promise<MockOrganizer | null> {
