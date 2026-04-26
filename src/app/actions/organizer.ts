@@ -6,6 +6,19 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 
+const websiteField = z
+  .string()
+  .trim()
+  .optional()
+  .transform((v) => (v ? v.replace(/^[Hh][Tt][Tt][Pp][Ss]?:\/\//, "https://").toLowerCase() : ""))
+  .transform((v) => {
+    if (!v) return "";
+    return /^https?:\/\//.test(v) ? v : `https://${v}`;
+  })
+  .refine((v) => !v || /^https:\/\/[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(v), {
+    message: "Invalid URL — example: example.com or https://example.com",
+  });
+
 const onboardSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
   slug: z.string().trim().min(2).regex(/^[a-z0-9-]+$/, "Lowercase letters, numbers and hyphens only"),
@@ -18,7 +31,7 @@ const onboardSchema = z.object({
   aboutSecond: z.string().trim().optional(),
   logoUrl: z.string().url().optional().or(z.literal("")),
   coverUrl: z.string().url().optional().or(z.literal("")),
-  website: z.string().url().optional().or(z.literal("")),
+  website: websiteField,
   phone: z.string().optional(),
   tier: z.enum(["FREE", "PRO", "PREMIUM"]).default("FREE"),
 });
