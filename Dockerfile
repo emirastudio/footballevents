@@ -2,7 +2,7 @@
 # Multi-stage Next.js standalone build for production.
 
 ARG NODE_VERSION=22-alpine
-ARG PNPM_VERSION=10.0.0
+ARG PNPM_VERSION=9.15.4
 
 # ─── deps: install only production-ish deps with pnpm ────────────
 FROM node:${NODE_VERSION} AS deps
