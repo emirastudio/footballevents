@@ -44,8 +44,8 @@ export async function GET(req: NextRequest) {
       country: ctry?.name ?? country,
       flag: ctry?.flag ?? "",
       slug: c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      lat: parseFloat(c.latitude),
-      lng: parseFloat(c.longitude),
+      lat: c.latitude ? parseFloat(c.latitude) : undefined,
+      lng: c.longitude ? parseFloat(c.longitude) : undefined,
     })),
   });
 }
