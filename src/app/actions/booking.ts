@@ -95,7 +95,7 @@ const respondSchema = z.object({
   note:      z.string().trim().optional(),
 });
 
-export async function respondBookingAction(_prev: BookingFormState, formData: FormData): Promise<BookingFormState> {
+export async function respondBookingAction(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -106,14 +106,14 @@ export async function respondBookingAction(_prev: BookingFormState, formData: Fo
     decision:  formData.get("decision"),
     note:      formData.get("note") || undefined,
   });
-  if (!parsed.success) return { error: "Invalid input" };
+  if (!parsed.success) return;
   const { bookingId, decision, note } = parsed.data;
 
   const booking = await db.booking.findUnique({
     where: { id: bookingId },
     include: { event: true },
   });
-  if (!booking || booking.event.organizerId !== organizer.id) return { error: "Not found" };
+  if (!booking || booking.event.organizerId !== organizer.id) return;
 
   await db.booking.update({
     where: { id: bookingId },
@@ -138,5 +138,4 @@ export async function respondBookingAction(_prev: BookingFormState, formData: Fo
 
   revalidatePath("/organizer/bookings");
   revalidatePath("/me/applications");
-  return { ok: true };
 }
