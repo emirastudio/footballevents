@@ -73,7 +73,23 @@ function buildEventTranslations(d: ParsedEventInput) {
   return rows;
 }
 
+async function ensureCountry(code: string): Promise<boolean> {
+  const exists = await db.country.findUnique({ where: { code } });
+  if (exists) return true;
+  // Use world-countries data (same source as the catalog UI) to backfill the row.
+  const { findCountry } = await import("@/lib/countries");
+  const c = findCountry(code);
+  if (!c) return false;
+  await db.country.upsert({
+    where: { code },
+    update: {},
+    create: { code, nameEn: c.name, flagEmoji: c.flag },
+  });
+  return true;
+}
+
 async function upsertVenue(v: { name: string; countryCode: string; city: string | null; address: string | null }): Promise<string> {
+  await ensureCountry(v.countryCode);
   const trimmedName = v.name.trim();
   // Match existing venue case-insensitively within the same country.
   const existing = await db.venue.findFirst({
@@ -645,6 +661,7 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
     }
     case 2: {
       const data = parsed.data as z.infer<typeof stepSchemas[2]>;
+      if (data.countryCode) await ensureCountry(data.countryCode);
       update.startDate = data.startDate ? new Date(data.startDate) : null;
       update.endDate = data.endDate ? new Date(data.endDate) : null;
       update.registrationDeadline = data.registrationDeadline ? new Date(data.registrationDeadline) : null;
