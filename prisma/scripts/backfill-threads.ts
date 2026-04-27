@@ -1,4 +1,4 @@
-// Run once via tsx in the seed environment: pnpm tsx prisma/migrations/manual/backfill-threads.ts
+// Run once via tsx in the seed environment: pnpm tsx prisma/scripts/backfill-threads.ts
 import { PrismaClient } from "@prisma/client";
 
 const db = new PrismaClient();
