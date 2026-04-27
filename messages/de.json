@@ -545,10 +545,10 @@
     "madeFor": "Für Fußballfans weltweit gemacht ⚽"
   },
   "cookieBanner": {
-    "text": "Wir nutzen nur essentielle Cookies für Anmeldung und Sicherheit. Keine Tracking-Cookies — Analytics ist cookie-frei.",
+    "text": "Wir nutzen essentielle Cookies für Anmeldung und Sicherheit. Mit deiner Zustimmung verwenden wir zusätzlich Google Analytics, um zu verstehen, wie die Seite genutzt wird.",
     "policy": "Cookie-Richtlinie",
-    "reject": "Nicht-essentielle ablehnen",
-    "accept": "Akzeptieren",
+    "reject": "Analytics ablehnen",
+    "accept": "Alle akzeptieren",
     "close": "Schließen"
   },
   "upload": {

@@ -545,10 +545,10 @@
     "madeFor": "Hecho para los aficionados al fútbol del mundo ⚽"
   },
   "cookieBanner": {
-    "text": "Solo usamos cookies esenciales para inicio de sesión y seguridad. No usamos cookies de seguimiento — la analítica es sin cookies.",
+    "text": "Usamos cookies esenciales para inicio de sesión y seguridad. Con tu consentimiento también usamos Google Analytics para entender cómo se usa el sitio.",
     "policy": "Política de cookies",
-    "reject": "Rechazar no esenciales",
-    "accept": "Aceptar",
+    "reject": "Rechazar analítica",
+    "accept": "Aceptar todo",
     "close": "Cerrar"
   },
   "upload": {

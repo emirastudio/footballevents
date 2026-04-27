@@ -34,9 +34,18 @@ Diese Cookies sind für die Kernfunktionalität erforderlich und können nicht d
 
 Rechtsgrundlage: **unbedingt erforderlich** nach der ePrivacy-Richtlinie — keine Einwilligung erforderlich.
 
-### 3.2 Analyse (cookiefrei)
+### 3.2 Analyse — Google Analytics 4 (Einwilligung erforderlich)
 
-Wir verwenden **Plausible Analytics** zur Messung der aggregierten Nutzung (Seitenaufrufe, Verweise, Land). Plausible ist **cookiefrei** und speichert keine persistente Kennung auf Ihrem Gerät. Es erhebt keine personenbezogenen Daten und ist DSGVO-/PECR-konform. Für Plausible ist nach aktueller EU-Auslegung kein Einwilligungsbanner erforderlich.
+Wir verwenden **Google Analytics 4** (GA4) zur Messung der aggregierten Nutzung (Seitenaufrufe, Verweise, Land, Interaktionen auf der Seite). GA4 setzt die unten aufgeführten Cookies — jedoch **erst, nachdem Sie im Cookie-Banner auf "Akzeptieren" geklickt haben**. Bis dahin wird GA4 im "Consent Mode v2" von Google mit verweigerter Einwilligung geladen, das heißt: es werden keine Analyse-Cookies geschrieben und allenfalls anonymisierte cookielose Pings übertragen.
+
+| Name | Zweck | Typ | Dauer |
+|---|---|---|---|
+| `_ga` | Unterscheidet eindeutige Besucher | Drittanbieter (Google) | Bis zu 2 Jahre |
+| `_ga_<container-id>` | Verwaltet den Sitzungsstatus von GA4 | Drittanbieter (Google) | Bis zu 2 Jahre |
+
+Wir senden GA4-Ereignisse mit aktivierter **IP-Anonymisierung**. Wir verwenden weder Google Signals noch Anzeigenpersonalisierung oder Remarketing. Sie können Ihre Einwilligung jederzeit widerrufen, indem Sie den Browser-Speicher für diese Website löschen oder beim nächsten Erscheinen des Banners auf "Analyse ablehnen" klicken.
+
+Rechtsgrundlage: **Ihre Einwilligung** nach Art. 6(1)(a) GDPR und Art. 5(3) ePrivacy Directive.
 
 ### 3.3 Drittanbieter-Cookies (bedarfsweise geladen)
 
@@ -50,7 +59,7 @@ Drittanbieter-Cookies werden nur gesetzt, wenn Sie die zugehörige Funktion akti
 
 Diese Anbieter können eigene Cookies nach ihren eigenen Datenschutzrichtlinien setzen. Wir kontrollieren diese Cookies nicht. Soweit möglich, nutzen Video-Einbettungen den datenschutzfreundlichen oder "Do-not-track"-Modus und werden erst geladen, nachdem Sie mit dem Player oder der Seite interagieren.
 
-Wir laden **kein** Google Analytics, Facebook Pixel, TikTok Pixel oder ähnliche Werbetracker.
+Wir laden **kein** Facebook Pixel, TikTok Pixel oder ähnliche Werbetracker.
 
 ## 4. Lokaler Speicher
 

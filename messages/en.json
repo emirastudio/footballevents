@@ -545,10 +545,10 @@
     "madeFor": "Made for football fans worldwide ⚽"
   },
   "cookieBanner": {
-    "text": "We use essential cookies for sign-in and security. We don't use tracking cookies — analytics is cookie-less.",
+    "text": "We use essential cookies for sign-in and security. With your consent we also use Google Analytics cookies to understand how the site is used.",
     "policy": "Cookie policy",
-    "reject": "Reject non-essential",
-    "accept": "Accept",
+    "reject": "Reject analytics",
+    "accept": "Accept all",
     "close": "Close"
   },
   "upload": {

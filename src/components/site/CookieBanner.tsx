@@ -21,6 +21,15 @@ export function CookieBanner() {
     try {
       localStorage.setItem(KEY, JSON.stringify({ v, ts: Date.now() }));
     } catch {}
+    // Push the consent decision to GA4 (Consent Mode v2). The default consent
+    // state set in the layout is "denied"; we update to "granted" only on accept.
+    type Gtag = (...args: unknown[]) => void;
+    const w = window as unknown as { gtag?: Gtag };
+    if (typeof w.gtag === "function") {
+      w.gtag("consent", "update", {
+        analytics_storage: v === "accept" ? "granted" : "denied",
+      });
+    }
     setOpen(false);
   }
 

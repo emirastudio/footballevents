@@ -34,9 +34,18 @@ These cookies are required for core functionality and cannot be disabled without
 
 Legal basis: **strictly necessary** under the ePrivacy Directive — no consent required.
 
-### 3.2 Analytics (Cookie-less)
+### 3.2 Analytics — Google Analytics 4 (Consent Required)
 
-We use **Plausible Analytics** to measure aggregate usage (page views, referrers, country). Plausible is **cookie-less** and does not store any persistent identifier on your device. It does not collect personal data and is GDPR/PECR-friendly. No consent banner is required for Plausible under current EU guidance.
+We use **Google Analytics 4** (GA4) to measure aggregate usage (page views, referrers, country, in-page interactions). GA4 sets the cookies listed below — but **only after you click "Accept" in the cookie banner**. Until then GA4 is loaded in Google's "Consent Mode v2" with consent denied, which means no analytics cookies are written and only anonymized cookieless pings (if any) are transmitted.
+
+| Name | Purpose | Type | Duration |
+|---|---|---|---|
+| `_ga` | Distinguishes unique visitors | Third-party (Google) | Up to 2 years |
+| `_ga_<container-id>` | Maintains the GA4 session state | Third-party (Google) | Up to 2 years |
+
+We send GA4 events with **IP anonymization** enabled. We do not use Google Signals, ad personalization, or remarketing. You can revoke consent at any time by clearing your browser storage for this site or by clicking "Reject analytics" the next time the banner appears.
+
+Legal basis: **your consent** under Art. 6(1)(a) GDPR and Art. 5(3) ePrivacy Directive.
 
 ### 3.3 Third-Party Cookies (Loaded On Demand)
 
@@ -50,7 +59,7 @@ Third-party cookies are only set when you actively use the related feature.
 
 These providers may set their own cookies under their own privacy policies. We do not control those cookies. Where feasible, video embeds use privacy-enhanced or "do-not-track" modes and load only after you interact with the player or the page.
 
-We do **not** load Google Analytics, Facebook Pixel, TikTok Pixel, or similar advertising trackers.
+We do **not** load Facebook Pixel, TikTok Pixel, or similar advertising trackers.
 
 ## 4. Local Storage
 

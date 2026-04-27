@@ -108,6 +108,39 @@ export default async function LocaleLayout({
             src={process.env.NEXT_PUBLIC_UMAMI_SCRIPT}
           />
         )}
+        {/* Google Analytics 4 with Consent Mode v2 — gtag is loaded on every page,
+            but consent defaults to "denied" so no cookies are written until the user
+            clicks "Accept" in the cookie banner. The banner then dispatches an event
+            that the inline script below listens for to flip consent to "granted". */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  window.gtag = gtag;
+                  gtag('consent', 'default', {
+                    ad_storage: 'denied',
+                    ad_user_data: 'denied',
+                    ad_personalization: 'denied',
+                    analytics_storage: 'denied',
+                    wait_for_update: 500,
+                  });
+                  try {
+                    var c = JSON.parse(localStorage.getItem('fe_cookie_consent_v1') || 'null');
+                    if (c && c.v === 'accept') {
+                      gtag('consent', 'update', { analytics_storage: 'granted' });
+                    }
+                  } catch (e) {}
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', { anonymize_ip: true });
+                `,
+              }}
+            />
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
+          </>
+        )}
       </head>
       <body className="flex min-h-screen flex-col bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>

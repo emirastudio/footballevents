@@ -34,9 +34,18 @@ Estas cookies son necesarias para la funcionalidad principal y no pueden desacti
 
 Base legal: **estrictamente necesarias** conforme a la Directiva ePrivacy — no se requiere consentimiento.
 
-### 3.2 Analítica (sin cookies)
+### 3.2 Analítica — Google Analytics 4 (se requiere consentimiento)
 
-Utilizamos **Plausible Analytics** para medir el uso agregado (páginas vistas, referencias, país). Plausible **no usa cookies** y no almacena ningún identificador persistente en su dispositivo. No recopila datos personales y es compatible con el RGPD/PECR. Conforme a las directrices vigentes de la UE, no se requiere banner de consentimiento para Plausible.
+Utilizamos **Google Analytics 4** (GA4) para medir el uso agregado (páginas vistas, referencias, país, interacciones en página). GA4 establece las cookies que se indican a continuación — pero **solo después de que usted haga clic en "Aceptar" en el banner de cookies**. Hasta entonces, GA4 se carga en el "Consent Mode v2" de Google con el consentimiento denegado, lo que significa que no se escriben cookies analíticas y solo se transmiten, en su caso, pings anonimizados sin cookies.
+
+| Nombre | Finalidad | Tipo | Duración |
+|---|---|---|---|
+| `_ga` | Distingue a los visitantes únicos | De terceros (Google) | Hasta 2 años |
+| `_ga_<container-id>` | Mantiene el estado de la sesión de GA4 | De terceros (Google) | Hasta 2 años |
+
+Enviamos los eventos de GA4 con la **anonimización de IP** activada. No utilizamos Google Signals, personalización de anuncios ni remarketing. Puede revocar su consentimiento en cualquier momento borrando el almacenamiento del navegador para este sitio o haciendo clic en "Rechazar analítica" la próxima vez que aparezca el banner.
+
+Base legal: **su consentimiento** conforme al Art. 6(1)(a) GDPR y al Art. 5(3) ePrivacy Directive.
 
 ### 3.3 Cookies de terceros (cargadas bajo demanda)
 
@@ -50,7 +59,7 @@ Las cookies de terceros solo se establecen cuando usted utiliza activamente la f
 
 Estos proveedores pueden establecer sus propias cookies conforme a sus respectivas políticas de privacidad. No controlamos esas cookies. Cuando es factible, los vídeos incrustados utilizan modos de privacidad mejorada o "do-not-track" y solo se cargan después de que usted interactúe con el reproductor o la página.
 
-**No** cargamos Google Analytics, Facebook Pixel, TikTok Pixel ni rastreadores publicitarios similares.
+**No** cargamos Facebook Pixel, TikTok Pixel ni rastreadores publicitarios similares.
 
 ## 4. Almacenamiento local
 
