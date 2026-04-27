@@ -20,6 +20,8 @@ const buttonVariants = cva(
           "text-[var(--color-pitch-700)] underline-offset-4 hover:underline",
         premium:
           "bg-[var(--color-premium)] text-[var(--color-navy-900)] hover:bg-[var(--color-gold-600)] hover:text-white shadow-[var(--shadow-sm)]",
+        destructive:
+          "bg-red-600 text-white hover:bg-red-700 shadow-[var(--shadow-sm)]",
       },
       size: {
         sm: "h-9 px-3.5 text-sm rounded-[var(--radius-md)]",

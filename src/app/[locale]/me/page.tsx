@@ -9,7 +9,7 @@ import { countUnreadThreads } from "@/lib/messages";
 import { EventCard } from "@/components/cards/EventCard";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import type { MockEvent, MockOrganizer } from "@/lib/mock-data";
-import { Bookmark, Bell, Mail, Calendar, MessageSquare } from "lucide-react";
+import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings } from "lucide-react";
 
 export default async function MePage({
   params,
@@ -171,6 +171,13 @@ export default async function MePage({
                 {unreadMessages}
               </span>
             )}
+          </Link>
+          <Link
+            href="/me/settings"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-surface-muted)] px-3 py-1.5 text-sm font-semibold text-[var(--color-foreground)] transition hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"
+          >
+            <Settings className="h-3.5 w-3.5" />
+            <span>{t("settings.title")}</span>
           </Link>
         </div>
       </div>

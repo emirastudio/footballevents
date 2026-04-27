@@ -10,7 +10,8 @@ type UploadKind =
   | "organizer-cover"
   | "event-logo"
   | "event-cover"
-  | "event-gallery";
+  | "event-gallery"
+  | "user-avatar";
 
 type Aspect = number | undefined;
 
@@ -20,6 +21,7 @@ const PRESETS: Record<UploadKind, { aspect: Aspect; targetW: number; targetH: nu
   "event-logo":      { aspect: 1,         targetW: 512,  targetH: 512,  minSrcW: 400,  minSrcH: 400 },
   "event-cover":     { aspect: 16 / 9,    targetW: 1600, targetH: 900,  minSrcW: 1200, minSrcH: 675 },
   "event-gallery":   { aspect: 4 / 3,     targetW: 1600, targetH: 1200, minSrcW: 800,  minSrcH: 600 },
+  "user-avatar":     { aspect: 1,         targetW: 512,  targetH: 512,  minSrcW: 200,  minSrcH: 200, circle: true },
 };
 
 const RECOMMEND: Record<UploadKind, string> = {
@@ -28,6 +30,7 @@ const RECOMMEND: Record<UploadKind, string> = {
   "event-logo":      "Square 512×512+ · max 5MB",
   "event-cover":     "16:9 · 1600×900+ · max 5MB",
   "event-gallery":   "4:3 · 1600×1200+ · max 5MB",
+  "user-avatar":     "Square 200×200+ · JPG/PNG · max 5MB",
 };
 
 export type ImageUploadProps = {

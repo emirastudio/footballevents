@@ -113,6 +113,25 @@ export function magicLinkEmail(opts: { to: string; url: string; expiresMinutes: 
   return sendEmail({ to: opts.to, subject: "Sign in to FootballEvents.eu", html, text });
 }
 
+export function emailChangeVerifyEmail(opts: { to: string; url: string; expiresMinutes: number }) {
+  const safeUrl = escape(opts.url);
+  const html = shell(
+    "Confirm your new email",
+    `<p>Click the button below to confirm this address as your new sign-in email for FootballEvents.eu. This link expires in <strong>${opts.expiresMinutes} minutes</strong>.</p>
+     <p style="margin:24px 0"><a href="${safeUrl}" style="display:inline-block;background:#00d26a;color:#0a1628;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">Confirm new email</a></p>
+     <p style="font-size:12px;color:#64748b">If you didn't request this change, ignore this email — your account is safe and the change will not happen.</p>`,
+  );
+  const text = [
+    `Confirm your new email for FootballEvents.eu`,
+    ``,
+    `Open this link within ${opts.expiresMinutes} minutes:`,
+    opts.url,
+    ``,
+    `If you didn't request this, ignore this email.`,
+  ].join("\n");
+  return sendEmail({ to: opts.to, subject: "Confirm your new email", html, text });
+}
+
 export function welcomeEmail(opts: { to: string; name: string }) {
   const html = shell(
     "Welcome to FootballEvents.eu",

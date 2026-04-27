@@ -12,6 +12,7 @@ const ALLOWED_KINDS = new Set([
   "event-logo",
   "event-cover",
   "event-gallery",
+  "user-avatar",
 ]);
 
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
