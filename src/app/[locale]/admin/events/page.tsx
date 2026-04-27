@@ -73,7 +73,7 @@ export default async function AdminEventsPage({
                       </span>
                     </div>
                     <div className="mt-1 text-xs text-[var(--color-muted)]">
-                      <span className="font-semibold text-[var(--color-foreground)]">{e.organizer.name}</span> · {e.organizer.subscriptionTier} · {e.startDate.toISOString().slice(0, 10)} → {e.endDate.toISOString().slice(0, 10)} · {e.countryCode} · {t("events.bookingsCount", { count: e._count.bookings })}
+                      <span className="font-semibold text-[var(--color-foreground)]">{e.organizer.name}</span> · {e.organizer.subscriptionTier} · {e.startDate?.toISOString().slice(0, 10) ?? "—"} → {e.endDate?.toISOString().slice(0, 10) ?? "—"} · {e.countryCode} · {t("events.bookingsCount", { count: e._count.bookings })}
                     </div>
                     {en?.shortDescription && <p className="mt-2 text-sm text-[var(--color-muted-strong)]">{en.shortDescription}</p>}
                   </div>

@@ -44,8 +44,8 @@ export default async function OrganizerDetailPage({
           style={{ backgroundImage: `url(${o.coverUrl})` }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          <Container className="relative flex h-full flex-col justify-end pb-6">
-            <nav aria-label="Breadcrumb" className="mb-3 flex items-center gap-1 text-xs text-white/80">
+          <Container className="relative flex h-full flex-col justify-start pt-5">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-white/80">
               <Link href="/" className="hover:text-white">Home</Link>
               <ChevronRight className="h-3 w-3" />
               <Link href="/org" className="hover:text-white">{tNav("organizers")}</Link>

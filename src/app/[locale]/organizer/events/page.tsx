@@ -93,7 +93,7 @@ export default async function OrganizerEventsListPage({
                       <StatusBadge status={e.status} t={t} />
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-[var(--color-muted)]">
-                      <span>{e.startDate.toISOString().slice(0, 10)} → {e.endDate.toISOString().slice(0, 10)}</span>
+                      <span>{e.startDate?.toISOString().slice(0, 10) ?? "—"} → {e.endDate?.toISOString().slice(0, 10) ?? "—"}</span>
                       {e._count.divisions > 0 && <span>{e._count.divisions} divisions</span>}
                       <span>{e._count.bookings} {tCommon("results")}</span>
                     </div>

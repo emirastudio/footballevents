@@ -247,9 +247,9 @@
     "notIncluded": "Not included",
     "notIncludedHint": "One item per line. E.g. 'Flights' / 'Travel insurance'.",
     "programme": "Programme",
-    "programmeHint": "Lines = items inside a day. Blank line = next day. We'll add a structured editor later.",
+    "programmeHint": "Day-by-day schedule. Title each day and list its items.",
     "faq": "FAQ",
-    "faqHint": "Format: 'Q: …' on one line, 'A: …' on next, blank line between pairs.",
+    "faqHint": "Common questions participants ask.",
     "tierLockTitle": "Available with Pro and Premium",
     "tierLockBody": "Upgrade to fill in this section. Drafts are not blocked — you can save and revisit.",
     "videoLockBody": "Video embeds are a Premium feature.",
@@ -269,6 +269,51 @@
       "videoNotAllowed": "Only YouTube and Vimeo URLs are accepted",
       "priceRange": "'Price up to' must be greater than 'Price from'",
       "venueNameRequired": "Location name is required"
+    }
+  },
+  "eventWizard": {
+    "steps": {
+      "1": "What",
+      "2": "When & where",
+      "3": "Who for",
+      "4": "Price & sign-ups",
+      "5": "Polish & publish"
+    },
+    "stepHints": {
+      "1": "Category, title and description. English required, a second language is optional.",
+      "2": "Dates and location. If the venue isn't in our catalog yet it'll appear automatically after you save.",
+      "3": "Age, gender, level and format — helps players find exactly your event.",
+      "4": "Pricing, contacts and where signups go. Free is OK.",
+      "5": "Logo, cover, programme, what's included and FAQ. When ready — submit for publication."
+    },
+    "prev": "Back",
+    "next": "Next",
+    "publish": "Publish",
+    "saveDraft": "Save draft",
+    "saving": "Saving…",
+    "publishingDisabled": "Missing required fields: dates, country, and location name. Fill them in and try again.",
+    "upgradeForPublish": "Your current plan can't publish this event. Upgrade to continue.",
+    "upgradeCta": "Change plan",
+    "genderMale": "Boys/Men",
+    "genderFemale": "Girls/Women",
+    "genderMixed": "Mixed",
+    "skillAll": "All levels",
+    "skillAm": "Amateur",
+    "skillSemiPro": "Semi-pro",
+    "skillPro": "Professional",
+    "programmeHint": "Day-by-day schedule. Title each day and list its items.",
+    "programmeAddDay": "Add day",
+    "programmeRemoveDay": "Remove day",
+    "programmeDayTitle": "Day title (e.g. 'Day 1 — Arrival')",
+    "programmeDayItems": "Schedule item",
+    "programmeAddItem": "Add item",
+    "faqHint": "Common questions participants ask.",
+    "faqAddQuestion": "Add question",
+    "faqRemoveQuestion": "Remove question",
+    "faqQuestion": "Question",
+    "faqAnswer": "Answer",
+    "errors": {
+      "datesRequired": "Pick dates before publishing"
     }
   },
   "me": {

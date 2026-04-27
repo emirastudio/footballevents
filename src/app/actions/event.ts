@@ -53,14 +53,14 @@ const baseSchema = z.object({
 export type EventFormState = { error?: string; fieldErrors?: Record<string, string> } | null;
 
 type ParsedEventInput = {
-  titleEn: string; shortDescEn?: string; descriptionEn: string;
+  titleEn: string; shortDescEn?: string; descriptionEn?: string;
   secondLocale?: "ru" | "de" | "es" | null;
   titleSecond?: string; shortDescSecond?: string; descriptionSecond?: string;
 };
 
 function buildEventTranslations(d: ParsedEventInput) {
   const rows: { locale: "en" | "ru" | "de" | "es"; title: string; shortDescription: string | null; description: string }[] = [
-    { locale: "en", title: d.titleEn, shortDescription: d.shortDescEn || null, description: d.descriptionEn },
+    { locale: "en", title: d.titleEn, shortDescription: d.shortDescEn || null, description: d.descriptionEn ?? "" },
   ];
   if (d.secondLocale && d.titleSecond && d.descriptionSecond && d.descriptionSecond.length >= 20) {
     rows.push({
@@ -124,6 +124,26 @@ function slugify(s: string) {
 
 function parseProgramme(raw?: string): { day: number; title: string; items: string[] }[] | null {
   if (!raw?.trim()) return null;
+  // Wizard sends JSON (array of {title, items[]}). Legacy form sent text. Accept both.
+  if (raw.trim().startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        const days = parsed
+          .map((d) => {
+            const obj = d as { title?: unknown; items?: unknown };
+            const title = typeof obj.title === "string" ? obj.title.trim() : "";
+            const items = Array.isArray(obj.items)
+              ? obj.items.filter((x): x is string => typeof x === "string").map((s) => s.trim()).filter(Boolean)
+              : [];
+            return { title, items };
+          })
+          .filter((d) => d.title || d.items.length)
+          .map((d, i) => ({ day: i + 1, ...d }));
+        return days.length ? days : null;
+      }
+    } catch { /* fall through to text */ }
+  }
   const days: { day: number; title: string; items: string[] }[] = [];
   let current: { title: string; items: string[] } | null = null;
   for (const lineRaw of raw.split("\n")) {
@@ -141,6 +161,20 @@ function parseProgramme(raw?: string): { day: number; title: string; items: stri
 
 function parseFaq(raw?: string): { q: string; a: string }[] | null {
   if (!raw?.trim()) return null;
+  if (raw.trim().startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        const items = parsed
+          .map((p) => {
+            const o = p as { q?: unknown; a?: unknown };
+            return { q: typeof o.q === "string" ? o.q.trim() : "", a: typeof o.a === "string" ? o.a.trim() : "" };
+          })
+          .filter((x) => x.q && x.a);
+        return items.length ? items : null;
+      }
+    } catch { /* fall through to text */ }
+  }
   const out: { q: string; a: string }[] = [];
   let q: string | null = null;
   let a: string[] = [];
@@ -463,4 +497,292 @@ export async function archiveEventAction(formData: FormData) {
   await db.event.update({ where: { id }, data: { status: "ARCHIVED" } });
   revalidatePath("/organizer/events");
   redirect("/organizer/events");
+}
+
+// ─────────────────────────────────────────────────────────────
+// WIZARD — incremental draft save, one step at a time
+// ─────────────────────────────────────────────────────────────
+
+const STEPS = [1, 2, 3, 4, 5] as const;
+type WizardStep = (typeof STEPS)[number];
+
+export type WizardState = { error?: string; fieldErrors?: Record<string, string>; eventId?: string } | null;
+
+const stepSchemas = {
+  1: z.object({
+    categoryId:        z.string().min(1, "categoryRequired"),
+    titleEn:           z.string().trim().min(2, "titleRequired"),
+    shortDescEn:       z.string().trim().optional(),
+    descriptionEn:     z.string().trim().optional(),
+    secondLocale:      z.enum(["ru", "de", "es"]).optional().nullable(),
+    titleSecond:       z.string().trim().optional(),
+    shortDescSecond:   z.string().trim().optional(),
+    descriptionSecond: z.string().trim().optional(),
+  }),
+  2: z.object({
+    startDate:            z.string().optional(),
+    endDate:              z.string().optional(),
+    registrationDeadline: z.string().optional(),
+    countryCode:          z.string().optional(),
+    city:                 z.string().optional(),
+    venueName:            z.string().trim().optional(),
+    venueAddress:         z.string().trim().optional(),
+  }),
+  3: z.object({
+    ageGroups:       z.array(z.string()).default([]),
+    gender:          z.enum(["MALE", "FEMALE", "MIXED"]).default("MIXED"),
+    skillLevel:      z.enum(["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"]).default("ALL_LEVELS"),
+    format:          z.string().optional(),
+    maxParticipants: z.coerce.number().int().positive().optional(),
+  }),
+  4: z.object({
+    isFree:          z.coerce.boolean().default(false),
+    priceFrom:       z.coerce.number().nonnegative().optional(),
+    priceTo:         z.coerce.number().nonnegative().optional(),
+    currency:        z.string().default("EUR"),
+    externalUrl:     z.string().url().optional().or(z.literal("")),
+    contactEmail:    z.string().email().optional().or(z.literal("")),
+    contactPhone:    z.string().optional(),
+    acceptsBookings: z.coerce.boolean().default(true),
+  }),
+  5: z.object({
+    logoUrl:     z.string().optional(),
+    coverUrl:    z.string().optional(),
+    videoUrl:    z.string().optional(),
+    included:    z.string().optional(),
+    notIncluded: z.string().optional(),
+    programme:   z.string().optional(),
+    faq:         z.string().optional(),
+  }),
+} as const;
+
+function fieldErrorsFromZod(err: z.ZodError): Record<string, string> {
+  const fe: Record<string, string> = {};
+  for (const issue of err.issues) fe[issue.path.join(".")] = issue.message;
+  return fe;
+}
+
+function isWizardStep(n: number): n is WizardStep {
+  return n >= 1 && n <= 5;
+}
+
+/** Save one step of the wizard. `direction`: "next" / "prev" / "publish". */
+export async function wizardSaveAction(_prev: WizardState, formData: FormData): Promise<WizardState> {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
+  if (!organizer) redirect("/onboarding/organizer");
+
+  const step = Number(formData.get("step") ?? 1);
+  const eventId = (formData.get("eventId") as string) || null;
+  const direction = (formData.get("direction") as string) || "next"; // "next" | "prev" | "publish"
+
+  if (!isWizardStep(step)) return { error: "invalidStep" };
+
+  // Load existing event if any.
+  const existing = eventId
+    ? await db.event.findUnique({ where: { id: eventId } })
+    : null;
+  if (eventId && (!existing || existing.organizerId !== organizer.id)) {
+    return { error: "notFound" };
+  }
+
+  // Parse current step's fields.
+  const schema = stepSchemas[step];
+  const parsed = schema.safeParse(parseStepInput(step, formData));
+  if (!parsed.success) {
+    return { error: "validation", fieldErrors: fieldErrorsFromZod(parsed.error), eventId: eventId ?? undefined };
+  }
+  const d = parsed.data as never as Record<string, unknown>;
+
+  // Step 1 with no event yet → create a fresh DRAFT.
+  if (!existing) {
+    if (step !== 1) return { error: "stepRequiresEvent" };
+    const data = parsed.data as z.infer<typeof stepSchemas[1]>;
+    const category = await db.category.findUnique({ where: { id: data.categoryId } });
+    if (!category) return { error: "categoryRequired", fieldErrors: { categoryId: "categoryRequired" } };
+
+    const baseSlug = slugify(data.titleEn) || "event";
+    const slug = `${baseSlug}-${nanoid(6).toLowerCase()}`;
+
+    const created = await db.event.create({
+      data: {
+        slug,
+        organizerId: organizer.id,
+        categoryId: category.id,
+        type: category.type,
+        status: "DRAFT",
+        wizardStep: 2, // moving to step 2 next
+        translations: { create: buildEventTranslations(data) },
+      },
+    });
+    revalidatePath("/organizer/events");
+    redirect(`/organizer/events/${created.id}/setup?step=2`);
+  }
+
+  // Update existing event with this step's fields.
+  const update: Record<string, unknown> = {};
+  switch (step) {
+    case 1: {
+      const data = parsed.data as z.infer<typeof stepSchemas[1]>;
+      const category = await db.category.findUnique({ where: { id: data.categoryId } });
+      if (!category) return { error: "categoryRequired", fieldErrors: { categoryId: "categoryRequired" } };
+      update.categoryId = category.id;
+      update.type = category.type;
+      // Upsert translations
+      for (const tr of buildEventTranslations(data)) {
+        await db.eventTranslation.upsert({
+          where: { eventId_locale: { eventId: existing.id, locale: tr.locale } },
+          create: { eventId: existing.id, locale: tr.locale, title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
+          update: { title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
+        });
+      }
+      // Drop secondary translation if user cleared the picker.
+      if (!data.secondLocale) {
+        await db.eventTranslation.deleteMany({ where: { eventId: existing.id, locale: { not: "en" } } });
+      }
+      break;
+    }
+    case 2: {
+      const data = parsed.data as z.infer<typeof stepSchemas[2]>;
+      update.startDate = data.startDate ? new Date(data.startDate) : null;
+      update.endDate = data.endDate ? new Date(data.endDate) : null;
+      update.registrationDeadline = data.registrationDeadline ? new Date(data.registrationDeadline) : null;
+      update.countryCode = data.countryCode || null;
+      if (data.venueName && data.countryCode) {
+        update.venueId = await upsertVenue({
+          name: data.venueName,
+          countryCode: data.countryCode,
+          city: data.city ?? null,
+          address: data.venueAddress ?? null,
+        });
+      } else {
+        update.venueId = null;
+      }
+      update.customLocation = data.venueAddress || null;
+      break;
+    }
+    case 3: {
+      const data = parsed.data as z.infer<typeof stepSchemas[3]>;
+      update.ageGroups = data.ageGroups as never;
+      update.gender = data.gender;
+      update.skillLevel = data.skillLevel;
+      update.format = data.format || null;
+      update.maxParticipants = data.maxParticipants ?? null;
+      break;
+    }
+    case 4: {
+      const data = parsed.data as z.infer<typeof stepSchemas[4]>;
+      update.isFree = data.isFree;
+      update.priceFrom = data.isFree ? null : data.priceFrom ?? null;
+      update.priceTo   = data.isFree ? null : data.priceTo   ?? null;
+      update.currency = data.currency;
+      update.externalUrl = data.externalUrl || null;
+      update.contactEmail = data.contactEmail || null;
+      update.contactPhone = data.contactPhone || null;
+      update.acceptsBookings = data.acceptsBookings;
+      break;
+    }
+    case 5: {
+      const data = parsed.data as z.infer<typeof stepSchemas[5]>;
+      const tier = organizer.subscriptionTier;
+      update.logoUrl = data.logoUrl || null;
+      update.coverUrl = data.coverUrl || null;
+      update.videoUrl = tierAllows(tier, "videoEmbed") && data.videoUrl ? data.videoUrl : null;
+      if (data.videoUrl && !VIDEO_HOSTS.test(data.videoUrl)) {
+        return { error: "videoNotAllowed", fieldErrors: { videoUrl: "videoNotAllowed" }, eventId: existing.id };
+      }
+      update.included    = tierAllows(tier, "included") ? splitLines(data.included)    : [];
+      update.notIncluded = tierAllows(tier, "included") ? splitLines(data.notIncluded) : [];
+      update.program = tierAllows(tier, "programme") ? (parseProgramme(data.programme) as never) : null;
+      update.faq     = tierAllows(tier, "faq")       ? (parseFaq(data.faq)             as never) : null;
+      break;
+    }
+  }
+
+  // Decide the next step / status.
+  let nextStep = step;
+  let nextStatus: "DRAFT" | "PENDING_REVIEW" = existing.status === "PENDING_REVIEW" ? "PENDING_REVIEW" : "DRAFT";
+  if (direction === "next" && step < 5) nextStep = (step + 1) as WizardStep;
+  if (direction === "prev" && step > 1) nextStep = (step - 1) as WizardStep;
+  if (direction === "publish") {
+    // Validate publishability — required fields must be set.
+    const publishErrors = collectPublishErrors({ ...existing, ...update });
+    if (publishErrors) {
+      return { error: "publishIncomplete", fieldErrors: publishErrors, eventId: existing.id };
+    }
+    nextStatus = "PENDING_REVIEW";
+  }
+
+  update.wizardStep = Math.max(existing.wizardStep, nextStep);
+  update.status = nextStatus;
+
+  await db.event.update({ where: { id: existing.id }, data: update as never });
+
+  revalidatePath("/organizer/events");
+
+  if (direction === "publish") {
+    redirect(`/organizer/events`);
+  }
+  redirect(`/organizer/events/${existing.id}/setup?step=${nextStep}`);
+}
+
+function parseStepInput(step: WizardStep, formData: FormData) {
+  switch (step) {
+    case 1: return {
+      categoryId:        formData.get("categoryId"),
+      titleEn:           formData.get("titleEn"),
+      shortDescEn:       formData.get("shortDescEn") || undefined,
+      descriptionEn:     formData.get("descriptionEn") || undefined,
+      secondLocale:      (formData.get("secondLocale") as string) || undefined,
+      titleSecond:       (formData.get("titleSecond") as string) || undefined,
+      shortDescSecond:   (formData.get("shortDescSecond") as string) || undefined,
+      descriptionSecond: (formData.get("descriptionSecond") as string) || undefined,
+    };
+    case 2: return {
+      startDate:            formData.get("startDate") || undefined,
+      endDate:              formData.get("endDate") || undefined,
+      registrationDeadline: formData.get("registrationDeadline") || undefined,
+      countryCode:          formData.get("countryCode") || undefined,
+      city:                 formData.get("city") || undefined,
+      venueName:            formData.get("venueName") || undefined,
+      venueAddress:         formData.get("venueAddress") || undefined,
+    };
+    case 3: return {
+      ageGroups:        formData.getAll("ageGroups").map(String),
+      gender:           formData.get("gender") || "MIXED",
+      skillLevel:       formData.get("skillLevel") || "ALL_LEVELS",
+      format:           formData.get("format") || undefined,
+      maxParticipants:  formData.get("maxParticipants") || undefined,
+    };
+    case 4: return {
+      isFree:           formData.get("isFree") === "on" || formData.get("isFree") === "true",
+      priceFrom:        formData.get("priceFrom") || undefined,
+      priceTo:          formData.get("priceTo") || undefined,
+      currency:         (formData.get("currency") as string) || "EUR",
+      externalUrl:      formData.get("externalUrl") || "",
+      contactEmail:     formData.get("contactEmail") || "",
+      contactPhone:     formData.get("contactPhone") || undefined,
+      acceptsBookings:  formData.get("acceptsBookings") === "on" || formData.get("acceptsBookings") === "true",
+    };
+    case 5: return {
+      logoUrl:     formData.get("logoUrl") || undefined,
+      coverUrl:    formData.get("coverUrl") || undefined,
+      videoUrl:    formData.get("videoUrl") || undefined,
+      included:    formData.get("included") || undefined,
+      notIncluded: formData.get("notIncluded") || undefined,
+      programme:   formData.get("programme") || undefined,
+      faq:         formData.get("faq") || undefined,
+    };
+  }
+}
+
+function collectPublishErrors(ev: { titleEn?: string; descriptionEn?: string; startDate?: Date | null; endDate?: Date | null; countryCode?: string | null; venueId?: string | null }): Record<string, string> | null {
+  const fe: Record<string, string> = {};
+  // titleEn/descriptionEn live in EventTranslation — we trust they were set in step 1; leave that to the form-side check.
+  if (!ev.startDate) fe.startDate = "datesRequired";
+  if (!ev.endDate) fe.endDate = "datesRequired";
+  if (!ev.countryCode) fe.countryCode = "countryRequired";
+  if (!ev.venueId) fe.venueName = "venueNameRequired";
+  return Object.keys(fe).length ? fe : null;
 }

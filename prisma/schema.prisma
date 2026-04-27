@@ -410,17 +410,20 @@ model Event {
   type            EventType
   status          EventStatus @default(DRAFT)
 
-  // Dates
-  startDate       DateTime
-  endDate         DateTime
+  // Dates — nullable so wizard can save partial drafts; required when status leaves DRAFT.
+  startDate       DateTime?
+  endDate         DateTime?
   registrationDeadline DateTime?
   timezone        String      @default("UTC")
 
-  // Location
-  countryCode     String
+  // Location — countryCode nullable for the same reason.
+  countryCode     String?
   cityId          String?
   venueId         String?
   customLocation  String?     // free-text fallback
+
+  // Wizard progress (1..5). Resets to 5 once published. Lets the org dashboard show "stuck on step N".
+  wizardStep      Int         @default(1)
 
   // Audience
   ageGroups       AgeGroup[]  @default([])
@@ -476,7 +479,7 @@ model Event {
 
   organizer       Organizer   @relation(fields: [organizerId], references: [id], onDelete: Cascade)
   category        Category    @relation(fields: [categoryId], references: [id])
-  country         Country     @relation(fields: [countryCode], references: [code])
+  country         Country?    @relation(fields: [countryCode], references: [code])
   city            City?       @relation(fields: [cityId], references: [id])
   venue           Venue?      @relation(fields: [venueId], references: [id])
 

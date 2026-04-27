@@ -112,7 +112,7 @@ export default async function OrganizerDashboardPage({
                       <div className="mt-0.5 flex items-center gap-2 text-xs text-[var(--color-muted)]">
                         <StatusBadge status={e.status} t={t} />
                         <span>·</span>
-                        <span>{e.startDate.toISOString().slice(0, 10)}</span>
+                        <span>{e.startDate?.toISOString().slice(0, 10) ?? "—"}</span>
                         <span>·</span>
                         <span>{e._count.bookings} {tCommon("results")}</span>
                       </div>
