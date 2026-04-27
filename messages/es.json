@@ -204,6 +204,7 @@
     "website": "Sitio web",
     "isStadium": "Estadio",
     "isStadiumHint": "Marca si es un estadio de verdad (no una pista cubierta, campo de entrenamiento o de academia).",
+    "cover": "Foto de portada",
     "submit": "Guardar ubicación",
     "saving": "Guardando…",
     "errors": {

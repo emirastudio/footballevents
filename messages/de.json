@@ -204,6 +204,7 @@
     "website": "Website",
     "isStadium": "Stadion",
     "isStadiumHint": "Ankreuzen, wenn es ein richtiges Stadion ist (kein Kunstrasenplatz, Trainingsgelände oder Akademieplatz).",
+    "cover": "Coverfoto",
     "submit": "Standort speichern",
     "saving": "Speichere…",
     "errors": {

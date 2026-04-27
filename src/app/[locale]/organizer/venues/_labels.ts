@@ -17,6 +17,7 @@ export function buildVenueLabels(t: T): VenueLabels {
     website: t("website"),
     isStadium: t("isStadium"),
     isStadiumHint: t("isStadiumHint"),
+    cover: t("cover"),
     submit: t("submit"),
     saving: t("saving"),
     errors: {

@@ -6,6 +6,8 @@ import { wizardSaveAction, type WizardState } from "@/app/actions/event";
 import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
 import { CityCombobox } from "@/components/ui/CityCombobox";
+import { VenueAutocomplete } from "@/components/ui/VenueAutocomplete";
+import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { ImageUpload } from "@/components/upload/ImageUpload";
 import { Check, ChevronLeft, ChevronRight, Lock, Send, Plus, Trash2 } from "lucide-react";
 import type { Tier } from "@/lib/tier";
@@ -319,8 +321,21 @@ function Step2({
         />
         <CityCombobox name="city" label={labels.city} countryCode={countryCode} defaultValue={defaults.city} />
       </div>
-      <Field name="venueName" label={labels.venueName} hint={labels.venueNameHint} error={errMsg(fe.venueName)} defaultValue={defaults.venueName} />
-      <Field name="venueAddress" label={labels.venueAddress} hint={labels.venueAddressHint} defaultValue={defaults.venueAddress} />
+      <VenueAutocomplete
+        name="venueName"
+        label={labels.venueName}
+        hint={labels.venueNameHint}
+        error={errMsg(fe.venueName)}
+        defaultValue={defaults.venueName}
+        countryCode={countryCode}
+      />
+      <AddressAutocomplete
+        name="venueAddress"
+        label={labels.venueAddress}
+        hint={labels.venueAddressHint}
+        defaultValue={defaults.venueAddress}
+        countryCode={countryCode}
+      />
     </div>
   );
 }

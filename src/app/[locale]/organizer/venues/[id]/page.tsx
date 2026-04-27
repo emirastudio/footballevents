@@ -46,6 +46,7 @@ export default async function EditVenuePage({ params }: { params: Promise<{ loca
             surfaceType: venue.surfaceType ?? undefined,
             website: venue.website ?? undefined,
             isStadium: venue.isStadium,
+            coverUrl: venue.coverUrl ?? undefined,
           }}
           labels={buildVenueLabels(tForm)}
         />

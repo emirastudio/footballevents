@@ -19,11 +19,21 @@ const schema = z.object({
   surfaceType:  z.string().optional(),
   website:      z.string().url().optional().or(z.literal("")),
   isStadium:    z.coerce.boolean().default(false),
+  coverUrl:     z.string().url().optional().or(z.literal("")),
 });
 
 function slugify(s: string) {
   return s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 60);
+}
+
+async function ensureCountry(code: string) {
+  const exists = await db.country.findUnique({ where: { code } });
+  if (exists) return;
+  const { findCountry } = await import("@/lib/countries");
+  const c = findCountry(code);
+  if (!c) return;
+  await db.country.upsert({ where: { code }, update: {}, create: { code, nameEn: c.name, flagEmoji: c.flag } });
 }
 
 export async function saveVenueAction(_prev: VenueFormState, formData: FormData): Promise<VenueFormState> {
@@ -42,6 +52,7 @@ export async function saveVenueAction(_prev: VenueFormState, formData: FormData)
     surfaceType: formData.get("surfaceType") || undefined,
     website:     formData.get("website") || undefined,
     isStadium:   formData.get("isStadium") === "on" || formData.get("isStadium") === "true",
+    coverUrl:    formData.get("coverUrl") || undefined,
   });
   if (!parsed.success) {
     const fe: Record<string, string> = {};
@@ -49,6 +60,7 @@ export async function saveVenueAction(_prev: VenueFormState, formData: FormData)
     return { error: parsed.error.issues[0]?.message ?? "Invalid input", fieldErrors: fe };
   }
   const d = parsed.data;
+  await ensureCountry(d.countryCode);
 
   if (d.id) {
     // Update — any organizer that has events at this venue can edit it.
@@ -65,6 +77,7 @@ export async function saveVenueAction(_prev: VenueFormState, formData: FormData)
         surfaceType: d.surfaceType || null,
         website: d.website || null,
         isStadium: d.isStadium,
+        coverUrl: d.coverUrl || null,
       },
     });
   } else {
@@ -86,6 +99,7 @@ export async function saveVenueAction(_prev: VenueFormState, formData: FormData)
         surfaceType: d.surfaceType || null,
         website: d.website || null,
         isStadium: d.isStadium,
+        coverUrl: d.coverUrl || null,
       },
     });
   }

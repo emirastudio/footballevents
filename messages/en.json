@@ -301,6 +301,7 @@
     "website": "Website",
     "isStadium": "Stadium",
     "isStadiumHint": "Tick if it's a full stadium (not an indoor pitch, training ground or academy field).",
+    "cover": "Cover photo",
     "submit": "Save location",
     "saving": "Saving…",
     "errors": {

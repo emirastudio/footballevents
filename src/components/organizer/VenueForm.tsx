@@ -6,6 +6,8 @@ import { saveVenueAction, type VenueFormState } from "@/app/actions/venue";
 import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
 import { CityCombobox } from "@/components/ui/CityCombobox";
+import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
+import { ImageUpload } from "@/components/upload/ImageUpload";
 
 type Country = { code: string; name: string; flag: string };
 
@@ -23,6 +25,7 @@ export type VenueLabels = {
   website: string;
   isStadium: string;
   isStadiumHint: string;
+  cover: string;
   submit: string;
   saving: string;
   errors: Record<string, string>;
@@ -38,6 +41,7 @@ export type VenueDefaults = {
   surfaceType?: string;
   website?: string;
   isStadium?: boolean;
+  coverUrl?: string;
 };
 
 export function VenueForm({
@@ -73,7 +77,12 @@ export function VenueForm({
         <CityCombobox name="city" label={labels.city} countryCode={countryCode} defaultValue={defaults?.city} />
       </div>
 
-      <Field name="address" label={labels.address} defaultValue={defaults?.address} />
+      <AddressAutocomplete
+        name="address"
+        label={labels.address}
+        defaultValue={defaults?.address}
+        countryCode={countryCode}
+      />
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field name="capacity" type="number" label={labels.capacity} placeholder="50000" defaultValue={defaults?.capacity?.toString()} />
@@ -92,6 +101,8 @@ export function VenueForm({
       </div>
 
       <Field name="website" type="url" label={labels.website} placeholder="https://…" defaultValue={defaults?.website} />
+
+      <ImageUpload name="coverUrl" kind="event-cover" label={labels.cover} defaultUrl={defaults?.coverUrl} />
 
       <label className="flex items-start gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-muted)] p-3 text-sm">
         <input type="checkbox" name="isStadium" defaultChecked={defaults?.isStadium ?? false} className="mt-0.5 h-4 w-4 rounded border-[var(--color-border-strong)]" />
