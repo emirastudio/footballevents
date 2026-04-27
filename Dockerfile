@@ -55,8 +55,14 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 # isolation and doesn't see /etc/passwd, so symbolic names error with
 # "invalid user index: -1".
 COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+engines* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+debug* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+fetch-engine* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+get-platform* ./node_modules/.pnpm/
 COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/prisma@* ./node_modules/.pnpm/
 COPY --link --from=builder --chown=1001:1001 /app/node_modules/prisma ./node_modules/prisma
+# pnpm puts symlinks for @prisma/* (engines, client, debug, ...) under node_modules/@prisma/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/@prisma ./node_modules/@prisma
 COPY --link --from=builder --chown=1001:1001 /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
 # Run pending migrations before the app boots — fails the container if migrations
