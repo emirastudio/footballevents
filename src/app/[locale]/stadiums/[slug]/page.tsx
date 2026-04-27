@@ -10,6 +10,29 @@ import { EventCard } from "@/components/cards/EventCard";
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  const v = await getVenueBySlug(slug);
+  if (!v) return {};
+  const country = getCountry(v.countryCode);
+  const desc = v.description || `${v.name} — ${[v.city, country?.name].filter(Boolean).join(", ")}`;
+  const url = `${SITE_URL}/${locale}/stadiums/${v.slug}`;
+  const image = v.coverUrl || v.galleryUrls?.[0] || `${SITE_URL}/og-default.jpg`;
+  return {
+    title: v.name,
+    description: desc,
+    alternates: { canonical: url },
+    openGraph: { type: "website", url, title: v.name, description: desc, images: [{ url: image, width: 1200, height: 630, alt: v.name }] },
+    twitter: { card: "summary_large_image", title: v.name, description: desc, images: [image] },
+  };
+}
+
 export default async function StadiumDetailPage({
   params,
 }: {

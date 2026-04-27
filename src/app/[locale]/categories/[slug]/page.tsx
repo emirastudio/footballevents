@@ -10,6 +10,32 @@ export async function generateStaticParams() {
   return categories.map((c) => ({ slug: c.slug }));
 }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  const cat = categories.find((c) => c.slug === slug);
+  if (!cat) return {};
+  let title = slug, description = "";
+  try {
+    const t = await getTranslations({ locale, namespace: `categoryHeaders.${slug}` });
+    title = t("title");
+    description = t("subtitle");
+  } catch { /* fall back to slug if translation missing */ }
+  const url = `${SITE_URL}/${locale}/categories/${slug}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: "website", url, title, description, images: [{ url: `${SITE_URL}/og-default.jpg`, width: 1200, height: 630, alt: title }] },
+    twitter: { card: "summary_large_image", title, description, images: [`${SITE_URL}/og-default.jpg`] },
+  };
+}
+
 export default async function CategoryPage({
   params,
 }: {

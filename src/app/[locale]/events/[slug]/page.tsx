@@ -26,6 +26,39 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  const event = await getEventBySlug(slug, locale);
+  if (!event) return {};
+  const country = getCountry(event.countryCode);
+  const desc = event.shortDescription
+    || `${event.city ?? country?.name ?? ""} · ${event.startDate ? new Date(event.startDate).toISOString().slice(0, 10) : ""}`.trim();
+  const url = `${SITE_URL}/${locale}/events/${event.slug}`;
+  const image = event.coverUrl || event.logoUrl || `${SITE_URL}/og-default.jpg`;
+  return {
+    title: event.title,
+    description: desc,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      title: event.title,
+      description: desc,
+      images: [{ url: image, width: 1200, height: 630, alt: event.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: event.title,
+      description: desc,
+      images: [image],
+    },
+  };
+}
+
 export default async function EventDetailPage({
   params,
 }: {

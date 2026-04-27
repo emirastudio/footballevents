@@ -13,6 +13,29 @@ import { EventCard } from "@/components/cards/EventCard";
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await params;
+  const o = await getOrganizerBySlug(slug);
+  if (!o) return {};
+  const country = getCountry(o.countryCode);
+  const desc = o.tagline || `${o.name} — football events organizer in ${[o.city, country?.name].filter(Boolean).join(", ")}`;
+  const url = `${SITE_URL}/${locale}/org/${o.slug}`;
+  const image = o.coverUrl || o.logoUrl || `${SITE_URL}/og-default.jpg`;
+  return {
+    title: o.name,
+    description: desc,
+    alternates: { canonical: url },
+    openGraph: { type: "website", url, title: o.name, description: desc, images: [{ url: image, width: 1200, height: 630, alt: o.name }] },
+    twitter: { card: "summary_large_image", title: o.name, description: desc, images: [image] },
+  };
+}
+
 export default async function OrganizerDetailPage({
   params,
 }: {

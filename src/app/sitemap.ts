@@ -8,7 +8,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locales = routing.locales;
-  const staticPaths = ["", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/legal/terms", "/legal/privacy", "/legal/cookies", "/legal/refund"];
+  const staticPaths = ["", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/about", "/contact", "/legal/terms", "/legal/privacy", "/legal/cookies", "/legal/refund", "/legal/imprint"];
 
   const where = process.env.HIDE_DEMO === "1" ? { status: "PUBLISHED" as const, isDemo: false } : { status: "PUBLISHED" as const };
   let events: Array<{ slug: string; updatedAt: Date }> = [];
