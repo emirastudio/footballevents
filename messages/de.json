@@ -117,6 +117,23 @@
     "reviewsModComingSoon": "Demnächst — Bewertungs-Moderation: freigeben/ausblenden/antworten, Eskalation an Admin.",
     "boostThis": "Dieses Event boosten",
     "boostThisHint": "Einmaliger Sichtbarkeitsschub. Lohnt sich schon ab einer einzigen zusätzlichen Anmeldung.",
+    "boostBanner": {
+      "appliedTitle": "Wir haben automatisch einen kostenlosen Boost auf dein nächstes Event angewendet",
+      "appliedBody": "„{event}“ wird bis {until} in den Listen hervorgehoben. Featured-Badge oder Startseiten-Karussell? Upgrade — dein Tarif gibt 30% Rabatt.",
+      "upgradeCta": "Boost upgraden",
+      "premiumTitle": "Dein Premium-Tarif enthält 3 kostenlose Basic-Boosts pro Monat",
+      "proTitle": "Dein Pro-Tarif enthält 1 kostenlosen Basic-Boost pro Monat",
+      "idleBody": "Wähle dein Flaggschiff-Event und setze einen Boost ein: Featured (€39) — Kategorie-Top, Premium (€119) — Startseiten-Karussell.",
+      "pickEventCta": "Event auswählen",
+      "quotaTitle": "{remaining} von {total} kostenlosen Boosts diesen Monat übrig",
+      "quotaBody": "Dein Tarif enthält kostenlose Basic-Boosts. Wende einen mit einem Klick auf dein nächstes Event an.",
+      "useFreeCta": "Gratis-Boost einlösen"
+    },
+    "includedBoosts": {
+      "title": "Im Tarif enthalten — noch {remaining} von {total} diesen Monat",
+      "applyCta": "{kind} gratis einsetzen",
+      "exhausted": "Kostenlose Boosts diesen Monat aufgebraucht. Quota wird am 1. zurückgesetzt."
+    },
     "boostBasicLabel": "Basic — €9 · 7 Tg",
     "boostFeaturedLabel": "Featured — €39 · 14 Tg",
     "boostPremiumLabel": "Premium — €119 · 7 Tg Homepage",
@@ -246,7 +263,8 @@
     "gender": "Geschlecht",
     "skillLevel": "Niveau",
     "format": "Format",
-    "formatHint": "5×5, 7×7, 11×11 oder ein eigenes Format.",
+    "formatHint": "Wählen Sie ein Format oder lassen Sie „Beliebig“.",
+    "formatAny": "Beliebig",
     "maxParticipants": "Max. Teilnehmer",
     "isFree": "Event ist kostenlos",
     "priceFrom": "Preis ab",

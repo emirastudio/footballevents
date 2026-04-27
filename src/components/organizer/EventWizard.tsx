@@ -43,7 +43,7 @@ export type WizardLabels = {
   // Step 3
   ageGroups: string; gender: string; genderMale: string; genderFemale: string; genderMixed: string;
   skillLevel: string; skillAll: string; skillAm: string; skillSemiPro: string; skillPro: string;
-  format: string; formatHint: string; maxParticipants: string;
+  format: string; formatHint: string; formatAny: string; maxParticipants: string;
   // Step 4
   isFree: string; priceFrom: string; priceTo: string; currency: string;
   externalUrl: string; externalUrlHint: string;
@@ -418,9 +418,24 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
         ]}
       />
 
-      {/* Format + Max participants */}
+      {/* Format */}
+      <PillRadioGroup
+        legend={labels.format}
+        name="format"
+        defaultValue={defaults.format ?? ""}
+        cols="grid-cols-3 sm:grid-cols-6"
+        options={[
+          { value: "",      label: labels.formatAny },
+          { value: "5x5",   label: "5×5"   },
+          { value: "7x7",   label: "7×7"   },
+          { value: "8x8",   label: "8×8"   },
+          { value: "9x9",   label: "9×9"   },
+          { value: "11x11", label: "11×11" },
+        ]}
+      />
+
+      {/* Max participants */}
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field name="format" label={labels.format} hint={labels.formatHint} placeholder="11×11" defaultValue={defaults.format} />
         <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults.maxParticipants?.toString()} />
       </div>
     </div>

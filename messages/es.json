@@ -117,6 +117,23 @@
     "reviewsModComingSoon": "Próximamente — moderación de reseñas: aprobar/ocultar/responder, escalar a admin.",
     "boostThis": "Impulsar este evento",
     "boostThisHint": "Mejora puntual de visibilidad. Se amortiza con un solo inscrito extra.",
+    "boostBanner": {
+      "appliedTitle": "Hemos aplicado un Boost gratuito a tu próximo evento",
+      "appliedBody": "«{event}» está destacado en el listado hasta {until}. ¿Quieres el badge Featured o el carrusel de la portada? Mejóralo — tu plan incluye un 30% de descuento.",
+      "upgradeCta": "Mejorar boost",
+      "premiumTitle": "Tu plan Premium incluye 3 boosts Basic gratuitos al mes",
+      "proTitle": "Tu plan Pro incluye 1 boost Basic gratuito al mes",
+      "idleBody": "Elige tu evento estrella y aplica un boost: Featured (€39) — top de categoría, Premium (€119) — carrusel de la portada.",
+      "pickEventCta": "Elegir evento",
+      "quotaTitle": "Quedan {remaining} de {total} boosts gratis este mes",
+      "quotaBody": "Tu plan incluye boosts Basic gratuitos. Aplica uno a tu próximo evento en un clic.",
+      "useFreeCta": "Usar boost gratis"
+    },
+    "includedBoosts": {
+      "title": "Incluido en tu plan — quedan {remaining} de {total} este mes",
+      "applyCta": "Aplicar {kind} gratis",
+      "exhausted": "Has usado los boosts gratuitos del mes. La cuota se reinicia el día 1."
+    },
     "boostBasicLabel": "Basic — €9 · 7 d",
     "boostFeaturedLabel": "Featured — €39 · 14 d",
     "boostPremiumLabel": "Premium — €119 · 7 d portada",
@@ -246,7 +263,8 @@
     "gender": "Género",
     "skillLevel": "Nivel",
     "format": "Formato",
-    "formatHint": "5×5, 7×7, 11×11 o un formato propio.",
+    "formatHint": "Elige un formato o deja «Cualquiera».",
+    "formatAny": "Cualquiera",
     "maxParticipants": "Máx. participantes",
     "isFree": "Este evento es gratuito",
     "priceFrom": "Precio desde",

@@ -4,7 +4,9 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
-import { Plus, Calendar as CalIcon, Inbox, Bell, MessageSquare } from "lucide-react";
+import { Plus, Calendar as CalIcon, Inbox, Bell, MessageSquare, Sparkles, Star, Gift } from "lucide-react";
+import { getIncludedBoostsRemaining } from "@/lib/included-boosts";
+import { BOOSTS_INCLUDED_PER_MONTH, type Tier } from "@/lib/tier";
 
 export default async function OrganizerDashboardPage({
   params,
@@ -24,6 +26,36 @@ export default async function OrganizerDashboardPage({
 
   const t = await getTranslations("organizer");
   const tCommon = await getTranslations("common");
+
+  const isPaidTier = organizer.subscriptionTier === "PRO" || organizer.subscriptionTier === "PREMIUM" || organizer.subscriptionTier === "ENTERPRISE";
+  const now = new Date();
+  const [welcomeBoost, anyStrongBoost, includedRemaining, firstEvent] = isPaidTier
+    ? await Promise.all([
+        db.boost.findFirst({
+          where: {
+            event: { organizerId: organizer.id },
+            paymentId: { startsWith: "welcome:" },
+            endsAt: { gte: now },
+          },
+          include: { event: { include: { translations: true } } },
+          orderBy: { endsAt: "desc" },
+        }),
+        db.boost.findFirst({
+          where: {
+            event: { organizerId: organizer.id },
+            tier: { in: ["FEATURED", "PREMIUM"] },
+            endsAt: { gte: now },
+          },
+        }),
+        getIncludedBoostsRemaining(organizer.id, organizer.subscriptionTier),
+        db.event.findFirst({
+          where: { organizerId: organizer.id, status: "PUBLISHED", startDate: { gte: now } },
+          orderBy: { startDate: "asc" },
+          select: { id: true },
+        }),
+      ])
+    : [null, null, 0, null];
+  const includedTotal = isPaidTier ? (BOOSTS_INCLUDED_PER_MONTH[organizer.subscriptionTier as Tier] ?? 0) : 0;
 
   const [
     publishedCount,
@@ -68,6 +100,74 @@ export default async function OrganizerDashboardPage({
           </Link>
         </Button>
       </div>
+
+      {isPaidTier && includedTotal > 0 && includedRemaining > 0 && firstEvent && (
+        <div className="mb-6 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-premium)]/40 bg-gradient-to-r from-amber-50 to-[var(--color-pitch-50)] p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <Gift className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-premium)]" />
+              <div>
+                <div className="font-semibold text-[var(--color-foreground)]">
+                  {t("boostBanner.quotaTitle", { remaining: includedRemaining, total: includedTotal })}
+                </div>
+                <p className="mt-0.5 text-sm text-[var(--color-muted-strong)]">
+                  {t("boostBanner.quotaBody")}
+                </p>
+              </div>
+            </div>
+            <Button variant="accent" size="sm" asChild>
+              <Link href={`/organizer/events/${firstEvent.id}`}>
+                <Gift className="h-4 w-4" /> {t("boostBanner.useFreeCta")}
+              </Link>
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {isPaidTier && !anyStrongBoost && (
+        <div className="mb-6 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-premium)]/30 bg-gradient-to-r from-amber-50 to-[var(--color-pitch-50)] p-5">
+          {welcomeBoost ? (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-premium)]" />
+                <div>
+                  <div className="font-semibold text-[var(--color-foreground)]">
+                    {t("boostBanner.appliedTitle")}
+                  </div>
+                  <p className="mt-0.5 text-sm text-[var(--color-muted-strong)]">
+                    {t("boostBanner.appliedBody", {
+                      event: (welcomeBoost.event.translations.find((tr) => tr.locale === "en") ?? welcomeBoost.event.translations[0])?.title ?? welcomeBoost.event.slug,
+                      until: welcomeBoost.endsAt.toISOString().slice(0, 10),
+                    })}
+                  </p>
+                </div>
+              </div>
+              <Button variant="accent" size="sm" asChild>
+                <Link href={`/organizer/events/${welcomeBoost.eventId}`}>
+                  <Star className="h-4 w-4" /> {t("boostBanner.upgradeCta")}
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <Star className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-premium)]" />
+                <div>
+                  <div className="font-semibold text-[var(--color-foreground)]">
+                    {t(`boostBanner.${organizer.subscriptionTier === "PREMIUM" ? "premiumTitle" : "proTitle"}`)}
+                  </div>
+                  <p className="mt-0.5 text-sm text-[var(--color-muted-strong)]">
+                    {t("boostBanner.idleBody")}
+                  </p>
+                </div>
+              </div>
+              <Button variant="accent" size="sm" asChild>
+                <Link href="/organizer/events">{t("boostBanner.pickEventCta")}</Link>
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats grid */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

@@ -33,7 +33,7 @@ export type EventFormLabels = {
   venueName: string; venueNameHint: string;
   venueAddress: string; venueAddressHint: string;
   ageGroups: string; gender: string; skillLevel: string;
-  format: string; formatHint: string; maxParticipants: string;
+  format: string; formatHint: string; formatAny: string; maxParticipants: string;
   isFree: string; priceFrom: string; priceTo: string; currency: string;
   externalUrl: string; externalUrlHint: string;
   contactEmail: string; contactPhone: string;
@@ -227,7 +227,14 @@ export function EventForm({
             { value: "SEMI_PRO", label: "Semi-pro" },
             { value: "PROFESSIONAL", label: "Professional" },
           ]} defaultValue={defaults?.skillLevel ?? "ALL_LEVELS"} />
-          <Field name="format" label={labels.format} hint={labels.formatHint} placeholder="11x11" defaultValue={defaults?.format} />
+          <SelectField name="format" label={labels.format} defaultValue={defaults?.format ?? ""} options={[
+            { value: "",      label: labels.formatAny },
+            { value: "5x5",   label: "5×5"   },
+            { value: "7x7",   label: "7×7"   },
+            { value: "8x8",   label: "8×8"   },
+            { value: "9x9",   label: "9×9"   },
+            { value: "11x11", label: "11×11" },
+          ]} />
         </div>
         <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults?.maxParticipants} />
       </Section>

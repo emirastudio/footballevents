@@ -1,9 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { stripe, STRIPE_ENABLED, PRICE_IDS, BOOST_PRICES_CENTS, type BoostKind } from "@/lib/stripe";
+import type { Tier } from "@/lib/tier";
+import { currentQuotaPeriod, getIncludedBoostsRemaining, includedKindAllowed, includedSentinel } from "@/lib/included-boosts";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
@@ -90,6 +93,61 @@ export async function startBoostCheckout(formData: FormData) {
   });
   if (!checkout.url) throw new Error("No checkout URL");
   redirect(checkout.url);
+}
+
+// Applies one of the included monthly boosts (no Stripe charge). Quota is
+// derived by counting Boost rows with paymentId starting `included:<orgId>:<period>:`.
+export async function applyIncludedBoost(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
+  if (!organizer) redirect("/onboarding/organizer");
+
+  const eventId = formData.get("eventId") as string;
+  const kind = formData.get("kind") as BoostKind;
+  if (!eventId || !(kind in BOOST_PRICES_CENTS)) redirect("/organizer/events");
+
+  if (!includedKindAllowed(organizer.subscriptionTier as Tier, kind)) {
+    redirect(`/organizer/events/${eventId}?included=not-allowed`);
+  }
+
+  const ev = await db.event.findUnique({ where: { id: eventId } });
+  if (!ev || ev.organizerId !== organizer.id) redirect("/organizer/events");
+
+  const remaining = await getIncludedBoostsRemaining(organizer.id, organizer.subscriptionTier);
+  if (remaining <= 0) redirect(`/organizer/events/${eventId}?included=exhausted`);
+
+  const days = kind === "featured" ? 14 : 7;
+  const tier: "BASIC" | "FEATURED" | "PREMIUM" =
+    kind === "featured" ? "FEATURED" : kind === "premium" ? "PREMIUM" : "BASIC";
+  const startsAt = new Date();
+  const endsAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  const period = currentQuotaPeriod();
+
+  await db.boost.create({
+    data: {
+      eventId: ev.id,
+      tier,
+      startsAt,
+      endsAt,
+      priceCents: 0,
+      currency: "EUR",
+      paymentId: includedSentinel(organizer.id, period, kind),
+    },
+  });
+  await db.event.update({
+    where: { id: ev.id },
+    data: {
+      boostTier: tier,
+      boostUntil: endsAt,
+      isFeatured: tier !== "BASIC" ? true : undefined,
+      featuredUntil: tier !== "BASIC" ? endsAt : undefined,
+    },
+  });
+
+  revalidatePath(`/organizer/events/${ev.id}`);
+  revalidatePath(`/organizer/dashboard`);
+  redirect(`/organizer/events/${ev.id}?included=success`);
 }
 
 export async function openBillingPortal() {

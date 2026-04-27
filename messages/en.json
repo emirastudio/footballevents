@@ -117,6 +117,23 @@
     "reviewsModComingSoon": "Coming next — review moderation: approve/hide/reply, escalate to admin.",
     "boostThis": "Boost this event",
     "boostThisHint": "One-time visibility upgrade. Pays for itself if it brings even one applicant.",
+    "boostBanner": {
+      "appliedTitle": "We auto-applied a free Boost to your nearest event",
+      "appliedBody": "“{event}” is bumped in listings until {until}. Want the green Featured badge or the homepage carousel? Upgrade — your plan unlocks 30% off.",
+      "upgradeCta": "Upgrade boost",
+      "premiumTitle": "Your Premium plan includes 3 free Basic boosts per month",
+      "proTitle": "Your Pro plan includes 1 free Basic boost per month",
+      "idleBody": "Pick your flagship event and apply a boost — Featured (€39) puts it at the top of category, Premium (€119) on the homepage carousel.",
+      "pickEventCta": "Choose event",
+      "quotaTitle": "{remaining} of {total} included boosts left this month",
+      "quotaBody": "Your plan includes free Basic boosts. Apply one to your nearest event in one click.",
+      "useFreeCta": "Use free boost"
+    },
+    "includedBoosts": {
+      "title": "Included with your plan — {remaining} of {total} left this month",
+      "applyCta": "Apply free {kind}",
+      "exhausted": "You've used this month's free boosts. Quota resets on the 1st."
+    },
     "boostBasicLabel": "Basic — €9 · 7d",
     "boostFeaturedLabel": "Featured — €39 · 14d",
     "boostPremiumLabel": "Premium — €119 · 7d homepage",
@@ -246,7 +263,8 @@
     "gender": "Gender",
     "skillLevel": "Skill level",
     "format": "Format",
-    "formatHint": "5×5, 7×7, 11×11 or any custom format.",
+    "formatHint": "Pick a side count, or leave as Any.",
+    "formatAny": "Any",
     "maxParticipants": "Max participants",
     "isFree": "This event is free",
     "priceFrom": "Price from",

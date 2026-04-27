@@ -81,7 +81,7 @@ export function EventCard({ event: e, locale, rank, size = "md", labels }: Props
         {!isCompact && e.ageGroups.length > 0 && (
           <div className="mt-1 flex items-center gap-1 text-xs text-[var(--color-muted)]">
             <Users className="h-3 w-3 shrink-0" />
-            <span className="truncate">{e.ageGroups.join(", ")} · {e.format}</span>
+            <span className="truncate">{e.ageGroups.join(", ")}{e.format ? ` · ${e.format}` : ""}</span>
           </div>
         )}
 

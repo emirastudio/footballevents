@@ -9,8 +9,10 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { Trash2, Archive, ExternalLink } from "lucide-react";
 import { deleteEventAction, archiveEventAction } from "@/app/actions/event";
-import { startBoostCheckout } from "@/app/actions/billing";
-import { Rocket } from "lucide-react";
+import { startBoostCheckout, applyIncludedBoost } from "@/app/actions/billing";
+import { Rocket, Gift } from "lucide-react";
+import { getIncludedBoostsRemaining, includedKindAllowed } from "@/lib/included-boosts";
+import { BOOSTS_INCLUDED_PER_MONTH } from "@/lib/tier";
 
 export default async function EditEventPage({
   params,
@@ -123,7 +125,7 @@ export default async function EditEventPage({
     venueName: t("venueName"), venueNameHint: t("venueNameHint"),
     venueAddress: t("venueAddress"), venueAddressHint: t("venueAddressHint"),
     ageGroups: t("ageGroups"), gender: t("gender"), skillLevel: t("skillLevel"),
-    format: t("format"), formatHint: t("formatHint"), maxParticipants: t("maxParticipants"),
+    format: t("format"), formatHint: t("formatHint"), formatAny: t("formatAny"), maxParticipants: t("maxParticipants"),
     isFree: t("isFree"), priceFrom: t("priceFrom"), priceTo: t("priceTo"), currency: t("currency"),
     externalUrl: t("externalUrl"), externalUrlHint: t("externalUrlHint"),
     contactEmail: t("contactEmail"), contactPhone: t("contactPhone"),
@@ -147,6 +149,15 @@ export default async function EditEventPage({
       venueNameRequired: t("errors.venueNameRequired"),
     },
   };
+
+  const boostTier = organizer.subscriptionTier as Tier;
+  const includedTotal = BOOSTS_INCLUDED_PER_MONTH[boostTier] ?? 0;
+  const includedRemaining = includedTotal > 0 ? await getIncludedBoostsRemaining(organizer.id, boostTier) : 0;
+  const boostKinds = [
+    { kind: "basic" as const,    label: "Basic — €9 · 7d",                niceLabel: "Basic" },
+    { kind: "featured" as const, label: "Featured — €39 · 14d",            niceLabel: "Featured" },
+    { kind: "premium" as const,  label: "Premium — €119 · 7d homepage",    niceLabel: "Premium" },
+  ];
 
   return (
     <div>
@@ -185,15 +196,38 @@ export default async function EditEventPage({
         <div className="mb-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-gradient-to-br from-[var(--color-pitch-50)] to-[var(--color-surface)] p-5">
           <div className="mb-3 flex items-center gap-2">
             <Rocket className="h-5 w-5 text-[var(--color-pitch-600)]" />
-            <h2 className="font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">Boost this event</h2>
+            <h2 className="font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">{tOrg("boostThis")}</h2>
           </div>
-          <p className="mb-4 text-sm text-[var(--color-muted-strong)]">One-time visibility upgrade. Pays for itself if it brings even one applicant.</p>
+          <p className="mb-4 text-sm text-[var(--color-muted-strong)]">{tOrg("boostThisHint")}</p>
+
+          {includedTotal > 0 && (
+            <div className="mb-4 rounded-[var(--radius-md)] border border-[var(--color-premium)]/30 bg-amber-50/60 p-3">
+              <div className="mb-2 flex items-center gap-2 text-sm">
+                <Gift className="h-4 w-4 text-[var(--color-premium)]" />
+                <span className="font-semibold text-[var(--color-foreground)]">
+                  {tOrg("includedBoosts.title", { remaining: includedRemaining, total: includedTotal })}
+                </span>
+              </div>
+              {includedRemaining > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {boostKinds.filter((b) => includedKindAllowed(boostTier, b.kind)).map((b) => (
+                    <form key={`inc-${b.kind}`} action={applyIncludedBoost}>
+                      <input type="hidden" name="eventId" value={ev.id} />
+                      <input type="hidden" name="kind" value={b.kind} />
+                      <button type="submit" className="rounded-[var(--radius-md)] border border-[var(--color-premium)] bg-[var(--color-premium)] px-3.5 py-2 text-xs font-bold text-white hover:opacity-90">
+                        {tOrg("includedBoosts.applyCta", { kind: b.niceLabel })}
+                      </button>
+                    </form>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-[var(--color-muted-strong)]">{tOrg("includedBoosts.exhausted")}</p>
+              )}
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-2">
-            {[
-              { kind: "basic",    label: "Basic — €9 · 7d" },
-              { kind: "featured", label: "Featured — €39 · 14d" },
-              { kind: "premium",  label: "Premium — €119 · 7d homepage" },
-            ].map((b) => (
+            {boostKinds.map((b) => (
               <form key={b.kind} action={startBoostCheckout}>
                 <input type="hidden" name="eventId" value={ev.id} />
                 <input type="hidden" name="kind" value={b.kind} />

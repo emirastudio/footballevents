@@ -94,6 +94,44 @@ export async function POST(req: NextRequest) {
             subscriptionEndsAt: item?.current_period_end ? new Date(item.current_period_end * 1000) : null,
           },
         });
+
+        // Welcome boost: on first activation of a paid tier, auto-apply one BASIC
+        // boost (7 days) to the nearest upcoming PUBLISHED event so the organizer
+        // immediately sees the effect of their subscription. Tagged with a
+        // sentinel paymentId so we never grant it twice for the same subscription.
+        if (event.type === "customer.subscription.created" && (tier === "PRO" || tier === "PREMIUM" || tier === "ENTERPRISE")) {
+          const sentinel = `welcome:${sub.id}`;
+          const already = await db.boost.findFirst({ where: { paymentId: sentinel } });
+          if (!already) {
+            const target = await db.event.findFirst({
+              where: {
+                organizerId: organizer.id,
+                status: "PUBLISHED",
+                startDate: { gte: new Date() },
+              },
+              orderBy: { startDate: "asc" },
+            });
+            if (target) {
+              const startsAt = new Date();
+              const endsAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+              await db.boost.create({
+                data: {
+                  eventId: target.id,
+                  tier: "BASIC",
+                  startsAt,
+                  endsAt,
+                  priceCents: 0,
+                  currency: "EUR",
+                  paymentId: sentinel,
+                },
+              });
+              await db.event.update({
+                where: { id: target.id },
+                data: { boostTier: "BASIC", boostUntil: endsAt },
+              });
+            }
+          }
+        }
         break;
       }
 

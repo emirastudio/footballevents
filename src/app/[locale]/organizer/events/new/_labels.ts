@@ -36,7 +36,7 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     genderMale: tw("genderMale"), genderFemale: tw("genderFemale"), genderMixed: tw("genderMixed"),
     skillLevel: t("skillLevel"),
     skillAll: tw("skillAll"), skillAm: tw("skillAm"), skillSemiPro: tw("skillSemiPro"), skillPro: tw("skillPro"),
-    format: t("format"), formatHint: t("formatHint"), maxParticipants: t("maxParticipants"),
+    format: t("format"), formatHint: t("formatHint"), formatAny: t("formatAny"), maxParticipants: t("maxParticipants"),
 
     isFree: t("isFree"), priceFrom: t("priceFrom"), priceTo: t("priceTo"), currency: t("currency"),
     externalUrl: t("externalUrl"), externalUrlHint: t("externalUrlHint"),
