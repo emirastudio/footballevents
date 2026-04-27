@@ -303,6 +303,11 @@ function Step2({
   defaults: WizardDefaults; labels: WizardLabels;
   fe: Record<string, string>; errMsg: (key?: string) => string | undefined;
 }) {
+  // Local state for the address so picking a venue can autofill it.
+  // `addressKey` bumps to force-remount the AddressAutocomplete with a new defaultValue.
+  const [address, setAddress] = useState<string>(defaults.venueAddress ?? "");
+  const [addressKey, setAddressKey] = useState(0);
+
   return (
     <div className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-3">
@@ -328,12 +333,19 @@ function Step2({
         error={errMsg(fe.venueName)}
         defaultValue={defaults.venueName}
         countryCode={countryCode}
+        onPicked={(v) => {
+          if (v.address) {
+            setAddress(v.address);
+            setAddressKey((k) => k + 1);
+          }
+        }}
       />
       <AddressAutocomplete
+        key={addressKey}
         name="venueAddress"
         label={labels.venueAddress}
         hint={labels.venueAddressHint}
-        defaultValue={defaults.venueAddress}
+        defaultValue={address}
         countryCode={countryCode}
       />
     </div>
