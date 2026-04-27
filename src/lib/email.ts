@@ -1,7 +1,8 @@
 import { Resend } from "resend";
 
 const apiKey = process.env.RESEND_API_KEY;
-const FROM = process.env.EMAIL_FROM ?? "FootballEvents.eu <noreply@footballevents.eu>";
+const FROM = process.env.EMAIL_FROM ?? "FootballEvents.eu <support@footballevents.eu>";
+const DEFAULT_REPLY_TO = process.env.EMAIL_REPLY_TO ?? "support@footballevents.eu";
 
 const resend = apiKey ? new Resend(apiKey) : null;
 
@@ -9,20 +10,40 @@ export type SendArgs = {
   to: string | string[];
   subject: string;
   html: string;
+  text?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 };
 
-export async function sendEmail({ to, subject, html, replyTo }: SendArgs) {
+export async function sendEmail({ to, subject, html, text, replyTo, headers }: SendArgs) {
+  const finalReplyTo = replyTo ?? DEFAULT_REPLY_TO;
+  // List-Unsubscribe is the single biggest deliverability signal for Gmail/iCloud
+  // outside of DKIM/SPF/DMARC — even on transactional mail.
+  const listUnsubUrl = `${SITE}/api/unsubscribe?email=${encodeURIComponent(Array.isArray(to) ? to[0] : to)}`;
+  const baseHeaders: Record<string, string> = {
+    "List-Unsubscribe": `<${listUnsubUrl}>, <mailto:${DEFAULT_REPLY_TO}?subject=unsubscribe>`,
+    "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+  };
+  const finalHeaders = { ...baseHeaders, ...(headers ?? {}) };
+  const finalText = text ?? htmlToText(html);
+
   if (!resend) {
-    // Dev / pre-prod: log to console instead of throwing.
     if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console
-      console.info("[email:dev] would send", { to, subject, replyTo, length: html.length });
+      console.info("[email:dev] would send", { to, subject, replyTo: finalReplyTo, length: html.length });
     }
     return { ok: false as const, skipped: true as const };
   }
   try {
-    const { data, error } = await resend.emails.send({ from: FROM, to, subject, html, replyTo });
+    const { data, error } = await resend.emails.send({
+      from: FROM,
+      to,
+      subject,
+      html,
+      text: finalText,
+      replyTo: finalReplyTo,
+      headers: finalHeaders,
+    });
     if (error) {
       console.error("[email] send failed", error);
       return { ok: false as const, error: String(error) };
@@ -32,6 +53,24 @@ export async function sendEmail({ to, subject, html, replyTo }: SendArgs) {
     console.error("[email] threw", e);
     return { ok: false as const, error: String(e) };
   }
+}
+
+function htmlToText(html: string): string {
+  return html
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>([^<]*)<\/a>/gi, "$2 ($1)")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/p>|<\/div>|<\/h\d>|<\/li>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
@@ -63,7 +102,15 @@ export function magicLinkEmail(opts: { to: string; url: string; expiresMinutes: 
      <p style="font-size:12px;color:#64748b">If the button doesn't work, paste this URL into your browser:<br><span style="word-break:break-all">${safeUrl}</span></p>
      <p style="font-size:12px;color:#64748b">If you didn't request this email, you can safely ignore it — no account changes were made.</p>`,
   );
-  return sendEmail({ to: opts.to, subject: "Sign in to FootballEvents.eu", html });
+  const text = [
+    `Sign in to FootballEvents.eu`,
+    ``,
+    `Open this link to finish signing in (expires in ${opts.expiresMinutes} minutes, one-time use):`,
+    opts.url,
+    ``,
+    `If you didn't request this email, you can safely ignore it.`,
+  ].join("\n");
+  return sendEmail({ to: opts.to, subject: "Sign in to FootballEvents.eu", html, text });
 }
 
 export function welcomeEmail(opts: { to: string; name: string }) {

@@ -58,7 +58,7 @@ providers.push({
   name: "Email magic link",
   type: "email",
   maxAge: MAGIC_LINK_TTL_MINUTES * 60,
-  from: process.env.EMAIL_FROM ?? "FootballEvents.eu <noreply@footballevents.eu>",
+  from: process.env.EMAIL_FROM ?? "FootballEvents.eu <support@footballevents.eu>",
   async sendVerificationRequest({ identifier, url }: { identifier: string; url: string }) {
     const result = await magicLinkEmail({
       to: identifier,
