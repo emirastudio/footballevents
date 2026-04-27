@@ -189,32 +189,43 @@ export default async function CapabilitiesPage({
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { tone: "premium", title: "Iberia Cup U14", city: "Barcelona", price: "€480" },
-                      { tone: "featured", title: "Alpine Camp", city: "Innsbruck", price: "€620" },
-                      { tone: "regular", title: "London Open", city: "London", price: "€185" },
-                    ].map((m, i) => (
-                      <div key={i} className="overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-[var(--color-border)]">
-                        <div className="relative aspect-[4/3] bg-gradient-to-br from-[var(--color-pitch-100)] via-[var(--color-pitch-50)] to-[var(--color-navy-50)]">
-                          {m.tone === "premium" && (
-                            <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-[var(--color-premium)] text-white ring-2 ring-white">
-                              <Star className="h-2.5 w-2.5 fill-current" />
-                            </span>
-                          )}
-                          {m.tone === "featured" && (
-                            <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-[var(--color-pitch-500)] text-white ring-2 ring-white">
-                              <Sparkles className="h-2.5 w-2.5" />
-                            </span>
-                          )}
-                        </div>
-                        <div className="p-2">
-                          <div className="truncate text-[11px] font-semibold text-[var(--color-foreground)]">{m.title}</div>
-                          <div className="mt-0.5 flex items-center gap-1 text-[9px] text-[var(--color-muted)]">
-                            <MapPin className="h-2 w-2" />{m.city}
+                      { tone: "premium",  event: showcasePremium  },
+                      { tone: "featured", event: showcaseFeatured },
+                      { tone: "regular",  event: showcaseRegular  },
+                    ]
+                      .filter((m) => m.event)
+                      .map(({ tone, event }) => {
+                        const e = event!;
+                        const price = e.isFree
+                          ? tCommon("free")
+                          : `${e.currency === "EUR" ? "€" : e.currency === "USD" ? "$" : e.currency + " "}${e.priceFrom}`;
+                        return (
+                          <div key={e.id} className="overflow-hidden rounded-md bg-white shadow-sm ring-1 ring-[var(--color-border)]">
+                            <div
+                              className="relative aspect-[4/3] bg-cover bg-center bg-gradient-to-br from-[var(--color-pitch-100)] via-[var(--color-pitch-50)] to-[var(--color-navy-50)]"
+                              style={e.coverUrl ? { backgroundImage: `url(${e.coverUrl})` } : undefined}
+                            >
+                              {tone === "premium" && (
+                                <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-[var(--color-premium)] text-white ring-2 ring-white">
+                                  <Star className="h-2.5 w-2.5 fill-current" />
+                                </span>
+                              )}
+                              {tone === "featured" && (
+                                <span className="absolute right-1.5 top-1.5 grid h-5 w-5 place-items-center rounded-full bg-[var(--color-pitch-500)] text-white ring-2 ring-white">
+                                  <Sparkles className="h-2.5 w-2.5" />
+                                </span>
+                              )}
+                            </div>
+                            <div className="p-2">
+                              <div className="truncate text-[11px] font-semibold text-[var(--color-foreground)]">{e.title}</div>
+                              <div className="mt-0.5 flex items-center gap-1 text-[9px] text-[var(--color-muted)]">
+                                <MapPin className="h-2 w-2" />{e.city || e.countryCode}
+                              </div>
+                              <div className="mt-1 text-[10px] font-bold text-[var(--color-foreground)]">{price}</div>
+                            </div>
                           </div>
-                          <div className="mt-1 text-[10px] font-bold text-[var(--color-foreground)]">{m.price}</div>
-                        </div>
-                      </div>
-                    ))}
+                        );
+                      })}
                   </div>
                 </div>
               </div>
