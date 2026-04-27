@@ -1,4 +1,15 @@
 {
+  "about": {
+    "title": "О нас",
+    "subtitle": "footballevents.eu — премиум-каталог футбольных мероприятий по всему миру. Оператор — Goality Sport Group OÜ, Таллинн, Эстония. Мы помогаем организаторам находить игроков и болельщиков без границ."
+  },
+  "contact": {
+    "title": "Контакты",
+    "subtitle": "Вопросы, партнёрства, пресса. Отвечаем в течение 1 рабочего дня.",
+    "email": "Email",
+    "supportTitle": "Поддержка",
+    "supportBody": "support@footballevents.eu"
+  },
   "meta": {
     "siteName": "FootballEvents.eu",
     "tagline": "Премиум-каталог футбольных мероприятий по всему миру",
