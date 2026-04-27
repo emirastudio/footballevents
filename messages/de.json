@@ -1,4 +1,9 @@
 {
+  "meta": {
+    "siteName": "FootballEvents.eu",
+    "tagline": "Der Premium-Katalog für Fußballveranstaltungen weltweit",
+    "slogan": "Hier spielt die Welt"
+  },
   "auth": {
     "signInTitle": "Willkommen zurück",
     "signInSubtitle": "Melde dich an, um Events zu speichern, Veranstaltern zu folgen und teilzunehmen.",
@@ -15,7 +20,12 @@
     "haveAccount": "Schon ein Konto?",
     "loading": "Bitte warten…",
     "continueWithGoogle": "Mit Google fortfahren",
-    "or": "oder"
+    "or": "oder",
+    "magicLinkSubmit": "Anmeldelink per E-Mail schicken",
+    "magicLinkSentTitle": "Postfach prüfen",
+    "magicLinkSentBody": "Wir haben einen einmaligen Anmeldelink an deine E-Mail geschickt. Öffne ihn, um die Anmeldung abzuschließen.",
+    "magicLinkExpiry": "Der Link läuft in 30 Minuten ab und ist nur einmal verwendbar.",
+    "backToSignIn": "Zurück zur Anmeldung"
   },
   "organizer": {
     "becomeOrganizer": "Veranstalter werden",
@@ -32,6 +42,19 @@
     "taglineHint": "Ein kurzer Satz unter deinem Namen.",
     "about": "Über uns",
     "aboutHint": "Was ihr macht, wo, für wen. 2–4 Sätze sind ideal.",
+    "englishSection": "Über uns auf Englisch",
+    "englishSectionHint": "Englisch ist Pflicht — die Standardsprache der Plattform und das, was internationale Teilnehmer zuerst sehen.",
+    "secondSection": "Über uns in deiner Sprache",
+    "secondSectionHint": "Optional. Wähle eine zweite Sprache — Besucher mit dieser Locale sehen diese Version statt Englisch.",
+    "secondLanguagePicker": "Zweite Sprache",
+    "taglineEn": "Slogan (Englisch)",
+    "aboutEn": "Über uns (Englisch)",
+    "taglineSecond": "Slogan",
+    "aboutSecond": "Über uns",
+    "langNone": "— Keine zweite Sprache",
+    "langRu": "Russisch (Русский)",
+    "langDe": "Deutsch",
+    "langEs": "Spanisch (Español)",
     "logoUrl": "Logo",
     "coverUrl": "Cover-Bild",
     "website": "Website",
@@ -88,19 +111,77 @@
       "PUBLISHED": "Veröffentlicht",
       "ARCHIVED": "Archiviert",
       "REJECTED": "Abgelehnt"
+    },
+    "divisionsCount": "{count} Klassen",
+    "settingsComingSoon": "Demnächst — Profil bearbeiten, Logo/Cover, Social Media, Tarif und Abrechnung (Stripe).",
+    "reviewsModComingSoon": "Demnächst — Bewertungs-Moderation: freigeben/ausblenden/antworten, Eskalation an Admin.",
+    "boostThis": "Dieses Event boosten",
+    "boostThisHint": "Einmaliger Sichtbarkeitsschub. Lohnt sich schon ab einer einzigen zusätzlichen Anmeldung.",
+    "boostBasicLabel": "Basic — €9 · 7 Tg",
+    "boostFeaturedLabel": "Featured — €39 · 14 Tg",
+    "boostPremiumLabel": "Premium — €119 · 7 Tg Homepage",
+    "yourReply": "Deine Antwort"
+  },
+  "apply": {
+    "title": "Anmeldung für {eventTitle}",
+    "subtitle": "Sende deine Anmeldung an den Veranstalter. Antwort kommt per E-Mail und in dein Konto-Postfach.",
+    "participantName": "Name des Teilnehmers",
+    "participantAge": "Alter",
+    "teamName": "Team / Verein (optional)",
+    "partySize": "Wie viele Teilnehmer?",
+    "contactEmail": "E-Mail",
+    "contactPhone": "Telefon (optional)",
+    "comment": "Nachricht an den Veranstalter",
+    "commentHint": "Was der Veranstalter über euer Team / Niveau / eure Fragen wissen sollte.",
+    "submit": "Anmeldung senden",
+    "submitting": "Sende…",
+    "successTitle": "Anmeldung gesendet",
+    "successBody": "Der Veranstalter prüft und antwortet. Statusupdates findest du in deinem Konto.",
+    "viewMine": "Meine Anmeldungen",
+    "alreadyApplied": "Du hast dich für dieses Event bereits angemeldet.",
+    "notAccepted": "Dieses Event akzeptiert keine Anmeldungen über die Plattform.",
+    "ownEvent": "Das ist dein eigenes Event — du kannst dich nicht selbst anmelden."
+  },
+  "bookings": {
+    "labelEmail": "E-Mail",
+    "labelPhone": "Telefon",
+    "labelTeam": "Team",
+    "labelAge": "Alter",
+    "labelParty": "Anzahl",
+    "pageTitle": "Anmeldungen",
+    "filterAll": "Alle",
+    "filterNew": "Neu",
+    "filterAccepted": "Angenommen",
+    "filterDeclined": "Abgelehnt",
+    "noNew": "Keine neuen Anmeldungen.",
+    "applicant": "Bewerber",
+    "event": "Event",
+    "submitted": "Eingegangen",
+    "status": "Status",
+    "actions": "Aktionen",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "view": "Ansehen",
+    "details": "Details",
+    "note": "Notiz an Bewerber (optional)",
+    "send": "Antwort senden",
+    "noteHint": "Diese Nachricht geht in der E-Mail an den Bewerber mit.",
+    "applicantStatus": {
+      "NEW": "Neu",
+      "ACCEPTED": "Angenommen",
+      "DECLINED": "Abgelehnt",
+      "CANCELLED": "Storniert",
+      "COMPLETED": "Abgeschlossen"
     }
   },
-  "me": {
-    "pageTitle": "Mein Konto",
-    "pageSubtitle": "Gemerkte Events, abonnierte Veranstalter und deine Anmeldungen.",
-    "savedEvents": "Gemerkte Events",
-    "followedOrganizers": "Abonnierte Veranstalter",
-    "noSaves": "Du hast noch nichts gemerkt. Schau im Katalog und tippe auf das Lesezeichen.",
-    "noFollows": "Du folgst noch keinen Veranstaltern.",
-    "browseEvents": "Zu den Events",
-    "browseOrganizers": "Zu den Veranstaltern",
-    "since": "Seit",
-    "account": "Konto"
+  "myApplications": {
+    "pageTitle": "Meine Anmeldungen",
+    "subtitle": "Anmeldungen, die du an Veranstalter gesendet hast, und ihre Antworten.",
+    "empty": "Du hast dich noch für kein Event angemeldet.",
+    "browse": "Events ansehen",
+    "appliedOn": "Angemeldet am",
+    "respondedOn": "Antwort am",
+    "organizerNote": "Antwort des Veranstalters"
   },
   "eventForm": {
     "newTitle": "Event erstellen",
@@ -131,20 +212,34 @@
     },
     "category": "Kategorie",
     "categoryHint": "Wähle die passendste — beeinflusst Sortierung und Filter.",
+    "englishSection": "Inhalte auf Englisch",
+    "englishSectionHint": "Pflicht. Englisch ist die Lingua franca des Katalogs — jeder Besucher sieht es.",
+    "secondSection": "Zweite Sprache (optional)",
+    "secondSectionHint": "Füge deine lokale Sprache hinzu, damit Besucher in dieser Sprache deine Originaltexte statt Englisch sehen.",
+    "secondLanguagePicker": "Zweite Sprache",
+    "langRu": "Russisch",
+    "langDe": "Deutsch",
+    "langEs": "Spanisch (Español)",
+    "langNone": "— Keine zweite Sprache",
     "titleEn": "Titel (English)",
     "titleEnHint": "Pflicht. Kurz und konkret (z.B. «Iberia Cup U14 Boys 2026»).",
     "shortDescEn": "Kurzbeschreibung (English)",
     "shortDescEnHint": "1–2 Sätze für Karten im Katalog.",
     "descriptionEn": "Vollständige Beschreibung (English)",
     "descriptionEnHint": "Was Teilnehmer erwartet: Format, Niveau, Inklusivleistungen, was es besonders macht.",
+    "titleSecond": "Titel",
+    "shortDescSecond": "Kurzbeschreibung",
+    "descriptionSecond": "Vollständige Beschreibung",
     "startDate": "Startdatum",
     "endDate": "Enddatum",
     "registrationDeadline": "Anmeldeschluss",
     "timezone": "Zeitzone",
     "country": "Land",
     "city": "Stadt",
-    "venue": "Stadion",
-    "venueHint": "Aus bekannten Stadien wählen oder leer lassen und Adresse eintragen.",
+    "venueName": "Standort (Name)",
+    "venueNameHint": "Name des Standorts — Stadion, Halle, Akademie. Wenn er noch nicht im Katalog ist, fügen wir ihn automatisch hinzu.",
+    "venueAddress": "Adresse",
+    "venueAddressHint": "Vollständige Anschrift — Straße, Nr., PLZ. Hilft Spielern und Schiedsrichtern, den Ort zu finden.",
     "customLocation": "Adresse",
     "customLocationHint": "Freitext-Adresse, wenn kein Stadion gewählt.",
     "ageGroups": "Altersgruppen",
@@ -179,6 +274,13 @@
     "tierLockTitle": "Verfügbar mit Pro und Premium",
     "tierLockBody": "Upgrade, um diesen Bereich auszufüllen. Entwürfe bleiben speicherbar.",
     "videoLockBody": "Video-Embeds sind ein Premium-Feature.",
+    "genderBoys": "Jungen",
+    "genderGirls": "Mädchen",
+    "genderMixed": "Gemischt",
+    "skillAllLevels": "Alle Niveaus",
+    "skillAmateur": "Amateur",
+    "skillSemiPro": "Semi-Profi",
+    "skillProfessional": "Profi",
     "errors": {
       "titleRequired": "Englischer Titel ist Pflicht",
       "descriptionRequired": "Englische Beschreibung ist Pflicht",
@@ -262,10 +364,82 @@
       "datesRequired": "Datum vor Veröffentlichung wählen"
     }
   },
-  "meta": {
-    "siteName": "FootballEvents.eu",
-    "tagline": "Der Premium-Katalog für Fußballveranstaltungen weltweit",
-    "slogan": "Hier spielt die Welt"
+  "me": {
+    "pageTitle": "Mein Konto",
+    "pageSubtitle": "Gemerkte Events, abonnierte Veranstalter und deine Anmeldungen.",
+    "savedEvents": "Gemerkte Events",
+    "followedOrganizers": "Abonnierte Veranstalter",
+    "noSaves": "Du hast noch nichts gemerkt. Schau im Katalog und tippe auf das Lesezeichen.",
+    "noFollows": "Du folgst noch keinen Veranstaltern.",
+    "browseEvents": "Zu den Events",
+    "browseOrganizers": "Zu den Veranstaltern",
+    "since": "Seit",
+    "account": "Konto",
+    "backToProfile": "Zurück zum Profil",
+    "settings": {
+      "title": "Einstellungen",
+      "subtitle": "Profil, Anmeldemethoden und Konto verwalten.",
+      "save": "Änderungen speichern",
+      "loading": "Speichern…",
+      "saved": "Gespeichert.",
+      "cancel": "Abbrechen",
+      "profileTitle": "Profil",
+      "profileSubtitle": "Dein Name, Avatar und deine Sprache.",
+      "name": "Anzeigename",
+      "avatar": "Avatar",
+      "locale": "Bevorzugte Sprache",
+      "passwordTitle": "Passwort",
+      "passwordSetSubtitle": "Passwort als zweite Anmeldemethode hinzufügen (Magic Link bleibt aktiv).",
+      "passwordChangeSubtitle": "Passwort ändern.",
+      "passwordCurrent": "Aktuelles Passwort",
+      "passwordNew": "Neues Passwort",
+      "passwordSet": "Passwort setzen",
+      "passwordChange": "Passwort ändern",
+      "passwordSaved": "Passwort aktualisiert.",
+      "passwordHint": "Mindestens 8 Zeichen.",
+      "emailTitle": "E-Mail-Adresse",
+      "emailSubtitle": "Wir senden einen Bestätigungslink an die neue Adresse. Die alte E-Mail bleibt bis zur Bestätigung aktiv.",
+      "emailCurrent": "Aktuell",
+      "emailNew": "Neue E-Mail",
+      "emailSubmit": "Bestätigungslink senden",
+      "emailSent": "Bestätigungslink gesendet. Öffne ihn von der neuen Adresse.",
+      "emailPending": "Bestätigung ausstehend",
+      "emailChangedOk": "E-Mail erfolgreich aktualisiert.",
+      "emailLinkExpired": "Bestätigungslink abgelaufen. Fordere einen neuen an.",
+      "emailLinkInvalid": "Ungültiger Bestätigungslink.",
+      "emailTaken": "Diese E-Mail wird von einem anderen Konto verwendet.",
+      "connectionsTitle": "Anmeldemethoden",
+      "connectionsSubtitle": "Wie du dich bei diesem Konto anmelden kannst.",
+      "linked": "Verbunden",
+      "notLinked": "Nicht verbunden",
+      "set": "Gesetzt",
+      "notSet": "Nicht gesetzt",
+      "password": "Passwort",
+      "magicLink": "Magic Link",
+      "alwaysOn": "Immer aktiv",
+      "dangerTitle": "Konto löschen",
+      "dangerSubtitle": "Entfernt deine persönlichen Daten. Bewertungen und Anmeldungen, die du an Veranstalter gesendet hast, bleiben für sie als „Gelöschter Nutzer“ sichtbar — sie brauchen das für ihre Unterlagen.",
+      "deleteWarning": "Das ist endgültig. Wir löschen Name, E-Mail, Avatar und Anmeldemethoden. Du kannst dich danach nicht mehr anmelden.",
+      "deleteConfirmHint": "DELETE eingeben zum Bestätigen",
+      "deleteOpen": "Konto löschen",
+      "deleteSubmit": "Endgültig löschen"
+    }
+  },
+  "messages": {
+    "noMessagesYet": "Noch keine Nachrichten.",
+    "shortcutHint": "Cmd/Strg + Enter",
+    "noReviewsYet": "Noch keine Bewertungen.",
+    "inboxTitle": "Nachrichten",
+    "emptyInbox": "Noch keine Konversationen — melde dich für ein Event an, um zu starten.",
+    "emptyInboxOrganizer": "Noch keine Konversationen — sie erscheinen hier, sobald sich Teilnehmer für deine Events anmelden.",
+    "send": "Senden",
+    "sending": "Sende…",
+    "sendDisabled": "Schreibe eine Nachricht zum Senden",
+    "replyPlaceholder": "Antwort schreiben…",
+    "applicationAcceptedSystem": "Anmeldung angenommen",
+    "applicationDeclinedSystem": "Anmeldung abgelehnt",
+    "newMessageEmailSubject": "Neue Nachricht von {senderName} zu {eventTitle}",
+    "newMessageEmailBody": "{senderName} hat dir eine Nachricht zu {eventTitle} geschickt."
   },
   "nav": {
     "events": "Events",
@@ -280,6 +454,11 @@
     "signIn": "Anmelden",
     "signUp": "Loslegen",
     "postEvent": "Event eintragen"
+  },
+  "homeTop": {
+    "badge": "Top {count}",
+    "title": "Top Fußball-Events weltweit",
+    "subtitle": "Sortiert nach Bewertungen, Buchungen und Redaktionspicks weltweit."
   },
   "home": {
     "hero": {
@@ -305,6 +484,13 @@
       "subtitle": "Ausgewählt von Veranstaltern und unserer Redaktion.",
       "viewAll": "Alle Events"
     },
+    "launchPromo": {
+      "label": "Launch-Angebot",
+      "title": "Erste 50 Veranstalter — 3 Monate Premium kostenlos",
+      "subtitle": "Jetzt registrieren und 3 Monate Premium gratis: unbegrenzte Events, „Verifiziert“-Badge, erweiterte Analytics, persönlicher Manager.",
+      "remaining": "Plätze frei",
+      "cta": "Premium sichern"
+    },
     "forOrganizers": {
       "eyebrow": "Für Veranstalter",
       "title": "Tausende Fans, Spieler und Eltern erreichen.",
@@ -322,7 +508,48 @@
     "company": "Unternehmen",
     "legal": "Rechtliches",
     "rights": "Alle Rechte vorbehalten.",
-    "language": "Sprache"
+    "language": "Sprache",
+    "pricing": "Preise",
+    "api": "API",
+    "about": "Über uns",
+    "contact": "Kontakt",
+    "blog": "Blog",
+    "terms": "AGB",
+    "privacy": "Datenschutz",
+    "cookies": "Cookies",
+    "madeFor": "Für Fußballfans weltweit gemacht ⚽"
+  },
+  "cookieBanner": {
+    "text": "Wir nutzen nur essentielle Cookies für Anmeldung und Sicherheit. Keine Tracking-Cookies — Analytics ist cookie-frei.",
+    "policy": "Cookie-Richtlinie",
+    "reject": "Nicht-essentielle ablehnen",
+    "accept": "Akzeptieren",
+    "close": "Schließen"
+  },
+  "upload": {
+    "uploadImage": "Bild hochladen",
+    "replace": "Ersetzen",
+    "remove": "Entfernen",
+    "cancel": "Abbrechen",
+    "uploading": "Lade hoch…",
+    "uploadingHint": "Lade hoch… ein paar Sekunden, bitte.",
+    "saveCrop": "Zuschnitt speichern",
+    "saveCropHint": "Vergiss nicht, „{saveCrop}“ zu drücken, sonst wird das Bild nicht hochgeladen.",
+    "errOnlyJpgPngWebp": "Nur JPG, PNG oder WebP",
+    "errFileTooBig": "Datei zu groß (max. 10 MB)",
+    "errImageTooSmall": "Bild zu klein. Mindestens {w}×{h}.",
+    "errPresignFailed": "Presign fehlgeschlagen",
+    "errUploadFailed": "Upload fehlgeschlagen",
+    "errEncodeFailed": "Encoding fehlgeschlagen",
+    "errCanvasUnsupported": "Canvas nicht unterstützt"
+  },
+  "combobox": {
+    "noMatches": "Keine Treffer",
+    "searching": "Suche…",
+    "clear": "Leeren",
+    "cityType": "Stadtnamen eingeben…",
+    "cityPickCountry": "Erst ein Land wählen",
+    "cityNotFound": "Keine Städte gefunden"
   },
   "i18n": {
     "translatedFromEn": "Aus dem Englischen übersetzt",
@@ -345,7 +572,24 @@
     "noResults": "Keine Ergebnisse gefunden.",
     "tryDifferentFilters": "Passen Sie Filter oder Suchbegriffe an.",
     "results": "Ergebnisse",
-    "result": "Ergebnis"
+    "result": "Ergebnis",
+    "home": "Start",
+    "all": "Alle",
+    "view": "Ansehen",
+    "edit": "Bearbeiten",
+    "archive": "Archivieren",
+    "delete": "Löschen",
+    "viewPublic": "Öffentlich ansehen",
+    "status": "Status",
+    "close": "Schließen",
+    "clear": "Leeren",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "noMatches": "Keine Treffer",
+    "searching": "Suche…",
+    "advertising": "Werbung",
+    "comingSoon": "Demnächst",
+    "website": "Website"
   },
   "filters": {
     "title": "Filter",
@@ -375,6 +619,7 @@
     "pageSubtitle": "Turniere, Camps, Festivals, Masterclasses und Spielreisen aus aller Welt.",
     "detail": {
       "about": "Über das Event",
+      "translatedFromHint": "Beschreibung wurde noch nicht in deine Sprache übersetzt — wir zeigen das Original.",
       "details": "Details",
       "dates": "Termine",
       "location": "Ort",
@@ -418,6 +663,19 @@
   "organizers": {
     "pageTitle": "Veranstalter",
     "pageSubtitle": "Verifizierte Fußball-Veranstalter weltweit.",
+    "filters": {
+      "searchPlaceholder": "Nach Name oder Stadt suchen…",
+      "country": "Land",
+      "allCountries": "Alle Länder",
+      "tier": "Tarif",
+      "allTiers": "Alle Tarife",
+      "activity": "Aktivität",
+      "allActivities": "Alle Aktivitäten",
+      "verifiedOnly": "Nur verifizierte",
+      "apply": "Anwenden",
+      "reset": "Zurücksetzen",
+      "empty": "Keine Veranstalter passen zu deinen Filtern."
+    },
     "detail": {
       "about": "Über uns",
       "contact": "Kontakt",
@@ -446,20 +704,262 @@
     }
   },
   "categoryHeaders": {
-    "tournaments":   { "title": "Fußballturniere",     "subtitle": "Wettbewerbe für alle Altersgruppen und Niveaus." },
-    "camps":         { "title": "Fußballcamps",         "subtitle": "Mehrtägige Trainingscamps mit Top-Trainern." },
-    "festivals":     { "title": "Fußballfestivals",     "subtitle": "Feiern des Spiels — Fanzonen, Ausstellungen, Turniere." },
-    "masterclasses": { "title": "Masterclasses",        "subtitle": "Skill-Sessions mit Profi-Trainern und Spielern." },
-    "match-tours":   { "title": "Spielreisen",          "subtitle": "Reisen zu den größten Stadien der Welt." },
-    "showcases":     { "title": "Showcases",            "subtitle": "Events für Spieler auf dem Sprung zur nächsten Stufe." },
-    "training-camps": { "title": "Trainingslager",     "subtitle": "Vor- und Saisonvorbereitungs-Trainingslager für Vereine und Akademien." },
-    "tryouts":       { "title": "Sichtungen",          "subtitle": "Individuelle Sichtungen und Probetrainings." }
+    "tournaments": {
+      "title": "Fußballturniere",
+      "subtitle": "Wettbewerbe für alle Altersgruppen und Niveaus."
+    },
+    "camps": {
+      "title": "Fußballcamps",
+      "subtitle": "Mehrtägige Trainingscamps mit Top-Trainern."
+    },
+    "festivals": {
+      "title": "Fußballfestivals",
+      "subtitle": "Feiern des Spiels — Fanzonen, Ausstellungen, Turniere."
+    },
+    "masterclasses": {
+      "title": "Masterclasses",
+      "subtitle": "Skill-Sessions mit Profi-Trainern und Spielern."
+    },
+    "match-tours": {
+      "title": "Spielreisen",
+      "subtitle": "Reisen zu den größten Stadien der Welt."
+    },
+    "showcases": {
+      "title": "Showcases",
+      "subtitle": "Events für Spieler auf dem Sprung zur nächsten Stufe."
+    },
+    "training-camps": {
+      "title": "Trainingslager",
+      "subtitle": "Vor- und Saisonvorbereitungs-Trainingslager für Vereine und Akademien."
+    },
+    "tryouts": {
+      "title": "Sichtungen",
+      "subtitle": "Individuelle Sichtungen und Probetrainings."
+    }
   },
   "advertise": {
-    "audience1": { "label": "Besucher monatlich" },
-    "audience2": { "label": "Länder" },
-    "audience3": { "label": "Aktive Veranstalter" },
-    "audience4": { "label": "Ø Sitzung" }
+    "eyebrow": "Für Veranstalter",
+    "pageTitle": "Poste dein Fußball-Event — damit Spieler es finden",
+    "pageSubtitle": "Turniere, Camps, Festivals, Masterclasses und Spielreisen. Kostenlos starten. Tausende Spieler, Eltern und Trainer durchsuchen den Katalog jeden Monat nach Events wie deinem.",
+    "ctaPrimary": "Event posten",
+    "ctaSecondary": "Preise ansehen",
+    "launchPromo": {
+      "label": "Launch-Angebot",
+      "title": "Erste 50 Veranstalter — 3 Monate Premium kostenlos",
+      "subtitle": "Jetzt registrieren und 3 Monate Premium gratis: unbegrenzte Events, „Verifiziert“-Badge, erweiterte Analytics, persönlicher Manager.",
+      "remaining": "Plätze frei",
+      "cta": "Premium sichern"
+    },
+    "vision": {
+      "eyebrow": "Warum du das brauchst",
+      "title": "Die Hälfte deiner potenziellen Spieler findet dich gerade nie",
+      "p1": "Turniere und Camps leben in Instagram-Stories, veralteten Websites oder WhatsApp-Gruppen. Wer deinem Account nicht folgt oder nicht weiß, wen er fragen soll — geht vorbei. Werbebudget fließt raus, Anmeldungen bleiben niedrig.",
+      "p2": "FootballEvents bringt alle Fußball-Events in einen Katalog. Ein Vater in Berlin sucht ein Sommercamp für seinen Sohn, kommt zu uns, wählt „10 Jahre, Juli, Österreich“ — und sieht dein Programm in den Top 5. Keine Anzeigen nötig — einfach weil du gelistet bist."
+    },
+    "audienceTitle": "Globales Fußballpublikum",
+    "countriesLabel": "Länder",
+    "audience1": {
+      "label": "Besucher monatlich",
+      "value": "120k+"
+    },
+    "audience2": {
+      "label": "Länder",
+      "value": "60+"
+    },
+    "audience3": {
+      "label": "Aktive Veranstalter",
+      "value": "180+"
+    },
+    "audience4": {
+      "label": "Ø Sitzung",
+      "value": "3:42"
+    },
+    "channelsTitle": "Was du auf der Seite tun kannst",
+    "channelsSubtitle": "Vier Optionen — von kostenlos bis Premium. Zahle nur für das, was du brauchst.",
+    "channel1": {
+      "tag": "Für Veranstalter",
+      "title": "30 Tage kostenlos",
+      "desc": "Bis zu 3 Events einen Monat lang kostenlos. Posten, sehen wie Anmeldungen reinkommen, dann entscheiden — Pro weiterführen oder bei den Basics bleiben.",
+      "bullets": [
+        "Bis zu 3 Events kostenlos — 30 Tage",
+        "Englisch Pflicht + lokale Sprache optional",
+        "Anmeldungen und Nachrichten — im Dashboard",
+        "Bewertungen moderierst du selbst",
+        "🔥 Erste 50 Veranstalter — 3 Monate Premium"
+      ]
+    },
+    "channel2": {
+      "tag": "Für Veranstalter",
+      "title": "Event nach oben pushen",
+      "desc": "Brauchst du mehr Anmeldungen bis zu einem bestimmten Datum? Ein Boost hebt dein Event 1–4 Wochen in den Listings. Einmalig, ohne Abo.",
+      "bullets": [
+        "Basic — 7 Tage höher in Listen, €19",
+        "Featured — 14 Tage Kategorie-Top, grünes Badge, €49",
+        "Premium — 30 Tage auf Homepage, goldenes Badge, €129",
+        "Bezahle bei Bedarf — keine Auto-Abbuchungen"
+      ]
+    },
+    "channel3": {
+      "tag": "Für Veranstalter",
+      "title": "Abo für aktive Veranstalter",
+      "desc": "Mehrere Events pro Jahr oder Agentur? Pro und Premium heben Limits auf und geben dir richtige Tools.",
+      "bullets": [
+        "Pro €9,90/Mo (Launch) — bis 25 Events, Analytics, Support",
+        "Premium €99/Mo — unbegrenzt, „Verifiziert“-Badge",
+        "Persönlicher Manager bei Premium",
+        "Rabatt auf Boosts und Bannerwerbung"
+      ]
+    },
+    "channel4": {
+      "tag": "Für Marken & Shops",
+      "title": "Werbung auf der Seite",
+      "desc": "Banner nur Leuten zeigen, die es interessiert. Zum Beispiel: Eltern von U12-Kindern in Deutschland oder Trainer in Spanien.",
+      "bullets": [
+        "6 Platzierungen: Homepage, Kategorien, Stadionseiten",
+        "Targeting nach Land, Sprache, Event-Kategorie",
+        "Impressionen und Klicks transparent",
+        "Ab €290 pro 1000 Impressionen"
+      ]
+    },
+    "advantagesTitle": "Warum das besser funktioniert als Anzeigen",
+    "advantage1": {
+      "title": "Spieler finden dich in 3 Klicks",
+      "desc": "Land, Alter, Format wählen — passende Events sehen. Kein Scrollen durch 50 Seiten und Instagram-Flyer."
+    },
+    "advantage2": {
+      "title": "Mehrsprachige Seite",
+      "desc": "Oberfläche in 4 Sprachen: Englisch, Russisch, Deutsch, Spanisch. Beschreibung in deiner Sprache + Englisch (damit Ausländer es verstehen). Termine, Preise, Fotos — klar ohne Übersetzung."
+    },
+    "advantage3": {
+      "title": "Funktioniert mobil",
+      "desc": "80% der Anmeldungen kommen vom Handy. Seite ist schnell, Buttons groß, Formular dauert 30 Sekunden."
+    },
+    "advantage4": {
+      "title": "Keine Spam-Bewertungen",
+      "desc": "Du genehmigst Bewertungen selbst. Admin hilft bei Streitfällen. Trolle kommen nicht durch."
+    },
+    "advantage5": {
+      "title": "Chat in der Seite",
+      "desc": "Alle Fragen der Bewerber an einem Ort. Keine Leads in E-Mail, WhatsApp oder DMs verloren. Volles Gespräch im Dashboard sichtbar."
+    },
+    "advantage6": {
+      "title": "Tickets — bald",
+      "desc": "Wir bauen Ticketverkauf über die Seite. Geld landet direkt auf deinem Konto via Stripe. Aktivierung optional — deine Daten bleiben."
+    },
+    "showcaseTitle": "So sieht dein Event im Katalog aus",
+    "showcaseSubtitle": "Standard, Featured und Premium — der Unterschied auf einen Blick und in Klicks.",
+    "showcaseRegular": {
+      "tag": "Free",
+      "title": "Standard-Karte",
+      "desc": "Erscheint in Kategorie, Filtern und Suche. Reicht, wenn du schon einen Namen hast."
+    },
+    "showcaseFeatured": {
+      "tag": "Featured",
+      "title": "Grünes Badge + Kategorie-Top",
+      "desc": "Karte oben mit „Featured“-Badge. Im Schnitt 3× mehr Klicks."
+    },
+    "showcasePremium": {
+      "tag": "Premium",
+      "title": "Goldenes Badge + Homepage-Karussell",
+      "desc": "Der sichtbarste Platz — Homepage-Karussell. 7× mehr Klicks. Für dein Flaggschiff-Event."
+    },
+    "placementsTitle": "Wo dein Banner sitzen kann",
+    "placementsSubtitle": "12 Platzierungen über die Seite — von der Homepage bis zu einzelnen Event-Seiten. Verschiedene Formate für verschiedene Ziele.",
+    "placement1": {
+      "where": "Homepage",
+      "title": "Hero — oben auf Homepage",
+      "size": "1280×400",
+      "desc": "Sichtbarster Platz. Jeder Besucher sieht es."
+    },
+    "placement2": {
+      "where": "Homepage",
+      "title": "Mid-Page-Slot",
+      "size": "1280×200",
+      "desc": "Zwischen Featured und Top 50. Große Reichweite ohne Hero-Priorität."
+    },
+    "placement3": {
+      "where": "Katalog",
+      "title": "Über Kategorieliste",
+      "size": "1200×200",
+      "desc": "Z.B. über allen „Turnieren“ oder „Camps“. Enger Kontext."
+    },
+    "placement4": {
+      "where": "Katalog",
+      "title": "Im Kategorie-Feed",
+      "size": "970×250",
+      "desc": "Großer nativer Block alle 12 Positionen. Geht im Feed nicht unter."
+    },
+    "placement5": {
+      "where": "Katalog",
+      "title": "In Suchergebnissen",
+      "size": "1200×120",
+      "desc": "Alle 8 Positionen — natives Banner. Sieht aus wie eine Karte, als Anzeige markiert."
+    },
+    "placement6": {
+      "where": "Event-Seite",
+      "title": "Event-Seite — oben",
+      "size": "970×250",
+      "desc": "Direkt unter dem Cover, vor der Beschreibung. 100% der Seitenbesucher sehen es."
+    },
+    "placement7": {
+      "where": "Event-Seite",
+      "title": "Event-Seite — Sidebar",
+      "size": "300×600",
+      "desc": "Sidebar neben Beschreibung und „Anmelden“. Langfristige Präsenz."
+    },
+    "placement8": {
+      "where": "Event-Seite",
+      "title": "Event-Seite — unten",
+      "size": "728×250",
+      "desc": "Über „Ähnliche Events“. Erreicht engagierte Besucher."
+    },
+    "placement9": {
+      "where": "Stadion",
+      "title": "Stadion-Seite",
+      "size": "728×90",
+      "desc": "Nur spanische Zielgruppe? Auf spanische Stadionseiten platzieren."
+    },
+    "placement10": {
+      "where": "Veranstalter",
+      "title": "Veranstalter-Seite",
+      "size": "970×90",
+      "desc": "Über der Eventliste. Passt für b2b-Services."
+    },
+    "placement11": {
+      "where": "Mobile",
+      "title": "Mobile Sticky Bottom",
+      "size": "320×100",
+      "desc": "Unten am mobilen Bildschirm fixiert. Beim Scrollen immer sichtbar."
+    },
+    "placement12": {
+      "where": "Global",
+      "title": "Site-Footer",
+      "size": "1280×120",
+      "desc": "Auf jedem Seitenende. Langfristige Präsenz für weniger Geld."
+    },
+    "howItWorksTitle": "So startest du — drei Schritte",
+    "step1": {
+      "title": "Registrieren",
+      "desc": "E-Mail + Passwort, 60 Sekunden. Keine Karte nötig."
+    },
+    "step2": {
+      "title": "Event posten",
+      "desc": "Name, Beschreibung, Termine, Fotos, Preis. Englisch Pflicht (damit jeder es sieht), lokale Sprache optional."
+    },
+    "step3": {
+      "title": "Anmeldungen erhalten",
+      "desc": "Anmeldungen kommen rein. Mit Teilnehmer chatten, annehmen oder ablehnen — alles an einem Ort."
+    },
+    "finalCtaTitle": "Bereit, es auszuprobieren?",
+    "finalCtaSubtitle": "30 Tage kostenlos. Erste 50 Veranstalter bekommen 3 Monate Premium. Keine Karte, keine Verpflichtung.",
+    "finalCta1": "Registrieren",
+    "finalCta2": "Preise ansehen",
+    "livePreview": "Live-Vorschau",
+    "adLabel": "Anzeige",
+    "pillTournaments": "Turniere",
+    "pillCamps": "Camps",
+    "pillFestivals": "Festivals",
+    "pillMatchTours": "Spielreisen"
   },
   "pricing": {
     "pageTitle": "Preise",
@@ -474,16 +974,44 @@
     "ctaButton": "Loslegen",
     "ctaContact": "Vertrieb kontaktieren",
     "tiers": {
-      "free":       { "name": "Free",       "tagline": "Kostenlos ausprobieren." },
-      "pro":        { "name": "Pro",        "tagline": "Für Veranstalter mit mehreren Events." },
-      "premium":    { "name": "Premium",    "tagline": "Für Agenturen und Großoperatoren." },
-      "enterprise": { "name": "Enterprise", "tagline": "Verbände & White-Label." }
+      "free": {
+        "name": "Free",
+        "tagline": "Kostenlos ausprobieren."
+      },
+      "pro": {
+        "name": "Pro",
+        "tagline": "Für Veranstalter mit mehreren Events."
+      },
+      "premium": {
+        "name": "Premium",
+        "tagline": "Für Agenturen und Großoperatoren."
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "tagline": "Verbände & White-Label."
+      }
     },
     "tierPrice": {
-      "free":     { "monthly": "€0",  "annual": "€0",   "annualEq": "" },
-      "pro":      { "monthly": "€9.90", "annual": "€99", "annualEq": "€8.25/Mo" },
-      "premium":  { "monthly": "€99", "annual": "€990", "annualEq": "€82/Mo" },
-      "enterprise": { "monthly": "Auf Anfrage", "annual": "Auf Anfrage", "annualEq": "" }
+      "free": {
+        "monthly": "€0",
+        "annual": "€0",
+        "annualEq": ""
+      },
+      "pro": {
+        "monthly": "€9.90",
+        "annual": "€99",
+        "annualEq": "€8.25/Mo"
+      },
+      "premium": {
+        "monthly": "€99",
+        "annual": "€990",
+        "annualEq": "€82/Mo"
+      },
+      "enterprise": {
+        "monthly": "Auf Anfrage",
+        "annual": "Auf Anfrage",
+        "annualEq": ""
+      }
     },
     "compareTitle": "Tarife vergleichen",
     "feature": "Funktion",
@@ -544,39 +1072,222 @@
     },
     "boostTitle": "Event boosten",
     "boostSubtitle": "Einmalige Sichtbarkeitsschübe. Ohne Abo.",
-    "boostBasic":    { "name": "Basic Boost",    "price": "€9",   "desc": "7 Tage höher in den Listings." },
-    "boostFeatured": { "name": "Featured",       "price": "€39",  "desc": "14 Tage Kategorie-Top + 'Featured'-Badge." },
-    "boostPremium":  { "name": "Premium Boost",  "price": "€119", "desc": "7 Tage in der Homepage-Hero-Rotation + featured + Goldrand." },
-    "boostBundle1":  { "name": "Bundle 3 + 1",   "price": "€99",  "desc": "3 Basic + 1 Featured. Frei auf Events verteilen." },
-    "boostBundle2":  { "name": "Bundle 5 + 2",   "price": "€249", "desc": "5 Basic + 2 Featured. Bestpreis für aktive Veranstalter." },
+    "boostBasic": {
+      "name": "Basic Boost",
+      "price": "€9",
+      "desc": "7 Tage höher in den Listings."
+    },
+    "boostFeatured": {
+      "name": "Featured",
+      "price": "€39",
+      "desc": "14 Tage Kategorie-Top + 'Featured'-Badge."
+    },
+    "boostPremium": {
+      "name": "Premium Boost",
+      "price": "€119",
+      "desc": "7 Tage in der Homepage-Hero-Rotation + featured + Goldrand."
+    },
+    "boostBundle1": {
+      "name": "Bundle 3 + 1",
+      "price": "€99",
+      "desc": "3 Basic + 1 Featured. Frei auf Events verteilen."
+    },
+    "boostBundle2": {
+      "name": "Bundle 5 + 2",
+      "price": "€249",
+      "desc": "5 Basic + 2 Featured. Bestpreis für aktive Veranstalter."
+    },
     "adsTitle": "Werbung für Marken",
     "adsSubtitle": "Erreiche eine engagierte Fußball-Zielgruppe. Konditionen verhandelbar — schreib uns.",
     "adsCta": "Anzeigenverkauf kontaktieren",
     "adsList": [
-      { "label": "Homepage-Hero",                "from": "ab €350/Wo" },
-      { "label": "Sidebar (sticky)",              "from": "ab €120/Wo" },
-      { "label": "Top der Kategorie",             "from": "ab €90/Wo" },
-      { "label": "Event- / Stadion-Sidebar",      "from": "ab €60/Wo" },
-      { "label": "Footer-Banner",                 "from": "ab €40/Wo" },
-      { "label": "Sponsored Kategorie (1 Monat)", "from": "ab €1 200" },
-      { "label": "Sponsored Search (CPC)",        "from": "ab €0,30" }
+      {
+        "label": "Homepage-Hero",
+        "from": "ab €350/Wo"
+      },
+      {
+        "label": "Sidebar (sticky)",
+        "from": "ab €120/Wo"
+      },
+      {
+        "label": "Top der Kategorie",
+        "from": "ab €90/Wo"
+      },
+      {
+        "label": "Event- / Stadion-Sidebar",
+        "from": "ab €60/Wo"
+      },
+      {
+        "label": "Footer-Banner",
+        "from": "ab €40/Wo"
+      },
+      {
+        "label": "Sponsored Kategorie (1 Monat)",
+        "from": "ab €1 200"
+      },
+      {
+        "label": "Sponsored Search (CPC)",
+        "from": "ab €0,30"
+      }
     ],
     "ticketingTitle": "Ticket-Gebühren (v3, bald)",
     "ticketingSubtitle": "Sobald Plattform-Ticketing live ist, zahlen Veranstalter eine Servicegebühr pro Ticket. Stripe-Gebühren werden separat weitergegeben.",
     "ticketingRows": [
-      { "tier": "Free",       "fee": "6% + €0,49" },
-      { "tier": "Pro",        "fee": "4% + €0,49" },
-      { "tier": "Premium",    "fee": "2,5% + €0,49" },
-      { "tier": "Enterprise", "fee": "1,5% pauschal" }
+      {
+        "tier": "Free",
+        "fee": "6% + €0,49"
+      },
+      {
+        "tier": "Pro",
+        "fee": "4% + €0,49"
+      },
+      {
+        "tier": "Premium",
+        "fee": "2,5% + €0,49"
+      },
+      {
+        "tier": "Enterprise",
+        "fee": "1,5% pauschal"
+      }
     ],
     "faqTitle": "Häufige Fragen",
     "faqs": [
-      { "q": "Kann ich kostenlos starten?",                                "a": "Ja — Free ist dauerhaft kostenlos, ohne Kreditkarte. Du bekommst 2 aktive Events, Galerie, Programm und Logo im Hero. Du kannst jederzeit upgraden oder downgraden." },
-      { "q": "Was ist der Unterschied zwischen Boost und Premium?",         "a": "Boost ist ein einmaliger Push für ein einzelnes Event. Premium ist ein Abo, das Funktionen (FAQ, Video, Featured) für all deine Events freischaltet — plus monatlich enthaltene Boosts." },
-      { "q": "Kann ich jederzeit kündigen?",                                "a": "Ja. Jahrespläne sind mitten im Zyklus nicht erstattbar, aber deine Funktionen bleiben bis zum Ende des Zeitraums aktiv." },
-      { "q": "Berechnet ihr MwSt.?",                                         "a": "Wir stellen in EUR in Rechnung. EU-Unternehmen mit gültiger USt-IdNr. erhalten Reverse-Charge. Privatpersonen und EU-Unternehmen ohne USt-IdNr. sehen die MwSt. im Checkout." },
-      { "q": "Wie funktioniert das Moderations-SLA?",                       "a": "Wenn du ein Event zur Prüfung einreichst, prüft unser Team es innerhalb der SLA-Frist deines Tarifs (Free 48 Std, Pro 24 Std, Premium 4 Std)." },
-      { "q": "Kann ich später von monatlich auf jährlich wechseln?",        "a": "Ja — wechsle jederzeit, der Jahrespreis greift im nächsten Abrechnungszyklus, mit ~17% Ersparnis." }
+      {
+        "q": "Kann ich kostenlos starten?",
+        "a": "Ja — Free ist dauerhaft kostenlos, ohne Kreditkarte. Du bekommst 2 aktive Events, Galerie, Programm und Logo im Hero. Du kannst jederzeit upgraden oder downgraden."
+      },
+      {
+        "q": "Was ist der Unterschied zwischen Boost und Premium?",
+        "a": "Boost ist ein einmaliger Push für ein einzelnes Event. Premium ist ein Abo, das Funktionen (FAQ, Video, Featured) für all deine Events freischaltet — plus monatlich enthaltene Boosts."
+      },
+      {
+        "q": "Kann ich jederzeit kündigen?",
+        "a": "Ja. Jahrespläne sind mitten im Zyklus nicht erstattbar, aber deine Funktionen bleiben bis zum Ende des Zeitraums aktiv."
+      },
+      {
+        "q": "Berechnet ihr MwSt.?",
+        "a": "Wir stellen in EUR in Rechnung. EU-Unternehmen mit gültiger USt-IdNr. erhalten Reverse-Charge. Privatpersonen und EU-Unternehmen ohne USt-IdNr. sehen die MwSt. im Checkout."
+      },
+      {
+        "q": "Wie funktioniert das Moderations-SLA?",
+        "a": "Wenn du ein Event zur Prüfung einreichst, prüft unser Team es innerhalb der SLA-Frist deines Tarifs (Free 48 Std, Pro 24 Std, Premium 4 Std)."
+      },
+      {
+        "q": "Kann ich später von monatlich auf jährlich wechseln?",
+        "a": "Ja — wechsle jederzeit, der Jahrespreis greift im nächsten Abrechnungszyklus, mit ~17% Ersparnis."
+      }
     ]
+  },
+  "admin": {
+    "badge": "Admin",
+    "nav": {
+      "overview": "Übersicht",
+      "eventsQueue": "Event-Queue",
+      "allBookings": "Alle Buchungen",
+      "organizers": "Veranstalter",
+      "reviews": "Bewertungen",
+      "users": "Nutzer"
+    },
+    "dashboard": {
+      "title": "Admin-Übersicht",
+      "stats": {
+        "pendingReview": "Zur Prüfung",
+        "pendingReviewHint": "Events",
+        "pendingReviews": "Offene Bewertungen",
+        "pendingReviewsHint": "Bewertungen",
+        "events": "Events",
+        "organizers": "Veranstalter",
+        "users": "Nutzer",
+        "newUsers7d": "Neue Nutzer · 7 Tg",
+        "bannedUsers": "Gesperrte Nutzer",
+        "bookingsNew": "Buchungen (neu)",
+        "bookingsTotal": "{count} gesamt",
+        "freeOrganizers": "Free-Veranstalter",
+        "proOrganizers": "Pro-Veranstalter",
+        "premiumOrganizers": "Premium-Veranstalter",
+        "enterpriseOrganizers": "Enterprise-Veranstalter"
+      }
+    },
+    "users": {
+      "title": "Nutzer",
+      "table": {
+        "email": "E-Mail",
+        "name": "Name",
+        "role": "Rolle",
+        "organizer": "Veranstalter",
+        "created": "Erstellt",
+        "signup": "Registrierung",
+        "lastSeen": "Zuletzt aktiv",
+        "ban": "Sperren"
+      },
+      "bannedBadge": "Gesperrt",
+      "save": "Speichern",
+      "ban": "Sperren",
+      "unban": "Entsperren",
+      "reasonPlaceholder": "Grund",
+      "confirmBan": "{email} sperren? Anmeldung wird verhindert.",
+      "confirmUnban": "{email} entsperren?"
+    },
+    "events": {
+      "title": "Event-Queue",
+      "filterAll": "Alle",
+      "empty": "Nichts zu prüfen.",
+      "preview": "Vorschau",
+      "approve": "Freigeben",
+      "reject": "Ablehnen",
+      "boost": "Boost",
+      "boostKinds": {
+        "basic": "Basic (7 Tg)",
+        "featured": "Featured (14 Tg)",
+        "premium": "Premium (7 Tg)",
+        "bundle31": "Bundle 3+1 (7 Tg)",
+        "bundle52": "Bundle 5+2 (7 Tg)"
+      },
+      "daysPlaceholder": "Tage",
+      "bookingsCount": "{count} Buchungen"
+    },
+    "organizers": {
+      "title": "Veranstalter",
+      "filters": {
+        "all": "Alle",
+        "free": "Free",
+        "pro": "Pro",
+        "premium": "Premium",
+        "enterprise": "Enterprise",
+        "verified": "Verifiziert",
+        "unverified": "Unverifiziert"
+      },
+      "table": {
+        "name": "Name",
+        "email": "E-Mail",
+        "slug": "Slug",
+        "tier": "Tarif",
+        "subEnds": "Abo endet",
+        "verified": "Verifiziert",
+        "grantTier": "Tarif zuweisen"
+      },
+      "verifiedYes": "Verifiziert ✓",
+      "verifyAction": "Verifizieren",
+      "grant": "Zuweisen"
+    },
+    "reviews": {
+      "title": "Bewertungen",
+      "empty": "Nichts zu moderieren.",
+      "noReviews": "Keine Bewertungen.",
+      "approve": "Freigeben",
+      "reject": "Ablehnen",
+      "ratingFmt": "{value}/5",
+      "by": "von {name}"
+    },
+    "bookings": {
+      "title": "Alle Buchungen",
+      "table": {
+        "applicant": "Bewerber",
+        "event": "Event",
+        "organizer": "Veranstalter",
+        "status": "Status",
+        "submitted": "Eingegangen"
+      }
+    }
   }
 }
