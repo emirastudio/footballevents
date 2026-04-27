@@ -380,12 +380,7 @@
     "errPresignFailed": "Presign failed",
     "errUploadFailed": "Upload failed",
     "errEncodeFailed": "Encode failed",
-    "errCanvasUnsupported": "Canvas not supported",
-    "rec.organizer-logo": "Square 512×512+ · PNG with transparency or JPG · max 5MB",
-    "rec.organizer-cover": "Wide 1920×640 (3:1) · JPG/WebP · max 5MB",
-    "rec.event-logo": "Square 512×512+ · max 5MB",
-    "rec.event-cover": "16:9 · 1600×900+ · max 5MB",
-    "rec.event-gallery": "4:3 · 1600×1200+ · max 5MB"
+    "errCanvasUnsupported": "Canvas not supported"
   },
   "combobox": {
     "noMatches": "No matches",

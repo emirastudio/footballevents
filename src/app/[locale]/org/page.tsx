@@ -4,6 +4,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import { getOrganizers, getOrganizerCountryCodes, type OrganizerFilters } from "@/lib/queries";
 import { getCountries, findCountry } from "@/lib/countries";
+import { Search, Globe2, Sparkles, ShieldCheck, ChevronDown, X } from "lucide-react";
 
 type SP = Record<string, string | string[] | undefined>;
 
@@ -66,6 +67,25 @@ export default async function OrganizersPage({
 
   const hasFilters = !!(country || filters.tier || verified || q);
 
+  const activeCountry = country ? countryByCode.get(country) ?? findCountry(country) : null;
+  const activeChips: { key: string; label: string; href: string }[] = [];
+  const buildHref = (overrides: Record<string, string | null>) => {
+    const next = new URLSearchParams();
+    if (q) next.set("q", q);
+    if (country) next.set("country", country);
+    if (filters.tier) next.set("tier", filters.tier);
+    if (verified) next.set("verified", "1");
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v === null) next.delete(k); else next.set(k, v);
+    }
+    const s = next.toString();
+    return s ? `?${s}` : "?";
+  };
+  if (q) activeChips.push({ key: "q", label: `"${q}"`, href: buildHref({ q: null }) });
+  if (activeCountry) activeChips.push({ key: "country", label: `${activeCountry.flag} ${activeCountry.name}`, href: buildHref({ country: null }) });
+  if (filters.tier) activeChips.push({ key: "tier", label: filters.tier, href: buildHref({ tier: null }) });
+  if (verified) activeChips.push({ key: "verified", label: t("filters.verifiedOnly"), href: buildHref({ verified: null }) });
+
   return (
     <>
       <PageHeader
@@ -77,67 +97,122 @@ export default async function OrganizersPage({
         {/* Filter bar — pure GET form, no client JS */}
         <form
           method="GET"
-          className="mb-6 flex flex-wrap items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-xs)]"
+          className="mb-4 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-sm)] sm:p-4"
         >
-          <input
-            type="text"
-            name="q"
-            defaultValue={q}
-            placeholder={t("filters.searchPlaceholder")}
-            className="min-w-[180px] flex-1 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
-            aria-label={t("filters.searchPlaceholder")}
-          />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center">
+            {/* Search */}
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+              <input
+                type="text"
+                name="q"
+                defaultValue={q}
+                placeholder={t("filters.searchPlaceholder")}
+                className="h-11 w-full rounded-[var(--radius-full)] border border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] pl-10 pr-9 text-sm outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-pitch-500)] focus:bg-[var(--color-surface)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+                aria-label={t("filters.searchPlaceholder")}
+              />
+              {q && (
+                <a
+                  href={buildHref({ q: null })}
+                  aria-label={t("filters.reset")}
+                  className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-[var(--color-muted)] transition hover:bg-[var(--color-bg-muted)] hover:text-[var(--color-foreground)]"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </a>
+              )}
+            </div>
 
-          <select
-            name="country"
-            defaultValue={country ?? ""}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
-            aria-label={t("filters.country")}
-          >
-            <option value="">{t("filters.allCountries")}</option>
-            {countryOpts.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.flag} {c.name}
-              </option>
-            ))}
-          </select>
+            {/* Country */}
+            <div className="relative">
+              <Globe2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+              <select
+                name="country"
+                defaultValue={country ?? ""}
+                className="h-11 w-full appearance-none rounded-[var(--radius-full)] border border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] pl-10 pr-9 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:bg-[var(--color-surface)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+                aria-label={t("filters.country")}
+              >
+                <option value="">{t("filters.allCountries")}</option>
+                {countryOpts.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.name}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+            </div>
 
-          <select
-            name="tier"
-            defaultValue={filters.tier ?? ""}
-            className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
-            aria-label={t("filters.tier")}
-          >
-            <option value="">{t("filters.allTiers")}</option>
-            {TIERS.map((tr) => (
-              <option key={tr} value={tr}>{tr}</option>
-            ))}
-          </select>
+            {/* Tier */}
+            <div className="relative">
+              <Sparkles className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+              <select
+                name="tier"
+                defaultValue={filters.tier ?? ""}
+                className="h-11 w-full appearance-none rounded-[var(--radius-full)] border border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] pl-10 pr-9 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:bg-[var(--color-surface)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+                aria-label={t("filters.tier")}
+              >
+                <option value="">{t("filters.allTiers")}</option>
+                {TIERS.map((tr) => (
+                  <option key={tr} value={tr}>{tr}</option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+            </div>
 
-          <label className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-foreground)]">
-            <input
-              type="checkbox"
-              name="verified"
-              value="1"
-              defaultChecked={verified}
-              className="h-4 w-4 accent-[var(--color-pitch-500)]"
-            />
-            {t("filters.verifiedOnly")}
-          </label>
+            {/* Actions */}
+            <div className="flex items-center gap-2 sm:justify-end">
+              {/* Verified pill toggle */}
+              <label
+                className={`inline-flex h-11 cursor-pointer select-none items-center gap-2 rounded-[var(--radius-full)] border px-3.5 text-sm font-medium transition ${
+                  verified
+                    ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)]/10 text-[var(--color-pitch-700)]"
+                    : "border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)] hover:text-[var(--color-foreground)]"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  name="verified"
+                  value="1"
+                  defaultChecked={verified}
+                  className="sr-only"
+                />
+                <ShieldCheck className={`h-4 w-4 ${verified ? "text-[var(--color-pitch-600)]" : ""}`} />
+                <span className="hidden sm:inline">{t("filters.verifiedOnly")}</span>
+              </label>
 
-          <button
-            type="submit"
-            className="rounded-[var(--radius-md)] bg-[var(--color-pitch-600)] px-4 py-2 text-sm font-semibold text-white shadow-[var(--shadow-xs)] transition hover:bg-[var(--color-pitch-700)]"
-          >
-            {t("filters.apply")}
-          </button>
-          {hasFilters && (
-            <a
-              href="?"
-              className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 py-2 text-sm font-medium text-[var(--color-muted-strong)] transition hover:bg-[var(--color-bg-muted)]"
-            >
-              {t("filters.reset")}
-            </a>
+              <button
+                type="submit"
+                className="inline-flex h-11 items-center justify-center rounded-[var(--radius-full)] bg-[var(--color-pitch-600)] px-5 text-sm font-semibold text-white shadow-[var(--shadow-xs)] transition hover:bg-[var(--color-pitch-700)] active:translate-y-px"
+              >
+                {t("filters.apply")}
+              </button>
+            </div>
+          </div>
+
+          {/* Active filter chips */}
+          {activeChips.length > 0 && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--color-border)] pt-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                {organizers.length}
+              </span>
+              {activeChips.map((c) => (
+                <a
+                  key={c.key}
+                  href={c.href}
+                  className="group inline-flex items-center gap-1.5 rounded-[var(--radius-full)] border border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] py-1 pl-3 pr-2 text-xs font-medium text-[var(--color-foreground)] transition hover:border-[var(--color-pitch-300)] hover:bg-[var(--color-pitch-500)]/5"
+                >
+                  <span>{c.label}</span>
+                  <span className="grid h-4 w-4 place-items-center rounded-full text-[var(--color-muted)] transition group-hover:bg-[var(--color-pitch-500)]/10 group-hover:text-[var(--color-pitch-700)]">
+                    <X className="h-3 w-3" />
+                  </span>
+                </a>
+              ))}
+              <a
+                href="?"
+                className="ml-auto text-xs font-medium text-[var(--color-muted-strong)] underline-offset-4 hover:text-[var(--color-pitch-700)] hover:underline"
+              >
+                {t("filters.reset")}
+              </a>
+            </div>
           )}
         </form>
 
