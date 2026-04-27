@@ -5,6 +5,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { magicLinkEmail } from "@/lib/email";
+
+export const MAGIC_LINK_TTL_MINUTES = 30;
 
 type Role = "USER" | "ORGANIZER" | "ADMIN";
 
@@ -48,6 +51,26 @@ if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
   providers.push(Google);
 }
 
+// Magic-link (passwordless) — uses Resend via lib/email.
+// VerificationToken table from Prisma adapter stores hashed tokens; one-time use, short TTL.
+providers.push({
+  id: "email",
+  name: "Email magic link",
+  type: "email",
+  maxAge: MAGIC_LINK_TTL_MINUTES * 60,
+  from: process.env.EMAIL_FROM ?? "FootballEvents.eu <noreply@footballevents.eu>",
+  async sendVerificationRequest({ identifier, url }: { identifier: string; url: string }) {
+    const result = await magicLinkEmail({
+      to: identifier,
+      url,
+      expiresMinutes: MAGIC_LINK_TTL_MINUTES,
+    });
+    if (!result.ok && !("skipped" in result && result.skipped)) {
+      throw new Error("Failed to send magic-link email");
+    }
+  },
+} as unknown as NextAuthConfig["providers"][number]);
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -70,6 +93,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/sign-in",
     error: "/sign-in",
+    verifyRequest: "/sign-in/check-email",
   },
   providers,
   callbacks: {

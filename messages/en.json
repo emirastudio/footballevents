@@ -20,7 +20,12 @@
     "haveAccount": "Already have an account?",
     "loading": "Please wait…",
     "continueWithGoogle": "Continue with Google",
-    "or": "or"
+    "or": "or",
+    "magicLinkSubmit": "Email me a sign-in link",
+    "magicLinkSentTitle": "Check your inbox",
+    "magicLinkSentBody": "We sent a one-time sign-in link to your email. Open it to finish signing in.",
+    "magicLinkExpiry": "The link expires in 30 minutes and can only be used once.",
+    "backToSignIn": "Back to sign in"
   },
   "organizer": {
     "becomeOrganizer": "Become an organizer",

@@ -121,3 +121,62 @@ export async function signOutAction() {
 export async function googleSignInAction() {
   await signIn("google", { redirectTo: "/" });
 }
+
+const magicLinkSchema = z.object({
+  email: z.string().email("Invalid email"),
+  website: z.string().max(0, "Bot detected").optional().default(""),
+  startedAt: z.coerce.number().optional(),
+});
+
+export type MagicLinkState = { error?: string; sent?: boolean } | null;
+
+const MAGIC_LINK_PER_EMAIL_PER_15MIN = 3;
+const MAGIC_LINK_PER_IP_PER_HOUR = 10;
+
+export async function magicLinkAction(_prev: MagicLinkState, formData: FormData): Promise<MagicLinkState> {
+  const parsed = magicLinkSchema.safeParse({
+    email: formData.get("email"),
+    website: formData.get("website") ?? "",
+    startedAt: formData.get("startedAt") ?? undefined,
+  });
+  if (!parsed.success) {
+    if (parsed.error.issues.some((i) => i.path.join(".") === "website")) {
+      return { error: "Could not send link. Try again." };
+    }
+    return { error: parsed.error.issues[0]?.message ?? "Invalid email" };
+  }
+  const { email, startedAt } = parsed.data;
+
+  if (startedAt && Date.now() - startedAt < 1_500) {
+    return { error: "Could not send link. Try again." };
+  }
+
+  const ip = await getClientIp();
+  const fifteenMinAgo = new Date(Date.now() - 15 * 60 * 1000);
+  const hourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+  const recentForEmail = await db.verificationToken.count({
+    where: { identifier: email, expires: { gte: fifteenMinAgo } },
+  });
+  if (recentForEmail >= MAGIC_LINK_PER_EMAIL_PER_15MIN) {
+    return { error: "Too many sign-in links requested. Check your inbox or try again later." };
+  }
+
+  if (ip) {
+    const recentByIp = await db.user.count({
+      where: { lastLoginIp: ip, lastLoginAt: { gte: hourAgo } },
+    });
+    if (recentByIp >= MAGIC_LINK_PER_IP_PER_HOUR) {
+      return { error: "Too many requests from this network. Try again later." };
+    }
+  }
+
+  try {
+    // redirect: false — we render our own "check your inbox" UI via the form state.
+    await signIn("email", { email, redirect: false });
+  } catch (e) {
+    if (e instanceof AuthError) return { error: "Could not send sign-in link. Try again." };
+    throw e;
+  }
+  return { sent: true };
+}

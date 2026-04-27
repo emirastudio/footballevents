@@ -15,7 +15,12 @@
     "haveAccount": "Уже есть аккаунт?",
     "loading": "Подождите…",
     "continueWithGoogle": "Войти через Google",
-    "or": "или"
+    "or": "или",
+    "magicLinkSubmit": "Прислать ссылку на почту",
+    "magicLinkSentTitle": "Проверьте почту",
+    "magicLinkSentBody": "Мы отправили одноразовую ссылку для входа. Откройте её, чтобы завершить вход.",
+    "magicLinkExpiry": "Ссылка действует 30 минут и работает один раз.",
+    "backToSignIn": "Вернуться ко входу"
   },
   "organizer": {
     "becomeOrganizer": "Стать организатором",

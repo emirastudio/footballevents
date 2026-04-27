@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
+import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 
 export default async function SignInPage({
   params,
@@ -33,6 +34,21 @@ export default async function SignInPage({
               password: t("password"),
               submit: t("signIn"),
               loading: t("loading"),
+            }}
+          />
+
+          <div className="relative text-center text-xs uppercase tracking-wider text-[var(--color-muted)]">
+            <span className="relative z-10 bg-[var(--color-surface)] px-3">{t("or")}</span>
+            <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--color-border)]" aria-hidden />
+          </div>
+
+          <MagicLinkForm
+            labels={{
+              email: t("email"),
+              submit: t("magicLinkSubmit"),
+              loading: t("loading"),
+              sentTitle: t("magicLinkSentTitle"),
+              sentBody: t("magicLinkSentBody"),
             }}
           />
         </div>
