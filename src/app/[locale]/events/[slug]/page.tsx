@@ -33,7 +33,7 @@ export default async function EventDetailPage({
 }) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const event = await getEventBySlug(slug);
+  const event = await getEventBySlug(slug, locale);
   if (!event) notFound();
 
   const t       = await getTranslations("events.detail");
@@ -44,7 +44,7 @@ export default async function EventDetailPage({
   const venue     = event.venueSlug ? await getVenueBySlug(event.venueSlug) : undefined;
   const country   = getCountry(event.countryCode);
   const reviews   = await getReviewsByEvent(event.id);
-  const sameCategory = await getEventsByCategory(event.categorySlug);
+  const sameCategory = await getEventsByCategory(event.categorySlug, locale);
   const similar = sameCategory.filter((e) => e.id !== event.id).slice(0, 4);
 
   const cardLabels = {
@@ -123,9 +123,19 @@ export default async function EventDetailPage({
               ))}
             </div>
 
-            <h2 className="mb-3 font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
-              {t("about")}
-            </h2>
+            <div className="mb-3 flex items-center gap-2">
+              <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
+                {t("about")}
+              </h2>
+              {event.titleFallback && event.titleLocale && (
+                <span
+                  className="rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-strong)]"
+                  title={t("translatedFromHint")}
+                >
+                  {event.titleLocale}
+                </span>
+              )}
+            </div>
             <p className="text-pretty leading-relaxed text-[var(--color-muted-strong)]">{event.description}</p>
 
             {/* Save + Share row */}

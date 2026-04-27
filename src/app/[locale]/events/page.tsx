@@ -30,7 +30,7 @@ export default async function EventsPage({
   const free     = sp.free === "1";
   const priceMax = sp.priceMax ? parseFloat(sp.priceMax as string) : undefined;
 
-  const allEvents = await getEvents();
+  const allEvents = await getEvents(locale);
   const filtered = allEvents.filter((e) => {
     if (q && !`${e.title} ${e.city} ${e.shortDescription}`.toLowerCase().includes(q)) return false;
     if (country  && e.countryCode !== country) return false;

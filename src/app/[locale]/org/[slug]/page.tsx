@@ -28,7 +28,7 @@ export default async function OrganizerDetailPage({
   const tCommon = await getTranslations("common");
 
   const country = getCountry(o.countryCode);
-  const events  = await getEventsByOrganizer(o.slug);
+  const events  = await getEventsByOrganizer(o.slug, locale);
 
   const cardLabels = {
     from: tCommon("from"), free: tCommon("free"),

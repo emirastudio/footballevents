@@ -7,6 +7,10 @@ export type MockEvent = {
   title: string;
   shortDescription: string;
   description: string;
+  /** Which locale was actually used for title/description (after fallback chain). */
+  titleLocale?: "en" | "ru" | "de" | "es";
+  /** True when the requested locale wasn't available — UI can show an "EN" badge. */
+  titleFallback?: boolean;
   type: "TOURNAMENT" | "CAMP" | "FESTIVAL" | "MASTERCLASS" | "MATCH_TOUR" | "SHOWCASE" | "CLINIC" | "TRAINING_CAMP" | "TRYOUT";
   categorySlug: string;
   organizerSlug: string;

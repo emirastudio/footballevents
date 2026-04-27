@@ -25,7 +25,7 @@ export default async function StadiumDetailPage({
   const tNav    = await getTranslations("nav");
 
   const country = getCountry(v.countryCode);
-  const events  = await getEventsByVenue(v.slug);
+  const events  = await getEventsByVenue(v.slug, locale);
 
   const cardLabels = {
     from: tCommon("from"), free: tCommon("free"),

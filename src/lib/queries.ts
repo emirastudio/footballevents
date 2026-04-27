@@ -13,14 +13,46 @@ const eventInclude = {
 
 type EventRow = Prisma.EventGetPayload<{ include: typeof eventInclude }>;
 
-function toMockEvent(e: EventRow): MockEvent {
-  const en = e.translations.find((t) => t.locale === "en") ?? e.translations[0];
+/** For values stored as `{ en: [...], ru: [...] }` (or legacy plain array) — return the array for the requested locale, falling back to EN. */
+function pickLocalizedArray(value: unknown, locale: string): unknown[] | undefined {
+  if (!value) return undefined;
+  if (Array.isArray(value)) return value as unknown[]; // legacy plain array
+  if (typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    const got = obj[locale] ?? obj.en;
+    if (Array.isArray(got)) return got as unknown[];
+  }
+  return undefined;
+}
+
+/** For included/notIncluded which have a JSONB I18n column + a legacy String[] EN mirror. */
+function pickLocalizedLines(i18n: unknown, legacy: string[], locale: string): string[] {
+  if (i18n && typeof i18n === "object" && !Array.isArray(i18n)) {
+    const obj = i18n as Record<string, unknown>;
+    const wanted = obj[locale];
+    if (Array.isArray(wanted)) return wanted.filter((x): x is string => typeof x === "string");
+    const en = obj.en;
+    if (Array.isArray(en)) return en.filter((x): x is string => typeof x === "string");
+  }
+  return legacy;
+}
+
+function toMockEvent(e: EventRow, preferredLocale: string = "en"): MockEvent {
+  // Pick the best available translation: requested locale → English fallback → first available.
+  const wanted = e.translations.find((t) => t.locale === preferredLocale);
+  const en     = e.translations.find((t) => t.locale === "en");
+  const picked = wanted ?? en ?? e.translations[0];
+  const usedLocale = (picked?.locale ?? "en") as MockEvent["titleLocale"];
+  // True only when the picked translation isn't in the requested language.
+  const fallback = !!preferredLocale && usedLocale !== preferredLocale;
   return {
     id: e.id,
     slug: e.slug,
-    title: en?.title ?? e.slug,
-    shortDescription: en?.shortDescription ?? "",
-    description: en?.description ?? "",
+    title: picked?.title ?? e.slug,
+    shortDescription: picked?.shortDescription ?? "",
+    description: picked?.description ?? "",
+    titleLocale: usedLocale,
+    titleFallback: fallback,
     type: e.type as MockEvent["type"],
     categorySlug: e.category.slug,
     organizerSlug: e.organizer.slug,
@@ -45,10 +77,10 @@ function toMockEvent(e: EventRow): MockEvent {
     isFeatured: e.isFeatured,
     logoUrl: e.logoUrl ?? e.organizer.logoUrl ?? undefined,
     savesCount: e._count.saves,
-    program: (e.program as MockEvent["program"]) ?? undefined,
-    included: e.included,
-    notIncluded: e.notIncluded,
-    faq: (e.faq as MockEvent["faq"]) ?? undefined,
+    program: pickLocalizedArray(e.program, preferredLocale) as MockEvent["program"],
+    included:    pickLocalizedLines(e.includedI18n,    e.included,    preferredLocale),
+    notIncluded: pickLocalizedLines(e.notIncludedI18n, e.notIncluded, preferredLocale),
+    faq: pickLocalizedArray(e.faq, preferredLocale) as MockEvent["faq"],
     divisions: e.divisions.length === 0 ? undefined : e.divisions.map((d) => ({
       id: d.id,
       name: d.name,
@@ -134,18 +166,18 @@ function toMockVenue(v: VenueRow): MockVenue {
 }
 
 // ─── Events ───────────────────────────────────────────
-export async function getEvents(): Promise<MockEvent[]> {
+export async function getEvents(locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
     orderBy: [{ isFeatured: "desc" }, { startDate: "asc" }],
   });
-  return rows.map(toMockEvent);
+  return rows.map((r) => toMockEvent(r, locale));
 }
 
-export async function getEventBySlug(slug: string): Promise<MockEvent | null> {
+export async function getEventBySlug(slug: string, locale: string = "en"): Promise<MockEvent | null> {
   const e = await db.event.findUnique({ where: { slug }, include: eventInclude });
-  return e ? toMockEvent(e) : null;
+  return e ? toMockEvent(e, locale) : null;
 }
 
 export async function getEventSlugs(): Promise<string[]> {
@@ -153,31 +185,31 @@ export async function getEventSlugs(): Promise<string[]> {
   return rows.map((r) => r.slug);
 }
 
-export async function getEventsByCategory(slug: string): Promise<MockEvent[]> {
+export async function getEventsByCategory(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", category: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
     orderBy: { startDate: "asc" },
   });
-  return rows.map(toMockEvent);
+  return rows.map((r) => toMockEvent(r, locale));
 }
 
-export async function getEventsByOrganizer(slug: string): Promise<MockEvent[]> {
+export async function getEventsByOrganizer(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", organizer: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
     orderBy: { startDate: "asc" },
   });
-  return rows.map(toMockEvent);
+  return rows.map((r) => toMockEvent(r, locale));
 }
 
-export async function getEventsByVenue(slug: string): Promise<MockEvent[]> {
+export async function getEventsByVenue(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", venue: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
     orderBy: { startDate: "asc" },
   });
-  return rows.map(toMockEvent);
+  return rows.map((r) => toMockEvent(r, locale));
 }
 
 // ─── Organizers ───────────────────────────────────────

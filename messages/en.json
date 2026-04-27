@@ -561,6 +561,7 @@
     "pageSubtitle": "Discover tournaments, camps, festivals, masterclasses and match tours from every corner of the world.",
     "detail": {
       "about": "About this event",
+      "translatedFromHint": "Description hasn't been translated to your language yet — showing the original.",
       "details": "Event details",
       "dates": "Dates",
       "location": "Location",

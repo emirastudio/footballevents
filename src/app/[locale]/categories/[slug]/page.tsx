@@ -24,7 +24,7 @@ export default async function CategoryPage({
   const tCommon  = await getTranslations("common");
   const tNav     = await getTranslations("nav");
 
-  const items = await getEventsByCategory(slug);
+  const items = await getEventsByCategory(slug, locale);
 
   const cardLabels = {
     from: tCommon("from"), free: tCommon("free"),
