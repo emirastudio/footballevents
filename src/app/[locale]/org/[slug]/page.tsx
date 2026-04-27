@@ -2,9 +2,10 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
-import { ChevronRight, MapPin, Star, ShieldCheck, Mail, Calendar } from "lucide-react";
+import { ChevronRight, MapPin, Star, Mail, Calendar } from "lucide-react";
 import { SocialLinks } from "@/components/site/SocialLinks";
 import { FollowOrganizerButton } from "@/components/site/FollowButton";
+import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { getCountry } from "@/lib/mock-data";
 import { getOrganizerBySlug, getOrganizerSlugs, getEventsByOrganizer } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
@@ -65,14 +66,7 @@ export default async function OrganizerDetailPage({
                 <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
                   {o.name}
                 </h1>
-                {o.isVerified && (
-                  <span
-                    className="grid h-7 w-7 place-items-center rounded-full bg-[var(--color-pitch-500)] text-white"
-                    title={tCommon("verified")}
-                  >
-                    <ShieldCheck className="h-4 w-4" />
-                  </span>
-                )}
+                {o.isVerified && <VerifiedBadge label={tCommon("verified")} className="h-7 w-7" />}
               </div>
               <p className="mt-1 text-[var(--color-muted-strong)]">{o.tagline}</p>
               <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-[var(--color-muted)]">

@@ -1,7 +1,8 @@
 import { Link } from "@/i18n/navigation";
-import { ShieldCheck, Star, Calendar, MapPin } from "lucide-react";
+import { Star, Calendar, MapPin } from "lucide-react";
 import type { MockOrganizer } from "@/lib/mock-data";
 import { getCountry } from "@/lib/mock-data";
+import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 
 type Props = {
   organizer: MockOrganizer;
@@ -48,15 +49,7 @@ export function OrganizerCard({ organizer: o, labels }: Props) {
           <h3 className="truncate text-base font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-pitch-700)]">
             {o.name}
           </h3>
-          {o.isVerified && (
-            <span
-              className="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--color-pitch-500)] text-white"
-              title={labels.verified}
-              aria-label={labels.verified}
-            >
-              <ShieldCheck className="h-2.5 w-2.5" strokeWidth={3} />
-            </span>
-          )}
+          {o.isVerified && <VerifiedBadge label={labels.verified} className="h-[18px] w-[18px]" />}
         </div>
 
         <p className="mt-1 line-clamp-2 text-sm text-[var(--color-muted-strong)]">{o.tagline}</p>
