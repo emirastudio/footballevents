@@ -47,11 +47,14 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/messages ./messages
 COPY --from=builder --chown=nextjs:nodejs /app/content ./content
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-# Prisma engine binaries + CLI (CLI is needed for `migrate deploy` at startup)
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/prisma@* ./node_modules/.pnpm/
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+# Prisma engine binaries + CLI (CLI is needed for `migrate deploy` at startup).
+# Use --link: cross-stage hardlinks instead of overlayfs cache merge — required
+# because pnpm's `.pnpm/node_modules/prisma` is a symlink and BuildKit's
+# default copy strategy chokes on it ("cannot copy to non-directory").
+COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/prisma@* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
+COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
 # Run pending migrations before the app boots — fails the container if migrations
 # are broken, which is the correct behaviour (don't serve traffic on wrong schema).
