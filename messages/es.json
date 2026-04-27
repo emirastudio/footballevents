@@ -253,6 +253,7 @@
     "faqRemoveQuestion": "Eliminar pregunta",
     "faqQuestion": "Pregunta",
     "faqAnswer": "Respuesta",
+    "contentLanguage": "Idioma del contenido",
     "errors": {
       "datesRequired": "Selecciona fechas antes de publicar"
     }

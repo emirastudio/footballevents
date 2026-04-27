@@ -58,6 +58,7 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     faqRemoveQuestion: tw("faqRemoveQuestion"),
     faqQuestion: tw("faqQuestion"),
     faqAnswer: tw("faqAnswer"),
+    contentLanguage: tw("contentLanguage"),
     tierLockTitle: t("tierLockTitle"), tierLockBody: t("tierLockBody"), videoLockBody: t("videoLockBody"),
 
     errors: {

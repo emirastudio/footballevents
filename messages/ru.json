@@ -348,6 +348,7 @@
     "faqRemoveQuestion": "Удалить вопрос",
     "faqQuestion": "Вопрос",
     "faqAnswer": "Ответ",
+    "contentLanguage": "Язык содержимого",
     "errors": {
       "datesRequired": "Укажите даты, чтобы опубликовать"
     }

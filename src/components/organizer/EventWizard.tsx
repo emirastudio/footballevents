@@ -59,6 +59,7 @@ export type WizardLabels = {
   faq: string; faqHint: string;
   faqAddQuestion: string; faqRemoveQuestion: string;
   faqQuestion: string; faqAnswer: string;
+  contentLanguage: string;
   tierLockTitle: string; tierLockBody: string; videoLockBody: string;
   errors: Record<string, string>;
 };
@@ -161,7 +162,7 @@ export function EventWizard({
       )}
 
       {step === 5 && (
-        <Step5 defaults={defaults} labels={labels} tier={tier} fe={fe} errMsg={errMsg} />
+        <Step5 defaults={defaults} labels={labels} tier={tier} fe={fe} errMsg={errMsg} secondLocale={secondLocale} />
       )}
 
       {state?.error && state.error !== "validation" && state.error !== "publishIncomplete" && (
@@ -494,13 +495,30 @@ function Step4({
 // Step 5 — Оформление и публикация
 // ─────────────────────────────────────────────────────────────
 function Step5({
-  defaults, labels, tier, fe, errMsg,
+  defaults, labels, tier, fe, errMsg, secondLocale,
 }: {
   defaults: WizardDefaults; labels: WizardLabels; tier: Tier;
   fe: Record<string, string>; errMsg: (key?: string) => string | undefined;
+  secondLocale: string;
 }) {
   const allowVideo = tierAllows(tier, "videoEmbed");
   const allowContent = tierAllows(tier, "included") || tierAllows(tier, "programme") || tierAllows(tier, "faq");
+
+  // Active language tab (only meaningful when secondLocale is set).
+  const [activeLocale, setActiveLocale] = useState<"en" | "ru" | "de" | "es">("en");
+  const second = (secondLocale || "") as "" | "ru" | "de" | "es";
+
+  // Pre-decode the per-locale defaults coming back from the server.
+  // - included/notIncluded: each locale is plain text (lines).
+  // - programme/faq: each locale is a JSON-stringified array.
+  const includedDefault    = decodeLocalizedText(defaults.included);
+  const notIncludedDefault = decodeLocalizedText(defaults.notIncluded);
+  const programmeDefault   = decodeLocalizedJson(defaults.programme);
+  const faqDefault         = decodeLocalizedJson(defaults.faq);
+
+  function getText(map: Record<string, string>, l: string): string | undefined {
+    return map[l] ?? (l === "en" ? map.en : undefined);
+  }
 
   return (
     <div className="space-y-8">
@@ -517,29 +535,92 @@ function Step5({
         )}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        {tierAllows(tier, "included") ? (
-          <>
-            <Textarea name="included" label={labels.included} hint={labels.includedHint} rows={5} defaultValue={defaults.included} />
-            <Textarea name="notIncluded" label={labels.notIncluded} hint={labels.notIncludedHint} rows={5} defaultValue={defaults.notIncluded} />
-          </>
-        ) : (
-          <div className="sm:col-span-2">
-            <LockedSection title={labels.included} body={labels.tierLockBody} cta={labels.upgradeCta} />
+      {/* Language tabs — only when the organizer chose a second locale at step 1 */}
+      {second && (
+        <div className="-mb-2 flex items-center gap-2 border-b border-[var(--color-border)] pb-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.contentLanguage}</span>
+          <div className="ml-2 inline-flex rounded-full bg-[var(--color-bg-muted)] p-1">
+            {(["en", second] as const).map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setActiveLocale(l)}
+                className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider transition ${activeLocale === l ? "bg-[var(--color-pitch-500)] text-white shadow-[var(--shadow-xs)]" : "text-[var(--color-muted-strong)] hover:text-[var(--color-foreground)]"}`}
+              >
+                {l}
+              </button>
+            ))}
           </div>
-        )}
-      </div>
-      {tierAllows(tier, "programme") && (
-        <ProgrammeEditor labels={labels} defaultValue={defaults.programme} />
+        </div>
       )}
-      {tierAllows(tier, "faq") && (
-        <FaqEditor labels={labels} defaultValue={defaults.faq} />
-      )}
+
+      {/* Per-locale content blocks — render for each locale, hide non-active so state persists */}
+      {(["en", ...(second ? [second] : [])] as const).map((l) => (
+        <div key={l} className={l === activeLocale ? "space-y-8" : "hidden"}>
+          {tierAllows(tier, "included") ? (
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Textarea name={`included_${l}`}    label={labels.included}    hint={labels.includedHint}    rows={5} defaultValue={getText(includedDefault, l)} />
+              <Textarea name={`notIncluded_${l}`} label={labels.notIncluded} hint={labels.notIncludedHint} rows={5} defaultValue={getText(notIncludedDefault, l)} />
+            </div>
+          ) : l === "en" ? (
+            <LockedSection title={labels.included} body={labels.tierLockBody} cta={labels.upgradeCta} />
+          ) : null}
+
+          {tierAllows(tier, "programme") && (
+            <ProgrammeEditor name={`programme_${l}`} labels={labels} defaultValue={programmeDefault[l]} />
+          )}
+          {tierAllows(tier, "faq") && (
+            <FaqEditor name={`faq_${l}`} labels={labels} defaultValue={faqDefault[l]} />
+          )}
+        </div>
+      ))}
+
       {!allowContent && tier === "FREE" && (
         <LockedSection title={labels.tierLockTitle} body={labels.tierLockBody} cta={labels.upgradeCta} />
       )}
     </div>
   );
+}
+
+/** Decode `{ en: "lines", ru: "lines" }` JSON or fall back to a single legacy string in EN. */
+function decodeLocalizedText(raw?: string): Record<string, string> {
+  if (!raw) return {};
+  if (raw.trim().startsWith("{")) {
+    try {
+      const obj = JSON.parse(raw) as unknown;
+      if (obj && typeof obj === "object") {
+        const out: Record<string, string> = {};
+        for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+          if (typeof v === "string") out[k] = v;
+          else if (Array.isArray(v)) out[k] = v.filter((x): x is string => typeof x === "string").join("\n");
+        }
+        return out;
+      }
+    } catch { /* ignore */ }
+  }
+  return { en: raw };
+}
+
+/** Decode `{ en: "<json>", ru: "<json>" }` or `{ en: [...], ru: [...] }` or legacy plain JSON-array string. */
+function decodeLocalizedJson(raw?: string): Record<string, string> {
+  if (!raw) return {};
+  const trimmed = raw.trim();
+  if (trimmed.startsWith("{")) {
+    try {
+      const obj = JSON.parse(trimmed) as unknown;
+      if (obj && typeof obj === "object" && !Array.isArray(obj)) {
+        const out: Record<string, string> = {};
+        for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+          if (typeof v === "string") out[k] = v;
+          else out[k] = JSON.stringify(v);
+        }
+        return out;
+      }
+    } catch { /* ignore */ }
+  }
+  // Legacy: a single JSON array string — assume EN.
+  if (trimmed.startsWith("[")) return { en: trimmed };
+  return {};
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -702,7 +783,7 @@ function parseProgrammeJson(raw?: string): Day[] {
   return days;
 }
 
-function ProgrammeEditor({ labels, defaultValue }: { labels: WizardLabels; defaultValue?: string }) {
+function ProgrammeEditor({ name, labels, defaultValue }: { name: string; labels: WizardLabels; defaultValue?: string }) {
   const [days, setDays] = useState<Day[]>(() => parseProgrammeJson(defaultValue));
 
   const updateDay = (idx: number, patch: Partial<Day>) => {
@@ -724,7 +805,7 @@ function ProgrammeEditor({ labels, defaultValue }: { labels: WizardLabels; defau
       </div>
       <p className="mb-3 text-xs text-[var(--color-muted)]">{labels.programmeHint}</p>
 
-      <input type="hidden" name="programme" value={JSON.stringify(days)} />
+      <input type="hidden" name={name} value={JSON.stringify(days)} />
 
       <div className="space-y-3">
         {days.map((d, i) => (
@@ -813,7 +894,7 @@ function parseFaqJson(raw?: string): Qa[] {
   return qas;
 }
 
-function FaqEditor({ labels, defaultValue }: { labels: WizardLabels; defaultValue?: string }) {
+function FaqEditor({ name, labels, defaultValue }: { name: string; labels: WizardLabels; defaultValue?: string }) {
   const [items, setItems] = useState<Qa[]>(() => parseFaqJson(defaultValue));
 
   const update = (i: number, patch: Partial<Qa>) => setItems(items.map((x, j) => j === i ? { ...x, ...patch } : x));
@@ -827,7 +908,7 @@ function FaqEditor({ labels, defaultValue }: { labels: WizardLabels; defaultValu
       </div>
       <p className="mb-3 text-xs text-[var(--color-muted)]">{labels.faqHint}</p>
 
-      <input type="hidden" name="faq" value={JSON.stringify(items)} />
+      <input type="hidden" name={name} value={JSON.stringify(items)} />
 
       <div className="space-y-3">
         {items.map((qa, i) => (

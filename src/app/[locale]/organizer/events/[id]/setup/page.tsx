@@ -49,8 +49,15 @@ export default async function SetupEventPage({
   const secondLocale: "" | "ru" | "de" | "es" =
     second?.locale === "ru" || second?.locale === "de" || second?.locale === "es" ? second.locale : "";
 
-  const programJson = ev.program ? JSON.stringify(ev.program) : "";
-  const faqJson = ev.faq ? JSON.stringify(ev.faq) : "";
+  // Localized rich content. New shape is { en: [...], ru: [...] }; old shape is plain array (legacy EN).
+  const programLocalized = ev.program ? JSON.stringify(ev.program) : "";
+  const faqLocalized     = ev.faq     ? JSON.stringify(ev.faq)     : "";
+  const includedLocalized    = ev.includedI18n
+    ? JSON.stringify(ev.includedI18n)
+    : (ev.included.length ? JSON.stringify({ en: ev.included.join("\n") }) : "");
+  const notIncludedLocalized = ev.notIncludedI18n
+    ? JSON.stringify(ev.notIncludedI18n)
+    : (ev.notIncluded.length ? JSON.stringify({ en: ev.notIncluded.join("\n") }) : "");
 
   const labels = buildWizardLabels(t, tWizard);
 
@@ -95,10 +102,10 @@ export default async function SetupEventPage({
             logoUrl: ev.logoUrl ?? undefined,
             coverUrl: ev.coverUrl ?? undefined,
             videoUrl: ev.videoUrl ?? undefined,
-            included: ev.included.join("\n"),
-            notIncluded: ev.notIncluded.join("\n"),
-            programme: programJson,
-            faq: faqJson,
+            included: includedLocalized,
+            notIncluded: notIncludedLocalized,
+            programme: programLocalized,
+            faq: faqLocalized,
           }}
           labels={labels}
         />

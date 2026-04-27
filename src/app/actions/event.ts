@@ -562,13 +562,14 @@ const stepSchemas = {
     acceptsBookings: z.coerce.boolean().default(true),
   }),
   5: z.object({
-    logoUrl:     z.string().optional(),
-    coverUrl:    z.string().optional(),
-    videoUrl:    z.string().optional(),
-    included:    z.string().optional(),
-    notIncluded: z.string().optional(),
-    programme:   z.string().optional(),
-    faq:         z.string().optional(),
+    logoUrl:           z.string().optional(),
+    coverUrl:          z.string().optional(),
+    videoUrl:          z.string().optional(),
+    // Per-locale JSON blobs from the wizard. Keys: locale ("en" | "ru" | "de" | "es").
+    includedI18n:      z.string().optional(),    // { en: "line1\nline2", ru: "…" }
+    notIncludedI18n:   z.string().optional(),
+    programmeI18n:     z.string().optional(),    // { en: Day[], ru: Day[] }
+    faqI18n:           z.string().optional(),    // { en: Qa[], ru: Qa[] }
   }),
 } as const;
 
@@ -709,10 +710,25 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
       if (data.videoUrl && !VIDEO_HOSTS.test(data.videoUrl)) {
         return { error: "videoNotAllowed", fieldErrors: { videoUrl: "videoNotAllowed" }, eventId: existing.id };
       }
-      update.included    = tierAllows(tier, "included") ? splitLines(data.included)    : [];
-      update.notIncluded = tierAllows(tier, "included") ? splitLines(data.notIncluded) : [];
-      update.program = tierAllows(tier, "programme") ? (parseProgramme(data.programme) as never) : null;
-      update.faq     = tierAllows(tier, "faq")       ? (parseFaq(data.faq)             as never) : null;
+
+      // Per-locale rich content. Form sends JSON {locale: text} for textareas, JSON {locale: array} for editors.
+      const includedByLocale    = parseLocaleStringMap(data.includedI18n);
+      const notIncludedByLocale = parseLocaleStringMap(data.notIncludedI18n);
+      const programmeByLocale   = parseLocaleArrayMap(data.programmeI18n, parseProgramme);
+      const faqByLocale         = parseLocaleArrayMap(data.faqI18n, parseFaq);
+
+      const allowIncluded  = tierAllows(tier, "included");
+      const allowProgramme = tierAllows(tier, "programme");
+      const allowFaq       = tierAllows(tier, "faq");
+
+      // Legacy mirrors (EN only) so older readers still work.
+      update.included    = allowIncluded ? splitLines(includedByLocale.en)    : [];
+      update.notIncluded = allowIncluded ? splitLines(notIncludedByLocale.en) : [];
+
+      update.includedI18n    = allowIncluded ? buildLocalizedLines(includedByLocale)    : null;
+      update.notIncludedI18n = allowIncluded ? buildLocalizedLines(notIncludedByLocale) : null;
+      update.program         = allowProgramme ? (programmeByLocale as never) : null;
+      update.faq             = allowFaq       ? (faqByLocale       as never) : null;
       break;
     }
   }
@@ -782,16 +798,78 @@ function parseStepInput(step: WizardStep, formData: FormData) {
       contactPhone:     formData.get("contactPhone") || undefined,
       acceptsBookings:  formData.get("acceptsBookings") === "on" || formData.get("acceptsBookings") === "true",
     };
-    case 5: return {
-      logoUrl:     formData.get("logoUrl") || undefined,
-      coverUrl:    formData.get("coverUrl") || undefined,
-      videoUrl:    formData.get("videoUrl") || undefined,
-      included:    formData.get("included") || undefined,
-      notIncluded: formData.get("notIncluded") || undefined,
-      programme:   formData.get("programme") || undefined,
-      faq:         formData.get("faq") || undefined,
-    };
+    case 5: {
+      // Form sends per-locale fields (included_en, included_ru, programme_en, programme_ru, …).
+      // We assemble JSON maps here and feed them through the same parsers downstream.
+      const locales = ["en", "ru", "de", "es"] as const;
+      const collect = (prefix: string) => {
+        const out: Record<string, string> = {};
+        for (const l of locales) {
+          const v = formData.get(`${prefix}_${l}`);
+          if (typeof v === "string" && v.trim()) out[l] = v;
+        }
+        return Object.keys(out).length ? JSON.stringify(out) : undefined;
+      };
+      return {
+        logoUrl:         formData.get("logoUrl") || undefined,
+        coverUrl:        formData.get("coverUrl") || undefined,
+        videoUrl:        formData.get("videoUrl") || undefined,
+        includedI18n:    collect("included"),
+        notIncludedI18n: collect("notIncluded"),
+        programmeI18n:   collect("programme"),
+        faqI18n:         collect("faq"),
+      };
+    }
   }
+}
+
+type LocaleStringMap = Partial<Record<"en" | "ru" | "de" | "es", string>>;
+type LocaleAnyMap<T> = Partial<Record<"en" | "ru" | "de" | "es", T>>;
+
+/** Parse `{ "en": "line1\nline2", "ru": "..." }` JSON string from the form. */
+function parseLocaleStringMap(raw?: string): LocaleStringMap {
+  if (!raw?.trim()) return {};
+  try {
+    const obj = JSON.parse(raw) as unknown;
+    if (obj && typeof obj === "object") {
+      const out: LocaleStringMap = {};
+      for (const k of ["en", "ru", "de", "es"] as const) {
+        const v = (obj as Record<string, unknown>)[k];
+        if (typeof v === "string") out[k] = v;
+      }
+      return out;
+    }
+  } catch { /* ignore */ }
+  return {};
+}
+
+/** Parse `{ "en": [Day], "ru": [Day] }` and run each per-locale array through `parser` (parseProgramme / parseFaq). */
+function parseLocaleArrayMap<T>(raw: string | undefined, parser: (s: string) => T[] | null): LocaleAnyMap<T[]> | null {
+  if (!raw?.trim()) return null;
+  try {
+    const obj = JSON.parse(raw) as unknown;
+    if (!obj || typeof obj !== "object") return null;
+    const out: LocaleAnyMap<T[]> = {};
+    for (const k of ["en", "ru", "de", "es"] as const) {
+      const v = (obj as Record<string, unknown>)[k];
+      if (!v) continue;
+      // The form serializes the editor's array as JSON; pass through parser to normalize.
+      const inner = typeof v === "string" ? parser(v) : parser(JSON.stringify(v));
+      if (inner && inner.length) out[k] = inner;
+    }
+    return Object.keys(out).length ? out : null;
+  } catch {
+    return null;
+  }
+}
+
+function buildLocalizedLines(map: LocaleStringMap): LocaleAnyMap<string[]> | null {
+  const out: LocaleAnyMap<string[]> = {};
+  for (const k of ["en", "ru", "de", "es"] as const) {
+    const lines = splitLines(map[k]);
+    if (lines.length) out[k] = lines;
+  }
+  return Object.keys(out).length ? out : null;
 }
 
 function collectPublishErrors(ev: { titleEn?: string; descriptionEn?: string; startDate?: Date | null; endDate?: Date | null; countryCode?: string | null; venueId?: string | null }): Record<string, string> | null {

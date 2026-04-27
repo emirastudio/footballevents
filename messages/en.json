@@ -350,6 +350,7 @@
     "faqRemoveQuestion": "Remove question",
     "faqQuestion": "Question",
     "faqAnswer": "Answer",
+    "contentLanguage": "Content language",
     "errors": {
       "datesRequired": "Pick dates before publishing"
     }

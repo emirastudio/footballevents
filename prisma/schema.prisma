@@ -449,11 +449,14 @@ model Event {
   contactEmail    String?
   contactPhone    String?
 
-  // Rich content (organizer-fillable, all optional)
-  program         Json?       // [{ day: 1, title: "Arrival", items: ["Check-in 14:00", "Welcome dinner"] }]
-  included        String[]    @default([])  // what's included
-  notIncluded     String[]    @default([])
-  faq             Json?       // [{ q, a }]
+  // Rich content (organizer-fillable, all optional). i18n: shape is { en: [...], ru?: [...], de?: [...], es?: [...] }
+  // — program/faq used to be plain arrays; readers must accept both legacy and new shape.
+  program         Json?       // { en: Day[], ru?: Day[], … } where Day = { day, title, items[] }
+  included        String[]    @default([])  // legacy EN-only mirror — kept for old readers
+  notIncluded     String[]    @default([])  // legacy EN-only mirror
+  includedI18n    Json?       // { en: string[], ru?: string[], … }
+  notIncludedI18n Json?       // { en: string[], ru?: string[], … }
+  faq             Json?       // { en: Qa[], ru?: Qa[], … } where Qa = { q, a }
 
   // Booking via platform
   acceptsBookings Boolean     @default(true)
