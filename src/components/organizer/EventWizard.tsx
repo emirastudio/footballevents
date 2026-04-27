@@ -345,34 +345,76 @@ function Step2({
 // ─────────────────────────────────────────────────────────────
 function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardLabels }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
+      {/* Age — multi-select chips */}
       <fieldset>
-        <legend className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.ageGroups}</legend>
-        <div className="flex flex-wrap gap-2">
+        <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.ageGroups}</legend>
+        <div className="flex flex-wrap gap-1.5">
           {AGE_GROUPS.map((a) => (
-            <label key={a} className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-50)] has-[:checked]:text-[var(--color-pitch-700)]">
+            <label key={a} className="inline-flex h-9 min-w-[3.25rem] cursor-pointer items-center justify-center rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 text-xs font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-500)] has-[:checked]:text-white">
               <input type="checkbox" name="ageGroups" value={a} defaultChecked={defaults.ageGroups?.includes(a)} className="sr-only" />
-              {a}
+              {a === "ALL_AGES" ? "All" : a}
             </label>
           ))}
         </div>
       </fieldset>
-      <div className="grid gap-5 sm:grid-cols-3">
-        <RadioGroup name="gender" label={labels.gender} defaultValue={defaults.gender ?? "MIXED"} options={[
-          { value: "MALE", label: labels.genderMale },
+
+      {/* Gender — single-select pills */}
+      <PillRadioGroup
+        name="gender"
+        label={labels.gender}
+        defaultValue={defaults.gender ?? "MIXED"}
+        options={[
+          { value: "MALE",   label: labels.genderMale },
           { value: "FEMALE", label: labels.genderFemale },
-          { value: "MIXED", label: labels.genderMixed },
-        ]} />
-        <SelectField name="skillLevel" label={labels.skillLevel} defaultValue={defaults.skillLevel ?? "ALL_LEVELS"} options={[
-          { value: "ALL_LEVELS", label: labels.skillAll },
-          { value: "AMATEUR", label: labels.skillAm },
-          { value: "SEMI_PRO", label: labels.skillSemiPro },
+          { value: "MIXED",  label: labels.genderMixed },
+        ]}
+      />
+
+      {/* Skill — single-select pills (consistent with gender) */}
+      <PillRadioGroup
+        name="skillLevel"
+        label={labels.skillLevel}
+        defaultValue={defaults.skillLevel ?? "ALL_LEVELS"}
+        options={[
+          { value: "ALL_LEVELS",   label: labels.skillAll },
+          { value: "AMATEUR",      label: labels.skillAm },
+          { value: "SEMI_PRO",     label: labels.skillSemiPro },
           { value: "PROFESSIONAL", label: labels.skillPro },
-        ]} />
-        <Field name="format" label={labels.format} hint={labels.formatHint} placeholder="11x11" defaultValue={defaults.format} />
+        ]}
+      />
+
+      {/* Format + Max participants */}
+      <div className="grid gap-5 sm:grid-cols-2">
+        <Field name="format" label={labels.format} hint={labels.formatHint} placeholder="11×11" defaultValue={defaults.format} />
+        <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults.maxParticipants?.toString()} />
       </div>
-      <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults.maxParticipants?.toString()} />
     </div>
+  );
+}
+
+/** Single-select pill row — alternative to native <select>, matches age chips visually. */
+function PillRadioGroup({
+  name, label, options, defaultValue,
+}: {
+  name: string; label: string; defaultValue: string;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <fieldset>
+      <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{label}</legend>
+      <div className="flex flex-wrap gap-1.5">
+        {options.map((o) => (
+          <label
+            key={o.value}
+            className="inline-flex h-10 cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 text-sm font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-500)] has-[:checked]:text-white"
+          >
+            <input type="radio" name={name} value={o.value} defaultChecked={defaultValue === o.value} className="sr-only" />
+            {o.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 
