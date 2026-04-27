@@ -351,6 +351,8 @@
     "faqQuestion": "Question",
     "faqAnswer": "Answer",
     "contentLanguage": "Content language",
+    "addLanguage": "Add language",
+    "langEn": "English",
     "errors": {
       "datesRequired": "Pick dates before publishing"
     }

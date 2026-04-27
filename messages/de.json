@@ -254,6 +254,8 @@
     "faqQuestion": "Frage",
     "faqAnswer": "Antwort",
     "contentLanguage": "Inhaltssprache",
+    "addLanguage": "Sprache hinzufügen",
+    "langEn": "Englisch",
     "errors": {
       "datesRequired": "Datum vor Veröffentlichung wählen"
     }

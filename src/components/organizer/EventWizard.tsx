@@ -8,6 +8,7 @@ import { Combobox } from "@/components/ui/Combobox";
 import { CityCombobox } from "@/components/ui/CityCombobox";
 import { VenueAutocomplete } from "@/components/ui/VenueAutocomplete";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
+import { LangTabs, LangPanel, type LocaleCode } from "@/components/ui/LangTabs";
 import { ImageUpload } from "@/components/upload/ImageUpload";
 import { Check, ChevronLeft, ChevronRight, Lock, Send, Plus, Trash2 } from "lucide-react";
 import type { Tier } from "@/lib/tier";
@@ -60,6 +61,8 @@ export type WizardLabels = {
   faqAddQuestion: string; faqRemoveQuestion: string;
   faqQuestion: string; faqAnswer: string;
   contentLanguage: string;
+  addLanguage: string;
+  langEn: string;
   tierLockTitle: string; tierLockBody: string; videoLockBody: string;
   errors: Record<string, string>;
 };
@@ -251,45 +254,33 @@ function Step1({
         items={categories.map((c) => ({ value: c.id, label: c.name }))}
       />
 
-      <fieldset className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5">
-        <legend className="px-2">
-          <span className="text-sm font-bold text-[var(--color-foreground)]">{labels.englishSection}</span>
-          <span className="ml-2 rounded-full bg-[var(--color-pitch-50)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-pitch-700)]">EN</span>
-        </legend>
-        <p className="text-xs text-[var(--color-muted)]">{labels.englishSectionHint}</p>
-        <Field name="titleEn" required label={labels.titleEn} hint={labels.titleEnHint} maxLength={120} error={errMsg(fe.titleEn)} defaultValue={defaults.titleEn} />
-        <Field name="shortDescEn" label={labels.shortDescEn} hint={labels.shortDescEnHint} maxLength={240} defaultValue={defaults.shortDescEn} />
-        <Textarea name="descriptionEn" label={labels.descriptionEn} hint={labels.descriptionEnHint} rows={5} error={errMsg(fe.descriptionEn)} defaultValue={defaults.descriptionEn} />
-      </fieldset>
-
-      <fieldset className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5">
-        <legend className="px-2">
-          <span className="text-sm font-bold text-[var(--color-foreground)]">{labels.secondSection}</span>
-          <span className="ml-2 rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">{secondLocale ? secondLocale.toUpperCase() : "—"}</span>
-        </legend>
-        <p className="text-xs text-[var(--color-muted)]">{labels.secondSectionHint}</p>
-        <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.secondLanguagePicker}</span>
-          <select
-            name="secondLocale"
-            value={secondLocale}
-            onChange={(e) => setSecondLocale(e.target.value)}
-            className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
-          >
-            <option value="">{labels.langNone}</option>
-            <option value="ru">{labels.langRu}</option>
-            <option value="de">{labels.langDe}</option>
-            <option value="es">{labels.langEs}</option>
-          </select>
-        </label>
-        {secondLocale && (
+      <LangTabs
+        secondLocale={(secondLocale || "") as "" | "ru" | "de" | "es"}
+        onSecondLocaleChange={(l) => setSecondLocale(l)}
+        hiddenInputName="secondLocale"
+        labels={{
+          heading: labels.contentLanguage,
+          addLanguage: labels.addLanguage,
+          langs: { en: labels.langEn, ru: labels.langRu, de: labels.langDe, es: labels.langEs },
+        }}
+      >
+        {({ active }) => (
           <>
-            <Field name="titleSecond" label={labels.titleSecond} maxLength={120} defaultValue={defaults.titleSecond} />
-            <Field name="shortDescSecond" label={labels.shortDescSecond} maxLength={240} defaultValue={defaults.shortDescSecond} />
-            <Textarea name="descriptionSecond" label={labels.descriptionSecond} rows={5} defaultValue={defaults.descriptionSecond} />
+            <LangPanel locale="en" active={active}>
+              <Field name="titleEn" required label={labels.titleEn} hint={labels.titleEnHint} maxLength={120} error={errMsg(fe.titleEn)} defaultValue={defaults.titleEn} />
+              <Field name="shortDescEn" label={labels.shortDescEn} hint={labels.shortDescEnHint} maxLength={240} defaultValue={defaults.shortDescEn} />
+              <Textarea name="descriptionEn" label={labels.descriptionEn} hint={labels.descriptionEnHint} rows={5} error={errMsg(fe.descriptionEn)} defaultValue={defaults.descriptionEn} />
+            </LangPanel>
+            {secondLocale && (
+              <LangPanel locale={secondLocale as LocaleCode} active={active}>
+                <Field name="titleSecond" label={labels.titleSecond} maxLength={120} defaultValue={defaults.titleSecond} />
+                <Field name="shortDescSecond" label={labels.shortDescSecond} maxLength={240} defaultValue={defaults.shortDescSecond} />
+                <Textarea name="descriptionSecond" label={labels.descriptionSecond} rows={5} defaultValue={defaults.descriptionSecond} />
+              </LangPanel>
+            )}
           </>
         )}
-      </fieldset>
+      </LangTabs>
     </div>
   );
 }
@@ -504,21 +495,11 @@ function Step5({
   const allowVideo = tierAllows(tier, "videoEmbed");
   const allowContent = tierAllows(tier, "included") || tierAllows(tier, "programme") || tierAllows(tier, "faq");
 
-  // Active language tab (only meaningful when secondLocale is set).
-  const [activeLocale, setActiveLocale] = useState<"en" | "ru" | "de" | "es">("en");
-  const second = (secondLocale || "") as "" | "ru" | "de" | "es";
-
   // Pre-decode the per-locale defaults coming back from the server.
-  // - included/notIncluded: each locale is plain text (lines).
-  // - programme/faq: each locale is a JSON-stringified array.
   const includedDefault    = decodeLocalizedText(defaults.included);
   const notIncludedDefault = decodeLocalizedText(defaults.notIncluded);
   const programmeDefault   = decodeLocalizedJson(defaults.programme);
   const faqDefault         = decodeLocalizedJson(defaults.faq);
-
-  function getText(map: Record<string, string>, l: string): string | undefined {
-    return map[l] ?? (l === "en" ? map.en : undefined);
-  }
 
   return (
     <div className="space-y-8">
@@ -535,45 +516,37 @@ function Step5({
         )}
       </div>
 
-      {/* Language tabs — only when the organizer chose a second locale at step 1 */}
-      {second && (
-        <div className="-mb-2 flex items-center gap-2 border-b border-[var(--color-border)] pb-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.contentLanguage}</span>
-          <div className="ml-2 inline-flex rounded-full bg-[var(--color-bg-muted)] p-1">
-            {(["en", second] as const).map((l) => (
-              <button
-                key={l}
-                type="button"
-                onClick={() => setActiveLocale(l)}
-                className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider transition ${activeLocale === l ? "bg-[var(--color-pitch-500)] text-white shadow-[var(--shadow-xs)]" : "text-[var(--color-muted-strong)] hover:text-[var(--color-foreground)]"}`}
-              >
-                {l}
-              </button>
+      <LangTabs
+        secondLocale={(secondLocale || "") as "" | "ru" | "de" | "es"}
+        labels={{
+          heading: labels.contentLanguage,
+          addLanguage: labels.addLanguage,
+          langs: { en: labels.langEn, ru: labels.langRu, de: labels.langDe, es: labels.langEs },
+        }}
+      >
+        {({ active, visible }) => (
+          <>
+            {visible.map((l) => (
+              <LangPanel key={l} locale={l} active={active}>
+                {tierAllows(tier, "included") ? (
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Textarea name={`included_${l}`}    label={labels.included}    hint={labels.includedHint}    rows={5} defaultValue={includedDefault[l]} />
+                    <Textarea name={`notIncluded_${l}`} label={labels.notIncluded} hint={labels.notIncludedHint} rows={5} defaultValue={notIncludedDefault[l]} />
+                  </div>
+                ) : l === "en" ? (
+                  <LockedSection title={labels.included} body={labels.tierLockBody} cta={labels.upgradeCta} />
+                ) : null}
+                {tierAllows(tier, "programme") && (
+                  <ProgrammeEditor name={`programme_${l}`} labels={labels} defaultValue={programmeDefault[l]} />
+                )}
+                {tierAllows(tier, "faq") && (
+                  <FaqEditor name={`faq_${l}`} labels={labels} defaultValue={faqDefault[l]} />
+                )}
+              </LangPanel>
             ))}
-          </div>
-        </div>
-      )}
-
-      {/* Per-locale content blocks — render for each locale, hide non-active so state persists */}
-      {(["en", ...(second ? [second] : [])] as const).map((l) => (
-        <div key={l} className={l === activeLocale ? "space-y-8" : "hidden"}>
-          {tierAllows(tier, "included") ? (
-            <div className="grid gap-5 sm:grid-cols-2">
-              <Textarea name={`included_${l}`}    label={labels.included}    hint={labels.includedHint}    rows={5} defaultValue={getText(includedDefault, l)} />
-              <Textarea name={`notIncluded_${l}`} label={labels.notIncluded} hint={labels.notIncludedHint} rows={5} defaultValue={getText(notIncludedDefault, l)} />
-            </div>
-          ) : l === "en" ? (
-            <LockedSection title={labels.included} body={labels.tierLockBody} cta={labels.upgradeCta} />
-          ) : null}
-
-          {tierAllows(tier, "programme") && (
-            <ProgrammeEditor name={`programme_${l}`} labels={labels} defaultValue={programmeDefault[l]} />
-          )}
-          {tierAllows(tier, "faq") && (
-            <FaqEditor name={`faq_${l}`} labels={labels} defaultValue={faqDefault[l]} />
-          )}
-        </div>
-      ))}
+          </>
+        )}
+      </LangTabs>
 
       {!allowContent && tier === "FREE" && (
         <LockedSection title={labels.tierLockTitle} body={labels.tierLockBody} cta={labels.upgradeCta} />

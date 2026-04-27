@@ -349,6 +349,8 @@
     "faqQuestion": "Вопрос",
     "faqAnswer": "Ответ",
     "contentLanguage": "Язык содержимого",
+    "addLanguage": "Добавить язык",
+    "langEn": "Английский",
     "errors": {
       "datesRequired": "Укажите даты, чтобы опубликовать"
     }
