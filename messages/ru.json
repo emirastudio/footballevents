@@ -307,7 +307,12 @@
       "countryRequired": "Страна обязательна",
       "videoNotAllowed": "Принимаются только ссылки на YouTube и Vimeo",
       "priceRange": "«Цена до» должна быть больше «Цена от»",
-      "venueNameRequired": "Укажите название локации"
+      "venueNameRequired": "Укажите название локации",
+      "eventLimitReached": "Достигнут лимит тарифа — на тарифе {tier} доступно {limit} активных событий. {hint} См. /pricing.",
+      "limitHintFree": "Перейдите на Pro (10 событий) или Premium (25).",
+      "limitHintPro": "Перейдите на Premium (25 событий).",
+      "limitHintPremium": "Напишите нам для перехода на Enterprise (25+).",
+      "limitHintEnterprise": "Свяжитесь с нами, чтобы увеличить лимит."
     }
   },
   "venueForm": {
@@ -534,7 +539,9 @@
     "blog": "Блог",
     "terms": "Условия",
     "privacy": "Конфиденциальность",
+    "refund": "Возвраты",
     "cookies": "Cookies",
+    "imprint": "Реквизиты",
     "madeFor": "Сделано для футбольных болельщиков по всему миру ⚽"
   },
   "cookieBanner": {
@@ -1066,10 +1073,10 @@
       "whiteLabel": "White-label / поддомен"
     },
     "values": {
-      "free_events": "2",
-      "pro_events": "15",
-      "premium_events": "100",
-      "enterprise_events": "Безлимит",
+      "free_events": "5",
+      "pro_events": "10",
+      "premium_events": "25",
+      "enterprise_events": "25+ (по договорённости)",
       "moderation_free": "48ч",
       "moderation_pro": "24ч",
       "moderation_premium": "4ч",
@@ -1172,7 +1179,7 @@
     "faqs": [
       {
         "q": "Можно начать бесплатно?",
-        "a": "Да — Free навсегда, без карты. Получаете 2 активных эвента, галерею, программу, лого в hero. Можно повышать или понижать тариф в любой момент."
+        "a": "Да — Free навсегда, без карты. Получаете 5 активных событий, галерею, программу, лого в hero. Можно повышать или понижать тариф в любой момент."
       },
       {
         "q": "Чем boost отличается от Premium?",

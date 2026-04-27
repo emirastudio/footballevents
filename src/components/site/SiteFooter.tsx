@@ -38,9 +38,11 @@ export async function SiteFooter() {
     {
       title: tFooter("legal"),
       items: [
-        { href: "/legal/terms", label: "Terms" },
-        { href: "/legal/privacy", label: "Privacy" },
-        { href: "/legal/cookies", label: "Cookies" },
+        { href: "/legal/terms", label: tFooter("terms") },
+        { href: "/legal/privacy", label: tFooter("privacy") },
+        { href: "/legal/refund", label: tFooter("refund") },
+        { href: "/legal/cookies", label: tFooter("cookies") },
+        { href: "/legal/imprint", label: tFooter("imprint") },
       ],
     },
   ];

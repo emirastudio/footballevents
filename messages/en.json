@@ -307,7 +307,12 @@
       "countryRequired": "Country is required",
       "videoNotAllowed": "Only YouTube and Vimeo URLs are accepted",
       "priceRange": "'Price up to' must be greater than 'Price from'",
-      "venueNameRequired": "Location name is required"
+      "venueNameRequired": "Location name is required",
+      "eventLimitReached": "You've hit your plan's limit — your {tier} plan allows {limit} active events. {hint} See pricing.",
+      "limitHintFree": "Upgrade to Pro (10 events) or Premium (25).",
+      "limitHintPro": "Upgrade to Premium (25 events).",
+      "limitHintPremium": "Contact us for an Enterprise plan (25+).",
+      "limitHintEnterprise": "Contact us to raise your custom limit."
     }
   },
   "venueForm": {
@@ -534,7 +539,9 @@
     "blog": "Blog",
     "terms": "Terms",
     "privacy": "Privacy",
+    "refund": "Refunds",
     "cookies": "Cookies",
+    "imprint": "Imprint",
     "madeFor": "Made for football fans worldwide ⚽"
   },
   "cookieBanner": {
@@ -912,10 +919,10 @@
       "whiteLabel": "White-label / subdomain"
     },
     "values": {
-      "free_events": "2",
-      "pro_events": "15",
-      "premium_events": "100",
-      "enterprise_events": "Unlimited",
+      "free_events": "5",
+      "pro_events": "10",
+      "premium_events": "25",
+      "enterprise_events": "25+ (by agreement)",
       "moderation_free": "48h",
       "moderation_pro": "24h",
       "moderation_premium": "4h",
@@ -963,7 +970,7 @@
     ],
     "faqTitle": "Frequently asked",
     "faqs": [
-      { "q": "Can I start free?",                              "a": "Yes — Free is forever, no credit card. You get 2 active events, gallery, programme, logo in hero. You can upgrade or downgrade any time." },
+      { "q": "Can I start free?",                              "a": "Yes — Free is forever, no credit card. You get 5 active events, gallery, programme, logo in hero. You can upgrade or downgrade any time." },
       { "q": "What's the difference between a Boost and Premium?", "a": "Boost is a one-time push for a single event. Premium is a recurring subscription that unlocks features (FAQ, video, featured placement) across all your events plus monthly boosts included." },
       { "q": "Can I cancel anytime?",                           "a": "Yes. Annual plans are non-refundable mid-cycle but your features stay active until the end of the period." },
       { "q": "Do you charge VAT?",                              "a": "We invoice in EUR. EU businesses with a valid VAT number get reverse-charge. Consumers and EU businesses without VAT see VAT added at checkout." },

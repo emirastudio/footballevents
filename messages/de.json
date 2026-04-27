@@ -307,7 +307,12 @@
       "countryRequired": "Land ist Pflicht",
       "videoNotAllowed": "Nur YouTube- und Vimeo-URLs werden akzeptiert",
       "priceRange": "«Preis bis» muss größer sein als «Preis ab»",
-      "venueNameRequired": "Standortname ist Pflicht"
+      "venueNameRequired": "Standortname ist Pflicht",
+      "eventLimitReached": "Plan-Limit erreicht — dein {tier}-Tarif erlaubt {limit} aktive Events. {hint} Siehe /pricing.",
+      "limitHintFree": "Upgrade auf Pro (10 Events) oder Premium (25).",
+      "limitHintPro": "Upgrade auf Premium (25 Events).",
+      "limitHintPremium": "Kontaktiere uns für Enterprise (25+).",
+      "limitHintEnterprise": "Kontaktiere uns, um dein Limit zu erhöhen."
     }
   },
   "venueForm": {
@@ -534,7 +539,9 @@
     "blog": "Blog",
     "terms": "AGB",
     "privacy": "Datenschutz",
+    "refund": "Erstattung",
     "cookies": "Cookies",
+    "imprint": "Impressum",
     "madeFor": "Für Fußballfans weltweit gemacht ⚽"
   },
   "cookieBanner": {
@@ -1066,10 +1073,10 @@
       "whiteLabel": "White-Label / Subdomain"
     },
     "values": {
-      "free_events": "2",
-      "pro_events": "15",
-      "premium_events": "100",
-      "enterprise_events": "Unbegrenzt",
+      "free_events": "5",
+      "pro_events": "10",
+      "premium_events": "25",
+      "enterprise_events": "25+ (auf Anfrage)",
       "moderation_free": "48 Std",
       "moderation_pro": "24 Std",
       "moderation_premium": "4 Std",
@@ -1172,7 +1179,7 @@
     "faqs": [
       {
         "q": "Kann ich kostenlos starten?",
-        "a": "Ja — Free ist dauerhaft kostenlos, ohne Kreditkarte. Du bekommst 2 aktive Events, Galerie, Programm und Logo im Hero. Du kannst jederzeit upgraden oder downgraden."
+        "a": "Ja — Free ist dauerhaft kostenlos, ohne Kreditkarte. Du bekommst 5 aktive Events, Galerie, Programm und Logo im Hero. Du kannst jederzeit upgraden oder downgraden."
       },
       {
         "q": "Was ist der Unterschied zwischen Boost und Premium?",
