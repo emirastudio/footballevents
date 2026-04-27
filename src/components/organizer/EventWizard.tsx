@@ -346,24 +346,21 @@ function Step2({
 function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardLabels }) {
   return (
     <div className="space-y-7">
-      {/* Age — multi-select chips */}
-      <fieldset>
-        <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.ageGroups}</legend>
-        <div className="flex flex-wrap gap-1.5">
-          {AGE_GROUPS.map((a) => (
-            <label key={a} className="inline-flex h-9 min-w-[3.25rem] cursor-pointer items-center justify-center rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 text-xs font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-500)] has-[:checked]:text-white">
-              <input type="checkbox" name="ageGroups" value={a} defaultChecked={defaults.ageGroups?.includes(a)} className="sr-only" />
-              {a === "ALL_AGES" ? "All" : a}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {/* Age — equal-width grid so every chip is the same size */}
+      <PillCheckGroup
+        legend={labels.ageGroups}
+        name="ageGroups"
+        defaultValues={defaults.ageGroups ?? []}
+        options={AGE_GROUPS.map((a) => ({ value: a, label: a === "ALL_AGES" ? "ALL" : a }))}
+        cols="grid-cols-6 sm:grid-cols-11"
+      />
 
-      {/* Gender — single-select pills */}
+      {/* Gender — 3 equal cells */}
       <PillRadioGroup
+        legend={labels.gender}
         name="gender"
-        label={labels.gender}
         defaultValue={defaults.gender ?? "MIXED"}
+        cols="grid-cols-3"
         options={[
           { value: "MALE",   label: labels.genderMale },
           { value: "FEMALE", label: labels.genderFemale },
@@ -371,11 +368,12 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
         ]}
       />
 
-      {/* Skill — single-select pills (consistent with gender) */}
+      {/* Skill level — 2 cols on mobile, 4 on desktop, equal */}
       <PillRadioGroup
+        legend={labels.skillLevel}
         name="skillLevel"
-        label={labels.skillLevel}
         defaultValue={defaults.skillLevel ?? "ALL_LEVELS"}
+        cols="grid-cols-2 sm:grid-cols-4"
         options={[
           { value: "ALL_LEVELS",   label: labels.skillAll },
           { value: "AMATEUR",      label: labels.skillAm },
@@ -393,22 +391,45 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
   );
 }
 
-/** Single-select pill row — alternative to native <select>, matches age chips visually. */
-function PillRadioGroup({
-  name, label, options, defaultValue,
+const pillCellCls =
+  "inline-flex h-10 w-full cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 text-sm font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-500)] has-[:checked]:text-white hover:border-[var(--color-pitch-300)]";
+
+/** Multi-select chip group with uniform grid cells. */
+function PillCheckGroup({
+  legend, name, options, defaultValues, cols,
 }: {
-  name: string; label: string; defaultValue: string;
+  legend: string; name: string; cols: string;
+  defaultValues: string[];
   options: { value: string; label: string }[];
 }) {
   return (
     <fieldset>
-      <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{label}</legend>
-      <div className="flex flex-wrap gap-1.5">
+      <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{legend}</legend>
+      <div className={`grid gap-1.5 ${cols}`}>
         {options.map((o) => (
-          <label
-            key={o.value}
-            className="inline-flex h-10 cursor-pointer items-center justify-center whitespace-nowrap rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 text-sm font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-500)] has-[:checked]:text-white"
-          >
+          <label key={o.value} className={pillCellCls}>
+            <input type="checkbox" name={name} value={o.value} defaultChecked={defaultValues.includes(o.value)} className="sr-only" />
+            {o.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
+/** Single-select pill row with uniform grid cells. */
+function PillRadioGroup({
+  legend, name, options, defaultValue, cols,
+}: {
+  legend: string; name: string; defaultValue: string; cols: string;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <fieldset>
+      <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{legend}</legend>
+      <div className={`grid gap-1.5 ${cols}`}>
+        {options.map((o) => (
+          <label key={o.value} className={pillCellCls}>
             <input type="radio" name={name} value={o.value} defaultChecked={defaultValue === o.value} className="sr-only" />
             {o.label}
           </label>
