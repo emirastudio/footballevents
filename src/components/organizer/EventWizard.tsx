@@ -13,6 +13,7 @@ import { ImageUpload } from "@/components/upload/ImageUpload";
 import { Check, ChevronLeft, ChevronRight, Lock, Send, Plus, Trash2 } from "lucide-react";
 import type { Tier } from "@/lib/tier";
 import { tierAllows } from "@/lib/tier";
+import { formatError } from "@/components/organizer/EventForm";
 import { Link } from "@/i18n/navigation";
 
 type Category = { id: string; slug: string; name: string };
@@ -194,7 +195,7 @@ export function EventWizard({
         </p>
       )}
       {state?.error && state.error !== "validation" && state.error !== "publishIncomplete" && (
-        <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
+        <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{formatError(state.error, labels.errors)}</p>
       )}
       {state?.error === "publishIncomplete" && (
         <p className="rounded-[var(--radius-md)] border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">

@@ -147,6 +147,11 @@ export default async function EditEventPage({
       videoNotAllowed: t("errors.videoNotAllowed"),
       priceRange: t("errors.priceRange"),
       venueNameRequired: t("errors.venueNameRequired"),
+      eventLimitReached: t("errors.eventLimitReached"),
+      limitHintFree: t("errors.limitHintFree"),
+      limitHintPro: t("errors.limitHintPro"),
+      limitHintPremium: t("errors.limitHintPremium"),
+      limitHintEnterprise: t("errors.limitHintEnterprise"),
     },
   };
 

@@ -14,6 +14,20 @@ import { tierAllows } from "@/lib/tier";
 type Category = { id: string; slug: string; name: string };
 type Country = { code: string; name: string; flag: string };
 
+// Backend errors come as either a plain key ("titleRequired") or as a
+// colon-encoded structured code like "eventLimitReached:5:FREE". Decode and
+// look up the right localized template.
+export function formatError(raw: string, errors: Record<string, string>): string {
+  if (raw.startsWith("eventLimitReached:")) {
+    const [, limit, tier] = raw.split(":");
+    const tpl = errors.eventLimitReached;
+    if (!tpl) return raw;
+    const hint = errors[`limitHint${tier?.charAt(0)}${tier?.slice(1).toLowerCase()}`] ?? "";
+    return tpl.replace("{limit}", String(limit)).replace("{tier}", String(tier)).replace("{hint}", hint);
+  }
+  return errors[raw] ?? raw;
+}
+
 export type EventFormLabels = {
   newTitle: string; newSubtitle: string;
   saveDraft: string; submitReview: string; saving: string;
@@ -305,7 +319,7 @@ export function EventForm({
 
       {state?.error && !state.fieldErrors && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {labels.errors[state.error] ?? state.error}
+          {formatError(state.error, labels.errors)}
         </p>
       )}
 

@@ -52,10 +52,10 @@ export function tierAllows(tier: Tier | string | null | undefined, feature: Feat
 }
 
 export const ACTIVE_EVENTS_LIMIT: Record<Tier, number | null> = {
-  FREE: 2,
-  PRO: 15,
-  PREMIUM: 100,
-  ENTERPRISE: null, // unlimited
+  FREE: 5,
+  PRO: 10,
+  PREMIUM: 25,
+  ENTERPRISE: null, // 25+ — by agreement
 };
 
 export const BOOSTS_INCLUDED_PER_MONTH: Record<Tier, number> = {
@@ -71,3 +71,7 @@ export const BOOST_DISCOUNT: Record<Tier, number> = {
   PREMIUM: 0.30,
   ENTERPRISE: 0.50,
 };
+
+// "Active" = not ARCHIVED. Drafts and PENDING_REVIEW count, since they
+// occupy a slot the organizer is working on.
+export const ACTIVE_EVENT_STATUSES = ["DRAFT", "PENDING_REVIEW", "PUBLISHED"] as const;

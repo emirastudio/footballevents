@@ -6,7 +6,17 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { nanoid } from "nanoid";
-import { tierAllows } from "@/lib/tier";
+import { tierAllows, ACTIVE_EVENTS_LIMIT, type Tier } from "@/lib/tier";
+
+// Returns null if creation is allowed, or the limit number when reached.
+async function activeEventsLimitReached(organizerId: string, tier: Tier | string): Promise<number | null> {
+  const limit = ACTIVE_EVENTS_LIMIT[(tier as Tier) ?? "FREE"];
+  if (limit === null) return null; // unlimited
+  const count = await db.event.count({
+    where: { organizerId, status: { in: ["DRAFT", "PENDING_REVIEW", "PUBLISHED"] } },
+  });
+  return count >= limit ? limit : null;
+}
 
 const VIDEO_HOSTS = /^https?:\/\/([a-z0-9.-]+\.)?(youtube\.com|youtu\.be|vimeo\.com|player\.vimeo\.com)\//i;
 
@@ -221,6 +231,9 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
 
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
   if (!organizer) redirect("/onboarding/organizer");
+
+  const limit = await activeEventsLimitReached(organizer.id, organizer.subscriptionTier);
+  if (limit !== null) return { error: `eventLimitReached:${limit}:${organizer.subscriptionTier}` };
 
   const ageGroupsRaw = formData.getAll("ageGroups").map((v) => String(v));
   const parsed = baseSchema.safeParse({
@@ -618,6 +631,9 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
     const data = parsed.data as z.infer<typeof stepSchemas[1]>;
     const category = await db.category.findUnique({ where: { id: data.categoryId } });
     if (!category) return { error: "categoryRequired", fieldErrors: { categoryId: "categoryRequired" } };
+
+    const limit = await activeEventsLimitReached(organizer.id, organizer.subscriptionTier);
+    if (limit !== null) return { error: `eventLimitReached:${limit}:${organizer.subscriptionTier}` };
 
     const baseSlug = slugify(data.titleEn) || "event";
     const slug = `${baseSlug}-${nanoid(6).toLowerCase()}`;
