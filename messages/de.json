@@ -47,10 +47,26 @@
     "alreadyOrganizer": "Du hast bereits ein Veranstalter-Profil.",
     "dashboard": "Dashboard",
     "myEvents": "Meine Events",
+    "venues": "Standorte",
     "applications": "Anmeldungen",
     "messages": "Nachrichten",
     "reviewsMod": "Bewertungen",
     "settings": "Einstellungen",
+    "venuesPage": {
+      "title": "Standorte",
+      "subtitle": "Orte, an denen deine Events stattfinden. Neu hinzufügen — erscheinen im öffentlichen Katalog.",
+      "addVenue": "Standort hinzufügen",
+      "view": "Öffnen",
+      "edit": "Bearbeiten",
+      "capacity": "Plätze",
+      "eventsCount": "Events",
+      "emptyTitle": "Noch keine Standorte",
+      "emptyBody": "Wenn du ein Event mit Standort erstellst, erscheint dieser automatisch hier. Oder füge einen Standort manuell hinzu.",
+      "newTitle": "Neuer Standort",
+      "newSubtitle": "Grunddaten ausfüllen. Nach dem Speichern erscheint der Standort im öffentlichen Katalog.",
+      "editSubtitle": "Standort aktualisieren.",
+      "backToList": "Zur Liste"
+    },
     "recentEvents": "Letzte Events",
     "recentApplications": "Letzte Anmeldungen",
     "createFirstEvent": "Erstes Event erstellen",
@@ -170,7 +186,74 @@
       "datesInvalid": "Enddatum muss am gleichen Tag oder nach dem Startdatum liegen",
       "countryRequired": "Land ist Pflicht",
       "videoNotAllowed": "Nur YouTube- und Vimeo-URLs werden akzeptiert",
-      "priceRange": "«Preis bis» muss größer sein als «Preis ab»"
+      "priceRange": "«Preis bis» muss größer sein als «Preis ab»",
+      "venueNameRequired": "Standortname ist Pflicht"
+    }
+  },
+  "venueForm": {
+    "name": "Name",
+    "country": "Land",
+    "city": "Stadt",
+    "address": "Adresse",
+    "capacity": "Kapazität",
+    "surfaceType": "Belag",
+    "surfaceGrass": "Naturrasen",
+    "surfaceArtificial": "Kunstrasen",
+    "surfaceHybrid": "Hybrid",
+    "surfaceIndoor": "Halle",
+    "website": "Website",
+    "isStadium": "Stadion",
+    "isStadiumHint": "Ankreuzen, wenn es ein richtiges Stadion ist (kein Kunstrasenplatz, Trainingsgelände oder Akademieplatz).",
+    "submit": "Standort speichern",
+    "saving": "Speichere…",
+    "errors": {
+      "nameRequired": "Name ist Pflicht",
+      "countryRequired": "Land ist Pflicht"
+    }
+  },
+  "eventWizard": {
+    "steps": {
+      "1": "Was",
+      "2": "Wann & wo",
+      "3": "Für wen",
+      "4": "Preis & Anmeldung",
+      "5": "Feinschliff & Veröffentlichen"
+    },
+    "stepHints": {
+      "1": "Kategorie, Titel und Beschreibung. Englisch ist Pflicht, eine zweite Sprache ist optional.",
+      "2": "Datum und Standort. Wenn der Standort noch nicht im Katalog ist, erscheint er nach dem Speichern automatisch.",
+      "3": "Alter, Geschlecht, Niveau und Format — hilft Spielern, genau dein Event zu finden.",
+      "4": "Preise, Kontakte und wohin Anmeldungen gehen. Kostenlos ist ok.",
+      "5": "Logo, Cover, Programm, Inklusivleistungen und FAQ. Wenn alles passt — zur Veröffentlichung einreichen."
+    },
+    "prev": "Zurück",
+    "next": "Weiter",
+    "publish": "Veröffentlichen",
+    "saveDraft": "Entwurf speichern",
+    "saving": "Speichere…",
+    "publishingDisabled": "Pflichtfelder fehlen: Datum, Land und Standortname. Bitte ausfüllen und erneut versuchen.",
+    "upgradeForPublish": "Dein aktueller Tarif kann dieses Event nicht veröffentlichen. Upgrade, um fortzufahren.",
+    "upgradeCta": "Tarif wechseln",
+    "genderMale": "Jungen/Männer",
+    "genderFemale": "Mädchen/Frauen",
+    "genderMixed": "Gemischt",
+    "skillAll": "Alle Niveaus",
+    "skillAm": "Amateur",
+    "skillSemiPro": "Semi-Profi",
+    "skillPro": "Profi",
+    "programmeHint": "Tag-für-Tag-Programm. Jeder Tag bekommt einen Titel und eine Liste von Punkten.",
+    "programmeAddDay": "Tag hinzufügen",
+    "programmeRemoveDay": "Tag entfernen",
+    "programmeDayTitle": "Tagestitel (z. B. „Tag 1 — Anreise“)",
+    "programmeDayItems": "Programmpunkt",
+    "programmeAddItem": "Punkt hinzufügen",
+    "faqHint": "Häufige Fragen, die Teilnehmer stellen.",
+    "faqAddQuestion": "Frage hinzufügen",
+    "faqRemoveQuestion": "Frage entfernen",
+    "faqQuestion": "Frage",
+    "faqAnswer": "Antwort",
+    "errors": {
+      "datesRequired": "Datum vor Veröffentlichung wählen"
     }
   },
   "meta": {

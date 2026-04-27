@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { countUnreadThreads } from "@/lib/messages";
-import { LayoutDashboard, Calendar, Inbox, MessageSquare, Star, Settings as Cog } from "lucide-react";
+import { LayoutDashboard, Calendar, Inbox, MessageSquare, Star, Settings as Cog, MapPin } from "lucide-react";
 
 export default async function OrganizerLayout({
   children,
@@ -32,6 +32,7 @@ export default async function OrganizerLayout({
   const nav = [
     { href: "/organizer/dashboard", icon: LayoutDashboard, label: t("dashboard"), badge: 0 },
     { href: "/organizer/events", icon: Calendar, label: t("myEvents"), badge: 0 },
+    { href: "/organizer/venues", icon: MapPin, label: t("venues"), badge: 0 },
     { href: "/organizer/bookings", icon: Inbox, label: t("applications"), badge: 0 },
     { href: "/organizer/messages", icon: MessageSquare, label: t("messages"), badge: unreadMessages },
     { href: "/organizer/reviews", icon: Star, label: t("reviewsMod"), badge: 0 },

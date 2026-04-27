@@ -47,10 +47,26 @@
     "alreadyOrganizer": "Ya tienes un perfil de organizador.",
     "dashboard": "Panel",
     "myEvents": "Mis eventos",
+    "venues": "Ubicaciones",
     "applications": "Inscripciones",
     "messages": "Mensajes",
     "reviewsMod": "Reseñas",
     "settings": "Ajustes",
+    "venuesPage": {
+      "title": "Ubicaciones",
+      "subtitle": "Lugares donde se celebran tus eventos. Añade nuevos — aparecerán en el catálogo público.",
+      "addVenue": "Añadir ubicación",
+      "view": "Abrir",
+      "edit": "Editar",
+      "capacity": "plazas",
+      "eventsCount": "eventos",
+      "emptyTitle": "Aún no hay ubicaciones",
+      "emptyBody": "Cuando crees un evento con sede, aparecerá aquí automáticamente. O añade una ubicación manualmente.",
+      "newTitle": "Nueva ubicación",
+      "newSubtitle": "Rellena los datos básicos. Una vez guardada, se incluye en el catálogo público.",
+      "editSubtitle": "Actualizar esta ubicación.",
+      "backToList": "Volver a la lista"
+    },
     "recentEvents": "Eventos recientes",
     "recentApplications": "Inscripciones recientes",
     "createFirstEvent": "Crear el primer evento",
@@ -170,7 +186,74 @@
       "datesInvalid": "La fecha de fin debe ser igual o posterior al inicio",
       "countryRequired": "País obligatorio",
       "videoNotAllowed": "Solo se aceptan URLs de YouTube y Vimeo",
-      "priceRange": "«Precio hasta» debe ser mayor que «Precio desde»"
+      "priceRange": "«Precio hasta» debe ser mayor que «Precio desde»",
+      "venueNameRequired": "Nombre de la ubicación obligatorio"
+    }
+  },
+  "venueForm": {
+    "name": "Nombre",
+    "country": "País",
+    "city": "Ciudad",
+    "address": "Dirección",
+    "capacity": "Aforo",
+    "surfaceType": "Superficie",
+    "surfaceGrass": "Césped natural",
+    "surfaceArtificial": "Artificial",
+    "surfaceHybrid": "Híbrida",
+    "surfaceIndoor": "Indoor",
+    "website": "Sitio web",
+    "isStadium": "Estadio",
+    "isStadiumHint": "Marca si es un estadio de verdad (no una pista cubierta, campo de entrenamiento o de academia).",
+    "submit": "Guardar ubicación",
+    "saving": "Guardando…",
+    "errors": {
+      "nameRequired": "Nombre obligatorio",
+      "countryRequired": "País obligatorio"
+    }
+  },
+  "eventWizard": {
+    "steps": {
+      "1": "Qué",
+      "2": "Cuándo y dónde",
+      "3": "Para quién",
+      "4": "Precio e inscripciones",
+      "5": "Acabado y publicación"
+    },
+    "stepHints": {
+      "1": "Categoría, título y descripción. El inglés es obligatorio, un segundo idioma es opcional.",
+      "2": "Fechas y ubicación. Si la ubicación aún no está en el catálogo, aparecerá automáticamente al guardar.",
+      "3": "Edad, género, nivel y formato — ayuda a los jugadores a encontrar tu evento.",
+      "4": "Precios, contactos y a dónde van las inscripciones. Gratis está bien.",
+      "5": "Logo, portada, programa, qué incluye y FAQ. Cuando esté listo — envía a publicación."
+    },
+    "prev": "Atrás",
+    "next": "Siguiente",
+    "publish": "Publicar",
+    "saveDraft": "Guardar borrador",
+    "saving": "Guardando…",
+    "publishingDisabled": "Faltan campos obligatorios: fechas, país y nombre de la ubicación. Complétalos e inténtalo de nuevo.",
+    "upgradeForPublish": "Tu plan actual no permite publicar este evento. Mejora para continuar.",
+    "upgradeCta": "Cambiar plan",
+    "genderMale": "Chicos/Hombres",
+    "genderFemale": "Chicas/Mujeres",
+    "genderMixed": "Mixto",
+    "skillAll": "Todos los niveles",
+    "skillAm": "Amateur",
+    "skillSemiPro": "Semi-pro",
+    "skillPro": "Profesional",
+    "programmeHint": "Programa día por día. Cada día con un título y una lista de puntos.",
+    "programmeAddDay": "Añadir día",
+    "programmeRemoveDay": "Eliminar día",
+    "programmeDayTitle": "Título del día (p. ej. «Día 1 — Llegada»)",
+    "programmeDayItems": "Punto del programa",
+    "programmeAddItem": "Añadir punto",
+    "faqHint": "Preguntas frecuentes de los participantes.",
+    "faqAddQuestion": "Añadir pregunta",
+    "faqRemoveQuestion": "Eliminar pregunta",
+    "faqQuestion": "Pregunta",
+    "faqAnswer": "Respuesta",
+    "errors": {
+      "datesRequired": "Selecciona fechas antes de publicar"
     }
   },
   "meta": {

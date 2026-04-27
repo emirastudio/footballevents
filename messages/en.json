@@ -65,10 +65,26 @@
     "alreadyOrganizer": "You already have an organizer profile.",
     "dashboard": "Dashboard",
     "myEvents": "My events",
+    "venues": "Locations",
     "applications": "Applications",
     "messages": "Messages",
     "reviewsMod": "Reviews",
     "settings": "Settings",
+    "venuesPage": {
+      "title": "Locations",
+      "subtitle": "Places where your events happen. Add new ones — they'll appear in the public catalog.",
+      "addVenue": "Add location",
+      "view": "Open",
+      "edit": "Edit",
+      "capacity": "seats",
+      "eventsCount": "events",
+      "emptyTitle": "No locations yet",
+      "emptyBody": "When you create an event with a venue it'll show up here automatically. Or add a location manually.",
+      "newTitle": "New location",
+      "newSubtitle": "Fill the basics. Once saved, it joins the public catalog.",
+      "editSubtitle": "Update this location.",
+      "backToList": "Back to list"
+    },
     "recentEvents": "Recent events",
     "recentApplications": "Recent applications",
     "createFirstEvent": "Create your first event",
@@ -269,6 +285,27 @@
       "videoNotAllowed": "Only YouTube and Vimeo URLs are accepted",
       "priceRange": "'Price up to' must be greater than 'Price from'",
       "venueNameRequired": "Location name is required"
+    }
+  },
+  "venueForm": {
+    "name": "Name",
+    "country": "Country",
+    "city": "City",
+    "address": "Address",
+    "capacity": "Capacity",
+    "surfaceType": "Surface",
+    "surfaceGrass": "Natural grass",
+    "surfaceArtificial": "Artificial",
+    "surfaceHybrid": "Hybrid",
+    "surfaceIndoor": "Indoor",
+    "website": "Website",
+    "isStadium": "Stadium",
+    "isStadiumHint": "Tick if it's a full stadium (not an indoor pitch, training ground or academy field).",
+    "submit": "Save location",
+    "saving": "Saving…",
+    "errors": {
+      "nameRequired": "Name is required",
+      "countryRequired": "Country is required"
     }
   },
   "eventWizard": {
