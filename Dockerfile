@@ -51,10 +51,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 # Use --link: cross-stage hardlinks instead of overlayfs cache merge — required
 # because pnpm's `.pnpm/node_modules/prisma` is a symlink and BuildKit's
 # default copy strategy chokes on it ("cannot copy to non-directory").
-COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/.pnpm/prisma@* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --link --from=builder --chown=nextjs:nodejs /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+# --chown must use NUMERIC ids with --link: the link layer is built in
+# isolation and doesn't see /etc/passwd, so symbolic names error with
+# "invalid user index: -1".
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/prisma@* ./node_modules/.pnpm/
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/prisma ./node_modules/prisma
+COPY --link --from=builder --chown=1001:1001 /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
 # Run pending migrations before the app boots — fails the container if migrations
 # are broken, which is the correct behaviour (don't serve traffic on wrong schema).

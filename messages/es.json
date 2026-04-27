@@ -1,7 +1,10 @@
 {
   "about": {
     "title": "Sobre nosotros",
-    "subtitle": "footballevents.eu — el catálogo premium de eventos de fútbol en todo el mundo. Operado por Goality Sport Group OÜ desde Tallin, Estonia. Ayudamos a los organizadores a llegar a jugadores y aficionados sin fronteras."
+    "subtitle": "footballevents.eu — el catálogo premium de eventos de fútbol en todo el mundo.",
+    "body1": "footballevents.eu es el catálogo premium de eventos de fútbol en todo el mundo — torneos, campus de entrenamiento, festivales y match tours. Conectamos a organizadores con jugadores, familias y aficionados sin fronteras, para que los grandes eventos encuentren su público y los grandes jugadores la experiencia adecuada.",
+    "body2": "La web la opera Goality Sport Group OÜ, una empresa deportiva con sede en Tallin, Estonia. Somos organizadores nosotros mismos — montamos campus de fútbol y nos cansamos de publicaciones dispersas en Facebook y tablas desfasadas. Así que construimos el catálogo que nos hubiera gustado tener.",
+    "body3": "Gratis para participantes, inicio gratis para organizadores. Los planes de pago desbloquean visibilidad (boosts, posiciones destacadas) y herramientas para gestionar contactos. ¿Preguntas, prensa, colaboraciones? Escríbenos a support@footballevents.eu — leemos cada email."
   },
   "contact": {
     "title": "Contacto",
