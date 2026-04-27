@@ -40,6 +40,8 @@
     "tierFree": "Free — para probar",
     "tierPro": "Pro — inscripciones, galería, programa",
     "tierPremium": "Premium — featured, embed YouTube/Vimeo en hero, todo el toolkit",
+    "activityTypes": "¿Qué organizas?",
+    "activityTypesHint": "Selecciona todas las actividades que organiza tu entidad. Por ellas te encontrarán en el catálogo.",
     "submit": "Crear perfil",
     "loading": "Creando…",
     "alreadyOrganizer": "Ya tienes un perfil de organizador.",
@@ -360,7 +362,9 @@
     "festivals":     { "title": "Festivales de fútbol",    "subtitle": "Celebraciones del deporte — fan zones, exhibiciones, torneos." },
     "masterclasses": { "title": "Masterclasses",           "subtitle": "Sesiones con entrenadores y jugadores profesionales." },
     "match-tours":   { "title": "Tours a partidos",        "subtitle": "Viajes a los grandes estadios del mundo." },
-    "showcases":     { "title": "Showcases",               "subtitle": "Eventos para jugadores que buscan el siguiente nivel." }
+    "showcases":     { "title": "Showcases",               "subtitle": "Eventos para jugadores que buscan el siguiente nivel." },
+    "training-camps": { "title": "Concentraciones",        "subtitle": "Concentraciones de pretemporada y temporada para clubes y academias." },
+    "tryouts":       { "title": "Pruebas",                 "subtitle": "Pruebas individuales y jornadas de scouting." }
   },
   "advertise": {
     "audience1": { "label": "Visitas mensuales" },

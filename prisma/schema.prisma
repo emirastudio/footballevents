@@ -35,6 +35,8 @@ enum EventType {
   MATCH_TOUR
   CLINIC
   SHOWCASE
+  TRAINING_CAMP
+  TRYOUT
 }
 
 enum EventStatus {
@@ -237,6 +239,9 @@ model Organizer {
   countryCode     String?
   city            String?
   isVerified      Boolean  @default(false)
+
+  // Activity types — what the organizer does (multi-select). Used in /org filter.
+  activityTypes   EventType[] @default([])
 
   // Social links (organizer-level, used as fallback for events)
   instagramUrl    String?

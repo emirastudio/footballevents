@@ -7,7 +7,7 @@ import { EventCard } from "@/components/cards/EventCard";
 import { db } from "@/lib/db";
 import { getEvents } from "@/lib/queries";
 import {
-  Search, Trophy, Tent, PartyPopper, GraduationCap, Plane, Sparkles,
+  Search, Trophy, Tent, PartyPopper, GraduationCap, Plane, Sparkles, Dumbbell, UserSearch,
   ArrowRight, Calendar, Users, Building2, Globe2, MessageSquare, TrendingUp,
 } from "lucide-react";
 
@@ -17,6 +17,7 @@ const eventWhere = HIDE_DEMO ? { status: "PUBLISHED" as const, isDemo: false } :
 const ICONS: Record<string, typeof Trophy> = {
   tournaments: Trophy, camps: Tent, festivals: PartyPopper,
   masterclasses: GraduationCap, "match-tours": Plane, showcases: Sparkles,
+  "training-camps": Dumbbell, tryouts: UserSearch,
 };
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {

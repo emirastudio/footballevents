@@ -17,6 +17,8 @@ const CATEGORY_NAMES_EN: Record<string, string> = {
   masterclasses: "Masterclasses",
   "match-tours": "Match Tours",
   showcases: "Showcases",
+  "training-camps": "Training Camps",
+  tryouts: "Tryouts",
 };
 
 async function main() {

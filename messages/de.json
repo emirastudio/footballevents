@@ -40,6 +40,8 @@
     "tierFree": "Free — ausprobieren",
     "tierPro": "Pro — Anmeldungen, Galerie, Programm",
     "tierPremium": "Premium — Featured, YouTube/Vimeo-Embed im Hero, volles Toolkit",
+    "activityTypes": "Was organisiert ihr",
+    "activityTypesHint": "Wähle alle Aktivitäten, die euer Verband anbietet. Besucher finden euch im Katalog danach.",
     "submit": "Profil erstellen",
     "loading": "Erstelle…",
     "alreadyOrganizer": "Du hast bereits ein Veranstalter-Profil.",
@@ -360,7 +362,9 @@
     "festivals":     { "title": "Fußballfestivals",     "subtitle": "Feiern des Spiels — Fanzonen, Ausstellungen, Turniere." },
     "masterclasses": { "title": "Masterclasses",        "subtitle": "Skill-Sessions mit Profi-Trainern und Spielern." },
     "match-tours":   { "title": "Spielreisen",          "subtitle": "Reisen zu den größten Stadien der Welt." },
-    "showcases":     { "title": "Showcases",            "subtitle": "Events für Spieler auf dem Sprung zur nächsten Stufe." }
+    "showcases":     { "title": "Showcases",            "subtitle": "Events für Spieler auf dem Sprung zur nächsten Stufe." },
+    "training-camps": { "title": "Trainingslager",     "subtitle": "Vor- und Saisonvorbereitungs-Trainingslager für Vereine und Akademien." },
+    "tryouts":       { "title": "Sichtungen",          "subtitle": "Individuelle Sichtungen und Probetrainings." }
   },
   "advertise": {
     "audience1": { "label": "Besucher monatlich" },

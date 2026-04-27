@@ -21,6 +21,18 @@ export default async function OrganizerOnboardingPage({
   if (existing) redirect("/organizer/dashboard");
 
   const t = await getTranslations("organizer");
+  const tCat = await getTranslations("categoryHeaders");
+
+  const activityOptions = [
+    { value: "TOURNAMENT",    label: tCat("tournaments.title") },
+    { value: "CAMP",          label: tCat("camps.title") },
+    { value: "FESTIVAL",      label: tCat("festivals.title") },
+    { value: "MASTERCLASS",   label: tCat("masterclasses.title") },
+    { value: "MATCH_TOUR",    label: tCat("match-tours.title") },
+    { value: "SHOWCASE",      label: tCat("showcases.title") },
+    { value: "TRAINING_CAMP", label: tCat("training-camps.title") },
+    { value: "TRYOUT",        label: tCat("tryouts.title") },
+  ];
 
   return (
     <Container className="py-12">
@@ -35,6 +47,7 @@ export default async function OrganizerOnboardingPage({
             defaultName={session.user.name ?? ""}
             defaultSecondLocale={locale === "ru" || locale === "de" || locale === "es" ? locale : ""}
             countries={getCountries(locale).map((c) => ({ code: c.code, name: c.name, flag: c.flag }))}
+            activityOptions={activityOptions}
             labels={{
               name: t("name"),
               nameHint: t("nameHint"),
@@ -61,6 +74,8 @@ export default async function OrganizerOnboardingPage({
               tierFree: t("tierFree"),
               tierPro: t("tierPro"),
               tierPremium: t("tierPremium"),
+              activityTypes: t("activityTypes"),
+              activityTypesHint: t("activityTypesHint"),
               submit: t("submit"),
               loading: t("loading"),
               langRu: t("langRu"),

@@ -1,0 +1,3 @@
+-- Add new EventType enum values
+ALTER TYPE "EventType" ADD VALUE IF NOT EXISTS 'TRAINING_CAMP';
+ALTER TYPE "EventType" ADD VALUE IF NOT EXISTS 'TRYOUT';

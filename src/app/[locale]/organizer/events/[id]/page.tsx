@@ -27,7 +27,7 @@ export default async function EditEventPage({
 
   const ev = await db.event.findUnique({
     where: { id },
-    include: { translations: true, category: true },
+    include: { translations: true, category: true, venue: true },
   });
   if (!ev || ev.organizerId !== organizer.id) notFound();
 
@@ -42,6 +42,11 @@ export default async function EditEventPage({
   });
 
   const en = ev.translations.find((tr) => tr.locale === "en") ?? ev.translations[0];
+  const second = ev.translations.find((tr) => tr.locale !== "en");
+  const defaultSecondLocale: "" | "ru" | "de" | "es" =
+    second?.locale === "ru" || second?.locale === "de" || second?.locale === "es"
+      ? second.locale
+      : (locale === "ru" || locale === "de" || locale === "es" ? locale : "");
 
   const programmeText = (ev.program as { day: number; title: string; items: string[] }[] | null)
     ?.map((d) => [d.title, ...d.items].join("\n"))
@@ -60,7 +65,8 @@ export default async function EditEventPage({
     endDate: ev.endDate.toISOString().slice(0, 10),
     registrationDeadline: ev.registrationDeadline?.toISOString().slice(0, 10),
     countryCode: ev.countryCode,
-    customLocation: ev.customLocation ?? undefined,
+    venueName: ev.venue?.name ?? "",
+    venueAddress: ev.customLocation ?? ev.venue?.address ?? undefined,
     ageGroups: ev.ageGroups as unknown as string[],
     gender: ev.gender,
     skillLevel: ev.skillLevel,
@@ -81,6 +87,10 @@ export default async function EditEventPage({
     notIncluded: ev.notIncluded.join("\n"),
     programme: programmeText,
     faq: faqText,
+    secondLocale: defaultSecondLocale,
+    titleSecond: second?.title ?? "",
+    shortDescSecond: second?.shortDescription ?? "",
+    descriptionSecond: second?.description ?? "",
   };
 
   const labels = {
@@ -100,12 +110,18 @@ export default async function EditEventPage({
       booking: t("sections.booking"), bookingHint: t("sections.bookingHint"),
     },
     category: t("category"), categoryHint: t("categoryHint"),
+    englishSection: t("englishSection"), englishSectionHint: t("englishSectionHint"),
+    secondSection: t("secondSection"), secondSectionHint: t("secondSectionHint"),
+    secondLanguagePicker: t("secondLanguagePicker"),
+    langRu: t("langRu"), langDe: t("langDe"), langEs: t("langEs"), langNone: t("langNone"),
     titleEn: t("titleEn"), titleEnHint: t("titleEnHint"),
     shortDescEn: t("shortDescEn"), shortDescEnHint: t("shortDescEnHint"),
     descriptionEn: t("descriptionEn"), descriptionEnHint: t("descriptionEnHint"),
+    titleSecond: t("titleSecond"), shortDescSecond: t("shortDescSecond"), descriptionSecond: t("descriptionSecond"),
     startDate: t("startDate"), endDate: t("endDate"), registrationDeadline: t("registrationDeadline"), timezone: t("timezone"),
-    country: t("country"), city: t("city"), venue: t("venue"), venueHint: t("venueHint"),
-    customLocation: t("customLocation"), customLocationHint: t("customLocationHint"),
+    country: t("country"), city: t("city"),
+    venueName: t("venueName"), venueNameHint: t("venueNameHint"),
+    venueAddress: t("venueAddress"), venueAddressHint: t("venueAddressHint"),
     ageGroups: t("ageGroups"), gender: t("gender"), skillLevel: t("skillLevel"),
     format: t("format"), formatHint: t("formatHint"), maxParticipants: t("maxParticipants"),
     isFree: t("isFree"), priceFrom: t("priceFrom"), priceTo: t("priceTo"), currency: t("currency"),
@@ -128,6 +144,7 @@ export default async function EditEventPage({
       countryRequired: t("errors.countryRequired"),
       videoNotAllowed: t("errors.videoNotAllowed"),
       priceRange: t("errors.priceRange"),
+      venueNameRequired: t("errors.venueNameRequired"),
     },
   };
 

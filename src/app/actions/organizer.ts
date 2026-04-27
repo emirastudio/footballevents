@@ -34,6 +34,9 @@ const onboardSchema = z.object({
   website: websiteField,
   phone: z.string().optional(),
   tier: z.enum(["FREE", "PRO", "PREMIUM"]).default("FREE"),
+  activityTypes: z.array(z.enum([
+    "TOURNAMENT","CAMP","FESTIVAL","MASTERCLASS","MATCH_TOUR","CLINIC","SHOWCASE","TRAINING_CAMP","TRYOUT",
+  ])).default([]),
 });
 
 export type OrganizerFormState = { error?: string; fieldErrors?: Record<string, string> } | null;
@@ -60,6 +63,7 @@ export async function createOrganizerAction(_prev: OrganizerFormState, formData:
     website: formData.get("website") || undefined,
     phone: formData.get("phone") || undefined,
     tier: (formData.get("tier") as string) || "FREE",
+    activityTypes: formData.getAll("activityTypes").map(String),
   });
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -105,6 +109,7 @@ export async function createOrganizerAction(_prev: OrganizerFormState, formData:
         phone: data.phone || null,
         subscriptionTier,
         subscriptionEndsAt,
+        activityTypes: data.activityTypes,
         translations: { create: translations },
       },
     });

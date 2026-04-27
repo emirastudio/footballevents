@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import { getOrganizers, getOrganizerCountryCodes, type OrganizerFilters } from "@/lib/queries";
 import { getCountries, findCountry } from "@/lib/countries";
-import { Search, Globe2, Sparkles, ShieldCheck, ChevronDown, X } from "lucide-react";
+import { Search, Globe2, Sparkles, ShieldCheck, ChevronDown, X, Tag } from "lucide-react";
 
 type SP = Record<string, string | string[] | undefined>;
 
@@ -18,6 +18,19 @@ type Tier = (typeof TIERS)[number];
 function isTier(v: string | undefined): v is Tier {
   return !!v && (TIERS as readonly string[]).includes(v);
 }
+
+const ACTIVITY_TYPES = [
+  "TOURNAMENT","CAMP","FESTIVAL","MASTERCLASS","MATCH_TOUR","SHOWCASE","TRAINING_CAMP","TRYOUT",
+] as const;
+type ActivityType = (typeof ACTIVITY_TYPES)[number];
+function isActivityType(v: string | undefined): v is ActivityType {
+  return !!v && (ACTIVITY_TYPES as readonly string[]).includes(v);
+}
+const ACTIVITY_TO_CAT_KEY: Record<ActivityType, string> = {
+  TOURNAMENT: "tournaments", CAMP: "camps", FESTIVAL: "festivals",
+  MASTERCLASS: "masterclasses", MATCH_TOUR: "match-tours", SHOWCASE: "showcases",
+  TRAINING_CAMP: "training-camps", TRYOUT: "tryouts",
+};
 
 export default async function OrganizersPage({
   params,
@@ -33,18 +46,25 @@ export default async function OrganizersPage({
   const t       = await getTranslations("organizers");
   const tCommon = await getTranslations("common");
   const tNav    = await getTranslations("nav");
+  const tCat    = await getTranslations("categoryHeaders");
 
   const country = pickStr(sp.country);
   const tierRaw = pickStr(sp.tier);
+  const activityRaw = pickStr(sp.activity);
   const verified = pickStr(sp.verified) === "1";
   const q = pickStr(sp.q) ?? "";
+
+  const activity: ActivityType | undefined = isActivityType(activityRaw) ? activityRaw : undefined;
 
   const filters: OrganizerFilters = {
     countryCode: country || undefined,
     tier: isTier(tierRaw) ? tierRaw : undefined,
     verified: verified || undefined,
     q: q || undefined,
+    activityType: activity,
   };
+
+  const activityOpts = ACTIVITY_TYPES.map((a) => ({ value: a, label: tCat(`${ACTIVITY_TO_CAT_KEY[a]}.title`) }));
 
   const [organizers, countryCodes] = await Promise.all([
     getOrganizers(filters),
@@ -65,15 +85,17 @@ export default async function OrganizersPage({
     reviews:  tCommon("reviews"),
   };
 
-  const hasFilters = !!(country || filters.tier || verified || q);
+  const hasFilters = !!(country || filters.tier || verified || q || activity);
 
   const activeCountry = country ? countryByCode.get(country) ?? findCountry(country) : null;
+  const activityLabel = activity ? tCat(`${ACTIVITY_TO_CAT_KEY[activity]}.title`) : null;
   const activeChips: { key: string; label: string; href: string }[] = [];
   const buildHref = (overrides: Record<string, string | null>) => {
     const next = new URLSearchParams();
     if (q) next.set("q", q);
     if (country) next.set("country", country);
     if (filters.tier) next.set("tier", filters.tier);
+    if (activity) next.set("activity", activity);
     if (verified) next.set("verified", "1");
     for (const [k, v] of Object.entries(overrides)) {
       if (v === null) next.delete(k); else next.set(k, v);
@@ -83,6 +105,7 @@ export default async function OrganizersPage({
   };
   if (q) activeChips.push({ key: "q", label: `"${q}"`, href: buildHref({ q: null }) });
   if (activeCountry) activeChips.push({ key: "country", label: `${activeCountry.flag} ${activeCountry.name}`, href: buildHref({ country: null }) });
+  if (activityLabel) activeChips.push({ key: "activity", label: activityLabel, href: buildHref({ activity: null }) });
   if (filters.tier) activeChips.push({ key: "tier", label: filters.tier, href: buildHref({ tier: null }) });
   if (verified) activeChips.push({ key: "verified", label: t("filters.verifiedOnly"), href: buildHref({ verified: null }) });
 
@@ -99,7 +122,7 @@ export default async function OrganizersPage({
           method="GET"
           className="mb-4 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-[var(--shadow-sm)] sm:p-4"
         >
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center">
             {/* Search */}
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
@@ -136,6 +159,23 @@ export default async function OrganizersPage({
                   <option key={c.code} value={c.code}>
                     {c.flag} {c.name}
                   </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+            </div>
+
+            {/* Activity */}
+            <div className="relative">
+              <Tag className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />
+              <select
+                name="activity"
+                defaultValue={activity ?? ""}
+                className="h-11 w-full appearance-none rounded-[var(--radius-full)] border border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] pl-10 pr-9 text-sm font-medium text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:bg-[var(--color-surface)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+                aria-label={t("filters.activity")}
+              >
+                <option value="">{t("filters.allActivities")}</option>
+                {activityOpts.map((a) => (
+                  <option key={a.value} value={a.value}>{a.label}</option>
                 ))}
               </select>
               <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-muted)]" />

@@ -7,7 +7,7 @@ export type MockEvent = {
   title: string;
   shortDescription: string;
   description: string;
-  type: "TOURNAMENT" | "CAMP" | "FESTIVAL" | "MASTERCLASS" | "MATCH_TOUR" | "SHOWCASE" | "CLINIC";
+  type: "TOURNAMENT" | "CAMP" | "FESTIVAL" | "MASTERCLASS" | "MATCH_TOUR" | "SHOWCASE" | "CLINIC" | "TRAINING_CAMP" | "TRYOUT";
   categorySlug: string;
   organizerSlug: string;
   venueSlug?: string;
@@ -142,6 +142,8 @@ export const categories = [
   { slug: "masterclasses", type: "MASTERCLASS", iconKey: "graduation", count: 89 },
   { slug: "match-tours",  type: "MATCH_TOUR",  iconKey: "plane",      count: 47 },
   { slug: "showcases",    type: "SHOWCASE",    iconKey: "sparkles",   count: 18 },
+  { slug: "training-camps", type: "TRAINING_CAMP", iconKey: "dumbbell", count: 0 },
+  { slug: "tryouts",      type: "TRYOUT",      iconKey: "search",     count: 0 },
 ];
 
 // ───────────────── Images pool ─────────────────

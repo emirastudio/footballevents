@@ -20,12 +20,18 @@ export type EventFormLabels = {
   draftHint: string;
   sections: Record<string, string>;
   category: string; categoryHint: string;
+  englishSection: string; englishSectionHint: string;
+  secondSection: string; secondSectionHint: string;
+  secondLanguagePicker: string;
+  langRu: string; langDe: string; langEs: string; langNone: string;
   titleEn: string; titleEnHint: string;
   shortDescEn: string; shortDescEnHint: string;
   descriptionEn: string; descriptionEnHint: string;
+  titleSecond: string; shortDescSecond: string; descriptionSecond: string;
   startDate: string; endDate: string; registrationDeadline: string; timezone: string;
-  country: string; city: string; venue: string; venueHint: string;
-  customLocation: string; customLocationHint: string;
+  country: string; city: string;
+  venueName: string; venueNameHint: string;
+  venueAddress: string; venueAddressHint: string;
   ageGroups: string; gender: string; skillLevel: string;
   format: string; formatHint: string; maxParticipants: string;
   isFree: string; priceFrom: string; priceTo: string; currency: string;
@@ -56,7 +62,8 @@ export type EventDefaults = {
   registrationDeadline?: string;
   countryCode?: string;
   city?: string;
-  customLocation?: string;
+  venueName?: string;
+  venueAddress?: string;
   ageGroups?: string[];
   gender?: string;
   skillLevel?: string;
@@ -77,6 +84,10 @@ export type EventDefaults = {
   notIncluded?: string;
   programme?: string;
   faq?: string;
+  secondLocale?: "" | "ru" | "de" | "es";
+  titleSecond?: string;
+  shortDescSecond?: string;
+  descriptionSecond?: string;
 };
 
 export function EventForm({
@@ -99,6 +110,7 @@ export function EventForm({
   );
   const [countryCode, setCountryCode] = useState<string>(defaults?.countryCode ?? "");
   const [isFree, setIsFree] = useState(defaults?.isFree ?? false);
+  const [secondLocale, setSecondLocale] = useState<string>(defaults?.secondLocale ?? "");
 
   const fe = state?.fieldErrors ?? {};
   const errMsg = (key?: string) => key ? labels.errors[key] ?? key : undefined;
@@ -122,9 +134,45 @@ export function EventForm({
           defaultValue={defaults?.categoryId}
           items={categories.map((c) => ({ value: c.id, label: c.name }))}
         />
-        <Field name="titleEn" required label={labels.titleEn} hint={labels.titleEnHint} maxLength={120} error={errMsg(fe.titleEn)} defaultValue={defaults?.titleEn} />
-        <Field name="shortDescEn" label={labels.shortDescEn} hint={labels.shortDescEnHint} maxLength={240} defaultValue={defaults?.shortDescEn} />
-        <Textarea name="descriptionEn" required label={labels.descriptionEn} hint={labels.descriptionEnHint} rows={6} error={errMsg(fe.descriptionEn)} defaultValue={defaults?.descriptionEn} />
+        <fieldset className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5">
+          <legend className="px-2">
+            <span className="text-sm font-bold text-[var(--color-foreground)]">{labels.englishSection}</span>
+            <span className="ml-2 rounded-full bg-[var(--color-pitch-50)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-pitch-700)]">EN</span>
+          </legend>
+          <p className="text-xs text-[var(--color-muted)]">{labels.englishSectionHint}</p>
+          <Field name="titleEn" required label={labels.titleEn} hint={labels.titleEnHint} maxLength={120} error={errMsg(fe.titleEn)} defaultValue={defaults?.titleEn} />
+          <Field name="shortDescEn" label={labels.shortDescEn} hint={labels.shortDescEnHint} maxLength={240} defaultValue={defaults?.shortDescEn} />
+          <Textarea name="descriptionEn" required label={labels.descriptionEn} hint={labels.descriptionEnHint} rows={6} error={errMsg(fe.descriptionEn)} defaultValue={defaults?.descriptionEn} />
+        </fieldset>
+
+        <fieldset className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] p-5">
+          <legend className="px-2">
+            <span className="text-sm font-bold text-[var(--color-foreground)]">{labels.secondSection}</span>
+            <span className="ml-2 rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">{secondLocale ? secondLocale.toUpperCase() : "—"}</span>
+          </legend>
+          <p className="text-xs text-[var(--color-muted)]">{labels.secondSectionHint}</p>
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.secondLanguagePicker}</span>
+            <select
+              name="secondLocale"
+              value={secondLocale}
+              onChange={(e) => setSecondLocale(e.target.value)}
+              className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+            >
+              <option value="">{labels.langNone}</option>
+              <option value="ru">{labels.langRu}</option>
+              <option value="de">{labels.langDe}</option>
+              <option value="es">{labels.langEs}</option>
+            </select>
+          </label>
+          {secondLocale && (
+            <>
+              <Field name="titleSecond" label={labels.titleSecond} maxLength={120} defaultValue={defaults?.titleSecond} />
+              <Field name="shortDescSecond" label={labels.shortDescSecond} maxLength={240} defaultValue={defaults?.shortDescSecond} />
+              <Textarea name="descriptionSecond" label={labels.descriptionSecond} rows={6} defaultValue={defaults?.descriptionSecond} />
+            </>
+          )}
+        </fieldset>
       </Section>
 
       {/* Schedule */}
@@ -150,7 +198,8 @@ export function EventForm({
           />
           <CityCombobox name="city" label={labels.city} countryCode={countryCode} defaultValue={defaults?.city} />
         </div>
-        <Field name="customLocation" label={labels.customLocation} hint={labels.customLocationHint} defaultValue={defaults?.customLocation} />
+        <Field name="venueName" required label={labels.venueName} hint={labels.venueNameHint} error={errMsg(fe.venueName)} defaultValue={defaults?.venueName} />
+        <Field name="venueAddress" label={labels.venueAddress} hint={labels.venueAddressHint} defaultValue={defaults?.venueAddress} />
       </Section>
 
       {/* Audience */}

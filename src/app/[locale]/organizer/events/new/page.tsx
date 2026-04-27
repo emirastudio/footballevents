@@ -43,12 +43,18 @@ export default async function NewEventPage({ params }: { params: Promise<{ local
       booking: t("sections.booking"), bookingHint: t("sections.bookingHint"),
     },
     category: t("category"), categoryHint: t("categoryHint"),
+    englishSection: t("englishSection"), englishSectionHint: t("englishSectionHint"),
+    secondSection: t("secondSection"), secondSectionHint: t("secondSectionHint"),
+    secondLanguagePicker: t("secondLanguagePicker"),
+    langRu: t("langRu"), langDe: t("langDe"), langEs: t("langEs"), langNone: t("langNone"),
     titleEn: t("titleEn"), titleEnHint: t("titleEnHint"),
     shortDescEn: t("shortDescEn"), shortDescEnHint: t("shortDescEnHint"),
     descriptionEn: t("descriptionEn"), descriptionEnHint: t("descriptionEnHint"),
+    titleSecond: t("titleSecond"), shortDescSecond: t("shortDescSecond"), descriptionSecond: t("descriptionSecond"),
     startDate: t("startDate"), endDate: t("endDate"), registrationDeadline: t("registrationDeadline"), timezone: t("timezone"),
-    country: t("country"), city: t("city"), venue: t("venue"), venueHint: t("venueHint"),
-    customLocation: t("customLocation"), customLocationHint: t("customLocationHint"),
+    country: t("country"), city: t("city"),
+    venueName: t("venueName"), venueNameHint: t("venueNameHint"),
+    venueAddress: t("venueAddress"), venueAddressHint: t("venueAddressHint"),
     ageGroups: t("ageGroups"), gender: t("gender"), skillLevel: t("skillLevel"),
     format: t("format"), formatHint: t("formatHint"), maxParticipants: t("maxParticipants"),
     isFree: t("isFree"), priceFrom: t("priceFrom"), priceTo: t("priceTo"), currency: t("currency"),
@@ -71,8 +77,11 @@ export default async function NewEventPage({ params }: { params: Promise<{ local
       countryRequired: t("errors.countryRequired"),
       videoNotAllowed: t("errors.videoNotAllowed"),
       priceRange: t("errors.priceRange"),
+      venueNameRequired: t("errors.venueNameRequired"),
     },
   };
+
+  const defaultSecondLocale = locale === "ru" || locale === "de" || locale === "es" ? locale : "";
 
   return (
     <EventForm
@@ -80,6 +89,7 @@ export default async function NewEventPage({ params }: { params: Promise<{ local
       categories={cats}
       countries={getCountries(locale).map((c) => ({ code: c.code, name: c.name, flag: c.flag }))}
       labels={labels}
+      defaults={{ secondLocale: defaultSecondLocale }}
     />
   );
 }

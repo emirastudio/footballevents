@@ -21,7 +21,8 @@ const baseSchema = z.object({
   timezone:          z.string().default("UTC"),
   countryCode:       z.string().length(2, "countryRequired"),
   city:              z.string().optional(),
-  customLocation:    z.string().optional(),
+  venueName:         z.string().trim().min(2, "venueNameRequired"),
+  venueAddress:      z.string().trim().optional(),
   ageGroups:         z.array(z.string()).default([]),
   gender:            z.enum(["MALE", "FEMALE", "MIXED"]).default("MIXED"),
   skillLevel:        z.enum(["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"]).default("ALL_LEVELS"),
@@ -43,9 +44,71 @@ const baseSchema = z.object({
   programme:         z.string().optional(),
   faq:               z.string().optional(),
   intent:            z.enum(["draft", "review"]).default("draft"),
+  secondLocale:      z.enum(["ru", "de", "es"]).optional().nullable(),
+  titleSecond:       z.string().trim().optional(),
+  shortDescSecond:   z.string().trim().optional(),
+  descriptionSecond: z.string().trim().optional(),
 });
 
 export type EventFormState = { error?: string; fieldErrors?: Record<string, string> } | null;
+
+type ParsedEventInput = {
+  titleEn: string; shortDescEn?: string; descriptionEn: string;
+  secondLocale?: "ru" | "de" | "es" | null;
+  titleSecond?: string; shortDescSecond?: string; descriptionSecond?: string;
+};
+
+function buildEventTranslations(d: ParsedEventInput) {
+  const rows: { locale: "en" | "ru" | "de" | "es"; title: string; shortDescription: string | null; description: string }[] = [
+    { locale: "en", title: d.titleEn, shortDescription: d.shortDescEn || null, description: d.descriptionEn },
+  ];
+  if (d.secondLocale && d.titleSecond && d.descriptionSecond && d.descriptionSecond.length >= 20) {
+    rows.push({
+      locale: d.secondLocale,
+      title: d.titleSecond,
+      shortDescription: d.shortDescSecond || null,
+      description: d.descriptionSecond,
+    });
+  }
+  return rows;
+}
+
+async function upsertVenue(v: { name: string; countryCode: string; city: string | null; address: string | null }): Promise<string> {
+  const trimmedName = v.name.trim();
+  // Match existing venue case-insensitively within the same country.
+  const existing = await db.venue.findFirst({
+    where: {
+      countryCode: v.countryCode,
+      name: { equals: trimmedName, mode: "insensitive" },
+    },
+    select: { id: true, address: true },
+  });
+  if (existing) {
+    // Backfill address if it was missing.
+    if (!existing.address && v.address) {
+      await db.venue.update({ where: { id: existing.id }, data: { address: v.address } });
+    }
+    return existing.id;
+  }
+  // Create a new venue with a unique slug.
+  let baseSlug = slugify(trimmedName) || "venue";
+  let slug = baseSlug;
+  for (let i = 0; i < 5; i++) {
+    const taken = await db.venue.findUnique({ where: { slug } });
+    if (!taken) break;
+    slug = `${baseSlug}-${nanoid(4).toLowerCase()}`;
+  }
+  const created = await db.venue.create({
+    data: {
+      slug,
+      name: trimmedName,
+      countryCode: v.countryCode,
+      address: v.address,
+      isStadium: false,
+    },
+  });
+  return created.id;
+}
 
 function slugify(s: string) {
   return s
@@ -121,7 +184,8 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
     timezone:          (formData.get("timezone") as string) || "UTC",
     countryCode:       formData.get("countryCode"),
     city:              formData.get("city") || undefined,
-    customLocation:    formData.get("customLocation") || undefined,
+    venueName:         formData.get("venueName"),
+    venueAddress:      formData.get("venueAddress") || undefined,
     ageGroups:         ageGroupsRaw,
     gender:            formData.get("gender") || "MIXED",
     skillLevel:        formData.get("skillLevel") || "ALL_LEVELS",
@@ -143,6 +207,10 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
     programme:         formData.get("programme") || undefined,
     faq:               formData.get("faq") || undefined,
     intent:            formData.get("intent") || "draft",
+    secondLocale:      (formData.get("secondLocale") as string) || undefined,
+    titleSecond:       (formData.get("titleSecond") as string) || undefined,
+    shortDescSecond:   (formData.get("shortDescSecond") as string) || undefined,
+    descriptionSecond: (formData.get("descriptionSecond") as string) || undefined,
   });
 
   if (!parsed.success) {
@@ -180,10 +248,13 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
   const baseSlug = slugify(d.titleEn) || "event";
   const slug = `${baseSlug}-${nanoid(6).toLowerCase()}`;
 
-  let venueId: string | null = null;
-  if (d.city) {
-    // Optional: try to match a known venue by city — skipped here, can add later.
-  }
+  // Upsert Venue by (countryCode + lowercased name) — auto-publishes to /stadiums catalog.
+  const venueId = await upsertVenue({
+    name: d.venueName,
+    countryCode: d.countryCode,
+    city: d.city ?? null,
+    address: d.venueAddress ?? null,
+  });
 
   const created = await db.event.create({
     data: {
@@ -198,7 +269,7 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
       timezone: d.timezone,
       countryCode: d.countryCode,
       venueId,
-      customLocation: d.customLocation || null,
+      customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
       gender: d.gender,
       skillLevel: d.skillLevel,
@@ -220,12 +291,7 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
       program: parseProgramme(d.programme) as never,
       faq: faqParsed as never,
       translations: {
-        create: {
-          locale: "en",
-          title: d.titleEn,
-          shortDescription: d.shortDescEn || null,
-          description: d.descriptionEn,
-        },
+        create: buildEventTranslations(d),
       },
     },
   });
@@ -261,7 +327,8 @@ export async function updateEventAction(_prev: EventFormState, formData: FormDat
     timezone:          (formData.get("timezone") as string) || "UTC",
     countryCode:       formData.get("countryCode"),
     city:              formData.get("city") || undefined,
-    customLocation:    formData.get("customLocation") || undefined,
+    venueName:         formData.get("venueName"),
+    venueAddress:      formData.get("venueAddress") || undefined,
     ageGroups:         ageGroupsRaw,
     gender:            formData.get("gender") || "MIXED",
     skillLevel:        formData.get("skillLevel") || "ALL_LEVELS",
@@ -324,7 +391,13 @@ export async function updateEventAction(_prev: EventFormState, formData: FormDat
       registrationDeadline: d.registrationDeadline ? new Date(d.registrationDeadline) : null,
       timezone: d.timezone,
       countryCode: d.countryCode,
-      customLocation: d.customLocation || null,
+      venueId: await upsertVenue({
+        name: d.venueName,
+        countryCode: d.countryCode,
+        city: d.city ?? null,
+        address: d.venueAddress ?? null,
+      }),
+      customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
       gender: d.gender,
       skillLevel: d.skillLevel,
@@ -345,15 +418,17 @@ export async function updateEventAction(_prev: EventFormState, formData: FormDat
       notIncluded: notIncludedClean,
       program: parseProgramme(d.programme) as never,
       faq: faqParsed as never,
-      translations: {
-        upsert: {
-          where: { eventId_locale: { eventId: id, locale: "en" } },
-          create: { locale: "en", title: d.titleEn, shortDescription: d.shortDescEn || null, description: d.descriptionEn },
-          update: { title: d.titleEn, shortDescription: d.shortDescEn || null, description: d.descriptionEn },
-        },
-      },
     },
   });
+
+  // Upsert each translation (en + optional second locale).
+  for (const tr of buildEventTranslations(d)) {
+    await db.eventTranslation.upsert({
+      where: { eventId_locale: { eventId: id, locale: tr.locale } },
+      create: { eventId: id, locale: tr.locale, title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
+      update: { title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
+    });
+  }
 
   revalidatePath("/organizer/events");
   revalidatePath(`/events/${existing.slug}`);

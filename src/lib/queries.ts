@@ -1,6 +1,6 @@
 import { db } from "./db";
 import type { MockEvent, MockOrganizer, MockVenue, MockReview } from "./mock-data";
-import { Prisma } from "@prisma/client";
+import { Prisma, type EventType } from "@prisma/client";
 
 const eventInclude = {
   category: true,
@@ -186,6 +186,7 @@ export type OrganizerFilters = {
   tier?: "FREE" | "PRO" | "PREMIUM" | "ENTERPRISE";
   verified?: boolean;
   q?: string;
+  activityType?: string; // EventType enum value
 };
 
 export async function getOrganizers(filters: OrganizerFilters = {}): Promise<MockOrganizer[]> {
@@ -193,6 +194,7 @@ export async function getOrganizers(filters: OrganizerFilters = {}): Promise<Moc
   if (filters.countryCode) where.countryCode = filters.countryCode;
   if (filters.tier) where.subscriptionTier = filters.tier;
   if (filters.verified) where.isVerified = true;
+  if (filters.activityType) where.activityTypes = { has: filters.activityType as EventType };
   if (filters.q && filters.q.trim()) {
     const q = filters.q.trim();
     where.OR = [

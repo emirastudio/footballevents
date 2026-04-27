@@ -21,6 +21,7 @@ type Labels = {
   logoUrl: string; coverUrl: string;
   website: string; phone: string;
   tier: string; tierFree: string; tierPro: string; tierPremium: string;
+  activityTypes: string; activityTypesHint: string;
   submit: string; loading: string;
   langRu: string; langDe: string; langEs: string; langNone: string;
 };
@@ -49,11 +50,13 @@ export function OrganizerOnboardForm({
   defaultName,
   defaultSecondLocale,
   countries,
+  activityOptions,
   labels,
 }: {
   defaultName: string;
   defaultSecondLocale: "" | "ru" | "de" | "es";
   countries: { code: string; name: string; flag: string }[];
+  activityOptions: { value: string; label: string }[];
   labels: Labels;
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
@@ -138,6 +141,24 @@ export function OrganizerOnboardForm({
             <TextareaField name="aboutSecond" label={labels.aboutSecond} hint={labels.aboutHint} rows={4} error={fe.aboutSecond} />
           </>
         )}
+      </fieldset>
+
+      <fieldset>
+        <legend className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+          {labels.activityTypes}
+        </legend>
+        <p className="mb-3 text-xs text-[var(--color-muted)]">{labels.activityTypesHint}</p>
+        <div className="flex flex-wrap gap-2">
+          {activityOptions.map((o) => (
+            <label
+              key={o.value}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-50)] has-[:checked]:text-[var(--color-pitch-700)]"
+            >
+              <input type="checkbox" name="activityTypes" value={o.value} className="sr-only" />
+              {o.label}
+            </label>
+          ))}
+        </div>
       </fieldset>
 
       <ImageUpload name="logoUrl" kind="organizer-logo" label={labels.logoUrl} />
