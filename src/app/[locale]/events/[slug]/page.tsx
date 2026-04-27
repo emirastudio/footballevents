@@ -14,6 +14,7 @@ import { EventCard } from "@/components/cards/EventCard";
 import { SocialLinks } from "@/components/site/SocialLinks";
 import { ShareRow } from "@/components/site/ShareRow";
 import { FollowOrganizerButton, SaveEventButton } from "@/components/site/FollowButton";
+import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { tierAllows } from "@/lib/tier";
 import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
@@ -350,7 +351,7 @@ export default async function EventDetailPage({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-sm font-semibold text-[var(--color-foreground)]">{organizer.name}</span>
-                      {organizer.isVerified && <ShieldCheck className="h-4 w-4 shrink-0 text-[var(--color-pitch-600)]" />}
+                      {organizer.isVerified && <VerifiedBadge label={tCommon("verified")} className="h-4 w-4" />}
                     </div>
                     {typeof organizer.followersCount === "number" && organizer.followersCount > 0 && (
                       <div className="mt-0.5 text-xs text-[var(--color-muted)]">
