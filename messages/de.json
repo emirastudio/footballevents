@@ -256,6 +256,7 @@
     "contentLanguage": "Inhaltssprache",
     "addLanguage": "Sprache hinzufügen",
     "langEn": "Englisch",
+    "uploadBlockedMessage": "Warte auf den Bild-Upload oder klicke „Save crop", sonst geht das Bild verloren.",
     "errors": {
       "datesRequired": "Datum vor Veröffentlichung wählen"
     }

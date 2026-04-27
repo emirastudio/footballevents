@@ -63,6 +63,7 @@ export type WizardLabels = {
   contentLanguage: string;
   addLanguage: string;
   langEn: string;
+  uploadBlockedMessage: string;
   tierLockTitle: string; tierLockBody: string; videoLockBody: string;
   errors: Record<string, string>;
 };
@@ -112,6 +113,7 @@ export function EventWizard({
   const [secondLocale, setSecondLocale] = useState<string>(defaults.secondLocale ?? "");
   const [isFree, setIsFree] = useState<boolean>(defaults.isFree ?? false);
   const [countryCode, setCountryCode] = useState<string>(defaults.countryCode ?? "");
+  const [uploadBlocked, setUploadBlocked] = useState(false);
 
   const fe = state?.fieldErrors ?? {};
   const errMsg = (key?: string) => key ? labels.errors[key] ?? key : undefined;
@@ -119,7 +121,22 @@ export function EventWizard({
   const isLast = step === 5;
 
   return (
-    <form action={action} className="space-y-8">
+    <form
+      action={action}
+      onSubmit={(e) => {
+        // Block submit if any ImageUpload is still mid-crop or mid-upload — otherwise we'd silently
+        // discard the user's image because the hidden input has no value yet.
+        const pending = e.currentTarget.querySelector<HTMLElement>('[data-pending-upload="1"]');
+        if (pending) {
+          e.preventDefault();
+          setUploadBlocked(true);
+          pending.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        setUploadBlocked(false);
+      }}
+      className="space-y-8"
+    >
       <input type="hidden" name="step" value={step} />
       {defaults.eventId && <input type="hidden" name="eventId" value={defaults.eventId} />}
 
@@ -168,6 +185,11 @@ export function EventWizard({
         <Step5 defaults={defaults} labels={labels} tier={tier} fe={fe} errMsg={errMsg} secondLocale={secondLocale} />
       )}
 
+      {uploadBlocked && (
+        <p className="rounded-[var(--radius-md)] border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          {labels.uploadBlockedMessage}
+        </p>
+      )}
       {state?.error && state.error !== "validation" && state.error !== "publishIncomplete" && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
       )}

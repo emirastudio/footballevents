@@ -353,6 +353,7 @@
     "contentLanguage": "Content language",
     "addLanguage": "Add language",
     "langEn": "English",
+    "uploadBlockedMessage": "Wait for the image upload to finish or click 'Save crop' to confirm it — otherwise it'll be lost.",
     "errors": {
       "datesRequired": "Pick dates before publishing"
     }

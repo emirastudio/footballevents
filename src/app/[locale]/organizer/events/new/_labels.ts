@@ -61,6 +61,7 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     contentLanguage: tw("contentLanguage"),
     addLanguage: tw("addLanguage"),
     langEn: tw("langEn"),
+    uploadBlockedMessage: tw("uploadBlockedMessage"),
     tierLockTitle: t("tierLockTitle"), tierLockBody: t("tierLockBody"), videoLockBody: t("videoLockBody"),
 
     errors: {

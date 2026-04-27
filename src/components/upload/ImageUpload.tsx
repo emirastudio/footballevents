@@ -141,12 +141,23 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
           ? "aspect-[4/3]"
           : "aspect-auto";
 
+  // Surface "I'm in the middle of uploading/cropping" state to the parent form.
+  // The wizard's <form onSubmit> queries for [data-pending-upload="1"] and blocks the submit when present.
+  const pending = !!src || busy;
+
   return (
-    <div>
+    <div data-pending-upload={pending ? "1" : "0"}>
       <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
         {label}
       </span>
       <input type="hidden" name={name} value={uploadedUrl ?? ""} />
+      {pending && (
+        <div className="mb-2 rounded-[var(--radius-md)] border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+          {busy
+            ? "Загружаем… подождите пару секунд."
+            : "Не забудьте нажать «Save crop», чтобы сохранить картинку — иначе она не загрузится."}
+        </div>
+      )}
 
       {/* Crop dialog inline (shown when src set) */}
       {src ? (

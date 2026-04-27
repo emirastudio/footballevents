@@ -27,9 +27,17 @@ export function EventCard({ event: e, locale, rank, size = "md", labels }: Props
       className="group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-xs)] transition-all hover:-translate-y-1 hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-md)]"
     >
       <div
-        className={`relative ${isCompact ? "aspect-[4/3]" : "aspect-[16/10]"} overflow-hidden bg-[var(--color-surface-muted)] bg-cover bg-center`}
-        style={{ backgroundImage: `url(${e.coverUrl})` }}
+        className={`relative ${isCompact ? "aspect-[4/3]" : "aspect-[16/10]"} overflow-hidden bg-[var(--color-pitch-50)] bg-cover bg-center`}
+        style={e.coverUrl ? { backgroundImage: `url(${e.coverUrl})` } : undefined}
       >
+        {/* Fallback: centered logo on a soft pitch tint when no cover yet. */}
+        {!e.coverUrl && e.logoUrl && (
+          <div
+            className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-md)] bg-cover bg-center bg-[var(--color-surface)] shadow-[var(--shadow-sm)]"
+            style={{ backgroundImage: `url(${e.logoUrl})` }}
+            aria-hidden
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
         {rank !== undefined && (

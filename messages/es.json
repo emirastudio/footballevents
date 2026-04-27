@@ -256,6 +256,7 @@
     "contentLanguage": "Idioma del contenido",
     "addLanguage": "Añadir idioma",
     "langEn": "Inglés",
+    "uploadBlockedMessage": "Espera a que termine la subida o pulsa «Save crop» para confirmar la imagen — si no, se perderá.",
     "errors": {
       "datesRequired": "Selecciona fechas antes de publicar"
     }
