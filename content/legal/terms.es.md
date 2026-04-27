@@ -6,7 +6,7 @@ Los presentes Términos de servicio ("Términos") regulan el acceso y uso de foo
 
 ## 1. Quiénes somos
 
-El Servicio es operado por [Company OÜ, Tallinn, Estonia] ("nosotros", "nos", "nuestro"), una sociedad de responsabilidad limitada registrada en la República de Estonia. Puede contactarnos en legal@footballevents.eu.
+El Servicio es operado por Goality Sport Group OÜ (Tallinn, Estonia) ("nosotros", "nos", "nuestro"), una sociedad de responsabilidad limitada registrada en la República de Estonia. Puede contactarnos en legal@footballevents.eu.
 
 ## 2. El Servicio
 
@@ -89,4 +89,4 @@ Podemos actualizar estos Términos de vez en cuando. Publicaremos la versión ac
 
 ## 13. Contacto
 
-Consultas sobre estos Términos: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Consultas sobre estos Términos: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

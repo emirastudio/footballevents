@@ -2,7 +2,7 @@
 
 **Дата обновления:** 2026-04-27
 
-Настоящая Политика использования файлов cookie описывает, как footballevents.eu, управляемый [Company OÜ, Tallinn, Estonia], использует файлы cookie и аналогичные технологии. Её следует читать вместе с нашей [Политикой конфиденциальности](./privacy.md). Контакт: **legal@footballevents.eu**.
+Настоящая Политика использования файлов cookie описывает, как footballevents.eu, управляемый Goality Sport Group OÜ (Tallinn, Estonia), использует файлы cookie и аналогичные технологии. Её следует читать вместе с нашей [Политикой конфиденциальности](./privacy.md). Контакт: **legal@footballevents.eu**.
 
 ## 1. Что такое файлы cookie
 
@@ -87,4 +87,4 @@
 
 ## 9. Контакты
 
-Вопросы по cookie: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Вопросы по cookie: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

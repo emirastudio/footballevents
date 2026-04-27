@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-04-27
 
-This Refund Policy explains the rules that apply to paid services on footballevents.eu, operated by [Company OÜ, Tallinn, Estonia] ("we", "us"). It supplements our Terms of Service. All amounts are in EUR. Contact: **legal@footballevents.eu**.
+This Refund Policy explains the rules that apply to paid services on footballevents.eu, operated by Goality Sport Group OÜ (Tallinn, Estonia) ("we", "us"). It supplements our Terms of Service. All amounts are in EUR. Contact: **legal@footballevents.eu**.
 
 ## 1. No-Refund Policy
 
@@ -63,4 +63,4 @@ We may update this Policy from time to time. The "Last updated" date will reflec
 
 ## 9. Contact
 
-Questions about this Policy: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Questions about this Policy: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

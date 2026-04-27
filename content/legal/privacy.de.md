@@ -2,7 +2,7 @@
 
 **Stand:** 2026-04-27
 
-Diese Datenschutzerklärung erläutert, wie [Company OÜ, Tallinn, Estonia] ("wir", "uns") personenbezogene Daten erhebt und verwendet, wenn Sie footballevents.eu (den "Dienst") nutzen. Wir handeln als **Verantwortlicher** für die nachstehend beschriebenen Daten. Kontakt: **legal@footballevents.eu**.
+Diese Datenschutzerklärung erläutert, wie Goality Sport Group OÜ (Tallinn, Estonia) ("wir", "uns") personenbezogene Daten erhebt und verwendet, wenn Sie footballevents.eu (den "Dienst") nutzen. Wir handeln als **Verantwortlicher** für die nachstehend beschriebenen Daten. Kontakt: **legal@footballevents.eu**.
 
 ## 1. Erhobene Daten
 
@@ -91,9 +91,9 @@ Der Dienst richtet sich nicht an Kinder unter 16 Jahren. Veranstalter, die Jugen
 
 Wir haben einen Ansprechpartner für Datenschutzangelegenheiten benannt:
 
-> **DSB — [Company OÜ, Tallinn, Estonia]**
+> **DSB — Goality Sport Group OÜ (Tallinn, Estonia)**
 > E-Mail: legal@footballevents.eu
-> Postanschrift: [Address placeholder], Tallinn, Estonia
+> Postanschrift: Peterburi tee 34/4, 11415 Tallinn, Estonia
 
 (Eine förmliche Bestellung eines Datenschutzbeauftragten gemäß Art. 37 DSGVO ist für unsere Verarbeitungen möglicherweise nicht zwingend erforderlich; wir halten diesen Kontakt dennoch als zentrale Anlaufstelle für Sie aufrecht.)
 
@@ -107,4 +107,4 @@ Wir können diese Erklärung von Zeit zu Zeit aktualisieren. Das "Stand"-Datum o
 
 ## 12. Kontakt
 
-Datenschutzfragen: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Datenschutzfragen: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

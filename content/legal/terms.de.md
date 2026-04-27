@@ -6,7 +6,7 @@ Diese Nutzungsbedingungen ("Bedingungen") regeln Ihren Zugang zu und Ihre Nutzun
 
 ## 1. Wer wir sind
 
-Der Dienst wird betrieben von [Company OÜ, Tallinn, Estonia] ("wir", "uns", "unser"), einer im Handelsregister der Republik Estland eingetragenen Gesellschaft mit beschränkter Haftung. Sie erreichen uns unter legal@footballevents.eu.
+Der Dienst wird betrieben von Goality Sport Group OÜ (Tallinn, Estonia) ("wir", "uns", "unser"), einer im Handelsregister der Republik Estland eingetragenen Gesellschaft mit beschränkter Haftung. Sie erreichen uns unter legal@footballevents.eu.
 
 ## 2. Der Dienst
 
@@ -89,4 +89,4 @@ Wir können diese Bedingungen von Zeit zu Zeit aktualisieren. Wir veröffentlich
 
 ## 13. Kontakt
 
-Fragen zu diesen Bedingungen: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Fragen zu diesen Bedingungen: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

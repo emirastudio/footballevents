@@ -6,7 +6,7 @@ These Terms of Service ("Terms") govern your access to and use of footballevents
 
 ## 1. Who We Are
 
-The Service is operated by [Company OÜ, Tallinn, Estonia] ("we", "us", "our"), a private limited company registered in the Republic of Estonia. You can reach us at legal@footballevents.eu.
+The Service is operated by Goality Sport Group OÜ (Tallinn, Estonia) ("we", "us", "our"), a private limited company registered in the Republic of Estonia. You can reach us at legal@footballevents.eu.
 
 ## 2. The Service
 
@@ -89,4 +89,4 @@ We may update these Terms from time to time. We will post the updated version wi
 
 ## 13. Contact
 
-Questions about these Terms: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Questions about these Terms: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

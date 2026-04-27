@@ -2,7 +2,7 @@
 
 **Stand:** 2026-04-27
 
-Diese Erstattungsrichtlinie erläutert die Regeln, die für kostenpflichtige Leistungen auf footballevents.eu gelten, betrieben von [Company OÜ, Tallinn, Estonia] ("wir", "uns"). Sie ergänzt unsere Nutzungsbedingungen. Alle Beträge sind in EUR angegeben. Kontakt: **legal@footballevents.eu**.
+Diese Erstattungsrichtlinie erläutert die Regeln, die für kostenpflichtige Leistungen auf footballevents.eu gelten, betrieben von Goality Sport Group OÜ (Tallinn, Estonia) ("wir", "uns"). Sie ergänzt unsere Nutzungsbedingungen. Alle Beträge sind in EUR angegeben. Kontakt: **legal@footballevents.eu**.
 
 ## 1. Keine Erstattung
 
@@ -63,4 +63,4 @@ Wir können diese Richtlinie von Zeit zu Zeit aktualisieren. Das "Stand"-Datum s
 
 ## 9. Kontakt
 
-Fragen zu dieser Richtlinie: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Fragen zu dieser Richtlinie: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

@@ -6,17 +6,17 @@
 
 ## Оператор
 
-**[Company OÜ]**
-[Street, postal code, city]
+**Goality Sport Group OÜ**
+Peterburi tee 34/4, 11415 Tallinn (Lasnamäe)
 Tallinn, Estonia
 
 Регистрационный суд: Эстонский Коммерческий Регистр
-Регистрационный номер: [registry number]
-Номер плательщика НДС (KMKR): [EE…]
+Регистрационный номер: 17232252
+Номер плательщика НДС (KMKR): not VAT-registered
 
 ## Уполномоченный представитель
 
-[Name of director / board member]
+Andrei Arhipov, board member
 
 ## Контакты
 
@@ -28,8 +28,8 @@ Tallinn, Estonia
 
 В соответствии с § 18 (2) MStV (Немецкий государственный договор о СМИ):
 
-[Name]
-[Address]
+Andrei Arhipov
+Peterburi tee 34/4, 11415 Tallinn, Estonia
 Email: legal@footballevents.eu
 
 ## Онлайн-разрешение споров ЕС

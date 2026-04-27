@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-04-26
 
-This Privacy Policy explains how [Company OÜ, Tallinn, Estonia] ("we", "us") collects and uses personal data when you use footballevents.eu (the "Service"). We act as a **data controller** for the data described below. Contact: **legal@footballevents.eu**.
+This Privacy Policy explains how Goality Sport Group OÜ (Tallinn, Estonia) ("we", "us") collects and uses personal data when you use footballevents.eu (the "Service"). We act as a **data controller** for the data described below. Contact: **legal@footballevents.eu**.
 
 ## 1. Data We Collect
 
@@ -91,9 +91,9 @@ The Service is not directed to children under 16. Organizers running youth event
 
 We have designated a contact for data protection matters:
 
-> **DPO — [Company OÜ, Tallinn, Estonia]**
+> **DPO — Goality Sport Group OÜ (Tallinn, Estonia)**
 > Email: legal@footballevents.eu
-> Postal: [Address placeholder], Tallinn, Estonia
+> Postal: Peterburi tee 34/4, 11415 Tallinn, Estonia
 
 (A formal DPO appointment under GDPR Art. 37 may not be mandatory for our processing; we still maintain this contact as your single point of contact.)
 
@@ -107,4 +107,4 @@ We may update this Policy from time to time. The "Last updated" date at the top 
 
 ## 12. Contact
 
-Privacy questions: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Privacy questions: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

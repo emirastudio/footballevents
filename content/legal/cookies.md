@@ -2,7 +2,7 @@
 
 **Last updated:** 2026-04-26
 
-This Cookie Policy explains how footballevents.eu, operated by [Company OÜ, Tallinn, Estonia], uses cookies and similar technologies. It should be read together with our [Privacy Policy](./privacy.md). Contact: **legal@footballevents.eu**.
+This Cookie Policy explains how footballevents.eu, operated by Goality Sport Group OÜ (Tallinn, Estonia), uses cookies and similar technologies. It should be read together with our [Privacy Policy](./privacy.md). Contact: **legal@footballevents.eu**.
 
 ## 1. What Cookies Are
 
@@ -87,4 +87,4 @@ For details on how we handle personal data overall, see our [Privacy Policy](./p
 
 ## 9. Contact
 
-Cookie questions: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Cookie questions: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

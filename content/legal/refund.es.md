@@ -2,7 +2,7 @@
 
 **Última actualización:** 2026-04-27
 
-Esta Política de reembolsos explica las normas aplicables a los servicios de pago en footballevents.eu, operado por [Company OÜ, Tallinn, Estonia] ("nosotros", "nos"). Complementa nuestros Términos de servicio. Todos los importes se expresan en EUR. Contacto: **legal@footballevents.eu**.
+Esta Política de reembolsos explica las normas aplicables a los servicios de pago en footballevents.eu, operado por Goality Sport Group OÜ (Tallinn, Estonia) ("nosotros", "nos"). Complementa nuestros Términos de servicio. Todos los importes se expresan en EUR. Contacto: **legal@footballevents.eu**.
 
 ## 1. Política de no reembolso
 
@@ -63,4 +63,4 @@ Podemos actualizar esta Política de vez en cuando. La fecha de "Última actuali
 
 ## 9. Contacto
 
-Consultas sobre esta Política: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Consultas sobre esta Política: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).

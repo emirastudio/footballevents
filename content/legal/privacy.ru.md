@@ -2,7 +2,7 @@
 
 **Дата обновления:** 2026-04-27
 
-Настоящая Политика конфиденциальности описывает, как [Company OÜ, Tallinn, Estonia] («мы», «нас») собирает и использует персональные данные при использовании Вами сайта footballevents.eu («Сервис»). Мы выступаем **контролёром данных** в отношении данных, описанных ниже. Контакт: **legal@footballevents.eu**.
+Настоящая Политика конфиденциальности описывает, как Goality Sport Group OÜ (Tallinn, Estonia) («мы», «нас») собирает и использует персональные данные при использовании Вами сайта footballevents.eu («Сервис»). Мы выступаем **контролёром данных** в отношении данных, описанных ниже. Контакт: **legal@footballevents.eu**.
 
 ## 1. Какие данные мы собираем
 
@@ -91,9 +91,9 @@
 
 Мы назначили контактное лицо по вопросам защиты данных:
 
-> **DPO — [Company OÜ, Tallinn, Estonia]**
+> **DPO — Goality Sport Group OÜ (Tallinn, Estonia)**
 > Email: legal@footballevents.eu
-> Почта: [Address placeholder], Tallinn, Estonia
+> Почта: Peterburi tee 34/4, 11415 Tallinn, Estonia
 
 (Формальное назначение DPO в соответствии со ст. 37 GDPR может быть необязательным для нашей обработки; мы тем не менее сохраняем этот контакт как Вашу единую точку обращения.)
 
@@ -107,4 +107,4 @@
 
 ## 12. Контакты
 
-Вопросы конфиденциальности: **legal@footballevents.eu** — [Company OÜ, Tallinn, Estonia].
+Вопросы конфиденциальности: **legal@footballevents.eu** — Goality Sport Group OÜ (Tallinn, Estonia).
