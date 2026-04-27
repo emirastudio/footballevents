@@ -25,7 +25,6 @@ export async function SiteFooter() {
         { href: "/organizer/events/new", label: tNav("postEvent") },
         { href: "/advertise", label: tNav("advertise") },
         { href: "/pricing", label: "Pricing" },
-        { href: "/api", label: "API" },
       ],
     },
     {
