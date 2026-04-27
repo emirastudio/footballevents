@@ -184,7 +184,7 @@
     "masterclasses": "Masterclasses",
     "matchTours": "Tours a partidos",
     "organizers": "Organizadores",
-    "stadiums": "Estadios",
+    "stadiums": "Ubicaciones",
     "advertise": "Posibilidades",
     "signIn": "Iniciar sesión",
     "signUp": "Empezar",
@@ -202,7 +202,7 @@
     "stats": {
       "events": "Eventos",
       "organizers": "Organizadores",
-      "stadiums": "Estadios",
+      "stadiums": "Ubicaciones",
       "countries": "Países"
     },
     "categories": {
@@ -339,19 +339,19 @@
     }
   },
   "stadiums": {
-    "pageTitle": "Sedes y ubicaciones",
-    "pageSubtitle": "Estadios y sedes donde se celebran eventos de fútbol en todo el mundo. Filtra por país o busca por nombre.",
+    "pageTitle": "Ubicaciones",
+    "pageSubtitle": "Todas las ubicaciones donde vive el fútbol — eventos, campus, torneos, concentraciones y pruebas.",
     "filterByCountry": "Filtrar por país",
-    "searchPlaceholder": "Buscar por nombre…",
+    "searchPlaceholder": "Buscar ubicaciones…",
     "allCountries": "Todos los países",
-    "noStadiums": "Aún no hay estadios en este país.",
+    "noStadiums": "Aún no hay ubicaciones en este país.",
     "detail": {
-      "about": "Sobre el estadio",
+      "about": "Sobre esta ubicación",
       "info": "Información",
       "capacity": "Aforo",
       "surface": "Superficie",
       "address": "Dirección",
-      "events": "Eventos en la sede"
+      "events": "Eventos en esta ubicación"
     }
   },
   "categoryHeaders": {

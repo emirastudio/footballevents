@@ -290,7 +290,7 @@
     "masterclasses": "Masterclasses",
     "matchTours": "Match Tours",
     "organizers": "Organizers",
-    "stadiums": "Stadiums",
+    "stadiums": "Locations",
     "advertise": "Capabilities",
     "signIn": "Sign in",
     "signUp": "Get started",
@@ -313,7 +313,7 @@
     "stats": {
       "events": "Events listed",
       "organizers": "Organizers",
-      "stadiums": "Stadiums",
+      "stadiums": "Locations",
       "countries": "Countries"
     },
     "categories": {
@@ -524,19 +524,19 @@
     }
   },
   "stadiums": {
-    "pageTitle": "Venues & locations",
-    "pageSubtitle": "Stadiums and football venues hosting events worldwide. Filter by country or search by name.",
+    "pageTitle": "Locations",
+    "pageSubtitle": "Every location where football lives — events, camps, tournaments, training sessions and tryouts.",
     "filterByCountry": "Filter by country",
-    "searchPlaceholder": "Search venues by name…",
+    "searchPlaceholder": "Search locations by name…",
     "allCountries": "All countries",
-    "noStadiums": "No stadiums in this country yet.",
+    "noStadiums": "No locations in this country yet.",
     "detail": {
-      "about": "About this stadium",
+      "about": "About this location",
       "info": "Information",
       "capacity": "Capacity",
       "surface": "Surface",
       "address": "Address",
-      "events": "Events at this venue"
+      "events": "Events at this location"
     }
   },
   "categoryHeaders": {

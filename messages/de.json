@@ -184,7 +184,7 @@
     "masterclasses": "Masterclasses",
     "matchTours": "Spielreisen",
     "organizers": "Veranstalter",
-    "stadiums": "Stadien",
+    "stadiums": "Standorte",
     "advertise": "Möglichkeiten",
     "signIn": "Anmelden",
     "signUp": "Loslegen",
@@ -202,7 +202,7 @@
     "stats": {
       "events": "Events",
       "organizers": "Veranstalter",
-      "stadiums": "Stadien",
+      "stadiums": "Standorte",
       "countries": "Länder"
     },
     "categories": {
@@ -339,19 +339,19 @@
     }
   },
   "stadiums": {
-    "pageTitle": "Veranstaltungsorte",
-    "pageSubtitle": "Stadien und Plätze, an denen weltweit Fußball-Events stattfinden. Nach Land filtern oder per Namen suchen.",
+    "pageTitle": "Standorte",
+    "pageSubtitle": "Alle Standorte, an denen Fußball stattfindet — Events, Camps, Turniere, Trainingslager und Sichtungen.",
     "filterByCountry": "Nach Land filtern",
-    "searchPlaceholder": "Suche nach Name…",
+    "searchPlaceholder": "Standorte suchen…",
     "allCountries": "Alle Länder",
-    "noStadiums": "Noch keine Stadien in diesem Land.",
+    "noStadiums": "Noch keine Standorte in diesem Land.",
     "detail": {
-      "about": "Über das Stadion",
+      "about": "Über diesen Standort",
       "info": "Informationen",
       "capacity": "Kapazität",
       "surface": "Belag",
       "address": "Adresse",
-      "events": "Events am Stadion"
+      "events": "Events an diesem Standort"
     }
   },
   "categoryHeaders": {
