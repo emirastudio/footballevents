@@ -47,7 +47,11 @@ export default async function StadiumsPage({
   };
 
   const groupedAll = await getStadiumsByCountry();
-  const orderedCountries = countries.filter((c) => groupedAll[c.code]?.length);
+  const countryByCode = new Map(countries.map((c) => [c.code, c]));
+  const orderedCountries = Object.keys(groupedAll)
+    .filter((code) => groupedAll[code]?.length)
+    .map((code) => countryByCode.get(code) ?? { code, name: code, flag: "🏳️" })
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <>
