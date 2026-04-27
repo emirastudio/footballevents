@@ -142,6 +142,13 @@ model User {
   preferredLocale Locale    @default(en)
   bannedAt       DateTime?
   banReason      String?
+  // Signup forensics — used by admins to triage suspicious accounts (bots, spam).
+  signupIp        String?
+  signupCountry   String?     // ISO 3166-1 alpha-2, resolved from IP
+  signupUserAgent String?
+  signupMethod    String?     // "credentials" | "google"
+  lastLoginAt     DateTime?
+  lastLoginIp     String?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 

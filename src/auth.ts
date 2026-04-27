@@ -92,4 +92,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  events: {
+    // Capture signup forensics for Google OAuth + refresh login metadata on every sign-in.
+    async signIn({ user, account, isNewUser }) {
+      if (!user?.id) return;
+      try {
+        const { headers } = await import("next/headers");
+        const h = await headers();
+        const ip =
+          h.get("cf-connecting-ip") ??
+          h.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+          h.get("x-real-ip") ??
+          "";
+        const userAgent = h.get("user-agent") ?? "";
+
+        const data: Record<string, unknown> = {
+          lastLoginAt: new Date(),
+          lastLoginIp: ip || null,
+        };
+        if (isNewUser) {
+          const { getCountryFromIp } = await import("@/lib/signup-meta");
+          const country = await getCountryFromIp(ip);
+          data.signupIp = ip || null;
+          data.signupCountry = country;
+          data.signupUserAgent = userAgent || null;
+          data.signupMethod = account?.provider === "google" ? "google" : (account?.provider ?? "credentials");
+        }
+        await db.user.update({ where: { id: user.id }, data: data as never });
+      } catch {
+        // never fail sign-in because forensics couldn't be saved
+      }
+    },
+  },
 });

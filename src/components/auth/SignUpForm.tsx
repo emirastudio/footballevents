@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { registerAction, type AuthFormState } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
@@ -21,8 +21,19 @@ function SubmitBtn({ labels }: { labels: Labels }) {
 
 export function SignUpForm({ labels }: { labels: Labels }) {
   const [state, action] = useActionState<AuthFormState, FormData>(registerAction, null);
+  // Snapshot of when the form was first rendered — humans take >= 2s to fill, bots are faster.
+  const startedAtRef = useRef<number>(Date.now());
   return (
     <form action={action} className="space-y-4">
+      {/* Honeypot — visually hidden, real users won't fill it. Bots auto-fill all inputs and trip. */}
+      <div aria-hidden className="absolute -left-[9999px] h-0 w-0 overflow-hidden" tabIndex={-1}>
+        <label>
+          Website (leave blank)
+          <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+      <input type="hidden" name="startedAt" value={startedAtRef.current} />
+
       <Field name="name" type="text" autoComplete="name" required label={labels.name} />
       <Field name="email" type="email" autoComplete="email" required label={labels.email} />
       <Field
