@@ -3,6 +3,8 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { LaunchPromo } from "@/components/site/LaunchPromo";
+import { EventCard } from "@/components/cards/EventCard";
+import { getEvents } from "@/lib/queries";
 import { db } from "@/lib/db";
 import {
   ArrowRight, Users, Globe2, TrendingUp, Clock, Sparkles, Star, Crown,
@@ -24,14 +26,27 @@ export default async function CapabilitiesPage({
   setRequestLocale(locale);
   const t    = await getTranslations("advertise");
   const tNav = await getTranslations("nav");
+  const tCommon = await getTranslations("common");
 
-  const [eventCount, organizerCount, venueCount, countryRows] = await Promise.all([
+  const [eventCount, organizerCount, venueCount, countryRows, allEvents] = await Promise.all([
     db.event.count({ where: eventWhere }),
     db.organizer.count(),
     db.venue.count(),
     db.event.findMany({ where: eventWhere, distinct: ["countryCode"], select: { countryCode: true } }),
+    getEvents(),
   ]);
   const countryCount = countryRows.length;
+
+  const cardLabels = {
+    from: tCommon("from"),
+    free: tCommon("free"),
+    premium: tCommon("premium"),
+    featured: tCommon("featured"),
+  };
+
+  const showcasePremium  = allEvents.find((e) => e.isPremium);
+  const showcaseFeatured = allEvents.find((e) => e.isFeatured && !e.isPremium);
+  const showcaseRegular  = allEvents.find((e) => !e.isFeatured && !e.isPremium);
 
   type AudienceCard = { value: string; label: string; icon: typeof Users };
   const audience: AudienceCard[] = [];
@@ -267,10 +282,10 @@ export default async function CapabilitiesPage({
 
           <div className="grid gap-5 md:grid-cols-3">
             {[
-              { variant: "regular",  data: t.raw("showcaseRegular"),  Icon: null,      tone: "neutral" },
-              { variant: "featured", data: t.raw("showcaseFeatured"), Icon: Sparkles,  tone: "accent"  },
-              { variant: "premium",  data: t.raw("showcasePremium"),  Icon: Star,      tone: "premium" },
-            ].map(({ variant, data, Icon, tone }) => {
+              { variant: "regular",  data: t.raw("showcaseRegular"),  Icon: null,      tone: "neutral", event: showcaseRegular  },
+              { variant: "featured", data: t.raw("showcaseFeatured"), Icon: Sparkles,  tone: "accent",  event: showcaseFeatured },
+              { variant: "premium",  data: t.raw("showcasePremium"),  Icon: Star,      tone: "premium", event: showcasePremium  },
+            ].map(({ variant, data, Icon, tone, event }) => {
               const d = data as { tag: string; title: string; desc: string };
               return (
                 <div
@@ -290,34 +305,11 @@ export default async function CapabilitiesPage({
                     {d.tag}
                   </span>
 
-                  {/* Mock card preview */}
-                  <div className="mb-4 overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)]">
-                    <div
-                      className="relative aspect-[16/9] bg-cover bg-center"
-                      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&q=80)" }}
-                    >
-                      {Icon && (
-                        <span className={`absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full text-white shadow-[var(--shadow-sm)] ring-2 ring-white/80 ${
-                          tone === "premium" ? "bg-[var(--color-premium)]" : "bg-[var(--color-pitch-500)]"
-                        }`}>
-                          <Icon className="h-3.5 w-3.5 fill-current" />
-                        </span>
-                      )}
+                  {event && (
+                    <div className="mb-4">
+                      <EventCard event={event} locale={locale} size="sm" labels={cardLabels} />
                     </div>
-                    <div className="bg-white p-3">
-                      <div className="text-sm font-semibold text-[var(--color-foreground)]">Mediterranean Cup U14</div>
-                      <div className="mt-1 flex items-center gap-1 text-xs text-[var(--color-muted)]">
-                        <MapPin className="h-3 w-3" /> Barcelona, Spain
-                      </div>
-                      <div className="mt-2 flex items-center justify-between text-xs">
-                        <span className="inline-flex items-center gap-1">
-                          <Star className="h-3 w-3 fill-[var(--color-premium)] text-[var(--color-premium)]" />
-                          <span className="font-semibold">4.8</span>
-                        </span>
-                        <span className="font-bold text-[var(--color-foreground)]">€480</span>
-                      </div>
-                    </div>
-                  </div>
+                  )}
 
                   <h3 className="font-[family-name:var(--font-manrope)] text-lg font-bold text-[var(--color-foreground)]">{d.title}</h3>
                   <p className="mt-1 text-sm text-[var(--color-muted-strong)]">{d.desc}</p>
