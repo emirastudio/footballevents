@@ -9,6 +9,7 @@ import { getCountry } from "@/lib/mock-data";
 import { getOrganizerBySlug, getOrganizerSlugs, getEventsByOrganizer } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
 
+export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
 
 export default async function OrganizerDetailPage({
