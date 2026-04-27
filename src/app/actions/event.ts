@@ -736,7 +736,7 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
   // Decide the next step / status.
   let nextStep = step;
   // Editing a PUBLISHED / PENDING_REVIEW event keeps its status — moderators don't need to re-approve every typo.
-  // DRAFT stays DRAFT until the user explicitly hits "Опубликовать" (publish direction).
+  // DRAFT stays DRAFT until the user explicitly hits "Publish" (publish direction).
   let nextStatus: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" =
     existing.status === "PUBLISHED"
       ? "PUBLISHED"

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Upload, Loader2, Trash2, ImageIcon } from "lucide-react";
@@ -52,6 +53,7 @@ function centeredAspectCrop(mediaW: number, mediaH: number, aspect: Aspect): Cro
 }
 
 export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUploadProps) {
+  const t = useTranslations("upload");
   const preset = PRESETS[kind];
   const inputRef = useRef<HTMLInputElement | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
@@ -72,11 +74,11 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
     const file = e.target.files?.[0];
     if (!file) return;
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setError("Only JPG, PNG or WebP");
+      setError(t("errOnlyJpgPngWebp"));
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      setError("File too big (max 10MB)");
+      setError(t("errFileTooBig"));
       return;
     }
     const reader = new FileReader();
@@ -87,7 +89,7 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { naturalWidth, naturalHeight, width, height } = e.currentTarget;
     if (naturalWidth < preset.minSrcW || naturalHeight < preset.minSrcH) {
-      setError(`Image too small. Minimum ${preset.minSrcW}×${preset.minSrcH}.`);
+      setError(t("errImageTooSmall", { w: preset.minSrcW, h: preset.minSrcH }));
       setSrc(null);
       return;
     }
@@ -109,7 +111,7 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
       });
       if (!presign.ok) {
         const j = await presign.json().catch(() => ({}));
-        throw new Error(j.error ?? "Presign failed");
+        throw new Error(j.error ?? t("errPresignFailed"));
       }
       const { uploadUrl, publicUrl } = await presign.json();
 
@@ -119,12 +121,12 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
         headers: { "Content-Type": blob.type },
         body: blob,
       });
-      if (!put.ok) throw new Error(`Upload failed (${put.status})`);
+      if (!put.ok) throw new Error(`${t("errUploadFailed")} (${put.status})`);
 
       setUploadedUrl(publicUrl);
       setSrc(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("errUploadFailed"));
     } finally {
       setBusy(false);
     }
@@ -157,8 +159,8 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
       {pending && (
         <div className="mb-2 rounded-[var(--radius-md)] border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
           {busy
-            ? "Загружаем… подождите пару секунд."
-            : "Не забудьте нажать «Save crop», чтобы сохранить картинку — иначе она не загрузится."}
+            ? t("uploadingHint")
+            : t("saveCropHint", { saveCrop: t("saveCrop") })}
         </div>
       )}
 
@@ -192,14 +194,14 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
               className="inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-[var(--color-accent-fg)] disabled:opacity-50"
             >
               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-              {busy ? "Uploading…" : "Save crop"}
+              {busy ? t("uploading") : t("saveCrop")}
             </button>
             <button
               type="button"
               onClick={() => { setSrc(null); setError(null); }}
               className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 py-2 text-sm text-[var(--color-foreground)]"
             >
-              Cancel
+              {t("cancel")}
             </button>
           </div>
         </div>
@@ -215,14 +217,14 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
               onClick={pickFile}
               className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2 text-sm font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-500)]"
             >
-              <Upload className="h-4 w-4" /> Replace
+              <Upload className="h-4 w-4" /> {t("replace")}
             </button>
             <button
               type="button"
               onClick={clearImage}
               className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-2 text-sm text-[var(--color-muted-strong)] hover:text-red-700"
             >
-              <Trash2 className="h-4 w-4" /> Remove
+              <Trash2 className="h-4 w-4" /> {t("remove")}
             </button>
           </div>
         </div>
@@ -233,7 +235,7 @@ export function ImageUpload({ name, kind, defaultUrl, label, hint }: ImageUpload
           className={`flex w-full ${previewClass} max-w-md flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border-2 border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6 text-sm text-[var(--color-muted-strong)] transition hover:border-[var(--color-pitch-500)] hover:bg-[var(--color-pitch-50)]`}
         >
           <ImageIcon className="h-7 w-7 text-[var(--color-pitch-500)]" />
-          <span className="font-semibold">Upload image</span>
+          <span className="font-semibold">{t("uploadImage")}</span>
           <span className="text-xs text-[var(--color-muted)]">{hint ?? RECOMMEND[kind]}</span>
         </button>
       )}
@@ -273,13 +275,13 @@ async function cropAndCompress(image: HTMLImageElement, crop: Crop, targetW: num
   canvas.width = outW;
   canvas.height = outH;
   const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas not supported");
+  if (!ctx) throw new Error("Canvas not supported"); // engineering error, not localized
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(image, cropX, cropY, cropW, cropH, 0, 0, outW, outH);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("Encode failed"))),
+      (blob) => (blob ? resolve(blob) : reject(new Error("Encode failed"))), // engineering error, not localized
       "image/webp",
       0.88,
     );

@@ -8,7 +8,7 @@ export default async function ReviewsModStub({ params }: { params: Promise<{ loc
     <div>
       <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{t("reviewsMod")}</h1>
       <p className="mt-3 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-8 text-sm text-[var(--color-muted)]">
-        Coming next — модерация отзывов: одобрить/скрыть/ответить, эскалация админу.
+        {t("reviewsModComingSoon")}
       </p>
     </div>
   );

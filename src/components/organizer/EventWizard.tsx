@@ -265,7 +265,7 @@ function Stepper({ step, highestStep, labels, eventId }: { step: number; highest
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 1 — Что
+// Step 1 — What
 // ─────────────────────────────────────────────────────────────
 function Step1({
   categories, defaults, labels, fe, errMsg, secondLocale, setSecondLocale,
@@ -318,7 +318,7 @@ function Step1({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 2 — Когда и где
+// Step 2 — When and where
 // ─────────────────────────────────────────────────────────────
 function Step2({
   countries, countryCode, setCountryCode, defaults, labels, fe, errMsg,
@@ -377,7 +377,7 @@ function Step2({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 3 — Для кого
+// Step 3 — Audience
 // ─────────────────────────────────────────────────────────────
 function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardLabels }) {
   return (
@@ -476,7 +476,7 @@ function PillRadioGroup({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 4 — Цена и регистрация
+// Step 4 — Pricing and registration
 // ─────────────────────────────────────────────────────────────
 function Step4({
   defaults, labels, isFree, setIsFree, fe, errMsg,
@@ -515,7 +515,7 @@ function Step4({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Step 5 — Оформление и публикация
+// Step 5 — Media and publish
 // ─────────────────────────────────────────────────────────────
 function Step5({
   defaults, labels, tier, fe, errMsg, secondLocale,

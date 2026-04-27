@@ -8,7 +8,7 @@ export default async function SettingsStub({ params }: { params: Promise<{ local
     <div>
       <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{t("settings")}</h1>
       <p className="mt-3 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-8 text-sm text-[var(--color-muted)]">
-        Coming next — редактирование профиля, лого/обложка, соцсети, тариф и биллинг (Stripe).
+        {t("settingsComingSoon")}
       </p>
     </div>
   );
