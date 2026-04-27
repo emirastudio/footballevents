@@ -68,6 +68,7 @@ export default async function SetupEventPage({
           step={step}
           highestStep={ev.wizardStep}
           tier={organizer.subscriptionTier as Tier}
+          status={ev.status}
           categories={cats}
           countries={getCountries(locale).map((c) => ({ code: c.code, name: c.name, flag: c.flag }))}
           defaults={{

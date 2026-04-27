@@ -23,7 +23,7 @@ const AGE_GROUPS = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT","ALL_A
 export type WizardLabels = {
   steps: { 1: string; 2: string; 3: string; 4: string; 5: string };
   stepHints: { 1: string; 2: string; 3: string; 4: string; 5: string };
-  prev: string; next: string; publish: string; saveDraft: string; saving: string;
+  prev: string; next: string; publish: string; saveDraft: string; saveChanges: string; saving: string;
   publishingDisabled: string; upgradeForPublish: string; upgradeCta: string;
   // Step 1
   category: string; categoryHint: string;
@@ -96,6 +96,7 @@ export function EventWizard({
   step,
   highestStep,
   tier,
+  status,
   categories,
   countries,
   defaults,
@@ -104,6 +105,8 @@ export function EventWizard({
   step: 1 | 2 | 3 | 4 | 5;
   highestStep: number; // max step user already reached
   tier: Tier;
+  /** Current event status — used to pick the right button labels. */
+  status?: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "REJECTED" | "ARCHIVED";
   categories: Category[];
   countries: Country[];
   defaults: WizardDefaults;
@@ -209,8 +212,15 @@ export function EventWizard({
           )}
           {isLast && (
             <>
-              <SubmitBtn name="direction" value="prev" variant="ghost" icon="none" label={labels.saveDraft} loadingLabel={labels.saving} hiddenStep />
-              <SubmitBtn name="direction" value="publish" variant="accent" icon="publish" label={labels.publish} loadingLabel={labels.saving} />
+              {status === "PUBLISHED" || status === "PENDING_REVIEW" ? (
+                // Already live (or awaiting first review) — edits should just save in place, no re-moderation.
+                <SubmitBtn name="direction" value="publish" variant="accent" icon="publish" label={labels.saveChanges} loadingLabel={labels.saving} />
+              ) : (
+                <>
+                  <SubmitBtn name="direction" value="prev" variant="ghost" icon="none" label={labels.saveDraft} loadingLabel={labels.saving} hiddenStep />
+                  <SubmitBtn name="direction" value="publish" variant="accent" icon="publish" label={labels.publish} loadingLabel={labels.saving} />
+                </>
+              )}
             </>
           )}
         </div>

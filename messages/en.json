@@ -328,6 +328,7 @@
     "next": "Next",
     "publish": "Publish",
     "saveDraft": "Save draft",
+    "saveChanges": "Save changes",
     "saving": "Saving…",
     "publishingDisabled": "Missing required fields: dates, country, and location name. Fill them in and try again.",
     "upgradeForPublish": "Your current plan can't publish this event. Upgrade to continue.",

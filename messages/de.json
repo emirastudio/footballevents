@@ -231,6 +231,7 @@
     "next": "Weiter",
     "publish": "Veröffentlichen",
     "saveDraft": "Entwurf speichern",
+    "saveChanges": "Änderungen speichern",
     "saving": "Speichere…",
     "publishingDisabled": "Pflichtfelder fehlen: Datum, Land und Standortname. Bitte ausfüllen und erneut versuchen.",
     "upgradeForPublish": "Dein aktueller Tarif kann dieses Event nicht veröffentlichen. Upgrade, um fortzufahren.",

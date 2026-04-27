@@ -735,7 +735,14 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
 
   // Decide the next step / status.
   let nextStep = step;
-  let nextStatus: "DRAFT" | "PENDING_REVIEW" = existing.status === "PENDING_REVIEW" ? "PENDING_REVIEW" : "DRAFT";
+  // Editing a PUBLISHED / PENDING_REVIEW event keeps its status — moderators don't need to re-approve every typo.
+  // DRAFT stays DRAFT until the user explicitly hits "Опубликовать" (publish direction).
+  let nextStatus: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" =
+    existing.status === "PUBLISHED"
+      ? "PUBLISHED"
+      : existing.status === "PENDING_REVIEW"
+        ? "PENDING_REVIEW"
+        : "DRAFT";
   if (direction === "next" && step < 5) nextStep = (step + 1) as WizardStep;
   if (direction === "prev" && step > 1) nextStep = (step - 1) as WizardStep;
   if (direction === "publish") {
@@ -744,7 +751,8 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
     if (publishErrors) {
       return { error: "publishIncomplete", fieldErrors: publishErrors, eventId: existing.id };
     }
-    nextStatus = "PENDING_REVIEW";
+    // First-time submit: DRAFT/REJECTED → PENDING_REVIEW. Re-clicking "publish" on already-live event keeps PUBLISHED.
+    if (existing.status === "DRAFT" || existing.status === "REJECTED") nextStatus = "PENDING_REVIEW";
   }
 
   update.wizardStep = Math.max(existing.wizardStep, nextStep);
@@ -753,8 +761,11 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
   await db.event.update({ where: { id: existing.id }, data: update as never });
 
   revalidatePath("/organizer/events");
+  revalidatePath(`/events/${existing.slug}`);
 
   if (direction === "publish") {
+    // After "Save changes" on a live event — bounce to the public page so the organizer can verify.
+    if (existing.status === "PUBLISHED") redirect(`/events/${existing.slug}`);
     redirect(`/organizer/events`);
   }
   redirect(`/organizer/events/${existing.id}/setup?step=${nextStep}`);

@@ -11,7 +11,7 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
       1: tw("stepHints.1"), 2: tw("stepHints.2"), 3: tw("stepHints.3"), 4: tw("stepHints.4"), 5: tw("stepHints.5"),
     },
     prev: tw("prev"), next: tw("next"), publish: tw("publish"),
-    saveDraft: tw("saveDraft"), saving: tw("saving"),
+    saveDraft: tw("saveDraft"), saveChanges: tw("saveChanges"), saving: tw("saving"),
     publishingDisabled: tw("publishingDisabled"),
     upgradeForPublish: tw("upgradeForPublish"),
     upgradeCta: tw("upgradeCta"),

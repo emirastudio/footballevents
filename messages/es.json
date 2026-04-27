@@ -231,6 +231,7 @@
     "next": "Siguiente",
     "publish": "Publicar",
     "saveDraft": "Guardar borrador",
+    "saveChanges": "Guardar cambios",
     "saving": "Guardando…",
     "publishingDisabled": "Faltan campos obligatorios: fechas, país y nombre de la ubicación. Complétalos e inténtalo de nuevo.",
     "upgradeForPublish": "Tu plan actual no permite publicar este evento. Mejora para continuar.",
