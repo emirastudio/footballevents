@@ -47,23 +47,15 @@ COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/messages ./messages
 COPY --from=builder --chown=nextjs:nodejs /app/content ./content
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-# Prisma engine binaries + CLI (CLI is needed for `migrate deploy` at startup).
-# Use --link: cross-stage hardlinks instead of overlayfs cache merge — required
-# because pnpm's `.pnpm/node_modules/prisma` is a symlink and BuildKit's
-# default copy strategy chokes on it ("cannot copy to non-directory").
-# --chown must use NUMERIC ids with --link: the link layer is built in
-# isolation and doesn't see /etc/passwd, so symbolic names error with
-# "invalid user index: -1".
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+client* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+engines* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+debug* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+fetch-engine* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/@prisma+get-platform* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.pnpm/prisma@* ./node_modules/.pnpm/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/prisma ./node_modules/prisma
-# pnpm puts symlinks for @prisma/* (engines, client, debug, ...) under node_modules/@prisma/
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/@prisma ./node_modules/@prisma
-COPY --link --from=builder --chown=1001:1001 /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
+# Prisma CLI + engines for `migrate deploy` at container startup.
+# We tried cherry-picking pnpm packages (@prisma+client*, @prisma+engines*, ...)
+# but BuildKit kept choking on pnpm's symlink layout ("cannot copy to non-
+# directory", "cannot replace to directory ... with file"). Copying the whole
+# node_modules from the builder stage is heavier (~500MB extra in the image)
+# but reliably preserves pnpm's symlink graph in one atomic operation.
+# Numeric --chown is required because --link layers are merged in isolation
+# and don't see the runner stage's /etc/passwd.
+COPY --link --from=builder --chown=1001:1001 /app/node_modules ./node_modules
 
 # Run pending migrations before the app boots — fails the container if migrations
 # are broken, which is the correct behaviour (don't serve traffic on wrong schema).
