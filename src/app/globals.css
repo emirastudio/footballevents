@@ -18,16 +18,18 @@
   --color-navy-800: #0F1E36;
   --color-navy-900: #0A1628;
 
-  --color-pitch-50:  #E6FBF0;
-  --color-pitch-100: #C2F5D9;
-  --color-pitch-200: #8AEBB8;
-  --color-pitch-300: #4FDD93;
-  --color-pitch-400: #1FCB72;
-  --color-pitch-500: #00D26A;
-  --color-pitch-600: #00B85B;
-  --color-pitch-700: #009548;
-  --color-pitch-800: #007339;
-  --color-pitch-900: #00552A;
+  /* Goality brand — mint/teal. 500 chosen darker than the logo background
+     so it reads on white without dissolving. Light shades stay airy. */
+  --color-pitch-50:  #E6FBF4;
+  --color-pitch-100: #C5F4E0;
+  --color-pitch-200: #92E8C5;
+  --color-pitch-300: #57D9A6;
+  --color-pitch-400: #2BC68A;
+  --color-pitch-500: #11AC78;
+  --color-pitch-600: #0F9163;
+  --color-pitch-700: #107552;
+  --color-pitch-800: #115C42;
+  --color-pitch-900: #0E4533;
 
   --color-gold-300: #ECD179;
   --color-gold-400: #DCBE56;
