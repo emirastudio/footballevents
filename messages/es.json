@@ -412,6 +412,7 @@
     "faqAnswer": "Respuesta",
     "contentLanguage": "Idioma del contenido",
     "addLanguage": "Añadir idioma",
+    "englishRequiredHint": "El inglés es obligatorio — lo ven los visitantes internacionales por defecto.",
     "langEn": "Inglés",
     "uploadBlockedMessage": "Espera a que termine la subida o pulsa «Save crop» para confirmar la imagen — si no, se perderá.",
     "errors": {

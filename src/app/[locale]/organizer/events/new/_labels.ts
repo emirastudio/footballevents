@@ -60,6 +60,7 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     faqAnswer: tw("faqAnswer"),
     contentLanguage: tw("contentLanguage"),
     addLanguage: tw("addLanguage"),
+    englishRequiredHint: tw("englishRequiredHint"),
     langEn: tw("langEn"),
     uploadBlockedMessage: tw("uploadBlockedMessage"),
     tierLockTitle: t("tierLockTitle"), tierLockBody: t("tierLockBody"), videoLockBody: t("videoLockBody"),

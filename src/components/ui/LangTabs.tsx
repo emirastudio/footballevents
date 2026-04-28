@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, AlertCircle } from "lucide-react";
 
 export type LocaleCode = "en" | "ru" | "de" | "es";
 
@@ -14,6 +14,8 @@ export type LangTabsLabels = {
   addLanguage: string;
   /** Localized labels for each language code. */
   langs: Record<LocaleCode, string>;
+  /** Suffix appended to required-tab labels (e.g. "(required)"). */
+  requiredSuffix?: string;
 };
 
 type ControlledProps = {
@@ -29,10 +31,15 @@ type Props = ControlledProps & {
   labels: LangTabsLabels;
   /** Render each locale's panel. Receives active locale + the list of currently visible locales. */
   children: (ctx: { active: LocaleCode; visible: LocaleCode[] }) => React.ReactNode;
+  /** Locales whose tabs should show a red error dot (e.g. validation failed on a hidden tab). */
+  errorLocales?: LocaleCode[];
+  /** Locales marked visually as required (asterisk + suffix). Default ["en"]. */
+  requiredLocales?: LocaleCode[];
 };
 
 export function LangTabs({
   secondLocale, onSecondLocaleChange, hiddenInputName, labels, children,
+  errorLocales = [], requiredLocales = ["en"],
 }: Props) {
   const [active, setActive] = useState<LocaleCode>("en");
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -44,6 +51,18 @@ export function LangTabs({
   useEffect(() => {
     if (!visible.includes(active)) setActive("en");
   }, [visible, active]);
+
+  // Auto-jump to the first tab that has a validation error so the user
+  // can immediately see what failed (instead of staring at the empty
+  // "submit" button on an irrelevant tab).
+  useEffect(() => {
+    if (errorLocales.length === 0) return;
+    const target = errorLocales.find((l) => visible.includes(l));
+    if (target && target !== active) setActive(target);
+    // We intentionally only react to errorLocales changing — switching the
+    // active tab manually shouldn't pin the user back on the error tab.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errorLocales.join(",")]);
 
   // Close picker on outside click
   useEffect(() => {
@@ -69,18 +88,24 @@ export function LangTabs({
           {visible.map((l) => {
             const isActive = active === l;
             const isSecond = l !== "en";
+            const hasError = errorLocales.includes(l);
+            const isRequired = requiredLocales.includes(l);
             return (
               <div key={l} className="flex items-center">
                 <button
                   type="button"
                   onClick={() => setActive(l)}
                   className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider transition ${
-                    isActive
+                    hasError
+                      ? "bg-red-50 text-red-700 ring-1 ring-red-200"
+                      : isActive
                       ? "bg-[var(--color-pitch-500)] text-white shadow-[var(--shadow-xs)]"
                       : "text-[var(--color-muted-strong)] hover:text-[var(--color-foreground)]"
                   }`}
                 >
+                  {hasError && <AlertCircle className="h-3 w-3" />}
                   {l}
+                  {isRequired && <span className={hasError ? "text-red-700" : isActive ? "text-white/80" : "text-[var(--color-muted)]"}>*</span>}
                 </button>
                 {isSecond && onSecondLocaleChange && (
                   <button
@@ -131,6 +156,12 @@ export function LangTabs({
           </div>
         )}
       </div>
+
+      {labels.requiredSuffix && requiredLocales.length > 0 && (
+        <p className="text-xs text-[var(--color-muted)]">
+          <span className="text-red-600">*</span> {labels.requiredSuffix}
+        </p>
+      )}
 
       {hiddenInputName && <input type="hidden" name={hiddenInputName} value={secondLocale} />}
 

@@ -412,6 +412,7 @@
     "faqAnswer": "Answer",
     "contentLanguage": "Content language",
     "addLanguage": "Add language",
+    "englishRequiredHint": "English is required — international visitors see it by default.",
     "langEn": "English",
     "uploadBlockedMessage": "Wait for the image upload to finish or click 'Save crop' to confirm it — otherwise it'll be lost.",
     "errors": {

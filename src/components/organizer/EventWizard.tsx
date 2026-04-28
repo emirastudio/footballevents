@@ -63,6 +63,7 @@ export type WizardLabels = {
   faqQuestion: string; faqAnswer: string;
   contentLanguage: string;
   addLanguage: string;
+  englishRequiredHint: string;
   langEn: string;
   uploadBlockedMessage: string;
   tierLockTitle: string; tierLockBody: string; videoLockBody: string;
@@ -268,6 +269,17 @@ function Stepper({ step, highestStep, labels, eventId }: { step: number; highest
 // ─────────────────────────────────────────────────────────────
 // Step 1 — What
 // ─────────────────────────────────────────────────────────────
+// Map field-error keys to which language tab the broken field lives on.
+// Used by Step1 to highlight the right tab and auto-jump there on submit.
+function langErrorLocales(fe: Record<string, string>, secondLocale: string): LocaleCode[] {
+  const out: LocaleCode[] = [];
+  if (fe.titleEn || fe.shortDescEn || fe.descriptionEn) out.push("en");
+  if (secondLocale && (fe.titleSecond || fe.shortDescSecond || fe.descriptionSecond)) {
+    out.push(secondLocale as LocaleCode);
+  }
+  return out;
+}
+
 function Step1({
   categories, defaults, labels, fe, errMsg, secondLocale, setSecondLocale,
 }: {
@@ -291,9 +303,12 @@ function Step1({
         secondLocale={(secondLocale || "") as "" | "ru" | "de" | "es"}
         onSecondLocaleChange={(l) => setSecondLocale(l)}
         hiddenInputName="secondLocale"
+        errorLocales={langErrorLocales(fe, secondLocale)}
+        requiredLocales={["en"]}
         labels={{
           heading: labels.contentLanguage,
           addLanguage: labels.addLanguage,
+          requiredSuffix: labels.englishRequiredHint,
           langs: { en: labels.langEn, ru: labels.langRu, de: labels.langDe, es: labels.langEs },
         }}
       >
