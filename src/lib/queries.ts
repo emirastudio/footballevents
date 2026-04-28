@@ -73,8 +73,10 @@ function toMockEvent(e: EventRow, preferredLocale: string = "en"): MockEvent {
     galleryUrls: e.galleryUrls,
     rating: e.ratingAvg,
     reviewsCount: e.ratingCount,
-    isPremium: e.boostTier === "PREMIUM",
-    isFeatured: e.isFeatured,
+    // Hide badges for stale boosts whose boostUntil has already passed.
+    // We don't run a cleanup cron on Event.boostTier, so the column may lie.
+    isPremium: e.boostTier === "PREMIUM" && (e.boostUntil ? e.boostUntil > new Date() : false),
+    isFeatured: e.isFeatured && (e.featuredUntil ? e.featuredUntil > new Date() : true),
     logoUrl: e.logoUrl ?? e.organizer.logoUrl ?? undefined,
     savesCount: e._count.saves,
     program: pickLocalizedArray(e.program, preferredLocale) as MockEvent["program"],
@@ -206,27 +208,24 @@ export async function getEventsByCategory(slug: string, locale: string = "en"): 
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", category: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
-    orderBy: { startDate: "asc" },
   });
-  return rows.map((r) => toMockEvent(r, locale));
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
 }
 
 export async function getEventsByOrganizer(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", organizer: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
-    orderBy: { startDate: "asc" },
   });
-  return rows.map((r) => toMockEvent(r, locale));
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
 }
 
 export async function getEventsByVenue(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", venue: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
-    orderBy: { startDate: "asc" },
   });
-  return rows.map((r) => toMockEvent(r, locale));
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
 }
 
 // ─── Organizers ───────────────────────────────────────

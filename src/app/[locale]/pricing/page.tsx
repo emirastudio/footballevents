@@ -76,12 +76,12 @@ export default async function PricingPage({
     },
   ];
 
+  // Bundle1/Bundle2 are hidden until multi-redeem is implemented — buying a
+  // bundle today only credits a single BASIC boost, not the advertised pack.
   const boosts = [
     t.raw("boostBasic"),
     t.raw("boostFeatured"),
     t.raw("boostPremium"),
-    t.raw("boostBundle1"),
-    t.raw("boostBundle2"),
   ] as { name: string; price: string; desc: string }[];
 
   const ads = t.raw("adsList") as { label: string; from: string }[];
