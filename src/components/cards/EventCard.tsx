@@ -21,10 +21,18 @@ export function EventCard({ event: e, locale, rank, size = "md", labels }: Props
   const country = getCountry(e.countryCode);
   const isCompact = size === "sm";
 
+  // Premium boost gets a visible gold border (per pricing matrix). Featured
+  // gets a green outline. Plain cards stay neutral.
+  const cardBorder = e.isPremium
+    ? "border-[var(--color-premium)] ring-2 ring-[var(--color-premium)]/30 shadow-[var(--shadow-md)]"
+    : e.isFeatured
+    ? "border-[var(--color-pitch-500)] ring-1 ring-[var(--color-pitch-500)]/20"
+    : "border-[var(--color-border)] shadow-[var(--shadow-xs)]";
+
   return (
     <Link
       href={`/events/${e.slug}`}
-      className="group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-xs)] transition-all hover:-translate-y-1 hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-md)]"
+      className={`group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border bg-[var(--color-surface)] transition-all hover:-translate-y-1 hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-md)] ${cardBorder}`}
     >
       <div
         className={`relative ${isCompact ? "aspect-[4/3]" : "aspect-[16/10]"} overflow-hidden bg-[var(--color-pitch-50)] bg-cover bg-center`}
