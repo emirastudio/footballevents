@@ -120,15 +120,23 @@ export async function applyIncludedBoost(formData: FormData) {
   const days = kind === "featured" ? 14 : 7;
   const tier: "BASIC" | "FEATURED" | "PREMIUM" =
     kind === "featured" ? "FEATURED" : kind === "premium" ? "PREMIUM" : "BASIC";
-  const startsAt = new Date();
-  const endsAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+  // Stack instead of overwrite: if the event already has an active boost,
+  // start the new period at the current end (or now if expired). 3× BASIC
+  // applied in one sitting → 21 days total, not 7.
+  const now = new Date();
+  const baseFrom = ev.boostUntil && ev.boostUntil > now ? ev.boostUntil : now;
+  const endsAt = new Date(baseFrom.getTime() + days * 24 * 60 * 60 * 1000);
+  // Don't downgrade an existing higher tier (e.g. running FEATURED + applying
+  // BASIC) — keep the higher tier active, just extend the window.
+  const TIER_RANK: Record<string, number> = { BASIC: 1, FEATURED: 2, PREMIUM: 3 };
+  const effectiveTier = ev.boostTier && TIER_RANK[ev.boostTier] > TIER_RANK[tier] ? ev.boostTier : tier;
   const period = currentQuotaPeriod();
 
   await db.boost.create({
     data: {
       eventId: ev.id,
       tier,
-      startsAt,
+      startsAt: now,
       endsAt,
       priceCents: 0,
       currency: "EUR",
@@ -138,10 +146,10 @@ export async function applyIncludedBoost(formData: FormData) {
   await db.event.update({
     where: { id: ev.id },
     data: {
-      boostTier: tier,
+      boostTier: effectiveTier,
       boostUntil: endsAt,
-      isFeatured: tier !== "BASIC" ? true : undefined,
-      featuredUntil: tier !== "BASIC" ? endsAt : undefined,
+      isFeatured: effectiveTier !== "BASIC" ? true : undefined,
+      featuredUntil: effectiveTier !== "BASIC" ? endsAt : undefined,
     },
   });
 

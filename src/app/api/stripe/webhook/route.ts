@@ -47,13 +47,20 @@ export async function POST(req: NextRequest) {
           const tier = tierToBoost(md.kind);
           if (tier) {
             const days = durationDays(md.kind);
-            const startsAt = new Date();
-            const endsAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+            // Stack with any active boost: start the new period at the current
+            // end (or now if expired) so a buyer who applies a second boost
+            // gets cumulative duration, not an overwrite.
+            const ev = await db.event.findUnique({ where: { id: md.eventId }, select: { boostTier: true, boostUntil: true } });
+            const now = new Date();
+            const baseFrom = ev?.boostUntil && ev.boostUntil > now ? ev.boostUntil : now;
+            const endsAt = new Date(baseFrom.getTime() + days * 24 * 60 * 60 * 1000);
+            const TIER_RANK: Record<string, number> = { BASIC: 1, FEATURED: 2, PREMIUM: 3 };
+            const effectiveTier = ev?.boostTier && TIER_RANK[ev.boostTier] > TIER_RANK[tier] ? ev.boostTier : tier;
             await db.boost.create({
               data: {
                 eventId: md.eventId,
                 tier,
-                startsAt,
+                startsAt: now,
                 endsAt,
                 priceCents: s.amount_total ?? 0,
                 currency: (s.currency ?? "eur").toUpperCase(),
@@ -63,10 +70,10 @@ export async function POST(req: NextRequest) {
             await db.event.update({
               where: { id: md.eventId },
               data: {
-                boostTier: tier,
+                boostTier: effectiveTier,
                 boostUntil: endsAt,
-                isFeatured: tier !== "BASIC" ? true : undefined,
-                featuredUntil: tier !== "BASIC" ? endsAt : undefined,
+                isFeatured: effectiveTier !== "BASIC" ? true : undefined,
+                featuredUntil: effectiveTier !== "BASIC" ? endsAt : undefined,
               },
             });
           }
