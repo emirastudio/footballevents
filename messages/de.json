@@ -148,6 +148,13 @@
       "applyCta": "{kind} gratis einsetzen",
       "exhausted": "Kostenlose Boosts diesen Monat aufgebraucht. Quota wird am 1. zurückgesetzt."
     },
+    "sharingKit": {
+      "title": "Sharing-Kit",
+      "hint": "Fertige Social-Media-Grafiken für dieses Event. Cover + Logo + Datum/Stadt + Preis + QR.",
+      "download": "PNG herunterladen",
+      "upgradeCta": "Pro — freischalten",
+      "apiHint": "Brauchst du es in n8n / Zapier? Einfach GET <code>/api/events/{slug}/social-image?format=story</code> — liefert ein PNG."
+    },
     "boostBasicLabel": "Basic — €9 · 7 Tg",
     "boostFeaturedLabel": "Featured — €39 · 14 Tg",
     "boostPremiumLabel": "Premium — €119 · 7 Tg Homepage",

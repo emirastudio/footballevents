@@ -148,6 +148,13 @@
       "applyCta": "Применить {kind} бесплатно",
       "exhausted": "Бесплатные бусты этого месяца использованы. Квота обнуляется 1-го числа."
     },
+    "sharingKit": {
+      "title": "Sharing kit",
+      "hint": "Готовые картинки для соцсетей по этому событию. Обложка + лого + дата/город + цена + QR.",
+      "download": "Скачать PNG",
+      "upgradeCta": "Pro — открыть",
+      "apiHint": "Нужно в n8n / Zapier? Просто GET <code>/api/events/{slug}/social-image?format=story</code> — отдаст PNG."
+    },
     "boostBasicLabel": "Basic — €9 · 7 дней",
     "boostFeaturedLabel": "Featured — €39 · 14 дней",
     "boostPremiumLabel": "Premium — €119 · 7 дней на главной",

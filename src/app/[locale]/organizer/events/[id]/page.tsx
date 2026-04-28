@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Trash2, Archive, ExternalLink } from "lucide-react";
 import { deleteEventAction, archiveEventAction } from "@/app/actions/event";
 import { startBoostCheckout, applyIncludedBoost } from "@/app/actions/billing";
-import { Rocket, Gift } from "lucide-react";
+import { Rocket, Gift, Image as ImageIcon, Download, Lock } from "lucide-react";
 import { getIncludedBoostsRemaining, includedKindAllowed } from "@/lib/included-boosts";
 import { BOOSTS_INCLUDED_PER_MONTH } from "@/lib/tier";
 
@@ -244,6 +244,52 @@ export default async function EditEventPage({
           </div>
         </div>
       )}
+
+      {ev.status === "PUBLISHED" && (() => {
+        const sharingFormats: { fmt: "square" | "portrait" | "story" | "landscape"; label: string; size: string; locked: boolean }[] = [
+          { fmt: "square",    label: "Square",    size: "1080×1080", locked: false },
+          { fmt: "portrait",  label: "Feed",      size: "1080×1350", locked: boostTier === "FREE" },
+          { fmt: "story",     label: "Story",     size: "1080×1920", locked: boostTier === "FREE" },
+          { fmt: "landscape", label: "Landscape", size: "1920×1080", locked: boostTier === "FREE" },
+        ];
+        const v = ev.updatedAt.getTime(); // cache-bust on event update
+        return (
+          <div className="mb-6 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+            <div className="mb-3 flex items-center gap-2">
+              <ImageIcon className="h-5 w-5 text-[var(--color-pitch-600)]" />
+              <h2 className="font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">{tOrg("sharingKit.title")}</h2>
+            </div>
+            <p className="mb-4 text-sm text-[var(--color-muted-strong)]">{tOrg("sharingKit.hint")}</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {sharingFormats.map((f) => {
+                const url = `/api/events/${ev.slug}/social-image?format=${f.fmt}&locale=${locale}&v=${v}`;
+                return (
+                  <div key={f.fmt} className="flex flex-col gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-muted)] p-3">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-[var(--color-foreground)]">{f.label}</span>
+                      <span className="text-[var(--color-muted)]">{f.size}</span>
+                    </div>
+                    {f.locked ? (
+                      <a href="/pricing" className="flex items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-xs font-semibold text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-500)] hover:text-[var(--color-pitch-700)]">
+                        <Lock className="h-3 w-3" /> {tOrg("sharingKit.upgradeCta")}
+                      </a>
+                    ) : (
+                      <a href={url} download={`footballevents-${ev.slug}-${f.fmt}.png`} className="flex items-center justify-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-accent)] px-3 py-2 text-xs font-bold text-[var(--color-accent-fg)] hover:bg-[var(--color-pitch-600)]">
+                        <Download className="h-3 w-3" /> {tOrg("sharingKit.download")}
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-3 text-xs text-[var(--color-muted)]">
+              {tOrg.rich("sharingKit.apiHint", {
+                code: (chunks) => <code className="rounded bg-[var(--color-bg-muted)] px-1.5 py-0.5 font-mono text-[11px]">{chunks}</code>,
+              })}
+            </p>
+          </div>
+        );
+      })()}
 
       <EventForm
         tier={organizer.subscriptionTier as Tier}
