@@ -137,7 +137,7 @@
       "upgradeCta": "Upgrade boost",
       "premiumTitle": "Your Premium plan includes 3 free Basic boosts per month",
       "proTitle": "Your Pro plan includes 1 free Basic boost per month",
-      "idleBody": "Pick your flagship event and apply a boost — Featured (€39) puts it at the top of category, Premium (€119) on the homepage carousel.",
+      "idleBody": "Pick your flagship event and apply a boost — Featured (€19) puts it at the top of category, Premium (€59) on the homepage carousel.",
       "pickEventCta": "Choose event",
       "quotaTitle": "{remaining} of {total} included boosts left this month",
       "quotaBody": "Your plan includes free Basic boosts. Apply one to your nearest event in one click.",
@@ -819,7 +819,7 @@
       "desc": "Several events per year, or you're an agency? Pro and Premium remove the limits and give you proper tools.",
       "bullets": [
         "Pro €9.90/mo (launch) — up to 25 events, analytics, support",
-        "Premium €99/mo — unlimited, «Verified» badge",
+        "Premium €49/mo — unlimited, «Verified» badge",
         "Dedicated manager on Premium",
         "Discount on boosts and banner ads"
       ]
@@ -902,7 +902,7 @@
     "tierPrice": {
       "free":     { "monthly": "€0",  "annual": "€0",   "annualEq": "" },
       "pro":      { "monthly": "€9.90", "annual": "€99", "annualEq": "€8.25/mo" },
-      "premium":  { "monthly": "€99", "annual": "€990", "annualEq": "€82/mo" },
+      "premium":  { "monthly": "€49", "annual": "€490", "annualEq": "€40.83/mo" },
       "enterprise": { "monthly": "Talk to us", "annual": "Talk to us", "annualEq": "" }
     },
     "compareTitle": "Compare plans",
@@ -964,11 +964,11 @@
     },
     "boostTitle": "Boost any event",
     "boostSubtitle": "One-time visibility upgrades. No subscription required.",
-    "boostBasic":    { "name": "Basic boost",    "price": "€9",   "desc": "7 days bumped in listings." },
-    "boostFeatured": { "name": "Featured",       "price": "€39",  "desc": "14 days at category top + 'Featured' badge." },
-    "boostPremium":  { "name": "Premium boost",  "price": "€119", "desc": "7 days on homepage hero rotation + featured + gold border." },
-    "boostBundle1":  { "name": "Bundle 3 + 1",   "price": "€99",  "desc": "3 Basic boosts + 1 Featured. Mix & match across events." },
-    "boostBundle2":  { "name": "Bundle 5 + 2",   "price": "€249", "desc": "5 Basic + 2 Featured. Best value for active organizers." },
+    "boostBasic":    { "name": "Basic boost",    "price": "€5",   "desc": "7 days bumped in listings." },
+    "boostFeatured": { "name": "Featured",       "price": "€19",  "desc": "14 days at category top + 'Featured' badge." },
+    "boostPremium":  { "name": "Premium boost",  "price": "€59",  "desc": "7 days on homepage hero rotation + featured + gold border." },
+    "boostBundle1":  { "name": "Bundle 3 + 1",   "price": "€89",  "desc": "3 Featured + 1 Premium boost. Save 23% vs buying separately." },
+    "boostBundle2":  { "name": "Bundle 5 + 2",   "price": "€119", "desc": "5 Featured + 2 Premium boosts. Best value — save 44%." },
     "adsTitle": "Advertising for brands",
     "adsSubtitle": "Reach engaged football audiences. Negotiable rates — drop us a line.",
     "adsCta": "Talk to ad sales",

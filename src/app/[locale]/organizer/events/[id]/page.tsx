@@ -98,8 +98,8 @@ export default async function EditEventPage({
   const labels = {
     newTitle: en?.title ?? t("newTitle"),
     newSubtitle: t("newSubtitle"),
-    saveDraft: t("saveDraft"), submitReview: t("submitReview"), saving: t("saving"),
-    draftHint: t("draftHint"),
+    saveDraft: t("saveDraft"), submitReview: t("submitReview"), saveChanges: t("saveChanges"), saving: t("saving"),
+    draftHint: t("draftHint"), publishedHint: t("publishedHint"),
     sections: {
       basics: t("sections.basics"), basicsHint: t("sections.basicsHint"),
       schedule: t("sections.schedule"), scheduleHint: t("sections.scheduleHint"),

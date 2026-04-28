@@ -137,7 +137,7 @@
       "upgradeCta": "Mejorar boost",
       "premiumTitle": "Tu plan Premium incluye 3 boosts Basic gratuitos al mes",
       "proTitle": "Tu plan Pro incluye 1 boost Basic gratuito al mes",
-      "idleBody": "Elige tu evento estrella y aplica un boost: Featured (€39) — top de categoría, Premium (€119) — carrusel de la portada.",
+      "idleBody": "Elige tu evento estrella y aplica un boost: Featured (€19) — top de categoría, Premium (€59) — carrusel de la portada.",
       "pickEventCta": "Elegir evento",
       "quotaTitle": "Quedan {remaining} de {total} boosts gratis este mes",
       "quotaBody": "Tu plan incluye boosts Basic gratuitos. Aplica uno a tu próximo evento en un clic.",
@@ -851,7 +851,7 @@
       "desc": "¿Varios eventos al año, o eres una agencia? Pro y Premium quitan límites y te dan herramientas serias.",
       "bullets": [
         "Pro €9,90/mes (lanzamiento) — hasta 25 eventos, analítica, soporte",
-        "Premium €99/mes — ilimitado, insignia «Verificado»",
+        "Premium €49/mes — ilimitado, insignia «Verificado»",
         "Manager dedicado en Premium",
         "Descuento en boosts y banners"
       ]
@@ -1049,9 +1049,9 @@
         "annualEq": "€8.25/mes"
       },
       "premium": {
-        "monthly": "€99",
-        "annual": "€990",
-        "annualEq": "€82/mes"
+        "monthly": "€49",
+        "annual": "€490",
+        "annualEq": "€40.83/mes"
       },
       "enterprise": {
         "monthly": "Consultar",
@@ -1120,28 +1120,28 @@
     "boostSubtitle": "Mejoras puntuales sin suscripción.",
     "boostBasic": {
       "name": "Boost básico",
-      "price": "€9",
+      "price": "€5",
       "desc": "7 días destacado en listados."
     },
     "boostFeatured": {
       "name": "Featured",
-      "price": "€39",
+      "price": "€19",
       "desc": "14 días top de categoría + insignia 'Featured'."
     },
     "boostPremium": {
       "name": "Boost premium",
-      "price": "€119",
+      "price": "€59",
       "desc": "7 días en hero rotativo + featured + borde dorado."
     },
     "boostBundle1": {
       "name": "Bundle 3 + 1",
-      "price": "€99",
-      "desc": "3 Basic + 1 Featured. Repártelos entre tus eventos."
+      "price": "€89",
+      "desc": "3 Featured + 1 Premium. Ahorra 23% frente a comprarlos por separado."
     },
     "boostBundle2": {
       "name": "Bundle 5 + 2",
-      "price": "€249",
-      "desc": "5 Basic + 2 Featured. Mejor valor para activos."
+      "price": "€119",
+      "desc": "5 Featured + 2 Premium. Mejor precio — ahorra 44%."
     },
     "adsTitle": "Publicidad para marcas",
     "adsSubtitle": "Llega a una audiencia futbolera comprometida. Tarifas negociables — escríbenos.",

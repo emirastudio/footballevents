@@ -137,7 +137,7 @@
       "upgradeCta": "Boost upgraden",
       "premiumTitle": "Dein Premium-Tarif enthält 3 kostenlose Basic-Boosts pro Monat",
       "proTitle": "Dein Pro-Tarif enthält 1 kostenlosen Basic-Boost pro Monat",
-      "idleBody": "Wähle dein Flaggschiff-Event und setze einen Boost ein: Featured (€39) — Kategorie-Top, Premium (€119) — Startseiten-Karussell.",
+      "idleBody": "Wähle dein Flaggschiff-Event und setze einen Boost ein: Featured (€19) — Kategorie-Top, Premium (€59) — Startseiten-Karussell.",
       "pickEventCta": "Event auswählen",
       "quotaTitle": "{remaining} von {total} kostenlosen Boosts diesen Monat übrig",
       "quotaBody": "Dein Tarif enthält kostenlose Basic-Boosts. Wende einen mit einem Klick auf dein nächstes Event an.",
@@ -851,7 +851,7 @@
       "desc": "Mehrere Events pro Jahr oder Agentur? Pro und Premium heben Limits auf und geben dir richtige Tools.",
       "bullets": [
         "Pro €9,90/Mo (Launch) — bis 25 Events, Analytics, Support",
-        "Premium €99/Mo — unbegrenzt, „Verifiziert“-Badge",
+        "Premium €49/Mo — unbegrenzt, „Verifiziert“-Badge",
         "Persönlicher Manager bei Premium",
         "Rabatt auf Boosts und Bannerwerbung"
       ]
@@ -1049,9 +1049,9 @@
         "annualEq": "€8.25/Mo"
       },
       "premium": {
-        "monthly": "€99",
-        "annual": "€990",
-        "annualEq": "€82/Mo"
+        "monthly": "€49",
+        "annual": "€490",
+        "annualEq": "€40.83/Mo"
       },
       "enterprise": {
         "monthly": "Auf Anfrage",
@@ -1120,28 +1120,28 @@
     "boostSubtitle": "Einmalige Sichtbarkeitsschübe. Ohne Abo.",
     "boostBasic": {
       "name": "Basic Boost",
-      "price": "€9",
+      "price": "€5",
       "desc": "7 Tage höher in den Listings."
     },
     "boostFeatured": {
       "name": "Featured",
-      "price": "€39",
+      "price": "€19",
       "desc": "14 Tage Kategorie-Top + 'Featured'-Badge."
     },
     "boostPremium": {
       "name": "Premium Boost",
-      "price": "€119",
+      "price": "€59",
       "desc": "7 Tage in der Homepage-Hero-Rotation + featured + Goldrand."
     },
     "boostBundle1": {
       "name": "Bundle 3 + 1",
-      "price": "€99",
-      "desc": "3 Basic + 1 Featured. Frei auf Events verteilen."
+      "price": "€89",
+      "desc": "3 Featured + 1 Premium. Spare 23% gegenüber Einzelkauf."
     },
     "boostBundle2": {
       "name": "Bundle 5 + 2",
-      "price": "€249",
-      "desc": "5 Basic + 2 Featured. Bestpreis für aktive Veranstalter."
+      "price": "€119",
+      "desc": "5 Featured + 2 Premium. Bestpreis — Spare 44%."
     },
     "adsTitle": "Werbung für Marken",
     "adsSubtitle": "Erreiche eine engagierte Fußball-Zielgruppe. Konditionen verhandelbar — schreib uns.",

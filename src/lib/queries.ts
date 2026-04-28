@@ -165,14 +165,31 @@ function toMockVenue(v: VenueRow): MockVenue {
   };
 }
 
+// Boost-aware ordering applied to every catalog list. PREMIUM tops, then
+// FEATURED, then BASIC, then everything else, ties broken by start date.
+// "Active" = boostUntil is in the future; expired boosts naturally drop out
+// because we partition them in JS below — Prisma orderBy can't combine
+// "is-active" + custom enum rank in a single SQL ORDER BY without raw SQL.
+const BOOST_RANK: Record<string, number> = { PREMIUM: 3, FEATURED: 2, BASIC: 1 };
+function sortByBoostThenDate<T extends { boostTier: string | null; boostUntil: Date | null; startDate: Date | null }>(rows: T[]): T[] {
+  const now = Date.now();
+  return [...rows].sort((a, b) => {
+    const ar = a.boostUntil && a.boostUntil.getTime() > now ? (BOOST_RANK[a.boostTier ?? ""] ?? 0) : 0;
+    const br = b.boostUntil && b.boostUntil.getTime() > now ? (BOOST_RANK[b.boostTier ?? ""] ?? 0) : 0;
+    if (ar !== br) return br - ar;
+    const ad = a.startDate?.getTime() ?? Infinity;
+    const bd = b.startDate?.getTime() ?? Infinity;
+    return ad - bd;
+  });
+}
+
 // ─── Events ───────────────────────────────────────────
 export async function getEvents(locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
-    orderBy: [{ isFeatured: "desc" }, { startDate: "asc" }],
   });
-  return rows.map((r) => toMockEvent(r, locale));
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
 }
 
 export async function getEventBySlug(slug: string, locale: string = "en"): Promise<MockEvent | null> {

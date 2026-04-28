@@ -30,8 +30,8 @@ export function formatError(raw: string, errors: Record<string, string>): string
 
 export type EventFormLabels = {
   newTitle: string; newSubtitle: string;
-  saveDraft: string; submitReview: string; saving: string;
-  draftHint: string;
+  saveDraft: string; submitReview: string; saveChanges: string; saving: string;
+  draftHint: string; publishedHint: string;
   sections: Record<string, string>;
   category: string; categoryHint: string;
   englishSection: string; englishSectionHint: string;
@@ -67,6 +67,7 @@ const AGE_GROUPS = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT","ALL_A
 
 export type EventDefaults = {
   id?: string;
+  status?: string;
   categoryId?: string;
   titleEn?: string;
   shortDescEn?: string;
@@ -324,10 +325,18 @@ export function EventForm({
       )}
 
       <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 px-4 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-[var(--color-muted)]">{labels.draftHint}</p>
+        <p className="text-xs text-[var(--color-muted)]">
+          {defaults?.status === "PUBLISHED" ? labels.publishedHint : labels.draftHint}
+        </p>
         <div className="flex gap-2">
-          <SubmitBtn intent="draft" label={labels.saveDraft} loadingLabel={labels.saving} variant="outline" />
-          <SubmitBtn intent="review" label={labels.submitReview} loadingLabel={labels.saving} variant="accent" />
+          {defaults?.status === "PUBLISHED" ? (
+            <SubmitBtn intent="draft" label={labels.saveChanges} loadingLabel={labels.saving} variant="accent" />
+          ) : (
+            <>
+              <SubmitBtn intent="draft" label={labels.saveDraft} loadingLabel={labels.saving} variant="outline" />
+              <SubmitBtn intent="review" label={labels.submitReview} loadingLabel={labels.saving} variant="accent" />
+            </>
+          )}
         </div>
       </div>
     </form>
