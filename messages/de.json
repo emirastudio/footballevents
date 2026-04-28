@@ -148,6 +148,16 @@
       "applyCta": "{kind} gratis einsetzen",
       "exhausted": "Kostenlose Boosts diesen Monat aufgebraucht. Quota wird am 1. zurückgesetzt."
     },
+    "credits": {
+      "title": "Boost-Guthaben",
+      "subtitle": "Vorab bezahlte Boost-Slots aus Bundles. Wende jeden auf eines deiner veröffentlichten Events an.",
+      "availableTitle": "Verfügbar",
+      "emptyAvailable": "Keine ungenutzten Guthaben.",
+      "buyBundleCta": "Bundle kaufen →",
+      "needPublishedEvent": "Veröffentliche zuerst ein Event, um dieses Guthaben einzusetzen.",
+      "apply": "Anwenden",
+      "historyTitle": "Verlauf"
+    },
     "sharingKit": {
       "title": "Sharing-Kit",
       "hint": "Fertige Social-Media-Grafiken für dieses Event. Cover + Logo + Datum/Stadt + Preis + QR.",
@@ -615,6 +625,7 @@
     "viewMore": "Mehr ansehen",
     "from": "ab",
     "free": "Kostenlos",
+    "used": "Eingelöst",
     "featured": "Empfohlen",
     "verified": "Verifizierter Veranstalter",
     "premium": "Premium",
@@ -1123,6 +1134,7 @@
       "websiteOnly": "Nur Website"
     },
     "boostTitle": "Event boosten",
+    "bundleBuyCta": "Bundle kaufen",
     "boostSubtitle": "Einmalige Sichtbarkeitsschübe. Ohne Abo.",
     "boostBasic": {
       "name": "Basic Boost",

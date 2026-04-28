@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { Check, Star, ChevronRight, Megaphone, Ticket } from "lucide-react";
 import { PricingTierToggle } from "@/components/pricing/PricingTierToggle";
+import { startBundleCheckout } from "@/app/actions/billing";
 
 type Tier = "free" | "pro" | "premium" | "enterprise";
 
@@ -76,13 +77,13 @@ export default async function PricingPage({
     },
   ];
 
-  // Bundle1/Bundle2 are hidden until multi-redeem is implemented — buying a
-  // bundle today only credits a single BASIC boost, not the advertised pack.
   const boosts = [
     t.raw("boostBasic"),
     t.raw("boostFeatured"),
     t.raw("boostPremium"),
-  ] as { name: string; price: string; desc: string }[];
+    { ...t.raw("boostBundle1"), kind: "bundle31" },
+    { ...t.raw("boostBundle2"), kind: "bundle52" },
+  ] as { name: string; price: string; desc: string; kind?: string }[];
 
   const ads = t.raw("adsList") as { label: string; from: string }[];
   const ticketing = t.raw("ticketingRows") as { tier: string; fee: string }[];
@@ -186,10 +187,18 @@ export default async function PricingPage({
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {boosts.map((b) => (
-              <div key={b.name} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+              <div key={b.name} className="flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
                 <h3 className="font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">{b.name}</h3>
                 <div className="mt-2 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{b.price}</div>
-                <p className="mt-2 text-xs text-[var(--color-muted-strong)]">{b.desc}</p>
+                <p className="mt-2 flex-1 text-xs text-[var(--color-muted-strong)]">{b.desc}</p>
+                {b.kind && (
+                  <form action={startBundleCheckout} className="mt-3">
+                    <input type="hidden" name="kind" value={b.kind} />
+                    <button type="submit" className="w-full rounded-[var(--radius-md)] bg-[var(--color-accent)] px-3 py-2 text-xs font-bold text-[var(--color-accent-fg)] hover:bg-[var(--color-pitch-600)]">
+                      {t("bundleBuyCta")}
+                    </button>
+                  </form>
+                )}
               </div>
             ))}
           </div>

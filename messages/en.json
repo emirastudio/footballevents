@@ -148,6 +148,16 @@
       "applyCta": "Apply free {kind}",
       "exhausted": "You've used this month's free boosts. Quota resets on the 1st."
     },
+    "credits": {
+      "title": "Boost credits",
+      "subtitle": "Pre-paid boost slots from bundle purchases. Apply each one to any of your published events.",
+      "availableTitle": "Available",
+      "emptyAvailable": "No unused credits.",
+      "buyBundleCta": "Buy a bundle →",
+      "needPublishedEvent": "Publish an event first to apply this credit.",
+      "apply": "Apply",
+      "historyTitle": "History"
+    },
     "sharingKit": {
       "title": "Sharing kit",
       "hint": "Download ready-made social-media graphics for this event. Cover + logo + date/city + price + QR.",
@@ -615,6 +625,7 @@
     "viewMore": "View more",
     "from": "from",
     "free": "Free",
+    "used": "Used",
     "featured": "Featured",
     "verified": "Verified organizer",
     "premium": "Premium",
@@ -969,6 +980,7 @@
       "websiteOnly": "Website only"
     },
     "boostTitle": "Boost any event",
+    "bundleBuyCta": "Buy bundle",
     "boostSubtitle": "One-time visibility upgrades. No subscription required.",
     "boostBasic":    { "name": "Basic boost",    "price": "€5",   "desc": "7 days bumped in listings." },
     "boostFeatured": { "name": "Featured",       "price": "€19",  "desc": "14 days at category top + 'Featured' badge." },

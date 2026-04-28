@@ -43,6 +43,27 @@ export async function POST(req: NextRequest) {
       case "checkout.session.completed": {
         const s = event.data.object as Stripe.Checkout.Session;
         const md = s.metadata ?? {};
+        // Bundle purchases: credit N BoostCredit rows to the organizer.
+        // bundle31 = 3 Featured + 1 Premium; bundle52 = 5 Featured + 2 Premium.
+        if (md.kindGroup === "bundle" && md.organizerId && md.kind) {
+          const composition: Record<string, Array<"BASIC" | "FEATURED" | "PREMIUM">> = {
+            bundle31: ["FEATURED", "FEATURED", "FEATURED", "PREMIUM"],
+            bundle52: ["FEATURED", "FEATURED", "FEATURED", "FEATURED", "FEATURED", "PREMIUM", "PREMIUM"],
+          };
+          const items = composition[md.kind];
+          if (items) {
+            const paymentId = (s.payment_intent as string | null) ?? `bundle:${s.id}`;
+            await db.boostCredit.createMany({
+              data: items.map((tier) => ({
+                organizerId: md.organizerId!,
+                tier,
+                paymentId,
+                source: md.kind!,
+              })),
+            });
+          }
+          break;
+        }
         if (md.kindGroup === "boost" && md.eventId && md.kind) {
           const tier = tierToBoost(md.kind);
           if (tier) {

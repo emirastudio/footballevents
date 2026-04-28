@@ -56,6 +56,41 @@ export async function startSubscriptionCheckout(formData: FormData) {
   redirect(checkout.url);
 }
 
+// Buys a bundle (no event chosen yet). Webhook credits N BoostCredit rows
+// to the organizer; redemption happens later in /organizer/credits.
+export async function startBundleCheckout(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
+  if (!organizer) redirect("/onboarding/organizer");
+
+  if (!STRIPE_ENABLED || !stripe) redirect("/pricing?stripe=not-configured");
+
+  const kind = formData.get("kind") as BoostKind;
+  if (kind !== "bundle31" && kind !== "bundle52") redirect("/pricing");
+
+  const customerId = await ensureCustomer(organizer.id);
+  const amount = BOOST_PRICES_CENTS[kind];
+
+  const checkout = await stripe.checkout.sessions.create({
+    mode: "payment",
+    customer: customerId,
+    line_items: [{
+      quantity: 1,
+      price_data: {
+        currency: "eur",
+        unit_amount: amount,
+        product_data: { name: `Boost bundle (${kind})` },
+      },
+    }],
+    success_url: `${SITE}/organizer/credits?bundle=success`,
+    cancel_url: `${SITE}/pricing?bundle=cancelled`,
+    metadata: { organizerId: organizer.id, kind, kindGroup: "bundle" },
+  });
+  if (!checkout.url) throw new Error("No checkout URL");
+  redirect(checkout.url);
+}
+
 export async function startBoostCheckout(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
@@ -93,6 +128,63 @@ export async function startBoostCheckout(formData: FormData) {
   });
   if (!checkout.url) throw new Error("No checkout URL");
   redirect(checkout.url);
+}
+
+// Redeems a previously-purchased BoostCredit on a chosen event. Credits
+// come from bundle purchases (and future admin grants). Marks the credit
+// as used and links it to the resulting Boost row for an audit trail.
+export async function redeemBoostCredit(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
+  if (!organizer) redirect("/onboarding/organizer");
+
+  const creditId = formData.get("creditId") as string;
+  const eventId = formData.get("eventId") as string;
+  if (!creditId || !eventId) redirect("/organizer/credits");
+
+  const credit = await db.boostCredit.findUnique({ where: { id: creditId } });
+  if (!credit || credit.organizerId !== organizer.id || credit.redeemedAt) {
+    redirect(`/organizer/credits?error=invalid`);
+  }
+  const ev = await db.event.findUnique({ where: { id: eventId } });
+  if (!ev || ev.organizerId !== organizer.id) redirect(`/organizer/events`);
+
+  const days = credit.tier === "FEATURED" ? 14 : 7;
+  const now = new Date();
+  const baseFrom = ev.boostUntil && ev.boostUntil > now ? ev.boostUntil : now;
+  const endsAt = new Date(baseFrom.getTime() + days * 24 * 60 * 60 * 1000);
+  const TIER_RANK: Record<string, number> = { BASIC: 1, FEATURED: 2, PREMIUM: 3 };
+  const effectiveTier = ev.boostTier && TIER_RANK[ev.boostTier] > TIER_RANK[credit.tier] ? ev.boostTier : credit.tier;
+
+  const boost = await db.boost.create({
+    data: {
+      eventId: ev.id,
+      tier: credit.tier,
+      startsAt: now,
+      endsAt,
+      priceCents: 0,
+      currency: "EUR",
+      paymentId: `credit:${credit.id}`,
+    },
+  });
+  await db.boostCredit.update({
+    where: { id: credit.id },
+    data: { redeemedAt: now, redeemedBoostId: boost.id },
+  });
+  await db.event.update({
+    where: { id: ev.id },
+    data: {
+      boostTier: effectiveTier,
+      boostUntil: endsAt,
+      isFeatured: effectiveTier !== "BASIC" ? true : undefined,
+      featuredUntil: effectiveTier !== "BASIC" ? endsAt : undefined,
+    },
+  });
+
+  revalidatePath(`/organizer/events/${ev.id}`);
+  revalidatePath(`/organizer/credits`);
+  redirect(`/organizer/events/${ev.id}?credit=success`);
 }
 
 // Applies one of the included monthly boosts (no Stripe charge). Quota is

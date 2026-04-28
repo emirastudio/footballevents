@@ -148,6 +148,16 @@
       "applyCta": "Aplicar {kind} gratis",
       "exhausted": "Has usado los boosts gratuitos del mes. La cuota se reinicia el día 1."
     },
+    "credits": {
+      "title": "Créditos de boost",
+      "subtitle": "Boost prepagados desde packs. Aplica cada uno a cualquiera de tus eventos publicados.",
+      "availableTitle": "Disponibles",
+      "emptyAvailable": "Sin créditos sin usar.",
+      "buyBundleCta": "Comprar un pack →",
+      "needPublishedEvent": "Publica primero un evento para usar este crédito.",
+      "apply": "Aplicar",
+      "historyTitle": "Historial"
+    },
     "sharingKit": {
       "title": "Sharing kit",
       "hint": "Imágenes listas para redes sociales de este evento. Portada + logo + fecha/ciudad + precio + QR.",
@@ -615,6 +625,7 @@
     "viewMore": "Ver más",
     "from": "desde",
     "free": "Gratis",
+    "used": "Usado",
     "featured": "Destacado",
     "verified": "Organizador verificado",
     "premium": "Premium",
@@ -1123,6 +1134,7 @@
       "websiteOnly": "Solo web"
     },
     "boostTitle": "Impulsa cualquier evento",
+    "bundleBuyCta": "Comprar pack",
     "boostSubtitle": "Mejoras puntuales sin suscripción.",
     "boostBasic": {
       "name": "Boost básico",
