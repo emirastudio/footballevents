@@ -523,6 +523,12 @@
       "title": "Nach Kategorie",
       "subtitle": "Von Elite-Jugendturnieren bis zu Spielreisen — auf jedem Kontinent."
     },
+    "premiumHero": {
+      "badge": "Premium",
+      "cta": "Event ansehen",
+      "prev": "Zurück",
+      "next": "Weiter"
+    },
     "featured": {
       "title": "Empfohlene Events",
       "subtitle": "Ausgewählt von Veranstaltern und unserer Redaktion.",

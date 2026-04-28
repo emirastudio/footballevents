@@ -523,6 +523,12 @@
       "title": "Browse by category",
       "subtitle": "From elite youth tournaments to away-day match tours, on every continent."
     },
+    "premiumHero": {
+      "badge": "Premium",
+      "cta": "View event",
+      "prev": "Previous",
+      "next": "Next"
+    },
     "featured": {
       "title": "Featured events",
       "subtitle": "Hand-picked by organizers and our editorial team.",

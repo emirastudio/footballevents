@@ -6,6 +6,7 @@ import { LaunchPromo } from "@/components/site/LaunchPromo";
 import { EventCard } from "@/components/cards/EventCard";
 import { db } from "@/lib/db";
 import { getEvents } from "@/lib/queries";
+import { PremiumHero } from "@/components/site/PremiumHero";
 import {
   Search, Trophy, Tent, PartyPopper, GraduationCap, Plane, Sparkles, Dumbbell, UserSearch,
   ArrowRight, Calendar, Users, Building2, Globe2, MessageSquare, TrendingUp,
@@ -42,6 +43,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getEvents(),
   ]);
   const countryCount = countryRows.length;
+  const premiumEvents = allEvents.filter((e) => e.isPremium).slice(0, 5);
   const featured = allEvents.filter((e) => e.isFeatured || e.isPremium).slice(0, 6);
   const top = allEvents.slice(0, 50);
   const launchSpotsLeft = Math.max(0, 50 - organizerCount);
@@ -135,6 +137,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           )}
         </Container>
       </section>
+
+      {/* PREMIUM HERO — auto-rotating spotlight on premium-boosted events */}
+      {premiumEvents.length > 0 && (
+        <PremiumHero
+          events={premiumEvents}
+          locale={locale}
+          labels={{
+            badge: t("premiumHero.badge"),
+            cta: t("premiumHero.cta"),
+            prev: t("premiumHero.prev"),
+            next: t("premiumHero.next"),
+          }}
+        />
+      )}
 
       {/* LAUNCH PROMO — first 50 organizers get Premium free for 3 months */}
       {launchSpotsLeft > 0 && (

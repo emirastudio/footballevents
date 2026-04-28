@@ -286,6 +286,7 @@ model Organizer {
   events       Event[]
   ads          AdCampaign[]
   followers    OrganizerFollow[]
+  boostCredits BoostCredit[]
 
   @@index([slug])
   @@index([countryCode])
@@ -717,6 +718,26 @@ model Boost {
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@index([eventId, endsAt])
+}
+
+// Pre-paid boost credits — issued when an organizer buys a bundle (3+1, 5+2,
+// or any future pack). Each row is one redeemable slot of a specific tier.
+// The organizer applies them later from /organizer/credits, picking which
+// event each slot lands on. `redeemedBoostId` links to the resulting Boost
+// row, which keeps the audit trail intact.
+model BoostCredit {
+  id              String     @id @default(cuid())
+  organizerId     String
+  tier            BoostTier
+  purchasedAt     DateTime   @default(now())
+  redeemedAt      DateTime?
+  redeemedBoostId String?    @unique
+  paymentId       String? // sentinel: bundle31/52 payment_intent
+  source          String? // "bundle31" | "bundle52" | "admin-grant" | …
+
+  organizer Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@index([organizerId, redeemedAt])
 }
 
 // ─────────────────────────────────────────────────────────────

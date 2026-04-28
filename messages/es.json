@@ -523,6 +523,12 @@
       "title": "Por categoría",
       "subtitle": "Desde torneos juveniles de élite hasta tours a partidos — en cada continente."
     },
+    "premiumHero": {
+      "badge": "Premium",
+      "cta": "Ver evento",
+      "prev": "Anterior",
+      "next": "Siguiente"
+    },
     "featured": {
       "title": "Eventos destacados",
       "subtitle": "Seleccionados por organizadores y nuestro equipo editorial.",
