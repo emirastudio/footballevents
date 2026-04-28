@@ -1,7 +1,63 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
+
+// Persist every named form field to sessionStorage on input (debounced) and
+// rehydrate on mount. Survives language-tab switches, accidental refreshes
+// and navigations between wizard steps. Cleared when the form successfully
+// transitions (e.g. server returns a new eventId or direction=publish).
+function useFormDraft(formRef: React.RefObject<HTMLFormElement | null>, key: string) {
+  // Hydrate
+  useEffect(() => {
+    if (!formRef.current) return;
+    let saved: Record<string, string> | null = null;
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (raw) saved = JSON.parse(raw);
+    } catch {}
+    if (!saved) return;
+    for (const [name, value] of Object.entries(saved)) {
+      const els = formRef.current.elements.namedItem(name);
+      if (!els) continue;
+      const list = els instanceof RadioNodeList ? Array.from(els) : [els as Element];
+      for (const el of list) {
+        if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement) {
+          if (el instanceof HTMLInputElement && (el.type === "checkbox" || el.type === "radio")) {
+            el.checked = value === "on" || value === "true" || value === el.value;
+          } else {
+            // Only fill empties so we don't clobber server-provided defaults.
+            const def = el instanceof HTMLSelectElement ? "" : (el.defaultValue ?? "");
+            if (!el.value || el.value === def) el.value = value;
+          }
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  // Persist
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    let t: ReturnType<typeof setTimeout> | undefined;
+    const save = () => {
+      const fd = new FormData(form);
+      const data: Record<string, string> = {};
+      fd.forEach((v, k) => { if (typeof v === "string" && v) data[k] = v; });
+      try { sessionStorage.setItem(key, JSON.stringify(data)); } catch {}
+    };
+    const onInput = () => { if (t) clearTimeout(t); t = setTimeout(save, 300); };
+    form.addEventListener("input", onInput);
+    form.addEventListener("change", onInput);
+    return () => {
+      if (t) clearTimeout(t);
+      form.removeEventListener("input", onInput);
+      form.removeEventListener("change", onInput);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+}
 import { wizardSaveAction, type WizardState } from "@/app/actions/event";
 import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
@@ -120,6 +176,21 @@ export function EventWizard({
   const [countryCode, setCountryCode] = useState<string>(defaults.countryCode ?? "");
   const [uploadBlocked, setUploadBlocked] = useState(false);
 
+  const formRef = useRef<HTMLFormElement | null>(null);
+  // Per-step + per-event draft key. "new" while the event hasn't been created yet,
+  // then the real eventId once step 1 returns. Switching to a different step or
+  // event uses a different bucket — drafts don't bleed.
+  const draftKey = `fe-wizard-draft-s${step}-${defaults.eventId ?? "new"}`;
+  useFormDraft(formRef, draftKey);
+
+  // Once the server confirms a transition (new eventId on step 1, or any
+  // successful step), wipe the draft for the bucket we just submitted.
+  useEffect(() => {
+    if (state && !state.error && !state.fieldErrors) {
+      try { sessionStorage.removeItem(draftKey); } catch {}
+    }
+  }, [state, draftKey]);
+
   const fe = state?.fieldErrors ?? {};
   const errMsg = (key?: string) => key ? labels.errors[key] ?? key : undefined;
 
@@ -127,6 +198,7 @@ export function EventWizard({
 
   return (
     <form
+      ref={formRef}
       action={action}
       onSubmit={(e) => {
         // Block submit if any ImageUpload is still mid-crop or mid-upload — otherwise we'd silently
