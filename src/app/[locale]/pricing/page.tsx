@@ -223,28 +223,30 @@ export default async function PricingPage({
           </div>
         </section>
 
-        {/* Ticketing teaser */}
-        <section className="mt-16">
-          <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6">
-            <div className="flex items-start gap-4">
-              <span className="grid h-10 w-10 place-items-center rounded-[var(--radius-md)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]">
-                <Ticket className="h-5 w-5" />
-              </span>
-              <div className="flex-1">
-                <h2 className="font-[family-name:var(--font-manrope)] text-xl font-bold text-[var(--color-foreground)]">{t("ticketingTitle")}</h2>
-                <p className="mt-1 text-sm text-[var(--color-muted-strong)]">{t("ticketingSubtitle")}</p>
-                <ul className="mt-3 grid gap-1.5 sm:grid-cols-4">
-                  {ticketing.map((row) => (
-                    <li key={row.tier} className="rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] px-3 py-2 text-xs">
-                      <span className="font-semibold text-[var(--color-foreground)]">{row.tier}:</span>{" "}
-                      <span className="text-[var(--color-muted-strong)]">{row.fee}</span>
-                    </li>
-                  ))}
-                </ul>
+        {/* Ticketing teaser — temporarily hidden until v3 launch (organizer feedback) */}
+        {false && (
+          <section className="mt-16">
+            <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-6">
+              <div className="flex items-start gap-4">
+                <span className="grid h-10 w-10 place-items-center rounded-[var(--radius-md)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]">
+                  <Ticket className="h-5 w-5" />
+                </span>
+                <div className="flex-1">
+                  <h2 className="font-[family-name:var(--font-manrope)] text-xl font-bold text-[var(--color-foreground)]">{t("ticketingTitle")}</h2>
+                  <p className="mt-1 text-sm text-[var(--color-muted-strong)]">{t("ticketingSubtitle")}</p>
+                  <ul className="mt-3 grid gap-1.5 sm:grid-cols-4">
+                    {ticketing.map((row) => (
+                      <li key={row.tier} className="rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] px-3 py-2 text-xs">
+                        <span className="font-semibold text-[var(--color-foreground)]">{row.tier}:</span>{" "}
+                        <span className="text-[var(--color-muted-strong)]">{row.fee}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* FAQ */}
         <section className="mt-16">
