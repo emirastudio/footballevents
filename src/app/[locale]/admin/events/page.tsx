@@ -6,6 +6,11 @@ import { Check, X, ExternalLink, Rocket } from "lucide-react";
 
 const STATUSES = ["PENDING_REVIEW", "ALL", "PUBLISHED", "DRAFT", "REJECTED", "ARCHIVED"] as const;
 
+// Admin queues must be fresh on every request — newly-submitted events
+// should appear immediately without any ISR delay.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminEventsPage({
   params,
   searchParams,

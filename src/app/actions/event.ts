@@ -361,6 +361,7 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
 
   revalidatePath("/organizer/dashboard");
   revalidatePath("/organizer/events");
+  if (d.intent === "review") revalidatePath("/admin/events");
   redirect(`/organizer/events/${created.id}`);
 }
 
@@ -778,6 +779,8 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
 
   revalidatePath("/organizer/events");
   revalidatePath(`/events/${existing.slug}`);
+  // Admin moderation queue must reflect a freshly submitted event right away.
+  if (nextStatus === "PENDING_REVIEW") revalidatePath("/admin/events");
 
   if (direction === "publish") {
     // After "Save changes" on a live event — bounce to the public page so the organizer can verify.
