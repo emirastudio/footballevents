@@ -16,6 +16,8 @@ const buttonVariants = cva(
           "border border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)]",
         ghost:
           "text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)]",
+        white:
+          "border border-white/30 bg-transparent text-white hover:bg-white/10",
         link:
           "text-[var(--color-pitch-700)] underline-offset-4 hover:underline",
         premium:

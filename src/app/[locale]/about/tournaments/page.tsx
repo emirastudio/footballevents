@@ -234,7 +234,7 @@ export default async function TournamentsAboutPage({
               <Button asChild variant="accent" size="lg">
                 <Link href="/categories/tournaments">Смотреть все турниры</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+              <Button asChild variant="white" size="lg">
                 <Link href="/organizer/events/new">Разместить турнир</Link>
               </Button>
             </div>

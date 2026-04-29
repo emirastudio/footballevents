@@ -252,7 +252,7 @@ export default async function ForPlayersPage({
               <Button asChild variant="accent" size="lg">
                 <Link href="/events">Найти мероприятие</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+              <Button asChild variant="white" size="lg">
                 <Link href="/sign-up">Создать аккаунт</Link>
               </Button>
             </div>

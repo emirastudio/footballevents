@@ -86,8 +86,8 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "€39/мес",
-    desc: "Для регулярных организаторов",
+    price: "€9.90/мес",
+    desc: "Для тех, кто проводит несколько мероприятий",
     features: [
       "Неограниченные события",
       "Галерея фото",
@@ -96,14 +96,14 @@ const tiers = [
       "Аналитика события",
       "Приоритетная поддержка",
     ],
-    cta: "Выбрать Pro",
+    cta: "Начать",
     href: "/pricing",
     highlight: true,
   },
   {
     name: "Premium",
-    price: "€99/мес",
-    desc: "Для максимальной видимости",
+    price: "€49/мес",
+    desc: "Для агентств и крупных операторов",
     features: [
       "Всё из Pro",
       "YouTube/Vimeo embed в hero",
@@ -112,8 +112,22 @@ const tiers = [
       "Sharing Kit для соцсетей",
       "Персональный менеджер",
     ],
-    cta: "Выбрать Premium",
+    cta: "Начать",
     href: "/pricing",
+    highlight: false,
+  },
+  {
+    name: "Enterprise",
+    price: "По запросу",
+    desc: "Федерации и white-label",
+    features: [
+      "Всё из Premium",
+      "White-label решение",
+      "Выделенный менеджер",
+      "SLA и интеграции",
+    ],
+    cta: "Связаться с нами",
+    href: "/contact",
     highlight: false,
   },
 ];
@@ -230,7 +244,7 @@ export default async function ForOrganizersPage({
               Бесплатный старт. Платите только когда хотите расти быстрее.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {tiers.map((t) => (
               <div
                 key={t.name}
@@ -298,7 +312,7 @@ export default async function ForOrganizersPage({
               <Button asChild variant="accent" size="lg">
                 <Link href="/onboarding">Создать профиль организатора</Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
+              <Button asChild variant="white" size="lg">
                 <Link href="/pricing">Подробнее о тарифах</Link>
               </Button>
             </div>
