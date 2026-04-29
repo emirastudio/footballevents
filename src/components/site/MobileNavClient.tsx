@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { X, Menu, LogOut, LayoutDashboard, ChevronRight, User } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
@@ -58,9 +59,9 @@ export function MobileNavClient({ links, user, labels }: Props) {
         <Menu className="h-5 w-5" />
       </button>
 
-      {open && (
+      {open && typeof document !== "undefined" && createPortal(
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-[var(--color-surface)] lg:hidden"
+          className="fixed inset-0 z-[9999] flex flex-col bg-[var(--color-surface)]"
           style={{ overscrollBehavior: "contain" }}
         >
           {/* Top bar */}
@@ -202,7 +203,8 @@ export function MobileNavClient({ links, user, labels }: Props) {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
