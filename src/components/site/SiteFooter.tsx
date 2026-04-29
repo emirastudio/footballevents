@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "./Logo";
+import { FooterAboutMenu } from "./FooterAboutMenu";
 
 export async function SiteFooter() {
   const tNav = await getTranslations("nav");
@@ -27,14 +28,7 @@ export async function SiteFooter() {
         { href: "/pricing", label: "Pricing" },
       ],
     },
-    {
-      title: tFooter("company"),
-      items: [
-        { href: "/about", label: "About" },
-        { href: "/contact", label: "Contact" },
-        { href: "/blog", label: "Blog" },
-      ],
-    },
+    { title: "__about__", items: [] },
     {
       title: tFooter("legal"),
       items: [
@@ -60,25 +54,31 @@ export async function SiteFooter() {
               {tFooter("tagline")}
             </p>
           </div>
-          {cols.map((c) => (
-            <div key={c.title}>
-              <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
-                {c.title}
-              </h4>
-              <ul className="space-y-2.5">
-                {c.items.map((it) => (
-                  <li key={it.href}>
-                    <Link
-                      href={it.href}
-                      className="text-sm text-[var(--color-foreground)] transition-colors hover:text-[var(--color-pitch-700)]"
-                    >
-                      {it.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {cols.map((c) =>
+            c.title === "__about__" ? (
+              <div key="about">
+                <FooterAboutMenu />
+              </div>
+            ) : (
+              <div key={c.title}>
+                <h4 className="mb-4 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+                  {c.title}
+                </h4>
+                <ul className="space-y-2.5">
+                  {c.items.map((it) => (
+                    <li key={it.href}>
+                      <Link
+                        href={it.href}
+                        className="text-sm text-[var(--color-foreground)] transition-colors hover:text-[var(--color-pitch-700)]"
+                      >
+                        {it.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          )}
         </div>
 
         <div className="flex flex-col items-start justify-between gap-4 border-t border-[var(--color-border)] py-6 text-sm text-[var(--color-muted)] md:flex-row md:items-center">
