@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
 import { EventCard } from "@/components/cards/EventCard";
 import { EventFilters } from "@/components/site/EventFilters";
+import { EventsViewToggle, type MapEventSummary } from "@/components/site/EventsViewToggle";
 import { getEvents } from "@/lib/queries";
 import { Search } from "lucide-react";
 
@@ -93,26 +94,40 @@ export default async function EventsPage({
           <EventFilters labels={filterLabels} />
 
           <div>
-            <div className="mb-6 flex items-center justify-between gap-3">
-              <p className="text-sm text-[var(--color-muted-strong)]">
-                <span className="font-semibold text-[var(--color-foreground)]">{filtered.length}</span>{" "}
-                {filtered.length === 1 ? tCommon("result") : tCommon("results")}
-              </p>
-            </div>
-
-            {filtered.length === 0 ? (
-              <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-12 text-center">
-                <Search className="mx-auto mb-4 h-10 w-10 text-[var(--color-muted)]" />
-                <h3 className="text-lg font-semibold text-[var(--color-foreground)]">{tCommon("noResults")}</h3>
-                <p className="mt-1 text-sm text-[var(--color-muted)]">{tCommon("tryDifferentFilters")}</p>
-              </div>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {filtered.map((e) => (
-                  <EventCard key={e.id} event={e} locale={locale} labels={cardLabels} />
-                ))}
-              </div>
-            )}
+            <EventsViewToggle
+              locale={locale}
+              events={filtered.map((e): MapEventSummary => ({
+                id:           e.id,
+                slug:         e.slug,
+                title:        e.title,
+                startDate:    e.startDate,
+                endDate:      e.endDate ?? "",
+                countryCode:  e.countryCode,
+                logoUrl:      e.logoUrl,
+                categorySlug: e.categorySlug,
+                isFeatured:   e.isFeatured,
+              }))}
+              resultsLabel={
+                <p className="text-sm text-[var(--color-muted-strong)]">
+                  <span className="font-semibold text-[var(--color-foreground)]">{filtered.length}</span>{" "}
+                  {filtered.length === 1 ? tCommon("result") : tCommon("results")}
+                </p>
+              }
+            >
+              {filtered.length === 0 ? (
+                <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-12 text-center">
+                  <Search className="mx-auto mb-4 h-10 w-10 text-[var(--color-muted)]" />
+                  <h3 className="text-lg font-semibold text-[var(--color-foreground)]">{tCommon("noResults")}</h3>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">{tCommon("tryDifferentFilters")}</p>
+                </div>
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {filtered.map((e) => (
+                    <EventCard key={e.id} event={e} locale={locale} labels={cardLabels} />
+                  ))}
+                </div>
+              )}
+            </EventsViewToggle>
           </div>
         </div>
       </Container>
