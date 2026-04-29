@@ -5,6 +5,10 @@ set -e
 # Fails the container if migrations error out (correct behaviour — never serve
 # traffic against a half-migrated schema).
 if [ -n "${DATABASE_URL:-}" ]; then
+  # Strip surrounding single or double quotes that some env-file parsers leave in.
+  DATABASE_URL="${DATABASE_URL#\'}" ; DATABASE_URL="${DATABASE_URL%\'}"
+  DATABASE_URL="${DATABASE_URL#\"}" ; DATABASE_URL="${DATABASE_URL%\"}"
+  export DATABASE_URL
   echo "[entrypoint] running prisma migrate deploy…"
   node node_modules/prisma/build/index.js migrate deploy
 else
