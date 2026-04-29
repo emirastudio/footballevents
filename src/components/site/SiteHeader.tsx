@@ -1,10 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
 import { Logo } from "./Logo";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { UserMenu } from "./UserMenu";
+import { MobileNav } from "./MobileNav";
 
 export async function SiteHeader() {
   const t = await getTranslations("nav");
@@ -38,14 +38,20 @@ export async function SiteHeader() {
           </div>
 
           <div className="flex items-center gap-2">
-            <LocaleSwitcher />
-            <UserMenu
-              signInLabel={tAuth("signIn")}
-              signUpLabel={tAuth("signUp")}
-              signOutLabel={tAuth("signOut")}
-              becomeOrganizerLabel={tOrg("becomeOrganizer")}
-              openCabinetLabel={tOrg("openCabinet")}
-            />
+            {/* Desktop: locale + full user menu */}
+            <div className="hidden lg:flex items-center gap-2">
+              <LocaleSwitcher />
+              <UserMenu
+                signInLabel={tAuth("signIn")}
+                signUpLabel={tAuth("signUp")}
+                signOutLabel={tAuth("signOut")}
+                becomeOrganizerLabel={tOrg("becomeOrganizer")}
+                openCabinetLabel={tOrg("openCabinet")}
+              />
+            </div>
+
+            {/* Mobile: hamburger → full-screen drawer */}
+            <MobileNav links={links} />
           </div>
         </div>
       </Container>
