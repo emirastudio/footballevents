@@ -49,10 +49,12 @@ export async function UserMenu({
           <Link href="/admin/dashboard">Admin</Link>
         </Button>
       )}
-      <Button asChild variant={isOrganizer ? "outline" : "primary"} size="sm" className="hidden md:inline-flex">
+      <Button asChild variant={isOrganizer ? "outline" : "primary"} size="sm">
         <Link href={isOrganizer ? "/organizer/dashboard" : "/onboarding/organizer"}>
           <LayoutDashboard className="h-4 w-4" />
-          {isOrganizer ? openCabinetLabel : becomeOrganizerLabel}
+          <span className="hidden sm:inline">
+            {isOrganizer ? openCabinetLabel : becomeOrganizerLabel}
+          </span>
         </Link>
       </Button>
       <Link
