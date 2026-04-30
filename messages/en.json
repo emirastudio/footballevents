@@ -253,6 +253,33 @@
       "bodyTooLong": "Review can't exceed 1500 characters"
     }
   },
+  "alerts": {
+    "title": "My alerts",
+    "subtitle": "We'll email you when new events match your saved filters.",
+    "save": "Notify me",
+    "hintLoggedOut": "Sign in to save this search",
+    "hintEmpty": "Pick at least one filter first",
+    "saved": "You're all set",
+    "manage": "Manage alerts",
+    "modalTitle": "Get notified about new matches",
+    "modalDescription": "We'll email you when new events match these filters. You can pause or delete this anytime.",
+    "nameLabel": "Name (optional)",
+    "namePlaceholder": "e.g. Camps for U12 in Estonia",
+    "saveCta": "Save & notify",
+    "saving": "Saving…",
+    "cancelCta": "Cancel",
+    "pause": "Pause",
+    "resume": "Resume",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this alert?",
+    "open": "Open",
+    "paused": "Paused",
+    "matchesSinceLastRun": "{count} new",
+    "lastRun": "Last checked",
+    "never": "Never",
+    "emptyBody": "You haven't saved any searches yet. Find events that interest you and click 'Notify me' to get an email when new ones appear.",
+    "emptyCta": "Browse events"
+  },
   "apply": {
     "title": "Apply to {eventTitle}",
     "subtitle": "Send your application to the organizer. They'll respond by email and via your account inbox.",

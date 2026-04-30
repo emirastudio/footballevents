@@ -253,6 +253,33 @@
       "bodyTooLong": "Bewertung darf 1500 Zeichen nicht überschreiten"
     }
   },
+  "alerts": {
+    "title": "Meine Benachrichtigungen",
+    "subtitle": "Wir mailen dir, wenn neue Events deinen gespeicherten Filtern entsprechen.",
+    "save": "Benachrichtige mich",
+    "hintLoggedOut": "Melde dich an, um diese Suche zu speichern",
+    "hintEmpty": "Wähle zuerst mindestens einen Filter",
+    "saved": "Eingerichtet",
+    "manage": "Benachrichtigungen verwalten",
+    "modalTitle": "Über neue Treffer benachrichtigt werden",
+    "modalDescription": "Wir mailen dir, wenn neue Events diesen Filtern entsprechen. Du kannst sie jederzeit pausieren oder löschen.",
+    "nameLabel": "Name (optional)",
+    "namePlaceholder": "z.B. Camps für U12 in Estland",
+    "saveCta": "Speichern & benachrichtigen",
+    "saving": "Wird gespeichert…",
+    "cancelCta": "Abbrechen",
+    "pause": "Pausieren",
+    "resume": "Fortsetzen",
+    "delete": "Löschen",
+    "deleteConfirm": "Diese Benachrichtigung löschen?",
+    "open": "Öffnen",
+    "paused": "Pausiert",
+    "matchesSinceLastRun": "{count} neu",
+    "lastRun": "Zuletzt geprüft",
+    "never": "Nie",
+    "emptyBody": "Du hast noch keine Suchen gespeichert. Finde interessante Events und klicke auf 'Benachrichtige mich', um eine E-Mail bei neuen Treffern zu bekommen.",
+    "emptyCta": "Events durchsuchen"
+  },
   "apply": {
     "title": "Anmeldung für {eventTitle}",
     "subtitle": "Sende deine Anmeldung an den Veranstalter. Antwort kommt per E-Mail und in dein Konto-Postfach.",

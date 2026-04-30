@@ -4,8 +4,12 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { EventCard } from "@/components/cards/EventCard";
 import { EventFilters } from "@/components/site/EventFilters";
 import { EventsViewToggle, type MapEventSummary } from "@/components/site/EventsViewToggle";
+import { SaveSearchButton } from "@/components/site/SaveSearchButton";
 import { getEvents } from "@/lib/queries";
 import { Search } from "lucide-react";
+import { auth } from "@/auth";
+import { filtersFromSearchParams, summarizeFilters, isEmptyFilters } from "@/lib/saved-search";
+import { getCountries } from "@/lib/countries";
 
 export default async function EventsPage({
   params,
@@ -60,6 +64,31 @@ export default async function EventsPage({
     featured: tCommon("featured"),
   };
 
+  const session = await auth();
+  const isLoggedIn = !!session?.user?.id;
+  const currentFilters = filtersFromSearchParams(sp);
+  const countryList = getCountries(locale);
+  const filtersSummary = summarizeFilters(currentFilters, {
+    countryName: (code) => countryList.find((c) => c.code === code)?.name ?? code,
+    categoryName: (slug) => categoryNames[slug] ?? slug,
+  });
+
+  const tAlerts = await getTranslations("alerts");
+  const saveSearchLabels = {
+    cta:              tAlerts("save"),
+    hintLoggedOut:    tAlerts("hintLoggedOut"),
+    hintEmpty:        tAlerts("hintEmpty"),
+    saved:            tAlerts("saved"),
+    manageCta:        tAlerts("manage"),
+    modalTitle:       tAlerts("modalTitle"),
+    modalDescription: tAlerts("modalDescription"),
+    nameLabel:        tAlerts("nameLabel"),
+    namePlaceholder:  tAlerts("namePlaceholder"),
+    saveCta:          tAlerts("saveCta"),
+    saving:           tAlerts("saving"),
+    cancelCta:        tAlerts("cancelCta"),
+  };
+
   const filterLabels = {
     filters:  tFilters("title"),
     reset:    tFilters("reset"),
@@ -108,10 +137,20 @@ export default async function EventsPage({
                 isFeatured:   e.isFeatured,
               }))}
               resultsLabel={
-                <p className="text-sm text-[var(--color-muted-strong)]">
-                  <span className="font-semibold text-[var(--color-foreground)]">{filtered.length}</span>{" "}
-                  {filtered.length === 1 ? tCommon("result") : tCommon("results")}
-                </p>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm text-[var(--color-muted-strong)]">
+                    <span className="font-semibold text-[var(--color-foreground)]">{filtered.length}</span>{" "}
+                    {filtered.length === 1 ? tCommon("result") : tCommon("results")}
+                  </p>
+                  {!isEmptyFilters(currentFilters) && (
+                    <SaveSearchButton
+                      isLoggedIn={isLoggedIn}
+                      filters={currentFilters}
+                      filtersSummary={filtersSummary}
+                      labels={saveSearchLabels}
+                    />
+                  )}
+                </div>
               }
             >
               {filtered.length === 0 ? (

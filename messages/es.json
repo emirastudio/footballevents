@@ -253,6 +253,33 @@
       "bodyTooLong": "La reseña no puede superar los 1500 caracteres"
     }
   },
+  "alerts": {
+    "title": "Mis alertas",
+    "subtitle": "Te enviaremos un email cuando aparezcan nuevos eventos según tus filtros.",
+    "save": "Avísame",
+    "hintLoggedOut": "Inicia sesión para guardar esta búsqueda",
+    "hintEmpty": "Elige al menos un filtro primero",
+    "saved": "Listo",
+    "manage": "Gestionar alertas",
+    "modalTitle": "Recibe avisos de nuevos eventos",
+    "modalDescription": "Te enviaremos email cuando aparezcan eventos con estos filtros. Puedes pausarlo o eliminarlo cuando quieras.",
+    "nameLabel": "Nombre (opcional)",
+    "namePlaceholder": "p. ej. Campus para U12 en Estonia",
+    "saveCta": "Guardar y avisar",
+    "saving": "Guardando…",
+    "cancelCta": "Cancelar",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "delete": "Eliminar",
+    "deleteConfirm": "¿Eliminar esta alerta?",
+    "open": "Abrir",
+    "paused": "Pausada",
+    "matchesSinceLastRun": "{count} nuevos",
+    "lastRun": "Última revisión",
+    "never": "Nunca",
+    "emptyBody": "Aún no has guardado búsquedas. Encuentra eventos interesantes y pulsa 'Avísame' para recibir email cuando aparezcan nuevos.",
+    "emptyCta": "Ver eventos"
+  },
   "apply": {
     "title": "Inscripción a {eventTitle}",
     "subtitle": "Envía tu inscripción al organizador. Te responderá por email y en tu bandeja.",

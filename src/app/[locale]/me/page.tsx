@@ -26,6 +26,7 @@ export default async function MePage({
   const tCommon = await getTranslations("common");
   const tNav = await getTranslations("nav");
   const tMessages = await getTranslations("messages");
+  const tAlerts = await getTranslations("alerts");
 
   const userId = session.user.id;
 
@@ -175,6 +176,13 @@ export default async function MePage({
                 {unreadMessages}
               </span>
             )}
+          </Link>
+          <Link
+            href="/me/alerts"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-surface-muted)] px-3 py-1.5 text-sm font-semibold text-[var(--color-foreground)] transition hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"
+          >
+            <Bell className="h-3.5 w-3.5" />
+            <span>{tAlerts("title")}</span>
           </Link>
           <Link
             href="/me/settings"

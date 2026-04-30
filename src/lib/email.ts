@@ -325,6 +325,47 @@ export function reviewModerationEmail(opts: {
   });
 }
 
+export function savedSearchAlertEmail(opts: {
+  to: string;
+  name: string;
+  searchLabel: string;
+  filterUrl: string; // absolute URL to /events?...
+  manageUrl: string; // absolute URL to /me/alerts
+  events: { title: string; city: string | null; dateRange: string; priceLine: string; coverUrl: string | null; eventUrl: string }[];
+}) {
+  const eventsCount = opts.events.length;
+  const list = opts.events
+    .map(
+      (e) => `<tr>
+<td style="width:96px;padding:0 12px 12px 0;vertical-align:top">
+  ${e.coverUrl
+    ? `<a href="${e.eventUrl}" style="display:block;width:96px;height:64px;border-radius:8px;background:#f4f7fa center/cover no-repeat url('${escape(e.coverUrl)}');"></a>`
+    : `<div style="width:96px;height:64px;border-radius:8px;background:#f4f7fa;display:block"></div>`}
+</td>
+<td style="padding:0 0 16px 0;vertical-align:top">
+  <a href="${e.eventUrl}" style="display:block;font-size:15px;font-weight:600;color:#0a1628;text-decoration:none;line-height:1.3;margin-bottom:4px">${escape(e.title)}</a>
+  <div style="font-size:13px;color:#64748b;line-height:1.4">${e.city ? `${escape(e.city)} · ` : ""}${escape(e.dateRange)}</div>
+  <div style="font-size:13px;color:#0a1628;font-weight:600;margin-top:4px">${escape(e.priceLine)}</div>
+</td>
+</tr>`,
+    )
+    .join("");
+
+  const html = shell(
+    `${eventsCount} new ${eventsCount === 1 ? "event matches" : "events match"} your search`,
+    `<p>Hi ${escape(opts.name)},</p>
+     <p style="margin-bottom:24px"><strong>${eventsCount}</strong> new ${eventsCount === 1 ? "event" : "events"} matched your saved search <em>${escape(opts.searchLabel)}</em>:</p>
+     <table cellpadding="0" cellspacing="0" border="0" style="width:100%;margin-bottom:8px">${list}</table>
+     <p style="margin-top:24px"><a href="${opts.filterUrl}" style="display:inline-block;background:#00d26a;color:#0a1628;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">See all matches →</a></p>
+     <p style="font-size:12px;color:#64748b;margin-top:24px">Don't want these? <a href="${opts.manageUrl}" style="color:#64748b">Pause or delete this alert</a>.</p>`,
+  );
+  return sendEmail({
+    to: opts.to,
+    subject: `${eventsCount} new ${eventsCount === 1 ? "match" : "matches"}: ${opts.searchLabel}`,
+    html,
+  });
+}
+
 export function eventModerationEmail(opts: {
   organizerEmail: string;
   organizerName: string;
