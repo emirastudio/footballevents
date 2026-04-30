@@ -6,6 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { Check, Star, ChevronRight, Megaphone, Ticket } from "lucide-react";
 import { PricingTierToggle } from "@/components/pricing/PricingTierToggle";
 import { startBundleCheckout } from "@/app/actions/billing";
+import { auth } from "@/auth";
+import { db } from "@/lib/db";
 
 type Tier = "free" | "pro" | "premium" | "enterprise";
 
@@ -18,6 +20,18 @@ export default async function PricingPage({
   setRequestLocale(locale);
   const t = await getTranslations("pricing");
   const tNav = await getTranslations("nav");
+
+  // Detect whether the viewer already has a live subscription so the CTA
+  // routes to changeSubscriptionPlan (proration) instead of a new checkout.
+  const session = await auth();
+  let hasActiveSubscription = false;
+  if (session?.user?.id) {
+    const org = await db.organizer.findUnique({
+      where: { userId: session.user.id },
+      select: { subscriptionId: true, subscriptionTier: true },
+    });
+    hasActiveSubscription = !!org?.subscriptionId && org.subscriptionTier !== "FREE";
+  }
 
   const tiers: { key: Tier; popular?: boolean; cta: string; ctaLabel: string }[] = [
     { key: "free",       cta: "/onboarding/organizer", ctaLabel: t("ctaButton") },
@@ -138,6 +152,7 @@ export default async function PricingPage({
           monthlySuffix={t("monthly")}
           annualSuffix={t("annual")}
           locale={locale}
+          hasActiveSubscription={hasActiveSubscription}
         />
 
         {/* Comparison table */}

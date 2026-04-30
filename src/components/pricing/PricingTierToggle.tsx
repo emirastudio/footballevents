@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { startSubscriptionCheckout } from "@/app/actions/billing";
+import { startSubscriptionCheckout, changeSubscriptionPlan } from "@/app/actions/billing";
 
 type Tier = {
   key: "free" | "pro" | "premium" | "enterprise";
@@ -28,6 +28,7 @@ export function PricingTierToggle({
   monthlySuffix,
   annualSuffix,
   locale,
+  hasActiveSubscription = false,
 }: {
   monthlyLabel: string;
   annualLabel: string;
@@ -37,6 +38,7 @@ export function PricingTierToggle({
   monthlySuffix: string;
   annualSuffix: string;
   locale: string;
+  hasActiveSubscription?: boolean;
 }) {
   const [annual, setAnnual] = useState(false);
 
@@ -82,7 +84,7 @@ export function PricingTierToggle({
                 {annual && p.annualEq ? `${billedAnnuallyLabel} · ≈ ${p.annualEq}` : annual ? "" : billedMonthlyLabel}
               </p>
               {p.key === "pro" || p.key === "premium" ? (
-                <form action={startSubscriptionCheckout} className="mt-7">
+                <form action={hasActiveSubscription ? changeSubscriptionPlan : startSubscriptionCheckout} className="mt-7">
                   <input type="hidden" name="plan" value={p.key} />
                   <input type="hidden" name="cycle" value={annual ? "annual" : "monthly"} />
                   <input type="hidden" name="locale" value={locale} />

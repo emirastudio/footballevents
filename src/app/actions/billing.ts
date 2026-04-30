@@ -258,6 +258,51 @@ export async function applyIncludedBoost(formData: FormData) {
   redirect(`/organizer/events/${ev.id}?included=success`);
 }
 
+// Mid-cycle plan change: swap the active subscription's price (Pro→Premium,
+// Premium→Pro, monthly→annual etc) and let Stripe prorate. No new checkout.
+// Falls through to startSubscriptionCheckout when there's no live subscription.
+export async function changeSubscriptionPlan(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
+  if (!organizer) redirect("/onboarding/organizer");
+  if (!STRIPE_ENABLED || !stripe) redirect("/pricing?stripe=not-configured");
+
+  const plan = formData.get("plan") as "pro" | "premium";
+  const cycle = (formData.get("cycle") as "monthly" | "annual") ?? "monthly";
+  const newPriceId = PRICE_IDS[`${plan}_${cycle}` as keyof typeof PRICE_IDS];
+  if (!newPriceId) redirect("/pricing?stripe=missing-price");
+
+  // No active Stripe subscription yet → fresh checkout
+  if (!organizer.subscriptionId) {
+    const fd = new FormData();
+    fd.set("plan", plan);
+    fd.set("cycle", cycle);
+    fd.set("locale", pickLocale(formData));
+    return startSubscriptionCheckout(fd);
+  }
+
+  const sub = await stripe.subscriptions.retrieve(organizer.subscriptionId);
+  const item = sub.items.data[0];
+  if (!item) redirect("/pricing?stripe=no-item");
+
+  // No-op if already on the same price
+  if (item.price.id === newPriceId) {
+    redirect(`/${pickLocale(formData)}/me?plan=already-on`);
+  }
+
+  await stripe.subscriptions.update(organizer.subscriptionId, {
+    items: [{ id: item.id, price: newPriceId }],
+    proration_behavior: "create_prorations",
+    metadata: { organizerId: organizer.id, plan, cycle },
+  });
+
+  // Webhook will sync subscriptionTier/endsAt; revalidate visible surfaces.
+  revalidatePath("/[locale]/me", "layout");
+  revalidatePath("/[locale]/organizer", "layout");
+  redirect(`/${pickLocale(formData)}/me?plan=changed`);
+}
+
 export async function openBillingPortal(formData?: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
