@@ -32,7 +32,7 @@ async function run(req: NextRequest) {
   }
 
   const now = new Date();
-  const [boostExpired, featuredExpired] = await Promise.all([
+  const [boostExpired, featuredExpired, subsDowngraded] = await Promise.all([
     db.event.updateMany({
       where: { boostUntil: { lt: now }, OR: [{ boostTier: { not: null } }] },
       data: { boostTier: null, boostUntil: null },
@@ -41,11 +41,19 @@ async function run(req: NextRequest) {
       where: { featuredUntil: { lt: now }, isFeatured: true },
       data: { isFeatured: false, featuredUntil: null },
     }),
+    // Downgrade organizers whose trial/promo subscription has expired back to FREE.
+    db.organizer.updateMany({
+      where: {
+        subscriptionEndsAt: { lt: now },
+        subscriptionTier: { not: "FREE" },
+      },
+      data: { subscriptionTier: "FREE", subscriptionEndsAt: null },
+    }),
   ]);
 
   return NextResponse.json({
     ok: true,
     at: now.toISOString(),
-    cleared: { boost: boostExpired.count, featured: featuredExpired.count },
+    cleared: { boost: boostExpired.count, featured: featuredExpired.count, subsDowngraded: subsDowngraded.count },
   });
 }
