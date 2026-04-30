@@ -52,12 +52,14 @@ export function OrganizerOnboardForm({
   countries,
   activityOptions,
   labels,
+  promoActive = false,
 }: {
   defaultName: string;
   defaultSecondLocale: "" | "ru" | "de" | "es";
   countries: { code: string; name: string; flag: string }[];
   activityOptions: { value: string; label: string }[];
   labels: Labels;
+  promoActive?: boolean;
 }) {
   const [countryCode, setCountryCode] = useState<string>("");
   const [state, action] = useActionState<OrganizerFormState, FormData>(createOrganizerAction, null);
@@ -168,14 +170,19 @@ export function OrganizerOnboardForm({
         <Field name="phone" label={labels.phone} placeholder="+49 …" error={fe.phone} />
       </div>
 
-      <fieldset>
-        <legend className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.tier}</legend>
-        <div className="grid gap-2 sm:grid-cols-3">
-          <TierOption value="FREE" defaultChecked label="Free" hint={labels.tierFree} />
-          <TierOption value="PRO" label="Pro" hint={labels.tierPro} />
-          <TierOption value="PREMIUM" label="Premium" hint={labels.tierPremium} />
-        </div>
-      </fieldset>
+      {promoActive ? (
+        // Promo: lock to PREMIUM silently, no visible tier selector
+        <input type="hidden" name="tier" value="PREMIUM" />
+      ) : (
+        <fieldset>
+          <legend className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.tier}</legend>
+          <div className="grid gap-2 sm:grid-cols-3">
+            <TierOption value="FREE" defaultChecked label="Free" hint={labels.tierFree} />
+            <TierOption value="PRO" label="Pro" hint={labels.tierPro} />
+            <TierOption value="PREMIUM" label="Premium" hint={labels.tierPremium} />
+          </div>
+        </fieldset>
+      )}
 
       {state?.error && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
