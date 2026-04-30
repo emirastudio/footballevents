@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -16,6 +17,8 @@ import { ShareRow } from "@/components/site/ShareRow";
 import { FollowOrganizerButton, SaveEventButton } from "@/components/site/FollowButton";
 import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { tierAllows } from "@/lib/tier";
+import { getEventCapacity } from "@/lib/event-capacity";
+import { CapacityWidget } from "@/components/cards/CapacityWidget";
 import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
   ChevronRight, Clock, Building2, MessageSquare, Check, X as XIcon,
@@ -78,6 +81,21 @@ export default async function EventDetailPage({
   const country   = getCountry(event.countryCode);
   const reviews   = await getReviewsByEvent(event.id);
   const sameCategory = await getEventsByCategory(event.categorySlug, locale);
+
+  const eventRow = await db.event.findUnique({
+    where: { id: event.id },
+    select: { maxParticipants: true },
+  });
+  const capacity = await getEventCapacity(event.id, eventRow?.maxParticipants ?? null);
+
+  const capacityLabels = {
+    joined:       t("capacity.joined"),
+    spotsLeft:    t("capacity.spotsLeft"),
+    full:         t("capacity.full"),
+    waitlistOpen: t("capacity.waitlistOpen"),
+    onWaitlist:   t("capacity.onWaitlist"),
+    capacityFmt:  t("capacity.capacityFmt"),
+  };
   const similar = sameCategory.filter((e) => e.id !== event.id).slice(0, 4);
 
   const cardLabels = {
@@ -366,6 +384,7 @@ export default async function EventDetailPage({
 
           {/* Sidebar */}
           <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+            <CapacityWidget snap={capacity} labels={capacityLabels} />
             <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-sm)]">
               <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{t("price")}</div>
               <div className="mt-1 font-[family-name:var(--font-manrope)] text-3xl font-bold text-[var(--color-foreground)]">
@@ -376,7 +395,9 @@ export default async function EventDetailPage({
               </div>
 
               <Button variant="accent" size="lg" className="mt-4 w-full" asChild>
-                <Link href={`/events/${event.slug}/apply`}>{t("applyNow")}</Link>
+                <Link href={`/events/${event.slug}/apply`}>
+                  {capacity.isFull ? t("joinWaitlist") : t("applyNow")}
+                </Link>
               </Button>
               <Button variant="outline" size="lg" className="mt-2 w-full" asChild>
                 <Link href={`/events/${event.slug}/contact`}>

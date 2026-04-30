@@ -807,6 +807,15 @@
       "viewOrganizer": "View organizer",
       "viewVenue": "View venue",
       "applyNow": "Apply now",
+      "joinWaitlist": "Join waitlist",
+      "capacity": {
+        "joined": "{count} joined",
+        "spotsLeft": "{count} spots left",
+        "full": "Full",
+        "waitlistOpen": "Waitlist open — apply to be next in line.",
+        "onWaitlist": "{count} on waitlist",
+        "capacityFmt": "{joined} of {max} joined"
+      },
       "contactOrganizer": "Contact organizer",
       "shareEvent": "Share event",
       "share": "Share",

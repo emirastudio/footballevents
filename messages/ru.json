@@ -807,6 +807,15 @@
       "viewOrganizer": "К организатору",
       "viewVenue": "К стадиону",
       "applyNow": "Подать заявку",
+      "joinWaitlist": "Встать в лист ожидания",
+      "capacity": {
+        "joined": "{count} записались",
+        "spotsLeft": "осталось {count} мест",
+        "full": "Все места заняты",
+        "waitlistOpen": "Открыт лист ожидания — записывайтесь следующим.",
+        "onWaitlist": "{count} в листе ожидания",
+        "capacityFmt": "{joined} из {max} записались"
+      },
       "contactOrganizer": "Связаться",
       "shareEvent": "Поделиться",
       "share": "Поделиться",

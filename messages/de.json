@@ -1357,6 +1357,15 @@
       "viewOrganizer": "Zum Veranstalter",
       "viewVenue": "Zum Stadion",
       "applyNow": "Jetzt anmelden",
+      "joinWaitlist": "Auf Warteliste",
+      "capacity": {
+        "joined": "{count} angemeldet",
+        "spotsLeft": "noch {count} Plätze",
+        "full": "Ausgebucht",
+        "waitlistOpen": "Warteliste geöffnet — sei der Nächste.",
+        "onWaitlist": "{count} auf der Warteliste",
+        "capacityFmt": "{joined} von {max} angemeldet"
+      },
       "contactOrganizer": "Kontakt",
       "shareEvent": "Teilen",
       "share": "Teilen",

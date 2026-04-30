@@ -1357,6 +1357,15 @@
       "viewOrganizer": "Ver organizador",
       "viewVenue": "Ver sede",
       "applyNow": "Inscribirse",
+      "joinWaitlist": "Unirse a la lista de espera",
+      "capacity": {
+        "joined": "{count} inscritos",
+        "spotsLeft": "{count} plazas libres",
+        "full": "Completo",
+        "waitlistOpen": "Lista de espera abierta — sé el siguiente.",
+        "onWaitlist": "{count} en lista de espera",
+        "capacityFmt": "{joined} de {max} inscritos"
+      },
       "contactOrganizer": "Contactar",
       "shareEvent": "Compartir",
       "share": "Compartir",

@@ -86,6 +86,7 @@ enum BookingStatus {
   DECLINED
   CANCELLED
   COMPLETED
+  WAITLIST
 }
 
 enum BoostTier {

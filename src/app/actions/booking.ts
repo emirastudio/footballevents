@@ -56,6 +56,19 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
   const existing = await db.booking.findFirst({ where: { eventId: d.eventId, userId: session.user.id } });
   if (existing) return { ok: true };
 
+  // Capacity check: if maxParticipants is set and the new partySize would
+  // overflow it, route to WAITLIST. Organizers can promote from waitlist
+  // when seats free up.
+  let initialStatus: "NEW" | "WAITLIST" = "NEW";
+  if (event.maxParticipants != null) {
+    const agg = await db.booking.aggregate({
+      where: { eventId: d.eventId, status: { in: ["ACCEPTED", "COMPLETED"] } },
+      _sum: { partySize: true },
+    });
+    const confirmed = agg._sum.partySize ?? 0;
+    if (confirmed + d.partySize > event.maxParticipants) initialStatus = "WAITLIST";
+  }
+
   const booking = await db.booking.create({
     data: {
       eventId: d.eventId,
@@ -67,7 +80,7 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
       contactEmail: d.contactEmail,
       contactPhone: d.contactPhone ?? null,
       comment: d.comment ?? null,
-      status: "NEW",
+      status: initialStatus,
     },
   });
 
