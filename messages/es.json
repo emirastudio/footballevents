@@ -283,7 +283,11 @@
     "dashboard": "Panel",
     "upgrade": "Mejorar plan",
     "renew": "Renovar",
-    "manage": "Gestionar suscripción"
+    "manage": "Gestionar suscripción",
+    "flash": {
+      "planChanged": "✓ Plan actualizado. Stripe calcula la diferencia automáticamente — sin doble cobro.",
+      "planAlreadyOn": "Ya estás en ese plan y ciclo."
+    }
   },
   "publicProfile": {
     "memberSince": "Miembro desde {date}",
@@ -1751,6 +1755,15 @@
   "pricing": {
     "pageTitle": "Precios",
     "pageSubtitle": "Gratis para empezar, para siempre. Sube de plan al crecer. Impulsa cualquier evento.",
+    "flash": {
+      "checkoutSuccess": "✓ Suscripción activada. Puede tardar un momento en reflejarse en tu panel.",
+      "checkoutCancelled": "Pago cancelado. Puedes intentarlo cuando quieras.",
+      "bundleSuccess": "✓ Pack comprado — créditos de impulso añadidos.",
+      "bundleCancelled": "Compra cancelada.",
+      "stripeNotConfigured": "Los pagos no están disponibles ahora. Inténtalo en un momento.",
+      "stripeMissingPrice": "Ese plan no está disponible ahora. Contacta con soporte.",
+      "currentPlan": "Estás en el plan {tier}. Al cambiar de plan, la diferencia se calcula automáticamente — sin doble cobro."
+    },
     "monthly": "/ mes",
     "annual": "/ año",
     "billedMonthly": "Facturación mensual",

@@ -29,6 +29,7 @@ export function PricingTierToggle({
   annualSuffix,
   locale,
   hasActiveSubscription = false,
+  currentTier = "FREE",
 }: {
   monthlyLabel: string;
   annualLabel: string;
@@ -39,6 +40,7 @@ export function PricingTierToggle({
   annualSuffix: string;
   locale: string;
   hasActiveSubscription?: boolean;
+  currentTier?: "FREE" | "PRO" | "PREMIUM" | "ENTERPRISE";
 }) {
   const [annual, setAnnual] = useState(false);
 
@@ -58,14 +60,21 @@ export function PricingTierToggle({
         {tiers.map((p) => {
           const price = annual ? p.annual : p.monthly;
           const isText = /[A-Za-zА-Яа-я]/.test(price); // "Talk to us" — no $ suffix
+          const isCurrent = currentTier !== "FREE" && p.key === currentTier.toLowerCase();
           return (
             <div
               key={p.key}
               className={`relative flex flex-col rounded-[var(--radius-2xl)] border bg-[var(--color-surface)] p-6 shadow-[var(--shadow-xs)] transition ${
-                p.popular ? "border-[var(--color-pitch-500)] ring-2 ring-[var(--color-pitch-500)]/20" : "border-[var(--color-border)]"
+                isCurrent ? "border-blue-500 ring-2 ring-blue-500/20" :
+                p.popular ? "border-[var(--color-pitch-500)] ring-2 ring-[var(--color-pitch-500)]/20" :
+                "border-[var(--color-border)]"
               }`}
             >
-              {p.popular && (
+              {isCurrent ? (
+                <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-blue-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-[var(--shadow-sm)]">
+                  Current plan
+                </span>
+              ) : p.popular && (
                 <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1 rounded-full bg-[var(--color-pitch-500)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-[var(--shadow-sm)]">
                   <Star className="h-3 w-3 fill-current" /> {p.popularLabel}
                 </span>

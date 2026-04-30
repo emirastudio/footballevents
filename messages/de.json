@@ -283,7 +283,11 @@
     "dashboard": "Dashboard",
     "upgrade": "Upgraden",
     "renew": "Verlängern",
-    "manage": "Abo verwalten"
+    "manage": "Abo verwalten",
+    "flash": {
+      "planChanged": "✓ Plan aktualisiert. Stripe verrechnet die Differenz automatisch — keine Doppelzahlung.",
+      "planAlreadyOn": "Du bist bereits auf diesem Plan und Zyklus."
+    }
   },
   "publicProfile": {
     "memberSince": "Mitglied seit {date}",
@@ -1751,6 +1755,15 @@
   "pricing": {
     "pageTitle": "Preise",
     "pageSubtitle": "Dauerhaft kostenlos starten. Upgrade beim Wachsen. Jedes Event mit einem Boost in den Vordergrund.",
+    "flash": {
+      "checkoutSuccess": "✓ Abo aktiviert. Im Dashboard kann es einen Moment dauern.",
+      "checkoutCancelled": "Bezahlung abgebrochen. Du kannst es jederzeit erneut versuchen.",
+      "bundleSuccess": "✓ Bundle gekauft — Boost-Credits gutgeschrieben.",
+      "bundleCancelled": "Kauf abgebrochen.",
+      "stripeNotConfigured": "Zahlungen sind vorübergehend nicht verfügbar. Bitte versuche es gleich erneut.",
+      "stripeMissingPrice": "Dieser Plan ist gerade nicht verfügbar. Bitte kontaktiere den Support.",
+      "currentPlan": "Du bist auf dem {tier}-Plan. Beim Wechsel wird der Differenzbetrag automatisch verrechnet — keine Doppelzahlung."
+    },
     "monthly": "/ Monat",
     "annual": "/ Jahr",
     "billedMonthly": "Monatliche Abrechnung",

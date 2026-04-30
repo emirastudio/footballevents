@@ -14,11 +14,19 @@ import { openBillingPortal } from "@/app/actions/billing";
 
 export default async function MePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ plan?: string }>;
 }) {
   const { locale } = await params;
+  const sp = await searchParams;
   setRequestLocale(locale);
+
+  const planFlash =
+    sp.plan === "changed"     ? { kind: "ok" as const,   key: "planChanged" } :
+    sp.plan === "already-on"  ? { kind: "warn" as const, key: "planAlreadyOn" } :
+    null;
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
@@ -204,6 +212,17 @@ export default async function MePage({
           </Link>
         </div>
       </div>
+
+      {planFlash && (
+        <div className={[
+          "mb-6 rounded-[var(--radius-lg)] border px-4 py-3 text-sm",
+          planFlash.kind === "ok"
+            ? "border-[var(--color-pitch-200)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-800)]"
+            : "border-amber-200 bg-amber-50 text-amber-900",
+        ].join(" ")}>
+          {tBilling(`flash.${planFlash.key}`)}
+        </div>
+      )}
 
       {/* Organizer plan card */}
       {organizer && (() => {

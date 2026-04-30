@@ -283,7 +283,11 @@
     "dashboard": "Dashboard",
     "upgrade": "Upgrade",
     "renew": "Renew",
-    "manage": "Manage subscription"
+    "manage": "Manage subscription",
+    "flash": {
+      "planChanged": "✓ Plan updated. Stripe credits or charges the difference automatically — no double billing.",
+      "planAlreadyOn": "You're already on that plan and cycle."
+    }
   },
   "publicProfile": {
     "memberSince": "Member since {date}",
@@ -1075,6 +1079,15 @@
   "pricing": {
     "pageTitle": "Pricing",
     "pageSubtitle": "Free forever to start. Upgrade when you grow. Boost any event for extra visibility.",
+    "flash": {
+      "checkoutSuccess": "✓ Subscription activated. It may take a moment to reflect on your dashboard.",
+      "checkoutCancelled": "Checkout cancelled. You can try again anytime.",
+      "bundleSuccess": "✓ Bundle purchased — boost credits added to your account.",
+      "bundleCancelled": "Purchase cancelled.",
+      "stripeNotConfigured": "Payments are temporarily unavailable. Please try again in a moment.",
+      "stripeMissingPrice": "That plan isn't available right now. Please contact support.",
+      "currentPlan": "You're on the {tier} plan. Switching tiers prorates the difference automatically — no double billing."
+    },
     "monthly": "/ month",
     "annual": "/ year",
     "billedMonthly": "Billed monthly",

@@ -13,10 +13,13 @@ type Tier = "free" | "pro" | "premium" | "enterprise";
 
 export default async function PricingPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ checkout?: string; bundle?: string; stripe?: string }>;
 }) {
   const { locale } = await params;
+  const sp = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("pricing");
   const tNav = await getTranslations("nav");
@@ -25,13 +28,24 @@ export default async function PricingPage({
   // routes to changeSubscriptionPlan (proration) instead of a new checkout.
   const session = await auth();
   let hasActiveSubscription = false;
+  let currentTier: "FREE" | "PRO" | "PREMIUM" | "ENTERPRISE" = "FREE";
   if (session?.user?.id) {
     const org = await db.organizer.findUnique({
       where: { userId: session.user.id },
       select: { subscriptionId: true, subscriptionTier: true },
     });
     hasActiveSubscription = !!org?.subscriptionId && org.subscriptionTier !== "FREE";
+    currentTier = (org?.subscriptionTier ?? "FREE") as typeof currentTier;
   }
+
+  // Flash banner from checkout / portal redirect
+  let flash: { kind: "ok" | "warn" | "err"; msg: string } | null = null;
+  if (sp.checkout === "success")        flash = { kind: "ok",   msg: t("flash.checkoutSuccess") };
+  else if (sp.checkout === "cancelled") flash = { kind: "warn", msg: t("flash.checkoutCancelled") };
+  else if (sp.bundle === "success")     flash = { kind: "ok",   msg: t("flash.bundleSuccess") };
+  else if (sp.bundle === "cancelled")   flash = { kind: "warn", msg: t("flash.bundleCancelled") };
+  else if (sp.stripe === "not-configured") flash = { kind: "err", msg: t("flash.stripeNotConfigured") };
+  else if (sp.stripe === "missing-price")  flash = { kind: "err", msg: t("flash.stripeMissingPrice") };
 
   const tiers: { key: Tier; popular?: boolean; cta: string; ctaLabel: string }[] = [
     { key: "free",       cta: "/onboarding/organizer", ctaLabel: t("ctaButton") },
@@ -132,6 +146,21 @@ export default async function PricingPage({
       />
 
       <Container className="py-10">
+        {flash && (
+          <div className={[
+            "mb-6 rounded-[var(--radius-lg)] border px-4 py-3 text-sm",
+            flash.kind === "ok"   ? "border-[var(--color-pitch-200)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-800)]" :
+            flash.kind === "warn" ? "border-amber-200 bg-amber-50 text-amber-900" :
+                                    "border-red-200 bg-red-50 text-red-700",
+          ].join(" ")}>
+            {flash.msg}
+          </div>
+        )}
+        {hasActiveSubscription && (
+          <div className="mb-6 rounded-[var(--radius-lg)] border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+            {t("flash.currentPlan", { tier: currentTier })}
+          </div>
+        )}
         <PricingTierToggle
           monthlyLabel={t("toggleMonthly")}
           annualLabel={t("toggleAnnual")}
@@ -153,6 +182,7 @@ export default async function PricingPage({
           annualSuffix={t("annual")}
           locale={locale}
           hasActiveSubscription={hasActiveSubscription}
+          currentTier={currentTier}
         />
 
         {/* Comparison table */}
