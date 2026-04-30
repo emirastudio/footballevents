@@ -110,7 +110,7 @@ export default async function CapabilitiesPage({
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="accent" size="lg">
-                <Link href="/auth/sign-up?role=organizer">
+                <Link href="/sign-up?role=organizer">
                   {t("ctaPrimary")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -441,7 +441,7 @@ export default async function CapabilitiesPage({
             <p className="mx-auto mt-3 max-w-xl text-[var(--color-muted-strong)]">{t("finalCtaSubtitle")}</p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Button asChild variant="accent" size="lg">
-                <Link href="/auth/sign-up?role=organizer">
+                <Link href="/sign-up?role=organizer">
                   {t("finalCta1")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>

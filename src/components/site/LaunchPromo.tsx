@@ -59,7 +59,7 @@ export function LaunchPromo({
         </div>
 
         <Link
-          href="/auth/sign-up?role=organizer&promo=launch100"
+          href="/sign-up?role=organizer&promo=launch100"
           className="inline-flex shrink-0 items-center justify-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-premium)] px-5 py-3 text-sm font-bold text-white shadow-[var(--shadow-sm)] transition-all hover:bg-[var(--color-gold-600)] hover:shadow-[var(--shadow-md)]"
         >
           <Zap className="h-4 w-4 fill-current" />

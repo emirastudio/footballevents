@@ -66,7 +66,7 @@ export function MobileNavClient({ links, user, labels }: Props) {
         >
           {/* Top bar */}
           <div className="flex h-16 shrink-0 items-center justify-between border-b border-[var(--color-border)] px-4">
-            <Logo />
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-muted)]">Menu</span>
             <button
               className="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted-strong)] hover:bg-[var(--color-surface-muted)] transition"
               onClick={() => setOpen(false)}
@@ -79,9 +79,56 @@ export function MobileNavClient({ links, user, labels }: Props) {
           {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8">
 
-            {/* User section */}
+            {/* Language — top */}
+            <div>
+              <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                Language
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {locales.map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => changeLocale(l)}
+                    disabled={isPending}
+                    className={`flex items-center gap-2 rounded-[var(--radius-lg)] border px-4 py-3 text-sm font-medium transition ${
+                      l === locale
+                        ? "border-[var(--color-pitch-700)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]"
+                        : "border-[var(--color-border)] text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)]"
+                    }`}
+                  >
+                    <span>{localeFlags[l]}</span>
+                    {localeNames[l]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Nav links */}
+            <nav>
+              <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                Navigation
+              </div>
+              <div className="space-y-0.5">
+                {links.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-between rounded-[var(--radius-lg)] px-4 py-3.5 text-base font-medium text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)] transition"
+                  >
+                    {l.label}
+                    <ChevronRight className="h-4 w-4 text-[var(--color-muted)]" />
+                  </Link>
+                ))}
+              </div>
+            </nav>
+
+            {/* User section — bottom */}
             {user ? (
               <div className="space-y-2">
+                <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+                  Account
+                </div>
                 <div className="flex items-center gap-3 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-4">
                   {user.image ? (
                     <img src={user.image} alt="" className="h-10 w-10 rounded-full shrink-0 object-cover" />
@@ -157,50 +204,6 @@ export function MobileNavClient({ links, user, labels }: Props) {
                 </Button>
               </div>
             )}
-
-            {/* Nav links */}
-            <nav>
-              <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-                Menu
-              </div>
-              <div className="space-y-0.5">
-                {links.map((l) => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center justify-between rounded-[var(--radius-lg)] px-4 py-3.5 text-base font-medium text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)] transition"
-                  >
-                    {l.label}
-                    <ChevronRight className="h-4 w-4 text-[var(--color-muted)]" />
-                  </Link>
-                ))}
-              </div>
-            </nav>
-
-            {/* Language */}
-            <div>
-              <div className="mb-2 px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-                Language
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {locales.map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => changeLocale(l)}
-                    disabled={isPending}
-                    className={`flex items-center gap-2 rounded-[var(--radius-lg)] border px-4 py-3 text-sm font-medium transition ${
-                      l === locale
-                        ? "border-[var(--color-pitch-700)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]"
-                        : "border-[var(--color-border)] text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)]"
-                    }`}
-                  >
-                    <span>{localeFlags[l]}</span>
-                    {localeNames[l]}
-                  </button>
-                ))}
-              </div>
-            </div>
 
           </div>
         </div>,
