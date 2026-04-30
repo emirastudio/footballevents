@@ -9,6 +9,12 @@ import type { Tier } from "@/lib/tier";
 import { currentQuotaPeriod, getIncludedBoostsRemaining, includedKindAllowed, includedSentinel } from "@/lib/included-boosts";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
+const SUPPORTED_LOCALES = new Set(["en", "ru", "de", "es"]);
+
+function pickLocale(formData: FormData): string {
+  const v = String(formData.get("locale") ?? "").toLowerCase();
+  return SUPPORTED_LOCALES.has(v) ? v : "en";
+}
 
 async function ensureCustomer(organizerId: string) {
   if (!stripe) throw new Error("Stripe not configured");
@@ -41,14 +47,16 @@ export async function startSubscriptionCheckout(formData: FormData) {
   if (!priceId) redirect("/pricing?stripe=missing-price");
 
   const customerId = await ensureCustomer(organizer.id);
+  const locale = pickLocale(formData);
 
   const checkout = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
     line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${SITE}/organizer/dashboard?checkout=success`,
-    cancel_url: `${SITE}/pricing?checkout=cancelled`,
+    success_url: `${SITE}/${locale}/organizer/dashboard?checkout=success`,
+    cancel_url: `${SITE}/${locale}/pricing?checkout=cancelled`,
     automatic_tax: { enabled: false },
+    allow_promotion_codes: true,
     subscription_data: { metadata: { organizerId: organizer.id, plan, cycle } },
     metadata: { organizerId: organizer.id, kind: "subscription", plan, cycle },
   });
@@ -83,8 +91,8 @@ export async function startBundleCheckout(formData: FormData) {
         product_data: { name: `Boost bundle (${kind})` },
       },
     }],
-    success_url: `${SITE}/organizer/credits?bundle=success`,
-    cancel_url: `${SITE}/pricing?bundle=cancelled`,
+    success_url: `${SITE}/${pickLocale(formData)}/organizer/credits?bundle=success`,
+    cancel_url: `${SITE}/${pickLocale(formData)}/pricing?bundle=cancelled`,
     metadata: { organizerId: organizer.id, kind, kindGroup: "bundle" },
   });
   if (!checkout.url) throw new Error("No checkout URL");
@@ -122,8 +130,8 @@ export async function startBoostCheckout(formData: FormData) {
         product_data: { name: `Boost (${kind}) — ${ev.slug}` },
       },
     }],
-    success_url: `${SITE}/organizer/events/${ev.id}?boost=success`,
-    cancel_url: `${SITE}/organizer/events/${ev.id}?boost=cancelled`,
+    success_url: `${SITE}/${pickLocale(formData)}/organizer/events/${ev.id}?boost=success`,
+    cancel_url: `${SITE}/${pickLocale(formData)}/organizer/events/${ev.id}?boost=cancelled`,
     metadata: { organizerId: organizer.id, eventId: ev.id, kind, kindGroup: "boost" },
   });
   if (!checkout.url) throw new Error("No checkout URL");
@@ -250,16 +258,17 @@ export async function applyIncludedBoost(formData: FormData) {
   redirect(`/organizer/events/${ev.id}?included=success`);
 }
 
-export async function openBillingPortal() {
+export async function openBillingPortal(formData?: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
   if (!organizer?.stripeCustomerId) redirect("/pricing");
   if (!STRIPE_ENABLED || !stripe) redirect("/pricing?stripe=not-configured");
 
+  const locale = formData ? pickLocale(formData) : "en";
   const portal = await stripe.billingPortal.sessions.create({
     customer: organizer.stripeCustomerId,
-    return_url: `${SITE}/organizer/dashboard`,
+    return_url: `${SITE}/${locale}/me`,
   });
   redirect(portal.url);
 }

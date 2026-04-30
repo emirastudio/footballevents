@@ -137,6 +137,7 @@ export default async function PricingPage({
           }))}
           monthlySuffix={t("monthly")}
           annualSuffix={t("annual")}
+          locale={locale}
         />
 
         {/* Comparison table */}

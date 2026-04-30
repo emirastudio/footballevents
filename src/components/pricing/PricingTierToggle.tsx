@@ -27,6 +27,7 @@ export function PricingTierToggle({
   tiers,
   monthlySuffix,
   annualSuffix,
+  locale,
 }: {
   monthlyLabel: string;
   annualLabel: string;
@@ -35,6 +36,7 @@ export function PricingTierToggle({
   tiers: Tier[];
   monthlySuffix: string;
   annualSuffix: string;
+  locale: string;
 }) {
   const [annual, setAnnual] = useState(false);
 
@@ -83,6 +85,7 @@ export function PricingTierToggle({
                 <form action={startSubscriptionCheckout} className="mt-7">
                   <input type="hidden" name="plan" value={p.key} />
                   <input type="hidden" name="cycle" value={annual ? "annual" : "monthly"} />
+                  <input type="hidden" name="locale" value={locale} />
                   <Button type="submit" variant={p.popular ? "accent" : "outline"} size="lg" className="w-full">
                     {p.ctaLabel}
                   </Button>

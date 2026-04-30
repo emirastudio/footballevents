@@ -279,6 +279,12 @@
       "bodyTooLong": "Bewertung darf 1500 Zeichen nicht überschreiten"
     }
   },
+  "billing": {
+    "dashboard": "Dashboard",
+    "upgrade": "Upgraden",
+    "renew": "Verlängern",
+    "manage": "Abo verwalten"
+  },
   "publicProfile": {
     "memberSince": "Mitglied seit {date}",
     "stats": {

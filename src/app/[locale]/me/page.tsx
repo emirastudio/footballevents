@@ -9,7 +9,8 @@ import { countUnreadThreads } from "@/lib/messages";
 import { EventCard } from "@/components/cards/EventCard";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import type { MockEvent, MockOrganizer } from "@/lib/mock-data";
-import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings, Zap, Star, Crown, Globe } from "lucide-react";
+import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings, Zap, Star, Crown, Globe, CreditCard } from "lucide-react";
+import { openBillingPortal } from "@/app/actions/billing";
 
 export default async function MePage({
   params,
@@ -27,6 +28,7 @@ export default async function MePage({
   const tNav = await getTranslations("nav");
   const tMessages = await getTranslations("messages");
   const tAlerts = await getTranslations("alerts");
+  const tBilling = await getTranslations("billing");
 
   const userId = session.user.id;
 
@@ -51,7 +53,7 @@ export default async function MePage({
     }),
     db.organizer.findUnique({
       where: { userId },
-      select: { id: true, slug: true, name: true, subscriptionTier: true, subscriptionEndsAt: true },
+      select: { id: true, slug: true, name: true, subscriptionTier: true, subscriptionEndsAt: true, stripeCustomerId: true },
     }),
     db.organizerFollow.findMany({
       where: { userId },
@@ -240,19 +242,27 @@ export default async function MePage({
                 </p>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href="/organizer/dashboard">Dashboard</Link>
+                <Link href="/organizer/dashboard">{tBilling("dashboard")}</Link>
               </Button>
               {tier === "FREE" && (
                 <Button asChild variant="accent" size="sm">
-                  <Link href="/pricing">Upgrade</Link>
+                  <Link href="/pricing">{tBilling("upgrade")}</Link>
                 </Button>
               )}
               {(tier === "PRO" || tier === "PREMIUM") && daysLeft !== null && daysLeft <= 14 && (
                 <Button asChild variant="accent" size="sm">
-                  <Link href="/pricing">Renew</Link>
+                  <Link href="/pricing">{tBilling("renew")}</Link>
                 </Button>
+              )}
+              {(tier === "PRO" || tier === "PREMIUM" || tier === "ENTERPRISE") && organizer.stripeCustomerId && (
+                <form action={openBillingPortal}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <Button type="submit" variant="outline" size="sm">
+                    <CreditCard className="h-3.5 w-3.5" /> {tBilling("manage")}
+                  </Button>
+                </form>
               )}
             </div>
           </div>

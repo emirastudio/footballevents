@@ -250,6 +250,37 @@ export function subscriptionExpiringEmail(opts: {
   });
 }
 
+export function paymentFailedEmail(opts: {
+  to: string;
+  organizerName: string;
+  tierName: string;
+  amountCents: number;
+  currency: string;
+  attemptCount: number;
+  nextAttemptAt: Date | null;
+}) {
+  const amount = (opts.amountCents / 100).toFixed(2);
+  const nextStr = opts.nextAttemptAt
+    ? opts.nextAttemptAt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+    : null;
+  const html = shell(
+    `Payment failed for your ${opts.tierName} plan`,
+    `<p>Hi ${escape(opts.organizerName)},</p>
+     <p>We couldn't charge your card for the renewal of your <strong>${escape(opts.tierName)}</strong> plan (${escape(opts.currency.toUpperCase())} ${escape(amount)}).</p>
+     ${nextStr ? `<p>Stripe will automatically retry on <strong>${escape(nextStr)}</strong>.</p>` : `<p>This was attempt #${opts.attemptCount}. After several failures the subscription will be cancelled.</p>`}
+     <p>Update your card to keep your plan active:</p>
+     <p style="margin:24px 0">
+       <a href="${SITE}/me" style="display:inline-block;background:#00d26a;color:#0a1628;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">Update payment method →</a>
+     </p>
+     <p style="font-size:12px;color:#64748b">Click "Manage subscription" on your profile, then "Update payment method".</p>`,
+  );
+  return sendEmail({
+    to: opts.to,
+    subject: `Payment failed — ${opts.tierName} plan on FootballEvents.eu`,
+    html,
+  });
+}
+
 export function reviewRequestEmail(opts: {
   to: string;
   participantName: string;

@@ -808,6 +808,21 @@ model AdSlot {
 // MONETIZATION — Payments (covers boost, subs, future tickets)
 // ─────────────────────────────────────────────────────────────
 
+// Idempotency log for inbound provider webhooks (Stripe, etc.). We insert
+// the event id BEFORE handling; a duplicate insert means we've already
+// processed it and can safely return 200 without re-running side effects.
+model WebhookEvent {
+  id          String   @id // Stripe event.id (evt_*)
+  provider    String   @default("stripe")
+  type        String
+  receivedAt  DateTime @default(now())
+  processedAt DateTime?
+  error       String?  @db.Text
+
+  @@index([type])
+  @@index([receivedAt])
+}
+
 model Payment {
   id          String        @id @default(cuid())
   userId      String?

@@ -279,6 +279,12 @@
       "bodyTooLong": "La reseña no puede superar los 1500 caracteres"
     }
   },
+  "billing": {
+    "dashboard": "Panel",
+    "upgrade": "Mejorar plan",
+    "renew": "Renovar",
+    "manage": "Gestionar suscripción"
+  },
   "publicProfile": {
     "memberSince": "Miembro desde {date}",
     "stats": {

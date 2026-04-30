@@ -279,6 +279,12 @@
       "bodyTooLong": "Review can't exceed 1500 characters"
     }
   },
+  "billing": {
+    "dashboard": "Dashboard",
+    "upgrade": "Upgrade",
+    "renew": "Renew",
+    "manage": "Manage subscription"
+  },
   "publicProfile": {
     "memberSince": "Member since {date}",
     "stats": {
