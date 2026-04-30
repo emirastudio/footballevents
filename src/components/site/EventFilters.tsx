@@ -79,7 +79,7 @@ export function EventFilters({ labels }: { labels: Labels }) {
           onClick={() => setOpen(false)}
           className={`absolute inset-0 bg-black/30 transition-opacity lg:hidden ${open ? "opacity-100" : "opacity-0"}`}
         />
-        <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm overflow-auto bg-[var(--color-surface)] p-5 shadow-[var(--shadow-xl)] transition-transform lg:static lg:h-auto lg:w-full lg:max-w-none lg:translate-x-0 lg:rounded-[var(--radius-lg)] lg:border lg:border-[var(--color-border)] lg:p-5 lg:shadow-none ${open ? "translate-x-0" : "translate-x-full"}`}>
+        <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm overflow-auto bg-[var(--color-surface)] p-5 shadow-[var(--shadow-xl)] transition-transform lg:static lg:h-auto lg:w-full lg:max-w-none lg:translate-x-0 lg:rounded-[var(--radius-lg)] lg:p-5 lg:shadow-[var(--shadow-sm)] ${open ? "translate-x-0" : "translate-x-full"}`}>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">
               {labels.filters}

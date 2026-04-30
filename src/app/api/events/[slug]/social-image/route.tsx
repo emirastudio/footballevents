@@ -99,7 +99,6 @@ export async function GET(
     event.translations[0];
 
   const title = (tr?.title ?? event.slug).slice(0, 90);
-  const cover = event.coverUrl;
   const logo = event.logoUrl ?? event.organizer.logoUrl;
   const city = event.city?.nameEn ?? event.venue?.city?.nameEn ?? event.customLocation ?? "";
   const dateStr = event.startDate
@@ -111,6 +110,11 @@ export async function GET(
   const eventUrl = `${siteUrl}/${locale}/events/${event.slug}`;
   const qrPng = await QRCode.toDataURL(eventUrl, { margin: 0, width: 200, color: { dark: NIGHT_BG, light: "#FFFFFF" } });
 
+  // Allow caller to override the background photo (e.g. from the Marketing page)
+  const rawImageUrl = url.searchParams.get("imageUrl");
+  const customImageUrl = rawImageUrl && /^https?:\/\//.test(rawImageUrl) ? rawImageUrl : null;
+  const cover = customImageUrl ?? event.coverUrl;
+
   const fonts = await getSocialImageFonts();
   const { width, height } = SIZES[format];
   const isPortraitLike = height > width;
@@ -118,6 +122,24 @@ export async function GET(
     ? (format === "story" ? 110 : 96)
     : (format === "landscape" ? 96 : 80);
   const padding = format === "story" ? 72 : 56;
+
+  // Football pitch SVG geometry
+  const pitchStroke = "rgba(255,255,255,0.13)";
+  const fw = Math.min(isPortraitLike ? width * 0.84 : width * 0.90, width * 0.96);
+  const fh = Math.min(isPortraitLike ? fw * (105 / 68) : fw * (68 / 105), height * 0.92);
+  const fx = (width - fw) / 2;
+  const fy = (height - fh) / 2;
+  const cx = width / 2;
+  const cy = height / 2;
+  const scaleW = fw / (isPortraitLike ? 68 : 105);
+  const scaleH = fh / (isPortraitLike ? 105 : 68);
+  const cR = Math.round(9.15 * scaleW);
+  const pbW = Math.round(40.32 * scaleW);
+  const pbH = Math.round(16.5 * scaleH);
+  const gbW = Math.round(18.32 * scaleW);
+  const gbH = Math.round(5.5 * scaleH);
+  const pbX = cx - pbW / 2;
+  const gbX = cx - gbW / 2;
 
   const node = (
     <div
@@ -140,6 +162,23 @@ export async function GET(
       <div style={{ position: "absolute", top: 0, left: 0, width, height, display: "flex",
         background: `linear-gradient(180deg, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.2) 35%, rgba(10,22,40,0.2) 60%, rgba(10,22,40,0.92) 100%)`,
       }} />
+      {/* Football pitch outline */}
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}
+        style={{ position: "absolute", top: 0, left: 0, width, height, display: "flex" }}
+      >
+        <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke={pitchStroke} strokeWidth="2.5" />
+        {isPortraitLike
+          ? <line x1={fx} y1={cy} x2={fx + fw} y2={cy} stroke={pitchStroke} strokeWidth="2" />
+          : <line x1={cx} y1={fy} x2={cx} y2={fy + fh} stroke={pitchStroke} strokeWidth="2" />}
+        <circle cx={cx} cy={cy} r={cR} fill="none" stroke={pitchStroke} strokeWidth="2" />
+        <circle cx={cx} cy={cy} r={5} fill={pitchStroke} />
+        <rect x={pbX} y={fy} width={pbW} height={pbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+        <rect x={gbX} y={fy} width={gbW} height={gbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+        <rect x={pbX} y={fy + fh - pbH} width={pbW} height={pbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+        <rect x={gbX} y={fy + fh - gbH} width={gbW} height={gbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+        <circle cx={cx} cy={fy + Math.round(11 * scaleH)} r={4} fill={pitchStroke} />
+        <circle cx={cx} cy={fy + fh - Math.round(11 * scaleH)} r={4} fill={pitchStroke} />
+      </svg>
 
       {/* Top bar: logo + organizer name */}
       <div style={{ position: "absolute", top: padding, left: padding, right: padding, display: "flex", alignItems: "center", gap: 18 }}>

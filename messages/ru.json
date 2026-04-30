@@ -165,6 +165,31 @@
       "upgradeCta": "Pro — открыть",
       "apiHint": "Нужно в n8n / Zapier? Просто GET <code>/api/events/{slug}/social-image?format=story</code> — отдаст PNG."
     },
+    "marketing": "Маркетинг",
+    "marketingPage": {
+      "title": "Маркетинг",
+      "subtitle": "Инструменты для продвижения ваших мероприятий в соцсетях.",
+      "selectEvent": "Выберите событие",
+      "noEvents": "Событий пока нет. Сначала создайте и опубликуйте событие.",
+      "socialImage": {
+        "title": "Социальный баннер",
+        "hint": "Сгенерируйте готовую картинку для Instagram, Facebook, Stories или Twitter. Выберите фото, формат и скачайте.",
+        "photoSection": "Фоновое фото",
+        "useEventCover": "Обложка события",
+        "fromGallery": "Галерея",
+        "uploadCustom": "Загрузить фото",
+        "uploading": "Загружаю…",
+        "noPhoto": "Нет фото обложки — загрузите или выберите из галереи.",
+        "preview": "Предпросмотр",
+        "download": "Скачать PNG",
+        "lockHint": "Требуется план Pro",
+        "upgrade": "Перейти на Pro →"
+      },
+      "pushNotifications": {
+        "title": "Push-уведомления",
+        "comingSoon": "Отправляйте пуш-уведомления подписчикам ваших событий — скоро."
+      }
+    },
     "boostBasicLabel": "Basic — €9 · 7 дней",
     "boostFeaturedLabel": "Featured — €39 · 14 дней",
     "boostPremiumLabel": "Premium — €119 · 7 дней на главной",

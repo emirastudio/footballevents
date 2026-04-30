@@ -18,7 +18,7 @@ export function PageHeader({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-[var(--color-border)] bg-hero-stadium">
+    <section className="relative overflow-hidden bg-hero-stadium">
       <div className="bg-grid absolute inset-0 opacity-50" aria-hidden />
       <Container className="relative py-12 sm:py-16">
         {breadcrumbs && breadcrumbs.length > 0 && (

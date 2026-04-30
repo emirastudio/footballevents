@@ -165,6 +165,31 @@
       "upgradeCta": "Pro — unlock",
       "apiHint": "Need it in n8n / Zapier? Just GET <code>/api/events/{slug}/social-image?format=story</code> — returns a PNG."
     },
+    "marketing": "Marketing",
+    "marketingPage": {
+      "title": "Marketing",
+      "subtitle": "Tools to promote your events across social media.",
+      "selectEvent": "Select event",
+      "noEvents": "No events yet. Create and publish an event first.",
+      "socialImage": {
+        "title": "Social Image",
+        "hint": "Generate a ready-made graphic for Instagram, Facebook, Stories or Twitter. Pick a background photo, choose the format and download.",
+        "photoSection": "Background photo",
+        "useEventCover": "Event cover",
+        "fromGallery": "Gallery",
+        "uploadCustom": "Upload photo",
+        "uploading": "Uploading…",
+        "noPhoto": "No cover photo — upload one or pick from gallery.",
+        "preview": "Preview",
+        "download": "Download PNG",
+        "lockHint": "Pro plan required",
+        "upgrade": "Upgrade to Pro →"
+      },
+      "pushNotifications": {
+        "title": "Push Notifications",
+        "comingSoon": "Send push alerts to followers of your events — coming soon."
+      }
+    },
     "boostBasicLabel": "Basic — €9 · 7d",
     "boostFeaturedLabel": "Featured — €39 · 14d",
     "boostPremiumLabel": "Premium — €119 · 7d homepage",
