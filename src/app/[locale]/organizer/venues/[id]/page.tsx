@@ -21,7 +21,10 @@ export default async function EditVenuePage({ params }: { params: Promise<{ loca
     where: { id },
     include: { events: { where: { organizerId: organizer.id }, take: 1 } },
   });
-  if (!venue || venue.events.length === 0) notFound();
+  if (!venue) notFound();
+  // Owner = original creator OR any organizer who has events here
+  const isOwner = venue.createdByOrganizerId === organizer.id || venue.events.length > 0;
+  if (!isOwner) notFound();
 
   const t = await getTranslations("organizer.venuesPage");
   const tForm = await getTranslations("venueForm");

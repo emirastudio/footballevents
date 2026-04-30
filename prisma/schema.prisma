@@ -310,6 +310,7 @@ model Organizer {
   ads          AdCampaign[]
   followers    OrganizerFollow[]
   boostCredits BoostCredit[]
+  createdVenues Venue[]               @relation("VenueCreator")
 
   @@index([slug])
   @@index([countryCode])
@@ -363,31 +364,37 @@ model City {
 // ─────────────────────────────────────────────────────────────
 
 model Venue {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  name        String
-  countryCode String
-  cityId      String?
-  address     String?
-  lat         Float?
-  lng         Float?
-  capacity    Int?
-  surfaceType String? // grass, artificial, hybrid
-  coverUrl    String?
-  galleryUrls String[] @default([])
-  website     String?
-  isStadium   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                   String   @id @default(cuid())
+  slug                 String   @unique
+  name                 String
+  countryCode          String
+  cityId               String?
+  address              String?
+  lat                  Float?
+  lng                  Float?
+  capacity             Int?
+  surfaceType          String? // grass, artificial, hybrid
+  coverUrl             String?
+  galleryUrls          String[] @default([])
+  website              String?
+  isStadium            Boolean  @default(true)
+  // Organizer who first created this venue. They can always edit it,
+  // even before any events are linked. Other organizers gain edit rights
+  // once they add an event at this venue.
+  createdByOrganizerId String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   country      Country            @relation(fields: [countryCode], references: [code])
   city         City?              @relation(fields: [cityId], references: [id])
+  createdBy    Organizer?         @relation("VenueCreator", fields: [createdByOrganizerId], references: [id], onDelete: SetNull)
   translations VenueTranslation[]
   events       Event[]
 
   @@index([countryCode])
   @@index([cityId])
   @@index([slug])
+  @@index([createdByOrganizerId])
 }
 
 model VenueTranslation {

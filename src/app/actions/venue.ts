@@ -63,10 +63,16 @@ export async function saveVenueAction(_prev: VenueFormState, formData: FormData)
   await ensureCountry(d.countryCode);
 
   if (d.id) {
-    // Update — any organizer that has events at this venue can edit it.
-    const existing = await db.venue.findUnique({ where: { id: d.id }, include: { events: { where: { organizerId: organizer.id }, take: 1 } } });
+    // Update — the original creator OR any organizer that has events at
+    // this venue can edit it.
+    const existing = await db.venue.findUnique({
+      where: { id: d.id },
+      include: { events: { where: { organizerId: organizer.id }, take: 1 } },
+    });
     if (!existing) return { error: "notFound" };
-    if (existing.events.length === 0) return { error: "notYourVenue" };
+    const isOwner =
+      existing.createdByOrganizerId === organizer.id || existing.events.length > 0;
+    if (!isOwner) return { error: "notYourVenue" };
     await db.venue.update({
       where: { id: d.id },
       data: {
@@ -100,6 +106,7 @@ export async function saveVenueAction(_prev: VenueFormState, formData: FormData)
         website: d.website || null,
         isStadium: d.isStadium,
         coverUrl: d.coverUrl || null,
+        createdByOrganizerId: organizer.id,
       },
     });
   }

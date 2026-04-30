@@ -17,9 +17,14 @@ export default async function OrganizerVenuesPage({ params }: { params: Promise<
 
   const t = await getTranslations("organizer.venuesPage");
 
-  // All venues used in this organizer's events (de-duplicated).
+  // Venues this organizer created OR uses for at least one event.
   const venues = await db.venue.findMany({
-    where: { events: { some: { organizerId: organizer.id } } },
+    where: {
+      OR: [
+        { createdByOrganizerId: organizer.id },
+        { events: { some: { organizerId: organizer.id } } },
+      ],
+    },
     include: { _count: { select: { events: { where: { organizerId: organizer.id } } } } },
     orderBy: { name: "asc" },
   });
