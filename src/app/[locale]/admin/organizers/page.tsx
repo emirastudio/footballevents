@@ -103,7 +103,7 @@ export default async function AdminOrganizersPage({
                 </td>
                 <td className="px-4 py-3 text-xs">
                   <Link
-                    href={`/organizers/${o.slug}`}
+                    href={`/org/${o.slug}`}
                     className="font-semibold text-[var(--color-pitch-700)] hover:underline"
                   >
                     {o.slug}

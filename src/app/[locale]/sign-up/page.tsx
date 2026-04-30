@@ -1,17 +1,32 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
+import { auth } from "@/auth";
 
 export default async function SignUpPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string>>;
 }) {
   const { locale } = await params;
+  const sp = await searchParams;
   setRequestLocale(locale);
+
+  const session = await auth();
+  if (session?.user) {
+    const role = sp.role;
+    if (role === "organizer") {
+      redirect(`/${locale}/onboarding/organizer`);
+    }
+    redirect(`/${locale}`);
+  }
+
   const t = await getTranslations("auth");
 
   return (
