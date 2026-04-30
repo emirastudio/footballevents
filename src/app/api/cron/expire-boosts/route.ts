@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { subscriptionExpiringEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,9 +52,34 @@ async function run(req: NextRequest) {
     }),
   ]);
 
+  // Send 7-day expiry warning emails (window: 7d ± 12h to avoid double-send).
+  const in7dMin = new Date(now.getTime() + 6.5 * 24 * 60 * 60 * 1000);
+  const in7dMax = new Date(now.getTime() + 7.5 * 24 * 60 * 60 * 1000);
+  const expiring = await db.organizer.findMany({
+    where: {
+      subscriptionEndsAt: { gte: in7dMin, lte: in7dMax },
+      subscriptionTier: { not: "FREE" },
+    },
+    select: { name: true, email: true, subscriptionTier: true, subscriptionEndsAt: true },
+  });
+
+  const emailResults = await Promise.allSettled(
+    expiring.map((org) =>
+      subscriptionExpiringEmail({
+        to: org.email,
+        organizerName: org.name,
+        tierName: org.subscriptionTier,
+        expiresAt: org.subscriptionEndsAt!,
+        daysLeft: 7,
+      }),
+    ),
+  );
+  const emailsSent = emailResults.filter((r) => r.status === "fulfilled").length;
+
   return NextResponse.json({
     ok: true,
     at: now.toISOString(),
     cleared: { boost: boostExpired.count, featured: featuredExpired.count, subsDowngraded: subsDowngraded.count },
+    warnings: { sent: emailsSent, total: expiring.length },
   });
 }

@@ -214,6 +214,42 @@ export function newMessageNotification(opts: {
   });
 }
 
+export function subscriptionExpiringEmail(opts: {
+  to: string;
+  organizerName: string;
+  tierName: string;
+  expiresAt: Date;
+  daysLeft: number;
+}) {
+  const dateStr = opts.expiresAt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const html = shell(
+    `Your ${opts.tierName} plan expires in ${opts.daysLeft} days`,
+    `<p>Hi ${escape(opts.organizerName)},</p>
+     <p>Your <strong>${escape(opts.tierName)}</strong> plan on FootballEvents.eu expires on <strong>${escape(dateStr)}</strong>.</p>
+     <p>After that, your account switches to the <strong>Free</strong> plan. Your events, applications and data stay safe — but Premium features (Featured placement, video embeds, extra boosts) will be paused.</p>
+     <p style="margin:24px 0">
+       <a href="${SITE}/pricing" style="display:inline-block;background:#00d26a;color:#0a1628;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">Renew or upgrade →</a>
+     </p>
+     <p style="font-size:12px;color:#64748b">Questions? Reply to this email — we read everything.</p>`,
+  );
+  const text = [
+    `Your ${opts.tierName} plan expires in ${opts.daysLeft} days`,
+    ``,
+    `Hi ${opts.organizerName},`,
+    ``,
+    `Your ${opts.tierName} plan expires on ${dateStr}. After that your account moves to Free.`,
+    `Your events and data are safe, but Premium features will be paused.`,
+    ``,
+    `Renew or upgrade: ${SITE}/pricing`,
+  ].join("\n");
+  return sendEmail({
+    to: opts.to,
+    subject: `Your ${opts.tierName} plan expires in ${opts.daysLeft} days — FootballEvents.eu`,
+    html,
+    text,
+  });
+}
+
 export function eventModerationEmail(opts: {
   organizerEmail: string;
   organizerName: string;
