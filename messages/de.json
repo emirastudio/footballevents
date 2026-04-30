@@ -108,6 +108,8 @@
     "recentApplications": "Letzte Anmeldungen",
     "createFirstEvent": "Erstes Event erstellen",
     "newEvent": "Neues Event",
+    "duplicate": "Duplizieren",
+    "duplicateHint": "Event als Entwurf klonen (Datum +1 Jahr)",
     "noEventsYet": "Noch keine Events — leg los und erstelle dein erstes.",
     "noApplicationsYet": "Noch keine Anmeldungen — sie erscheinen hier, sobald jemand sich anmeldet.",
     "stats": {

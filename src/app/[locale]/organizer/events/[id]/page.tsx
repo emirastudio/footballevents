@@ -7,8 +7,8 @@ import { EventForm, type EventDefaults } from "@/components/organizer/EventForm"
 import type { Tier } from "@/lib/tier";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
-import { Trash2, Archive, ExternalLink } from "lucide-react";
-import { deleteEventAction, archiveEventAction } from "@/app/actions/event";
+import { Trash2, Archive, ExternalLink, Copy } from "lucide-react";
+import { deleteEventAction, archiveEventAction, duplicateEventAction } from "@/app/actions/event";
 import { startBoostCheckout, applyIncludedBoost } from "@/app/actions/billing";
 import { Rocket, Gift, Image as ImageIcon, Download, Lock } from "lucide-react";
 import { getIncludedBoostsRemaining, includedKindAllowed } from "@/lib/included-boosts";
@@ -182,6 +182,12 @@ export default async function EditEventPage({
               </Link>
             </Button>
           )}
+          <form action={duplicateEventAction}>
+            <input type="hidden" name="id" value={ev.id} />
+            <Button type="submit" variant="outline" size="sm" title={tOrg("duplicateHint")}>
+              <Copy className="h-3.5 w-3.5" /> {tOrg("duplicate")}
+            </Button>
+          </form>
           <form action={archiveEventAction}>
             <input type="hidden" name="id" value={ev.id} />
             <Button type="submit" variant="outline" size="sm">

@@ -108,6 +108,8 @@
     "recentApplications": "Inscripciones recientes",
     "createFirstEvent": "Crear el primer evento",
     "newEvent": "Nuevo evento",
+    "duplicate": "Duplicar",
+    "duplicateHint": "Clonar evento como borrador (fechas +1 año)",
     "noEventsYet": "Aún no hay eventos — crea el primero para empezar.",
     "noApplicationsYet": "Aún no hay inscripciones — aparecerán aquí cuando alguien se inscriba.",
     "stats": {

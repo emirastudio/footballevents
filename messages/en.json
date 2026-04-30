@@ -108,6 +108,8 @@
     "recentApplications": "Recent applications",
     "createFirstEvent": "Create your first event",
     "newEvent": "New event",
+    "duplicate": "Duplicate",
+    "duplicateHint": "Clone this event as a new draft (dates shifted +1 year)",
     "noEventsYet": "No events yet — create your first to get started.",
     "noApplicationsYet": "No applications yet — they'll appear here once people start applying.",
     "stats": {

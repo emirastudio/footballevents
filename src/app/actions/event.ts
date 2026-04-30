@@ -529,6 +529,93 @@ export async function archiveEventAction(formData: FormData) {
   redirect("/organizer/events");
 }
 
+// Clone an existing event into a fresh DRAFT. Strips applications/bookings/
+// reviews/boosts and shifts dates by one year so the organizer just adjusts
+// what changed. The slug gets a "-copy" suffix and becomes editable.
+export async function duplicateEventAction(formData: FormData) {
+  "use server";
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
+  if (!organizer) redirect("/onboarding/organizer");
+
+  const id = formData.get("id") as string;
+  if (!id) return;
+
+  const source = await db.event.findUnique({
+    where: { id },
+    include: { translations: true },
+  });
+  if (!source || source.organizerId !== organizer.id) return;
+
+  // Generate a unique slug with -copy / -copy-2 / -copy-3...
+  const baseSlug = `${source.slug}-copy`.slice(0, 80);
+  let newSlug = baseSlug;
+  for (let i = 2; i < 100; i++) {
+    const conflict = await db.event.findUnique({ where: { slug: newSlug }, select: { id: true } });
+    if (!conflict) break;
+    newSlug = `${baseSlug}-${i}`.slice(0, 80);
+  }
+
+  const oneYearMs = 365 * 24 * 3600 * 1000;
+  const shiftDate = (d: Date | null) => (d ? new Date(d.getTime() + oneYearMs) : null);
+
+  const created = await db.event.create({
+    data: {
+      slug: newSlug,
+      organizerId: source.organizerId,
+      categoryId: source.categoryId,
+      type: source.type,
+      status: "DRAFT",
+      startDate: shiftDate(source.startDate),
+      endDate: shiftDate(source.endDate),
+      registrationDeadline: shiftDate(source.registrationDeadline),
+      timezone: source.timezone,
+      countryCode: source.countryCode,
+      cityId: source.cityId,
+      venueId: source.venueId,
+      customLocation: source.customLocation,
+      ageGroups: source.ageGroups,
+      gender: source.gender,
+      skillLevel: source.skillLevel,
+      format: source.format,
+      maxParticipants: source.maxParticipants,
+      isFree: source.isFree,
+      priceFrom: source.priceFrom,
+      priceTo: source.priceTo,
+      currency: source.currency,
+      externalUrl: source.externalUrl,
+      contactEmail: source.contactEmail,
+      contactPhone: source.contactPhone,
+      acceptsBookings: source.acceptsBookings,
+      videoUrl: source.videoUrl,
+      logoUrl: source.logoUrl,
+      coverUrl: source.coverUrl,
+      galleryUrls: source.galleryUrls,
+      included: source.included,
+      notIncluded: source.notIncluded,
+      program: source.program ?? undefined,
+      faq: source.faq ?? undefined,
+      // Stats reset — this is a new event
+      ratingAvg: 0,
+      ratingCount: 0,
+      // Boost / featured / demo flags do NOT carry over
+      isDemo: source.isDemo,
+      translations: {
+        create: source.translations.map((t) => ({
+          locale: t.locale,
+          title: t.title,
+          shortDescription: t.shortDescription,
+          description: t.description,
+        })),
+      },
+    },
+  });
+
+  revalidatePath("/organizer/events");
+  redirect(`/organizer/events/${created.id}`);
+}
+
 // ─────────────────────────────────────────────────────────────
 // WIZARD — incremental draft save, one step at a time
 // ─────────────────────────────────────────────────────────────
