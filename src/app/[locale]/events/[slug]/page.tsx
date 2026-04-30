@@ -294,10 +294,18 @@ export default async function EventDetailPage({
                 <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
                   {t("reviews")}
                 </h2>
-                <div className="flex items-center gap-1.5">
-                  <Star className="h-4 w-4 fill-[var(--color-premium)] text-[var(--color-premium)]" />
-                  <span className="font-semibold text-[var(--color-foreground)]">{event.rating}</span>
-                  <span className="text-sm text-[var(--color-muted)]">({event.reviewsCount})</span>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <Star className="h-4 w-4 fill-[var(--color-premium)] text-[var(--color-premium)]" />
+                    <span className="font-semibold text-[var(--color-foreground)]">{event.rating}</span>
+                    <span className="text-sm text-[var(--color-muted)]">({event.reviewsCount})</span>
+                  </div>
+                  <Link
+                    href={`/events/${event.slug}/review`}
+                    className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-500)] hover:text-[var(--color-pitch-700)]"
+                  >
+                    {t("writeReview")}
+                  </Link>
                 </div>
               </div>
 

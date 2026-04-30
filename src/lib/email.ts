@@ -250,6 +250,81 @@ export function subscriptionExpiringEmail(opts: {
   });
 }
 
+export function reviewRequestEmail(opts: {
+  to: string;
+  participantName: string;
+  eventTitle: string;
+  eventSlug: string;
+  locale: string;
+}) {
+  const url = `${SITE}/${opts.locale}/events/${opts.eventSlug}/review`;
+  const html = shell(
+    `How was ${opts.eventTitle}?`,
+    `<p>Hi ${escape(opts.participantName)},</p>
+     <p>Thanks for joining <strong>${escape(opts.eventTitle)}</strong>! Your honest review helps the next participants and rewards good organizers.</p>
+     <p style="margin:24px 0">
+       <a href="${url}" style="display:inline-block;background:#00d26a;color:#0a1628;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">Write a review (60 sec)</a>
+     </p>
+     <p style="font-size:12px;color:#64748b">If you didn't attend, you can ignore this email.</p>`,
+  );
+  return sendEmail({
+    to: opts.to,
+    subject: `How was ${opts.eventTitle}?`,
+    html,
+  });
+}
+
+export function newReviewNotificationEmail(opts: {
+  organizerEmail: string;
+  organizerName: string;
+  eventTitle: string;
+  rating: number;
+  bodyPreview: string;
+}) {
+  const stars = "★".repeat(opts.rating) + "☆".repeat(5 - opts.rating);
+  const html = shell(
+    `New review on ${opts.eventTitle}`,
+    `<p>Hi ${escape(opts.organizerName)},</p>
+     <p>You received a new review on <strong>${escape(opts.eventTitle)}</strong>:</p>
+     <p style="font-size:22px;color:#f59e0b;letter-spacing:2px;margin:8px 0">${stars} <span style="font-size:14px;color:#64748b">${opts.rating}/5</span></p>
+     <p style="background:#fafbfc;border-left:4px solid #00d26a;padding:12px;border-radius:4px;white-space:pre-wrap">${escape(opts.bodyPreview)}${opts.bodyPreview.length >= 200 ? "…" : ""}</p>
+     <p>It's pending moderation — open your cabinet to approve, reply or escalate.</p>
+     <p style="margin:24px 0"><a href="${SITE}/organizer/reviews" style="display:inline-block;background:#0a1628;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Moderate review</a></p>
+     <p style="font-size:12px;color:#64748b">Reviews you don't moderate within 72 hours auto-publish.</p>`,
+  );
+  return sendEmail({
+    to: opts.organizerEmail,
+    subject: `New ${opts.rating}-star review on ${opts.eventTitle}`,
+    html,
+  });
+}
+
+export function reviewModerationEmail(opts: {
+  to: string;
+  authorName: string;
+  eventTitle: string;
+  eventSlug: string;
+  decision: "approve" | "reject";
+  reason?: string | null;
+}) {
+  const approved = opts.decision === "approve";
+  const html = shell(
+    approved ? `Your review is live` : `Your review wasn't published`,
+    `<p>Hi ${escape(opts.authorName)},</p>
+     <p>${approved
+       ? `Your review on <strong>${escape(opts.eventTitle)}</strong> is now live for other participants to see.`
+       : `Your review on <strong>${escape(opts.eventTitle)}</strong> wasn't published by the organizer.`}</p>
+     ${opts.reason ? `<p style="background:#fafbfc;border-left:4px solid #dc2626;padding:12px;border-radius:4px"><strong>Reason:</strong> ${escape(opts.reason)}</p>` : ""}
+     <p><a href="${SITE}/events/${opts.eventSlug}" style="display:inline-block;background:#0a1628;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View event</a></p>
+     ${approved ? "" : `<p style="font-size:12px;color:#64748b">If you believe this was a mistake, reply to this email and we'll review it.</p>`}`,
+  );
+  return sendEmail({
+    to: opts.to,
+    subject: approved ? `Your review is live` : `Your review wasn't published`,
+    html,
+  });
+}
+
 export function eventModerationEmail(opts: {
   organizerEmail: string;
   organizerName: string;
