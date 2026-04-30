@@ -279,6 +279,17 @@
       "bodyTooLong": "La reseña no puede superar los 1500 caracteres"
     }
   },
+  "publicProfile": {
+    "memberSince": "Miembro desde {date}",
+    "stats": {
+      "eventsAttended": "Eventos asistidos",
+      "reviewsWritten": "Reseñas escritas"
+    },
+    "attendedHeading": "Eventos pasados",
+    "noAttended": "Aún sin historial público.",
+    "reviewsHeading": "Reseñas",
+    "noReviews": "Aún sin reseñas."
+  },
   "alerts": {
     "title": "Mis alertas",
     "subtitle": "Te enviaremos un email cuando aparezcan nuevos eventos según tus filtros.",
@@ -579,6 +590,17 @@
       "name": "Nombre visible",
       "avatar": "Avatar",
       "locale": "Idioma preferido",
+      "publicProfileTitle": "Perfil público",
+      "publicProfileSubtitle": "Tu @usuario y una bio corta. Cuando es público, organizadores y otros participantes pueden encontrarte y ver a qué eventos has asistido.",
+      "publicUsername": "Nombre de usuario",
+      "publicUsernameHint": "3-30 caracteres: minúsculas, dígitos, _ y -. Se usa para tu enlace público /u/<usuario>.",
+      "publicBio": "Bio",
+      "publicBioPlaceholder": "Jugador del FC Tallinn · U16 · me gustan los campus indoor",
+      "publicVisibility": "Visibilidad del perfil",
+      "publicVisibilityPrivate": "Privado — solo lo ves tú",
+      "publicVisibilityPublic": "Público — cualquiera con el enlace",
+      "publicVisibilityHint": "Tu perfil es público:",
+      "viewPublicProfile": "Ver perfil público",
       "passwordTitle": "Contraseña",
       "passwordSetSubtitle": "Añade una contraseña como segundo método de acceso (mantienes el magic link).",
       "passwordChangeSubtitle": "Cambia tu contraseña.",

@@ -279,6 +279,17 @@
       "bodyTooLong": "Bewertung darf 1500 Zeichen nicht überschreiten"
     }
   },
+  "publicProfile": {
+    "memberSince": "Mitglied seit {date}",
+    "stats": {
+      "eventsAttended": "Events besucht",
+      "reviewsWritten": "Bewertungen geschrieben"
+    },
+    "attendedHeading": "Vergangene Events",
+    "noAttended": "Noch keine öffentliche Historie.",
+    "reviewsHeading": "Bewertungen",
+    "noReviews": "Noch keine Bewertungen."
+  },
   "alerts": {
     "title": "Meine Benachrichtigungen",
     "subtitle": "Wir mailen dir, wenn neue Events deinen gespeicherten Filtern entsprechen.",
@@ -579,6 +590,17 @@
       "name": "Anzeigename",
       "avatar": "Avatar",
       "locale": "Bevorzugte Sprache",
+      "publicProfileTitle": "Öffentliches Profil",
+      "publicProfileSubtitle": "Dein @benutzername und eine kurze Bio. Wenn öffentlich, können Veranstalter und andere Teilnehmer dich finden und sehen, an welchen Events du warst.",
+      "publicUsername": "Benutzername",
+      "publicUsernameHint": "3-30 Zeichen: Kleinbuchstaben, Ziffern, _ und -. Wird für deinen öffentlichen Link /u/<benutzername> verwendet.",
+      "publicBio": "Bio",
+      "publicBioPlaceholder": "Spieler bei FC Tallinn · U16 · liebt Hallen-Camps",
+      "publicVisibility": "Profil-Sichtbarkeit",
+      "publicVisibilityPrivate": "Privat — nur du siehst es",
+      "publicVisibilityPublic": "Öffentlich — jeder mit Link",
+      "publicVisibilityHint": "Dein Profil ist öffentlich:",
+      "viewPublicProfile": "Öffentliches Profil ansehen",
       "passwordTitle": "Passwort",
       "passwordSetSubtitle": "Passwort als zweite Anmeldemethode hinzufügen (Magic Link bleibt aktiv).",
       "passwordChangeSubtitle": "Passwort ändern.",

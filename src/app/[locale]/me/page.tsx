@@ -9,7 +9,7 @@ import { countUnreadThreads } from "@/lib/messages";
 import { EventCard } from "@/components/cards/EventCard";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import type { MockEvent, MockOrganizer } from "@/lib/mock-data";
-import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings, Zap, Star, Crown } from "lucide-react";
+import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings, Zap, Star, Crown, Globe } from "lucide-react";
 
 export default async function MePage({
   params,
@@ -184,6 +184,15 @@ export default async function MePage({
             <Bell className="h-3.5 w-3.5" />
             <span>{tAlerts("title")}</span>
           </Link>
+          {user?.username && user.profilePublic && (
+            <Link
+              href={`/u/${user.username}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-surface-muted)] px-3 py-1.5 text-sm font-semibold text-[var(--color-foreground)] transition hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              <span>@{user.username}</span>
+            </Link>
+          )}
           <Link
             href="/me/settings"
             className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-surface-muted)] px-3 py-1.5 text-sm font-semibold text-[var(--color-foreground)] transition hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"

@@ -8,6 +8,7 @@ import { ProfileForm } from "@/components/profile/ProfileForm";
 import { PasswordForm } from "@/components/profile/PasswordForm";
 import { EmailChangeForm } from "@/components/profile/EmailChangeForm";
 import { DeleteAccountForm } from "@/components/profile/DeleteAccountForm";
+import { PublicProfileForm } from "@/components/profile/PublicProfileForm";
 import { ChevronLeft } from "lucide-react";
 
 export default async function SettingsPage({
@@ -78,6 +79,30 @@ export default async function SettingsPage({
               loading: t("settings.loading"),
               saved: t("settings.saved"),
               uploadLabel: t("settings.avatar"),
+            }}
+          />
+        </Section>
+
+        <Section title={t("settings.publicProfileTitle")} subtitle={t("settings.publicProfileSubtitle")}>
+          <PublicProfileForm
+            defaults={{
+              username: user.username,
+              bio: user.bio,
+              profilePublic: user.profilePublic,
+            }}
+            labels={{
+              usernameLabel: t("settings.publicUsername"),
+              usernameHint: t("settings.publicUsernameHint"),
+              bioLabel: t("settings.publicBio"),
+              bioPlaceholder: t("settings.publicBioPlaceholder"),
+              visibilityLabel: t("settings.publicVisibility"),
+              visibilityPublic: t("settings.publicVisibilityPublic"),
+              visibilityPrivate: t("settings.publicVisibilityPrivate"),
+              visibilityPublicHint: t("settings.publicVisibilityHint"),
+              submit: t("settings.save"),
+              loading: t("settings.loading"),
+              saved: t("settings.saved"),
+              viewPublic: t("settings.viewPublicProfile"),
             }}
           />
         </Section>

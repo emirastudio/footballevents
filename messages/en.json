@@ -279,6 +279,17 @@
       "bodyTooLong": "Review can't exceed 1500 characters"
     }
   },
+  "publicProfile": {
+    "memberSince": "Member since {date}",
+    "stats": {
+      "eventsAttended": "Events attended",
+      "reviewsWritten": "Reviews written"
+    },
+    "attendedHeading": "Past events",
+    "noAttended": "No public history yet.",
+    "reviewsHeading": "Reviews",
+    "noReviews": "No reviews yet."
+  },
   "alerts": {
     "title": "My alerts",
     "subtitle": "We'll email you when new events match your saved filters.",
@@ -579,6 +590,17 @@
       "name": "Display name",
       "avatar": "Avatar",
       "locale": "Preferred language",
+      "publicProfileTitle": "Public profile",
+      "publicProfileSubtitle": "Your @username and a short bio. When public, organizers and other participants can find you and see what events you've attended.",
+      "publicUsername": "Username",
+      "publicUsernameHint": "3-30 chars, lowercase letters, digits, _ and -. Used for your public link /u/<username>.",
+      "publicBio": "Bio",
+      "publicBioPlaceholder": "Player at FC Tallinn · U16 · loves indoor camps",
+      "publicVisibility": "Profile visibility",
+      "publicVisibilityPrivate": "Private — only you see it",
+      "publicVisibilityPublic": "Public — anyone with the link",
+      "publicVisibilityHint": "Your profile is public:",
+      "viewPublicProfile": "View public profile",
       "passwordTitle": "Password",
       "passwordSetSubtitle": "Add a password as a second sign-in method (you'll keep magic-link too).",
       "passwordChangeSubtitle": "Change your password.",
