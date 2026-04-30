@@ -88,6 +88,11 @@ export default async function EventDetailPage({
   });
   const capacity = await getEventCapacity(event.id, eventRow?.maxParticipants ?? null);
 
+  // Fire-and-forget: bump the public view counter for the organizer's analytics.
+  // Atomic Prisma increment, no awaiting; a failed bump never blocks the page.
+  db.event.update({ where: { id: event.id }, data: { viewsCount: { increment: 1 } } })
+    .catch(() => {});
+
   const capacityLabels = {
     joined:       t("capacity.joined"),
     spotsLeft:    t("capacity.spotsLeft"),

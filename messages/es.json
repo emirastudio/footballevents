@@ -168,6 +168,30 @@
       "apiHint": "¿Lo necesitas en n8n / Zapier? Simplemente GET <code>/api/events/{slug}/social-image?format=story</code> — devuelve un PNG."
     },
     "marketing": "Marketing",
+    "analyticsNav": "Analítica",
+    "analytics": {
+      "title": "Analítica",
+      "subtitle": "Cómo van tus eventos — vistas, solicitudes, conversión.",
+      "kpi": {
+        "views": "Vistas totales",
+        "applications": "Solicitudes",
+        "accepted": "Aceptadas",
+        "acceptanceRate": "aceptadas",
+        "reviews": "Reseñas"
+      },
+      "col": {
+        "event": "Evento",
+        "views": "Vistas",
+        "applications": "Solic.",
+        "acceptance": "Aceptado",
+        "conversion": "Conv.",
+        "waitlist": "En espera",
+        "reviews": "Reseñas",
+        "rating": "Valor."
+      },
+      "conversionHint": "Conversión = solicitudes aceptadas ÷ vistas. Saludable por encima del 5%.",
+      "emptyBody": "Aún no hay eventos — al publicar, las estadísticas aparecerán aquí."
+    },
     "marketingPage": {
       "title": "Marketing",
       "subtitle": "Herramientas para promocionar tus eventos en redes sociales.",

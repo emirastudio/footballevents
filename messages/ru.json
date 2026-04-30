@@ -168,6 +168,30 @@
       "apiHint": "Нужно в n8n / Zapier? Просто GET <code>/api/events/{slug}/social-image?format=story</code> — отдаст PNG."
     },
     "marketing": "Маркетинг",
+    "analyticsNav": "Аналитика",
+    "analytics": {
+      "title": "Аналитика",
+      "subtitle": "Как идут ваши события — просмотры, заявки, конверсия.",
+      "kpi": {
+        "views": "Всего просмотров",
+        "applications": "Заявок",
+        "accepted": "Приняли",
+        "acceptanceRate": "приняты",
+        "reviews": "Отзывы"
+      },
+      "col": {
+        "event": "Событие",
+        "views": "Просм.",
+        "applications": "Заявки",
+        "acceptance": "Принято",
+        "conversion": "Конв.",
+        "waitlist": "Лист ожид.",
+        "reviews": "Отзывы",
+        "rating": "Рейтинг"
+      },
+      "conversionHint": "Конверсия = принятые заявки ÷ просмотры. Здоровое событие — выше 5%.",
+      "emptyBody": "Пока нет событий — после публикации статистика появится здесь."
+    },
     "marketingPage": {
       "title": "Маркетинг",
       "subtitle": "Инструменты для продвижения ваших мероприятий в соцсетях.",
