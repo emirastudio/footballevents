@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Download, Upload, Image as ImageIcon, Bell, ChevronDown, Loader2 } from "lucide-react";
 
 type Format = "square" | "portrait" | "story" | "landscape";
@@ -63,10 +63,16 @@ function isLocked(tier: string, fmt: Format) {
   return fmt !== "square";
 }
 
+function defaultImageFor(event: EventItem | undefined): string | null {
+  if (!event) return null;
+  if (event.coverUrl) return event.coverUrl;
+  if (event.galleryUrls.length > 0) return event.galleryUrls[0];
+  return null;
+}
+
 export function MarketingClient({ events, tier, locale, labels }: Props) {
   const [eventId, setEventId] = useState(events[0]?.id ?? "");
   const [format, setFormat] = useState<Format>("portrait");
-  const [customImageUrl, setCustomImageUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [previewTs, setPreviewTs] = useState(Date.now());
@@ -75,14 +81,26 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
   const event = events.find((e) => e.id === eventId);
   const locked = isLocked(tier, format);
 
-  const activeImage = customImageUrl ?? event?.coverUrl ?? null;
+  // Selected image is explicit. Defaults to event cover, then first gallery
+  // photo, then null. Resets whenever the user picks a different event so the
+  // preview never shows a stale photo from the previous event.
+  const [selectedImage, setSelectedImage] = useState<string | null>(() => defaultImageFor(event));
+  useEffect(() => {
+    setSelectedImage(defaultImageFor(event));
+    setPreviewTs(Date.now());
+  }, [eventId, event]);
 
   const apiBase = event
-    ? `/api/events/${event.slug}/social-image?format=${format}&locale=${locale}${activeImage ? `&imageUrl=${encodeURIComponent(activeImage)}` : ""}`
+    ? `/api/events/${event.slug}/social-image?format=${format}&locale=${locale}${selectedImage ? `&imageUrl=${encodeURIComponent(selectedImage)}` : ""}`
     : null;
   const previewUrl = apiBase ? `${apiBase}&v=${previewTs}` : null;
   const downloadUrl = apiBase ? `${apiBase}&v=${Date.now()}` : null;
   const downloadName = event ? `footballevents-${event.slug}-${format}.png` : "social.png";
+
+  function pickImage(url: string | null) {
+    setSelectedImage(url);
+    setPreviewTs(Date.now());
+  }
 
   async function handleFileUpload(file: File) {
     if (file.size > 5 * 1024 * 1024) {
@@ -107,8 +125,7 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
       });
       if (!putRes.ok) throw new Error("upload failed");
 
-      setCustomImageUrl(publicUrl);
-      setPreviewTs(Date.now());
+      pickImage(publicUrl);
     } catch {
       setUploadError("Upload failed. Please try again.");
     } finally {
@@ -130,7 +147,7 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
       <div className="relative">
         <select
           value={eventId}
-          onChange={(e) => { setEventId(e.target.value); setCustomImageUrl(null); setPreviewTs(Date.now()); }}
+          onChange={(e) => setEventId(e.target.value)}
           className="w-full appearance-none rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] py-3 pl-4 pr-10 text-sm font-medium text-[var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--color-pitch-500)]"
         >
           {events.map((e) => (
@@ -198,10 +215,10 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
                 {/* Event cover */}
                 {event?.coverUrl && (
                   <button
-                    onClick={() => { setCustomImageUrl(null); setPreviewTs(Date.now()); }}
+                    onClick={() => pickImage(event.coverUrl)}
                     className={[
                       "h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border-2 transition",
-                      !customImageUrl
+                      selectedImage === event.coverUrl
                         ? "border-[var(--color-pitch-500)]"
                         : "border-transparent hover:border-[var(--color-pitch-300)]",
                     ].join(" ")}
@@ -216,10 +233,10 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
                 {event?.galleryUrls.map((url, i) => (
                   <button
                     key={url}
-                    onClick={() => { setCustomImageUrl(url); setPreviewTs(Date.now()); }}
+                    onClick={() => pickImage(url)}
                     className={[
                       "h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border-2 transition",
-                      customImageUrl === url
+                      selectedImage === url
                         ? "border-[var(--color-pitch-500)]"
                         : "border-transparent hover:border-[var(--color-pitch-300)]",
                     ].join(" ")}
@@ -255,7 +272,7 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
                   }}
                 />
               </div>
-              {!event?.coverUrl && event?.galleryUrls.length === 0 && !customImageUrl && (
+              {!selectedImage && (
                 <p className="mt-2 text-xs text-[var(--color-muted)]">{labels.socialImage.noPhoto}</p>
               )}
               {uploadError && <p className="mt-2 text-xs text-red-600">{uploadError}</p>}

@@ -110,10 +110,11 @@ export async function GET(
   const eventUrl = `${siteUrl}/${locale}/events/${event.slug}`;
   const qrPng = await QRCode.toDataURL(eventUrl, { margin: 0, width: 200, color: { dark: NIGHT_BG, light: "#FFFFFF" } });
 
-  // Allow caller to override the background photo (e.g. from the Marketing page)
+  // Allow caller to override the background photo (e.g. from the Marketing page).
+  // Fallback chain: explicit imageUrl → event cover → first gallery photo → none.
   const rawImageUrl = url.searchParams.get("imageUrl");
   const customImageUrl = rawImageUrl && /^https?:\/\//.test(rawImageUrl) ? rawImageUrl : null;
-  const cover = customImageUrl ?? event.coverUrl;
+  const cover = customImageUrl ?? event.coverUrl ?? event.galleryUrls[0] ?? null;
 
   const fonts = await getSocialImageFonts();
   const { width, height } = SIZES[format];
