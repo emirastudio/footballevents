@@ -155,30 +155,42 @@ export async function GET(
           src={cover}
           width={width}
           height={height}
-          style={{ position: "absolute", top: 0, left: 0, width, height, objectFit: "cover", opacity: 0.45 }}
+          style={{ position: "absolute", top: 0, left: 0, width, height, objectFit: "cover" }}
         />
       )}
-      {/* Dark gradient overlay for text legibility (top + bottom) */}
-      <div style={{ position: "absolute", top: 0, left: 0, width, height, display: "flex",
-        background: `linear-gradient(180deg, rgba(10,22,40,0.85) 0%, rgba(10,22,40,0.2) 35%, rgba(10,22,40,0.2) 60%, rgba(10,22,40,0.92) 100%)`,
+      {/* No-cover fallback: decorative football pitch SVG centred on the gradient */}
+      {!cover && (
+        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}
+          style={{ position: "absolute", top: 0, left: 0, width, height, display: "flex" }}
+        >
+          <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke={pitchStroke} strokeWidth="2.5" />
+          {isPortraitLike
+            ? <line x1={fx} y1={cy} x2={fx + fw} y2={cy} stroke={pitchStroke} strokeWidth="2" />
+            : <line x1={cx} y1={fy} x2={cx} y2={fy + fh} stroke={pitchStroke} strokeWidth="2" />}
+          <circle cx={cx} cy={cy} r={cR} fill="none" stroke={pitchStroke} strokeWidth="2" />
+          <circle cx={cx} cy={cy} r={5} fill={pitchStroke} />
+          <rect x={pbX} y={fy} width={pbW} height={pbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+          <rect x={gbX} y={fy} width={gbW} height={gbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+          <rect x={pbX} y={fy + fh - pbH} width={pbW} height={pbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+          <rect x={gbX} y={fy + fh - gbH} width={gbW} height={gbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
+          <circle cx={cx} cy={fy + Math.round(11 * scaleH)} r={4} fill={pitchStroke} />
+          <circle cx={cx} cy={fy + fh - Math.round(11 * scaleH)} r={4} fill={pitchStroke} />
+        </svg>
+      )}
+      {/* Top scrim — keeps logo + organizer name + price chip readable */}
+      <div style={{ position: "absolute", top: 0, left: 0, width, height: Math.round(height * 0.22), display: "flex",
+        background: "linear-gradient(180deg, rgba(10,22,40,0.78) 0%, rgba(10,22,40,0.45) 55%, rgba(10,22,40,0) 100%)",
       }} />
-      {/* Football pitch outline */}
-      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}
-        style={{ position: "absolute", top: 0, left: 0, width, height, display: "flex" }}
-      >
-        <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke={pitchStroke} strokeWidth="2.5" />
-        {isPortraitLike
-          ? <line x1={fx} y1={cy} x2={fx + fw} y2={cy} stroke={pitchStroke} strokeWidth="2" />
-          : <line x1={cx} y1={fy} x2={cx} y2={fy + fh} stroke={pitchStroke} strokeWidth="2" />}
-        <circle cx={cx} cy={cy} r={cR} fill="none" stroke={pitchStroke} strokeWidth="2" />
-        <circle cx={cx} cy={cy} r={5} fill={pitchStroke} />
-        <rect x={pbX} y={fy} width={pbW} height={pbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
-        <rect x={gbX} y={fy} width={gbW} height={gbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
-        <rect x={pbX} y={fy + fh - pbH} width={pbW} height={pbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
-        <rect x={gbX} y={fy + fh - gbH} width={gbW} height={gbH} fill="none" stroke={pitchStroke} strokeWidth="2" />
-        <circle cx={cx} cy={fy + Math.round(11 * scaleH)} r={4} fill={pitchStroke} />
-        <circle cx={cx} cy={fy + fh - Math.round(11 * scaleH)} r={4} fill={pitchStroke} />
-      </svg>
+      {/* Bottom scrim — under the title block. Tall on Story, shorter on Landscape. */}
+      <div style={{ position: "absolute", left: 0, width,
+        bottom: 0, height: Math.round(height * (isPortraitLike ? 0.42 : 0.55)), display: "flex",
+        background: `linear-gradient(180deg, rgba(10,22,40,0) 0%, rgba(10,22,40,0.55) 45%, rgba(10,22,40,0.94) 100%)`,
+      }} />
+      {/* Subtle pitch-tinted glow at the very bottom edge for brand continuity */}
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, width, height: Math.round(height * 0.06),
+        display: "flex",
+        background: `linear-gradient(180deg, rgba(4,120,87,0) 0%, rgba(4,120,87,0.55) 100%)`,
+      }} />
 
       {/* Top bar: logo + organizer name */}
       <div style={{ position: "absolute", top: padding, left: padding, right: padding, display: "flex", alignItems: "center", gap: 18 }}>
