@@ -5,9 +5,9 @@
 let cache: Promise<{ name: string; data: ArrayBuffer; weight: 400 | 700; style: "normal" }[]> | null = null;
 
 const URLS = {
-  bebas:    "https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXoo9WdhyzbiHQ.woff",
-  interReg: "https://fonts.gstatic.com/s/inter/v19/UcCo3FwrK3iLTcvneQ.woff",
-  interBold:"https://fonts.gstatic.com/s/inter/v19/UcCo3FwrK3iLTcvieQ.woff",
+  bebas:    "https://fonts.gstatic.com/s/bebasneue/v16/JTUSjIg69CK48gW7PXooxW4.ttf",
+  interReg: "https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf",
+  interBold:"https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf",
 };
 
 async function fetchFont(url: string): Promise<ArrayBuffer> {
