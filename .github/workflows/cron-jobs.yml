@@ -1,0 +1,65 @@
+name: Cron jobs
+
+# All scheduled tasks for footballevents.eu live here so the schedule is in
+# version control and not hidden in a hosting dashboard. Each job hits a
+# protected /api/cron/* endpoint with Bearer ${{ secrets.CRON_SECRET }}.
+#
+# REQUIRED GITHUB SECRETS (Settings → Secrets and variables → Actions):
+# - CRON_SECRET   — same value as the CRON_SECRET env var on the server
+# - SITE_URL      — e.g. https://footballevents.eu (no trailing slash)
+#
+# Schedules use UTC. GitHub may delay scheduled runs under heavy load —
+# acceptable for these workloads since each job has its own idempotency.
+
+on:
+  schedule:
+    # Hourly: auto-publish reviews older than 72h that organizer hasn't moderated
+    - cron: "5 * * * *"
+    # Daily 08:00 UTC: digest of new events for each saved search
+    - cron: "0 8 * * *"
+    # Daily 09:00 UTC: ask attendees to leave a review
+    - cron: "0 9 * * *"
+    # Daily 10:00 UTC: clear stale boosts, downgrade expired subscriptions, send 7-day expiry warnings
+    - cron: "0 10 * * *"
+  workflow_dispatch: # manual trigger from the Actions tab
+
+jobs:
+  auto-approve-reviews:
+    if: github.event.schedule == '5 * * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/auto-approve-reviews
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/auto-approve-reviews"
+
+  saved-search-alerts:
+    if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/saved-search-alerts
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/saved-search-alerts"
+
+  request-reviews:
+    if: github.event.schedule == '0 9 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/request-reviews
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/request-reviews"
+
+  expire-boosts:
+    if: github.event.schedule == '0 10 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/expire-boosts
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/expire-boosts"
