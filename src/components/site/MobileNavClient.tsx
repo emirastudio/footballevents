@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { X, Menu, LogOut, LayoutDashboard, ChevronRight, User } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
-import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
+import { locales, localeNames, type Locale } from "@/i18n/config";
 import { signOutAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/Button";
 import { Logo } from "./Logo";
@@ -96,7 +96,6 @@ export function MobileNavClient({ links, user, labels }: Props) {
                         : "border-[var(--color-border)] text-[var(--color-foreground)] hover:bg-[var(--color-surface-muted)]"
                     }`}
                   >
-                    <span>{localeFlags[l]}</span>
                     {localeNames[l]}
                   </button>
                 ))}

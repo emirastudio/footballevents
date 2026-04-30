@@ -2,7 +2,7 @@
 
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
-import { locales, localeNames, localeFlags, type Locale } from "@/i18n/config";
+import { locales, localeNames, type Locale } from "@/i18n/config";
 import { Globe } from "lucide-react";
 import { useTransition } from "react";
 
@@ -33,7 +33,7 @@ export function LocaleSwitcher() {
       >
         {locales.map((l) => (
           <option key={l} value={l}>
-            {localeFlags[l]} {localeNames[l]}
+            {localeNames[l]}
           </option>
         ))}
       </select>
