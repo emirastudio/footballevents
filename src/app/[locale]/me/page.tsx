@@ -9,7 +9,7 @@ import { countUnreadThreads } from "@/lib/messages";
 import { EventCard } from "@/components/cards/EventCard";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
 import type { MockEvent, MockOrganizer } from "@/lib/mock-data";
-import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings } from "lucide-react";
+import { Bookmark, Bell, Mail, Calendar, MessageSquare, Settings, Zap, Star, Crown } from "lucide-react";
 
 export default async function MePage({
   params,
@@ -31,7 +31,7 @@ export default async function MePage({
 
   const unreadMessages = await countUnreadThreads(userId);
 
-  const [user, savedRows, followedRows] = await Promise.all([
+  const [user, savedRows, organizer, followedRows] = await Promise.all([
     db.user.findUnique({ where: { id: userId } }),
     db.eventSave.findMany({
       where: { userId },
@@ -47,6 +47,10 @@ export default async function MePage({
           },
         },
       },
+    }),
+    db.organizer.findUnique({
+      where: { userId },
+      select: { id: true, slug: true, name: true, subscriptionTier: true, subscriptionEndsAt: true },
     }),
     db.organizerFollow.findMany({
       where: { userId },
@@ -181,6 +185,62 @@ export default async function MePage({
           </Link>
         </div>
       </div>
+
+      {/* Organizer plan card */}
+      {organizer && (() => {
+        const tier = organizer.subscriptionTier as "FREE" | "PRO" | "PREMIUM" | "ENTERPRISE";
+        const endsAt = organizer.subscriptionEndsAt;
+        const daysLeft = endsAt ? Math.ceil((endsAt.getTime() - Date.now()) / 86400000) : null;
+        const tierColors = {
+          FREE:       "bg-[var(--color-surface-muted)] text-[var(--color-muted-strong)]",
+          PRO:        "bg-blue-50 text-blue-700",
+          PREMIUM:    "bg-amber-50 text-amber-700",
+          ENTERPRISE: "bg-purple-50 text-purple-700",
+        };
+        const TierIcon = tier === "PREMIUM" || tier === "ENTERPRISE" ? Crown : tier === "PRO" ? Star : Zap;
+        return (
+          <div className={`mb-10 flex flex-col gap-4 rounded-[var(--radius-2xl)] border p-6 sm:flex-row sm:items-center ${
+            tier === "PREMIUM" ? "border-amber-200 bg-amber-50" :
+            tier === "PRO"     ? "border-blue-200 bg-blue-50" :
+                                 "border-[var(--color-border)] bg-[var(--color-surface)]"
+          }`}>
+            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${tierColors[tier]}`}>
+              <TierIcon className="h-5 w-5" />
+            </div>
+            <div className="flex-1">
+              <div className="font-[family-name:var(--font-manrope)] text-lg font-bold text-[var(--color-foreground)]">
+                {organizer.name} — <span className={tier === "PREMIUM" ? "text-amber-700" : tier === "PRO" ? "text-blue-700" : "text-[var(--color-muted-strong)]"}>{tier}</span>
+              </div>
+              {daysLeft !== null && daysLeft > 0 ? (
+                <p className="mt-0.5 text-sm text-[var(--color-muted-strong)]">
+                  {tier} active · expires in <strong>{daysLeft} day{daysLeft !== 1 ? "s" : ""}</strong> ({endsAt!.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })})
+                </p>
+              ) : daysLeft !== null && daysLeft <= 0 ? (
+                <p className="mt-0.5 text-sm text-red-600">Plan expired — downgrade to Free pending</p>
+              ) : (
+                <p className="mt-0.5 text-sm text-[var(--color-muted)]">
+                  {tier === "FREE" ? "Free plan · upgrade to unlock more features" : "Active subscription"}
+                </p>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link href="/organizer/dashboard">Dashboard</Link>
+              </Button>
+              {tier === "FREE" && (
+                <Button asChild variant="accent" size="sm">
+                  <Link href="/pricing">Upgrade</Link>
+                </Button>
+              )}
+              {(tier === "PRO" || tier === "PREMIUM") && daysLeft !== null && daysLeft <= 14 && (
+                <Button asChild variant="accent" size="sm">
+                  <Link href="/pricing">Renew</Link>
+                </Button>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Saved events */}
       <section className="mb-12">
