@@ -95,9 +95,17 @@ export function EventCard({ event: e, locale, rank, size = "md", labels }: Props
 
         <div className="mt-auto flex items-end justify-between gap-2 border-t border-[var(--color-border)] pt-2.5">
           <div className="flex items-center gap-1 text-xs">
-            <Star className="h-3 w-3 fill-[var(--color-premium)] text-[var(--color-premium)]" />
-            <span className="font-semibold text-[var(--color-foreground)]">{e.rating}</span>
-            <span className="text-[var(--color-muted)]">({e.reviewsCount})</span>
+            {e.reviewsCount > 0 ? (
+              <>
+                <Star className="h-3 w-3 fill-[var(--color-premium)] text-[var(--color-premium)]" />
+                <span className="font-semibold text-[var(--color-foreground)]">{e.rating.toFixed(1)}</span>
+                <span className="text-[var(--color-muted)]">({e.reviewsCount})</span>
+              </>
+            ) : (
+              <span className="rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">
+                New
+              </span>
+            )}
           </div>
           <div className="text-right">
             {e.isFree ? (

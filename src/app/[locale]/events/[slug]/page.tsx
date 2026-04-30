@@ -295,11 +295,13 @@ export default async function EventDetailPage({
                   {t("reviews")}
                 </h2>
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <Star className="h-4 w-4 fill-[var(--color-premium)] text-[var(--color-premium)]" />
-                    <span className="font-semibold text-[var(--color-foreground)]">{event.rating}</span>
-                    <span className="text-sm text-[var(--color-muted)]">({event.reviewsCount})</span>
-                  </div>
+                  {event.reviewsCount > 0 ? (
+                    <div className="flex items-center gap-1.5">
+                      <Star className="h-4 w-4 fill-[var(--color-premium)] text-[var(--color-premium)]" />
+                      <span className="font-semibold text-[var(--color-foreground)]">{event.rating.toFixed(1)}</span>
+                      <span className="text-sm text-[var(--color-muted)]">({event.reviewsCount})</span>
+                    </div>
+                  ) : null}
                   <Link
                     href={`/events/${event.slug}/review`}
                     className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-500)] hover:text-[var(--color-pitch-700)]"
