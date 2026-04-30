@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -10,8 +10,6 @@ import {
   Hotel,
   Users,
   Star,
-  Globe,
-  CheckCircle2,
   Camera,
   Mic,
   Trophy,
@@ -19,55 +17,25 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "aboutMatchTours" });
   return {
-    title: "Туры на футбольные матчи | footballevents.eu",
-    description:
-      "Организованные туры на матчи Лиги Чемпионов, Примеры, АПЛ, Серии А и других топ-лиг. Билеты, отель, трансфер — живой стадион незабываем. Выбирай тур и бронируй онлайн.",
-    alternates: { canonical: `${SITE_URL}/ru/about/match-tours` },
+    title: t("metaTitle"),
+    description: t("metaDesc"),
+    alternates: { canonical: `${SITE_URL}/${locale}/about/match-tours` },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/ru/about/match-tours`,
-      title: "Туры на футбольные матчи | footballevents.eu",
-      description: "Организованные туры на матчи топовых лиг — Лига Чемпионов, АПЛ, Примера, Серия А.",
+      url: `${SITE_URL}/${locale}/about/match-tours`,
+      title: t("metaTitle"),
+      description: t("metaDesc"),
     },
   };
 }
-
-const leagues = [
-  { label: "Лига Чемпионов", flag: "🏆" },
-  { label: "Английская Премьер-лига", flag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
-  { label: "Ла Лига (Испания)", flag: "🇪🇸" },
-  { label: "Бундеслига (Германия)", flag: "🇩🇪" },
-  { label: "Серия А (Италия)", flag: "🇮🇹" },
-  { label: "Лига 1 (Франция)", flag: "🇫🇷" },
-  { label: "Эредивизие (Нидерланды)", flag: "🇳🇱" },
-  { label: "Primeira Liga (Португалия)", flag: "🇵🇹" },
-];
-
-const included = [
-  { icon: Ticket, title: "Билеты на матч", desc: "Организатор тура берёт на себя поиск и бронирование официальных билетов" },
-  { icon: Hotel, title: "Размещение", desc: "Отель рядом со стадионом или в центре города — выбирается вместе с туром" },
-  { icon: Plane, title: "Трансфер", desc: "Трансфер из аэропорта и до стадиона — без стресса и навигации в чужом городе" },
-  { icon: Camera, title: "Экскурсии", desc: "Посещение стадиона, музея клуба, тренировочной базы — в зависимости от тура" },
-  { icon: Mic, title: "Гид и организация", desc: "Профессиональный гид на месте, готовый отвечать на вопросы и решать вопросы" },
-  { icon: Users, title: "Группа единомышленников", desc: "Едешь не один — рядом такие же фанаты, с которыми уже есть общая тема" },
-];
-
-const forWhom = [
-  {
-    title: "Для болельщиков",
-    desc: "Мечтаешь увидеть Real Madrid или Manchester United вживую? Тур убирает все сложности — визы, билеты, отель — и оставляет только эмоции.",
-  },
-  {
-    title: "Для семей",
-    desc: "Семейные туры с продуманной программой: матч, экскурсия по стадиону, музей клуба, прогулка по городу. Незабываемые воспоминания для детей.",
-  },
-  {
-    title: "Для корпораций",
-    desc: "VIP-туры на матчи топ-клубов — лучший вариант корпоративного мероприятия для команды или партнёров. Бизнес-среда + футбол = работает безупречно.",
-  },
-];
 
 export default async function MatchToursAboutPage({
   params,
@@ -77,24 +45,52 @@ export default async function MatchToursAboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations("aboutMatchTours");
+
+  const leagues = [
+    { label: t("leagues.0.label"), flag: t("leagues.0.flag") },
+    { label: t("leagues.1.label"), flag: t("leagues.1.flag") },
+    { label: t("leagues.2.label"), flag: t("leagues.2.flag") },
+    { label: t("leagues.3.label"), flag: t("leagues.3.flag") },
+    { label: t("leagues.4.label"), flag: t("leagues.4.flag") },
+    { label: t("leagues.5.label"), flag: t("leagues.5.flag") },
+    { label: t("leagues.6.label"), flag: t("leagues.6.flag") },
+    { label: t("leagues.7.label"), flag: t("leagues.7.flag") },
+  ];
+
+  const included = [
+    { icon: Ticket, title: t("included.0.title"), desc: t("included.0.desc") },
+    { icon: Hotel, title: t("included.1.title"), desc: t("included.1.desc") },
+    { icon: Plane, title: t("included.2.title"), desc: t("included.2.desc") },
+    { icon: Camera, title: t("included.3.title"), desc: t("included.3.desc") },
+    { icon: Mic, title: t("included.4.title"), desc: t("included.4.desc") },
+    { icon: Users, title: t("included.5.title"), desc: t("included.5.desc") },
+  ];
+
+  const forWhom = [
+    { title: t("forWhom.0.title"), desc: t("forWhom.0.desc") },
+    { title: t("forWhom.1.title"), desc: t("forWhom.1.desc") },
+    { title: t("forWhom.2.title"), desc: t("forWhom.2.desc") },
+  ];
+
   return (
     <>
       <PageHeader
-        eyebrow="Категория"
-        title="Туры на футбольные матчи"
-        subtitle="Живой стадион — это незабываемо. Организованные туры на матчи Лиги Чемпионов, АПЛ, Примеры и других топ-лиг мира — с билетами, отелем и трансфером."
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle")}
         breadcrumbs={[
-          { href: "/", label: "Главная" },
-          { href: "/about", label: "О проекте" },
-          { label: "Туры на матчи" },
+          { href: "/", label: t("breadcrumbHome") },
+          { href: "/about", label: t("breadcrumbAbout") },
+          { label: t("breadcrumbCurrent") },
         ]}
       >
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="accent" size="lg">
-            <Link href="/categories/match-tours">Смотреть туры</Link>
+            <Link href="/categories/match-tours">{t("ctaView")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/organizer/events/new">Разместить тур</Link>
+            <Link href="/organizer/events/new">{t("ctaPost")}</Link>
           </Button>
         </div>
       </PageHeader>
@@ -103,17 +99,13 @@ export default async function MatchToursAboutPage({
       <Container className="py-16 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Живой матч — другой мир
+            {t("whyTitle")}
           </h2>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            Смотреть футбол по телевизору и быть на стадионе — это два совершенно разных опыта. Рёв трибун,
-            запах газона, физическое присутствие тысяч болельщиков, которые переживают то же самое —
-            это невозможно передать ни одним HD-трансляцией.
+            {t("whyBody1")}
           </p>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            Туры на матчи убирают всё сложное: поиск официальных билетов (которых нет в свободной продаже),
-            бронирование отеля, навигацию в незнакомом городе, языковой барьер. Ты просто приезжаешь —
-            и получаешь незабываемые эмоции.
+            {t("whyBody2")}
           </p>
         </div>
       </Container>
@@ -122,7 +114,7 @@ export default async function MatchToursAboutPage({
       <div className="bg-[var(--color-surface-muted,#F4F6FA)] py-16">
         <Container>
           <h2 className="mb-8 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Лиги и турниры
+            {t("leaguesTitle")}
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {leagues.map((l) => (
@@ -136,7 +128,7 @@ export default async function MatchToursAboutPage({
             ))}
           </div>
           <p className="mt-6 text-sm text-[var(--color-muted)]">
-            Организаторы также предлагают туры на матчи местных лиг и кубков — уточняйте в каталоге.
+            {t("leaguesNote")}
           </p>
         </Container>
       </div>
@@ -144,7 +136,7 @@ export default async function MatchToursAboutPage({
       {/* What's included */}
       <Container className="py-16 sm:py-20">
         <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-          Что обычно входит в тур
+          {t("includedTitle")}
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {included.map((it) => (
@@ -163,7 +155,7 @@ export default async function MatchToursAboutPage({
           ))}
         </div>
         <p className="mt-6 text-sm text-[var(--color-muted)]">
-          * Точный состав тура зависит от организатора и выбранной программы. Уточняйте на странице события.
+          {t("includedNote")}
         </p>
       </Container>
 
@@ -171,7 +163,7 @@ export default async function MatchToursAboutPage({
       <div className="bg-[var(--color-surface-muted,#F4F6FA)] py-16">
         <Container>
           <h2 className="mb-8 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Кому подойдёт тур на матч
+            {t("forWhomTitle")}
           </h2>
           <div className="grid gap-6 sm:grid-cols-3">
             {forWhom.map((f) => (
@@ -199,11 +191,9 @@ export default async function MatchToursAboutPage({
             ))}
           </div>
           <blockquote className="text-lg font-medium leading-relaxed text-[var(--color-foreground)]">
-            «Впервые попал на Камп Ноу — это было невероятно. Организаторы тура сделали всё:
-            билеты в нужный сектор, отель в 10 минутах ходьбы, экскурсия по стадиону за день до матча.
-            Уже планирую следующий тур.»
+            &ldquo;{t("testimonialQuote")}&rdquo;
           </blockquote>
-          <div className="mt-4 text-sm text-[var(--color-muted)]">Алексей, болельщик, Минск</div>
+          <div className="mt-4 text-sm text-[var(--color-muted)]">{t("testimonialAuthor")}</div>
         </div>
       </Container>
 
@@ -212,12 +202,12 @@ export default async function MatchToursAboutPage({
         <Container>
           <div className="text-center">
             <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-white sm:text-3xl">
-              Выбери тур на матч мечты
+              {t("ctaTitle")}
             </h2>
-            <p className="mt-3 text-white/70">Матчи АПЛ, Примеры, Лига Чемпионов — прямо сейчас в каталоге</p>
+            <p className="mt-3 text-white/70">{t("ctaSubtitle")}</p>
             <div className="mt-8">
               <Button asChild variant="accent" size="lg">
-                <Link href="/categories/match-tours">Смотреть все туры</Link>
+                <Link href="/categories/match-tours">{t("ctaView2")}</Link>
               </Button>
             </div>
           </div>

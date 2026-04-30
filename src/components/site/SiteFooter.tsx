@@ -57,7 +57,26 @@ export async function SiteFooter() {
           {cols.map((c) =>
             c.title === "__about__" ? (
               <div key="about">
-                <FooterAboutMenu />
+                <FooterAboutMenu
+                  title={tFooter("aboutSection")}
+                  more={tFooter("aboutMore")}
+                  hide={tFooter("aboutHide")}
+                  links={[
+                    { href: "/about", label: tFooter("aboutLinks.about") },
+                    { href: "/about/tournaments", label: tFooter("aboutLinks.tournaments") },
+                    { href: "/about/camps", label: tFooter("aboutLinks.camps") },
+                    { href: "/about/for-organizers", label: tFooter("aboutLinks.forOrganizers") },
+                    { href: "/about/for-clubs", label: tFooter("aboutLinks.forClubs") },
+                    { href: "/about/academy-trials", label: tFooter("aboutLinks.academyTrials") },
+                  ]}
+                  secondaryLinks={[
+                    { href: "/about/for-players", label: tFooter("aboutLinks.forPlayers") },
+                    { href: "/about/festivals", label: tFooter("aboutLinks.festivals") },
+                    { href: "/about/match-tours", label: tFooter("aboutLinks.matchTours") },
+                    { href: "/about/training-camps", label: tFooter("aboutLinks.trainingCamps") },
+                    { href: "/contact", label: tFooter("aboutLinks.contact") },
+                  ]}
+                />
               </div>
             ) : (
               <div key={c.title}>

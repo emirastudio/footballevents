@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -14,75 +14,30 @@ import {
   ArrowRight,
   Target,
   CalendarDays,
-  BarChart3,
   Star,
 } from "lucide-react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "aboutClubs" });
   return {
-    title: "footballevents.eu для футбольных клубов | Турниры, сборы, игроки",
-    description:
-      "Как футбольный клуб может использовать footballevents.eu: поиск турниров для команд, организация тренировочных сборов, привлечение игроков через просмотры, продвижение клубных событий.",
-    alternates: { canonical: `${SITE_URL}/ru/about/for-clubs` },
+    title: t("metaTitle"),
+    description: t("metaDesc"),
+    alternates: { canonical: `${SITE_URL}/${locale}/about/for-clubs` },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/ru/about/for-clubs`,
-      title: "footballevents.eu для клубов | Турниры, сборы, игроки",
-      description: "Всё что нужно футбольному клубу: турниры, сборы, просмотры и продвижение — на одной платформе.",
+      url: `${SITE_URL}/${locale}/about/for-clubs`,
+      title: t("metaTitle"),
+      description: t("metaDesc"),
     },
   };
 }
-
-const useCases = [
-  {
-    icon: Trophy,
-    title: "Найди турниры для команд",
-    desc: "Регистрируй одну или несколько команд клуба на турниры — от городских кубков до международных соревнований. Фильтрация по возрасту, уровню, стране.",
-  },
-  {
-    icon: Dumbbell,
-    title: "Организуй сборы",
-    desc: "Найди тренировочные базы и программы сборов — предсезонные, тактические, международные. Одна форма заявки для всей команды.",
-  },
-  {
-    icon: Target,
-    title: "Проводи просмотры",
-    desc: "Публикуй открытые просмотры в академию или основной состав. Получай заявки от игроков со всего мира — с данными, возрастом и позицией.",
-  },
-  {
-    icon: Globe,
-    title: "Продвигай клубные события",
-    desc: "Проводишь турнир, лагерь, день открытых дверей? Размести на платформе — и получи аудиторию из 50+ стран без рекламного бюджета.",
-  },
-  {
-    icon: Users,
-    title: "Привлекай игроков",
-    desc: "Открытые просмотры и клубные события на footballevents.eu — это лучший способ заявить о клубе для новых игроков, особенно международных.",
-  },
-  {
-    icon: CalendarDays,
-    title: "Планируй сезон",
-    desc: "Каталог мероприятий помогает выстроить календарь команды: турниры, сборы, фестивали — всё в одном месте с фильтром по датам.",
-  },
-];
-
-const clubBenefits = [
-  "Единая платформа для всех активностей клуба",
-  "Международная аудитория без рекламных вложений",
-  "Онлайн-заявки на турниры и сборы — без бумаги",
-  "Командные заявки: один раз — вся группа",
-  "Верифицированный профиль организатора для доверия",
-  "Аналитика по каждому мероприятию клуба",
-];
-
-const clubTypes = [
-  { icon: "🏆", label: "Профессиональные клубы", desc: "Академии с системой юношеских команд" },
-  { icon: "⚽", label: "Любительские клубы", desc: "Городские и районные клубы с несколькими составами" },
-  { icon: "🎓", label: "Футбольные школы", desc: "Частные школы и секции, работающие с детьми" },
-  { icon: "🤝", label: "Корпоративные команды", desc: "Корпоративные лиги и команды компаний" },
-];
 
 export default async function ForClubsPage({
   params,
@@ -92,24 +47,51 @@ export default async function ForClubsPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations("aboutClubs");
+
+  const useCases = [
+    { icon: Trophy, title: t("useCases.0.title"), desc: t("useCases.0.desc") },
+    { icon: Dumbbell, title: t("useCases.1.title"), desc: t("useCases.1.desc") },
+    { icon: Target, title: t("useCases.2.title"), desc: t("useCases.2.desc") },
+    { icon: Globe, title: t("useCases.3.title"), desc: t("useCases.3.desc") },
+    { icon: Users, title: t("useCases.4.title"), desc: t("useCases.4.desc") },
+    { icon: CalendarDays, title: t("useCases.5.title"), desc: t("useCases.5.desc") },
+  ];
+
+  const clubBenefits = [
+    t("benefits.0"),
+    t("benefits.1"),
+    t("benefits.2"),
+    t("benefits.3"),
+    t("benefits.4"),
+    t("benefits.5"),
+  ];
+
+  const clubTypes = [
+    { icon: t("clubTypes.0.icon"), label: t("clubTypes.0.label"), desc: t("clubTypes.0.desc") },
+    { icon: t("clubTypes.1.icon"), label: t("clubTypes.1.label"), desc: t("clubTypes.1.desc") },
+    { icon: t("clubTypes.2.icon"), label: t("clubTypes.2.label"), desc: t("clubTypes.2.desc") },
+    { icon: t("clubTypes.3.icon"), label: t("clubTypes.3.label"), desc: t("clubTypes.3.desc") },
+  ];
+
   return (
     <>
       <PageHeader
-        eyebrow="Для клубов"
-        title="footballevents.eu для футбольных клубов"
-        subtitle="Регистрируй команды на турниры, организуй сборы, проводи просмотры и продвигай клубные события — всё на одной платформе."
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle")}
         breadcrumbs={[
-          { href: "/", label: "Главная" },
-          { href: "/about", label: "О проекте" },
-          { label: "Для клубов" },
+          { href: "/", label: t("breadcrumbHome") },
+          { href: "/about", label: t("breadcrumbAbout") },
+          { label: t("breadcrumbCurrent") },
         ]}
       >
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="accent" size="lg">
-            <Link href="/onboarding">Зарегистрировать клуб</Link>
+            <Link href="/onboarding">{t("ctaRegister")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/events">Найти турнир</Link>
+            <Link href="/events">{t("ctaFind")}</Link>
           </Button>
         </div>
       </PageHeader>
@@ -118,16 +100,13 @@ export default async function ForClubsPage({
       <Container className="py-16 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Один инструмент — все задачи клуба
+            {t("introTitle")}
           </h2>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            Современный футбольный клуб занимается сразу многим: играет в турнирах, ищет новых игроков,
-            проводит сборы, организует собственные мероприятия. Всё это обычно рассыпано по разным
-            таблицам, мессенджерам и сайтам.
+            {t("introBody1")}
           </p>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            footballevents.eu закрывает весь этот цикл: как инструмент поиска (находи турниры и сборы)
-            и как инструмент продвижения (публикуй свои мероприятия и просмотры для международной аудитории).
+            {t("introBody2")}
           </p>
         </div>
       </Container>
@@ -136,7 +115,7 @@ export default async function ForClubsPage({
       <div className="bg-[var(--color-surface-muted,#F4F6FA)] py-12">
         <Container>
           <h2 className="mb-8 font-[family-name:var(--font-manrope)] text-xl font-bold text-[var(--color-foreground)]">
-            Кому подходит
+            {t("whoTitle")}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {clubTypes.map((c) => (
@@ -156,7 +135,7 @@ export default async function ForClubsPage({
       {/* Use cases */}
       <Container className="py-16 sm:py-20">
         <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-          Что делает клуб на платформе
+          {t("useCasesTitle")}
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {useCases.map((u) => (
@@ -184,7 +163,7 @@ export default async function ForClubsPage({
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-                Преимущества для клуба
+                {t("benefitsTitle")}
               </h2>
               <ul className="mt-6 space-y-3">
                 {clubBenefits.map((b) => (
@@ -196,18 +175,16 @@ export default async function ForClubsPage({
               </ul>
               <div className="mt-8">
                 <Button asChild variant="accent">
-                  <Link href="/onboarding">Зарегистрировать клуб <ArrowRight className="ml-1 h-4 w-4" /></Link>
+                  <Link href="/onboarding">{t("ctaRegister")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
                 </Button>
               </div>
             </div>
             <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8">
               <Star className="mb-4 h-8 w-8 text-amber-500" />
               <blockquote className="text-lg font-medium leading-relaxed text-[var(--color-foreground)]">
-                «Раньше мы искали турниры через знакомых или в Facebook-группах. Теперь открываем каталог,
-                фильтруем по возрасту команды — и через 5 минут уже подаём заявку. Плюс сами разместили
-                свой летний турнир и получили команды из трёх стран.»
+                &ldquo;{t("testimonialQuote")}&rdquo;
               </blockquote>
-              <div className="mt-4 text-sm text-[var(--color-muted)]">Директор любительского клуба, Рига</div>
+              <div className="mt-4 text-sm text-[var(--color-muted)]">{t("testimonialAuthor")}</div>
             </div>
           </div>
         </Container>
@@ -218,15 +195,15 @@ export default async function ForClubsPage({
         <Container>
           <div className="text-center">
             <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-white sm:text-3xl">
-              Зарегистрируй клуб — это бесплатно
+              {t("ctaTitle")}
             </h2>
-            <p className="mt-3 text-white/70">Первые мероприятия и профиль организатора — бесплатно навсегда</p>
+            <p className="mt-3 text-white/70">{t("ctaSubtitle")}</p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button asChild variant="accent" size="lg">
-                <Link href="/onboarding">Создать профиль клуба</Link>
+                <Link href="/onboarding">{t("ctaCreate")}</Link>
               </Button>
               <Button asChild variant="white" size="lg">
-                <Link href="/events">Найти турниры и сборы</Link>
+                <Link href="/events">{t("ctaFind2")}</Link>
               </Button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -19,59 +19,25 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "aboutTournaments" });
   return {
-    title: "Футбольные турниры по всему миру | footballevents.eu",
-    description:
-      "Каталог футбольных турниров для любителей, юношей, корпораций и полупрофессионалов. Соревнования со всех континентов — фильтруй по возрасту, уровню и стране, подавай заявку онлайн.",
-    alternates: { canonical: `${SITE_URL}/ru/about/tournaments` },
+    title: t("metaTitle"),
+    description: t("metaDesc"),
+    alternates: { canonical: `${SITE_URL}/${locale}/about/tournaments` },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/ru/about/tournaments`,
-      title: "Футбольные турниры по всему миру | footballevents.eu",
-      description:
-        "Турниры по футболу для любителей, юношей и полупрофессионалов — каталог соревнований со всего мира.",
+      url: `${SITE_URL}/${locale}/about/tournaments`,
+      title: t("metaTitle"),
+      description: t("metaDesc"),
     },
   };
 }
-
-const types = [
-  {
-    icon: Users,
-    title: "Юношеские турниры",
-    desc: "Соревнования от U7 до U21. Развивающие форматы, международные чемпионаты, академические отборы. Для детей и подростков.",
-  },
-  {
-    icon: Trophy,
-    title: "Любительские кубки",
-    desc: "Лиги выходного дня, городские кубки, корпоративные чемпионаты. Играй без профессионального контракта — в своё удовольствие.",
-  },
-  {
-    icon: Globe,
-    title: "Международные турниры",
-    desc: "Приглашённые команды из разных стран. Настоящий international experience — новые соперники, новые связи, новый уровень.",
-  },
-  {
-    icon: Star,
-    title: "Полупрофессиональные",
-    desc: "Соревнования для игроков с серьёзными амбициями. Качественный уровень игры, профессиональные судьи, разбор матчей.",
-  },
-];
-
-const howItWorks = [
-  { num: "01", title: "Найди турнир", desc: "Используй фильтры по стране, возрастной группе, уровню и датам" },
-  { num: "02", title: "Изучи детали", desc: "Расписание, правила, взносы, место проведения — всё на странице события" },
-  { num: "03", title: "Подай заявку", desc: "Онлайн-форма за 2 минуты. Никаких звонков, мессенджеров и ожидания" },
-  { num: "04", title: "Получи подтверждение", desc: "Организатор рассмотрит заявку и свяжется с тобой на платформе" },
-];
-
-const organizerBenefits = [
-  "Аудитория с 50+ стран — без дорогой рекламы",
-  "Онлайн-заявки и управление участниками в кабинете",
-  "Featured-размещение и бусты для максимальной видимости",
-  "Аналитика: просмотры, заявки, конверсия",
-  "Верифицированный бейдж — доверие участников",
-];
 
 export default async function TournamentsAboutPage({
   params,
@@ -81,24 +47,48 @@ export default async function TournamentsAboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations("aboutTournaments");
+
+  const types = [
+    { icon: Users, title: t("types.0.title"), desc: t("types.0.desc") },
+    { icon: Trophy, title: t("types.1.title"), desc: t("types.1.desc") },
+    { icon: Globe, title: t("types.2.title"), desc: t("types.2.desc") },
+    { icon: Star, title: t("types.3.title"), desc: t("types.3.desc") },
+  ];
+
+  const howItWorks = [
+    { num: t("how.0.num"), title: t("how.0.title"), desc: t("how.0.desc") },
+    { num: t("how.1.num"), title: t("how.1.title"), desc: t("how.1.desc") },
+    { num: t("how.2.num"), title: t("how.2.title"), desc: t("how.2.desc") },
+    { num: t("how.3.num"), title: t("how.3.title"), desc: t("how.3.desc") },
+  ];
+
+  const organizerBenefits = [
+    t("orgBenefits.0"),
+    t("orgBenefits.1"),
+    t("orgBenefits.2"),
+    t("orgBenefits.3"),
+    t("orgBenefits.4"),
+  ];
+
   return (
     <>
       <PageHeader
-        eyebrow="Категория"
-        title="Футбольные турниры со всего мира"
-        subtitle="От дворовых кубков до международных чемпионатов — находи соревнование своего уровня в любой стране мира и подавай заявку онлайн."
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle")}
         breadcrumbs={[
-          { href: "/", label: "Главная" },
-          { href: "/about", label: "О проекте" },
-          { label: "Турниры" },
+          { href: "/", label: t("breadcrumbHome") },
+          { href: "/about", label: t("breadcrumbAbout") },
+          { label: t("breadcrumbCurrent") },
         ]}
       >
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="accent" size="lg">
-            <Link href="/categories/tournaments">Смотреть турниры</Link>
+            <Link href="/categories/tournaments">{t("ctaView")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/organizer/events/new">Разместить турнир</Link>
+            <Link href="/organizer/events/new">{t("ctaPost")}</Link>
           </Button>
         </div>
       </PageHeader>
@@ -107,17 +97,13 @@ export default async function TournamentsAboutPage({
       <Container className="py-16 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Почему турнир — лучший способ расти
+            {t("whyTitle")}
           </h2>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            Турнир — это концентрат опыта. За один уикенд игрок получает больше игровых ситуаций, давления и
-            обратной связи, чем за месяц тренировок. Именно поэтому лучшие академии мира строят свои программы
-            развития вокруг соревновательной практики.
+            {t("whyBody1")}
           </p>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            На footballevents.eu собраны турниры из более чем 50 стран — от локальных городских кубков до
-            крупных международных турниров с участием команд из 20+ государств. Фильтруй по возрасту, уровню,
-            формату и стране — находи именно то, что нужно тебе или твоей команде.
+            {t("whyBody2")}
           </p>
         </div>
       </Container>
@@ -126,22 +112,22 @@ export default async function TournamentsAboutPage({
       <div className="bg-[var(--color-surface-muted,#F4F6FA)] py-16 sm:py-20">
         <Container>
           <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Какие турниры найдёшь в каталоге
+            {t("typesTitle")}
           </h2>
           <div className="grid gap-6 sm:grid-cols-2">
-            {types.map((t) => (
+            {types.map((t2) => (
               <div
-                key={t.title}
+                key={t2.title}
                 className="flex gap-5 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6"
               >
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-amber-50">
-                  <t.icon className="h-5 w-5 text-amber-600" />
+                  <t2.icon className="h-5 w-5 text-amber-600" />
                 </div>
                 <div>
                   <h3 className="font-[family-name:var(--font-manrope)] font-semibold text-[var(--color-foreground)]">
-                    {t.title}
+                    {t2.title}
                   </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-[var(--color-muted)]">{t.desc}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-[var(--color-muted)]">{t2.desc}</p>
                 </div>
               </div>
             ))}
@@ -152,7 +138,7 @@ export default async function TournamentsAboutPage({
       {/* How it works */}
       <Container className="py-16 sm:py-20">
         <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-          Как найти и подать заявку
+          {t("howTitle")}
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {howItWorks.map((s) => (
@@ -175,15 +161,13 @@ export default async function TournamentsAboutPage({
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <div className="mb-3 inline-flex items-center rounded-full border border-[var(--color-pitch-200)] bg-[var(--color-pitch-50)] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-pitch-700)]">
-                Для организаторов
+                {t("forOrgTitle")}
               </div>
               <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-                Размести турнир — и получи заявки из 50+ стран
+                {t("forOrgHeadline")}
               </h2>
               <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-                footballevents.eu — это лучший способ дать турниру международную видимость без дорогостоящей
-                рекламы. Организаторы с Premium-тарифом регулярно получают заявки из стран, куда
-                они никогда не «заходили» самостоятельно.
+                {t("forOrgBody")}
               </p>
               <ul className="mt-6 space-y-2">
                 {organizerBenefits.map((b) => (
@@ -195,16 +179,16 @@ export default async function TournamentsAboutPage({
               </ul>
               <div className="mt-8">
                 <Button asChild variant="accent">
-                  <Link href="/about/for-organizers">Подробнее для организаторов <ArrowRight className="ml-1 h-4 w-4" /></Link>
+                  <Link href="/about/for-organizers">{t("forOrgCta")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
                 </Button>
               </div>
             </div>
             <div className="flex flex-col gap-4">
               {[
-                { icon: MapPin, label: "Любая страна", val: "Укажи город или страну — участники найдут тебя" },
-                { icon: Filter, label: "Умные фильтры", val: "Возраст, формат, уровень — твой турнир точно в нужной выдаче" },
-                { icon: ClipboardList, label: "Заявки в кабинете", val: "Все запросы, контакты и статусы — в одном месте" },
-                { icon: CalendarDays, label: "Живой каталог", val: "Страница мероприятия обновляется в реальном времени" },
+                { icon: MapPin, label: t("orgFeatures.0.label"), val: t("orgFeatures.0.val") },
+                { icon: Filter, label: t("orgFeatures.1.label"), val: t("orgFeatures.1.val") },
+                { icon: ClipboardList, label: t("orgFeatures.2.label"), val: t("orgFeatures.2.val") },
+                { icon: CalendarDays, label: t("orgFeatures.3.label"), val: t("orgFeatures.3.val") },
               ].map((f) => (
                 <div
                   key={f.label}
@@ -227,15 +211,15 @@ export default async function TournamentsAboutPage({
         <Container>
           <div className="text-center">
             <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-white sm:text-3xl">
-              Найди свой турнир
+              {t("ctaTitle")}
             </h2>
-            <p className="mt-3 text-white/70">Более 1 000 мероприятий из 50+ стран — прямо сейчас</p>
+            <p className="mt-3 text-white/70">{t("ctaSubtitle")}</p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button asChild variant="accent" size="lg">
-                <Link href="/categories/tournaments">Смотреть все турниры</Link>
+                <Link href="/categories/tournaments">{t("ctaView2")}</Link>
               </Button>
               <Button asChild variant="white" size="lg">
-                <Link href="/organizer/events/new">Разместить турнир</Link>
+                <Link href="/organizer/events/new">{t("ctaPost2")}</Link>
               </Button>
             </div>
           </div>

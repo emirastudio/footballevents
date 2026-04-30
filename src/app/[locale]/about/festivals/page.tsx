@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -18,62 +18,25 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "aboutFestivals" });
   return {
-    title: "Футбольные фестивали | footballevents.eu",
-    description:
-      "Многодневные футбольные фестивали: стритбол, пляжный футбол, семейные события, культура игры. Находи фестивали по всему миру — от городских праздников до международных шоу-событий.",
-    alternates: { canonical: `${SITE_URL}/ru/about/festivals` },
+    title: t("metaTitle"),
+    description: t("metaDesc"),
+    alternates: { canonical: `${SITE_URL}/${locale}/about/festivals` },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/ru/about/festivals`,
-      title: "Футбольные фестивали | footballevents.eu",
-      description: "Многодневные футбольные фестивали — стритбол, пляжный футбол, семейный формат, культура игры.",
+      url: `${SITE_URL}/${locale}/about/festivals`,
+      title: t("metaTitle"),
+      description: t("metaDesc"),
     },
   };
 }
-
-const festivalTypes = [
-  {
-    icon: Globe,
-    title: "Уличный футбол",
-    desc: "Стритбол, freekick-соревнования, freestyle. Асфальт, маленькие ворота, большие эмоции. Для тех, кто вырос с мячом во дворе.",
-  },
-  {
-    icon: Sun,
-    title: "Пляжный футбол",
-    desc: "Песок, море, летний турнир. Пляжный футбол объединяет профессионалов и любителей — правила для всех одинаковы.",
-  },
-  {
-    icon: Users,
-    title: "Семейные фестивали",
-    desc: "Форматы для всей семьи: дети играют, родители болеют, все вместе едят и веселятся. Праздник, а не просто турнир.",
-  },
-  {
-    icon: Music,
-    title: "Футбол + культура",
-    desc: "Мероприятия, где футбол — часть большой культурной программы. Музыка, еда, арт, выставки. Атмосфера, а не только счёт.",
-  },
-  {
-    icon: Trophy,
-    title: "Мультиформатные события",
-    desc: "Несколько турниров, возрастных категорий и форматов на одной площадке. Три дня — тысячи участников и болельщиков.",
-  },
-  {
-    icon: Camera,
-    title: "Медиа-фестивали",
-    desc: "Соревнования с полноценной медиапродукцией: трансляции, фотографы, YouTube. Твои голы попадут в хайлайты.",
-  },
-];
-
-const whyFestival = [
-  "Атмосфера, которой нет в обычном турнире",
-  "Множество активностей помимо игры",
-  "Новые знакомства и нетворкинг",
-  "Контент для соцсетей — фото, видео, впечатления",
-  "Для всей команды — не только для игроков",
-  "Незабываемый опыт выходного дня",
-];
 
 export default async function FestivalsAboutPage({
   params,
@@ -83,24 +46,44 @@ export default async function FestivalsAboutPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations("aboutFestivals");
+
+  const festivalTypes = [
+    { icon: Globe, title: t("types.0.title"), desc: t("types.0.desc") },
+    { icon: Sun, title: t("types.1.title"), desc: t("types.1.desc") },
+    { icon: Users, title: t("types.2.title"), desc: t("types.2.desc") },
+    { icon: Music, title: t("types.3.title"), desc: t("types.3.desc") },
+    { icon: Trophy, title: t("types.4.title"), desc: t("types.4.desc") },
+    { icon: Camera, title: t("types.5.title"), desc: t("types.5.desc") },
+  ];
+
+  const whyFestival = [
+    t("whyBenefits.0"),
+    t("whyBenefits.1"),
+    t("whyBenefits.2"),
+    t("whyBenefits.3"),
+    t("whyBenefits.4"),
+    t("whyBenefits.5"),
+  ];
+
   return (
     <>
       <PageHeader
-        eyebrow="Категория"
-        title="Футбольные фестивали"
-        subtitle="Футбол — это праздник. Фестивали объединяют турниры, мастер-классы, культуру и атмосферу, которую невозможно создать в рамках обычного матча."
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle")}
         breadcrumbs={[
-          { href: "/", label: "Главная" },
-          { href: "/about", label: "О проекте" },
-          { label: "Фестивали" },
+          { href: "/", label: t("breadcrumbHome") },
+          { href: "/about", label: t("breadcrumbAbout") },
+          { label: t("breadcrumbCurrent") },
         ]}
       >
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="accent" size="lg">
-            <Link href="/categories/festivals">Смотреть фестивали</Link>
+            <Link href="/categories/festivals">{t("ctaView")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/organizer/events/new">Разместить фестиваль</Link>
+            <Link href="/organizer/events/new">{t("ctaPost")}</Link>
           </Button>
         </div>
       </PageHeader>
@@ -109,17 +92,13 @@ export default async function FestivalsAboutPage({
       <Container className="py-16 sm:py-20">
         <div className="mx-auto max-w-3xl">
           <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Больше, чем просто турнир
+            {t("openingTitle")}
           </h2>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            Футбольный фестиваль — это когда спорт встречается с культурой. Два-три дня на большой
-            площадке, несколько турниров параллельно, мастер-классы, музыка, еда — и объединяющая
-            атмосфера, которую создают тысячи людей, искренне любящих игру.
+            {t("openingBody1")}
           </p>
           <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-            В каталоге footballevents.eu вы найдёте фестивали разных форматов — от городских праздников
-            с пяти-минутным стрит-футболом до многодневных международных событий с командами из десятков
-            стран. Всё на одной платформе, с онлайн-заявкой.
+            {t("openingBody2")}
           </p>
         </div>
       </Container>
@@ -128,7 +107,7 @@ export default async function FestivalsAboutPage({
       <div className="bg-[var(--color-surface-muted,#F4F6FA)] py-16 sm:py-20">
         <Container>
           <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Форматы фестивалей
+            {t("typesTitle")}
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {festivalTypes.map((f) => (
@@ -155,18 +134,16 @@ export default async function FestivalsAboutPage({
           <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-gradient-to-br from-purple-50 to-pink-50 p-8">
             <Zap className="mb-4 h-8 w-8 text-purple-600" />
             <blockquote className="text-lg font-medium leading-relaxed text-[var(--color-foreground)]">
-              «Приехали как команда — уехали как семья. Фестиваль не просто дал нам игровое время,
-              он создал воспоминания, которые мы обсуждаем до сих пор.»
+              &ldquo;{t("testimonialQuote")}&rdquo;
             </blockquote>
-            <div className="mt-4 text-sm text-[var(--color-muted)]">Капитан любительской команды, Берлин</div>
+            <div className="mt-4 text-sm text-[var(--color-muted)]">{t("testimonialAuthor")}</div>
           </div>
           <div>
             <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-              Почему стоит ехать на фестиваль
+              {t("whyTitle")}
             </h2>
             <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-              Фестиваль — это событие, которое объединяет команду, создаёт общую историю и остаётся
-              в памяти на годы. Это не просто соревнование — это опыт.
+              {t("whyBody")}
             </p>
             <ul className="mt-6 space-y-2">
               {whyFestival.map((b) => (
@@ -185,15 +162,15 @@ export default async function FestivalsAboutPage({
         <Container>
           <div className="text-center">
             <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-white sm:text-3xl">
-              Найди свой фестиваль
+              {t("ctaTitle")}
             </h2>
-            <p className="mt-3 text-white/70">Стритбол, пляжный футбол, семейные форматы — всё в каталоге</p>
+            <p className="mt-3 text-white/70">{t("ctaSubtitle")}</p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button asChild variant="accent" size="lg">
-                <Link href="/categories/festivals">Смотреть все фестивали</Link>
+                <Link href="/categories/festivals">{t("ctaView")}</Link>
               </Button>
               <Button asChild variant="white" size="lg">
-                <Link href="/organizer/events/new">Разместить фестиваль</Link>
+                <Link href="/organizer/events/new">{t("ctaPost2")}</Link>
               </Button>
             </div>
           </div>

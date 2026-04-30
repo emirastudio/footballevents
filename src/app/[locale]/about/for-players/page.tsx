@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
@@ -22,76 +22,25 @@ import {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "aboutPlayers" });
   return {
-    title: "Для игроков и родителей | footballevents.eu — Найди мероприятие",
-    description:
-      "Каталог футбольных мероприятий для игроков и родителей: турниры, лагеря, просмотры в академиях, тренировочные сборы. Фильтруй по возрасту, уровню и стране. Подавай заявку онлайн.",
-    alternates: { canonical: `${SITE_URL}/ru/about/for-players` },
+    title: t("metaTitle"),
+    description: t("metaDesc"),
+    alternates: { canonical: `${SITE_URL}/${locale}/about/for-players` },
     openGraph: {
       type: "website",
-      url: `${SITE_URL}/ru/about/for-players`,
-      title: "Для игроков и родителей | footballevents.eu",
-      description: "Находи турниры, лагеря и просмотры в академиях — фильтр по возрасту, уровню и стране.",
+      url: `${SITE_URL}/${locale}/about/for-players`,
+      title: t("metaTitle"),
+      description: t("metaDesc"),
     },
   };
 }
-
-const features = [
-  {
-    icon: Search,
-    title: "Умный поиск",
-    desc: "Введи город, возраст или формат — система покажет релевантные мероприятия. Без лишнего шума.",
-  },
-  {
-    icon: Filter,
-    title: "Точные фильтры",
-    desc: "Возрастная группа, уровень игры, тип события, страна, даты, стоимость. Находи именно то, что нужно.",
-  },
-  {
-    icon: ClipboardList,
-    title: "Заявка в один клик",
-    desc: "Никаких email-переписок и мессенджеров. Форма на сайте — и организатор получит запрос автоматически.",
-  },
-  {
-    icon: BellRing,
-    title: "Трекинг статуса",
-    desc: "Подал заявку — следи за статусом в личном кабинете. Организатор ответит прямо на платформе.",
-  },
-  {
-    icon: Heart,
-    title: "Избранное",
-    desc: "Сохраняй мероприятия, которые понравились. Возвращайся, когда будешь готов записаться.",
-  },
-  {
-    icon: Globe,
-    title: "Весь мир в одном месте",
-    desc: "Местные турниры и международные кэмпы в Испании — рядом, в одном каталоге. Выбирай масштаб.",
-  },
-];
-
-const journeySteps = [
-  { icon: Search, label: "Ищи", desc: "Используй поиск и фильтры — по возрасту, типу, стране, дате" },
-  { icon: ClipboardList, label: "Подавай заявку", desc: "Заполни форму прямо на странице мероприятия" },
-  { icon: BellRing, label: "Жди ответа", desc: "Организатор рассмотрит заявку и ответит в кабинете" },
-  { icon: Trophy, label: "Участвуй", desc: "Получи подтверждение — и готовься к мероприятию!" },
-];
-
-const forParents = [
-  "Прозрачная информация: цена, программа, тренеры, адрес",
-  "Верифицированные организаторы — платформа проверила каждого",
-  "Онлайн-оплата через безопасный платёжный шлюз (Stripe)",
-  "Контакт с организатором прямо через платформу",
-  "Отзывы других родителей о мероприятиях",
-  "Уведомления об изменениях в событии",
-];
-
-const eventTypes = [
-  { href: "/about/tournaments", icon: Trophy, label: "Турниры", desc: "Соревнования от U7 до взрослых" },
-  { href: "/about/camps", icon: Tent, label: "Лагеря", desc: "Летние кэмпы и интенсивы" },
-  { href: "/about/academy-trials", icon: Target, label: "Просмотры", desc: "В академии Европы" },
-  { href: "/about/training-camps", icon: Users, label: "Сборы", desc: "Для команд и групп" },
-];
 
 export default async function ForPlayersPage({
   params,
@@ -101,24 +50,58 @@ export default async function ForPlayersPage({
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations("aboutPlayers");
+
+  const features = [
+    { icon: Search, title: t("features.0.title"), desc: t("features.0.desc") },
+    { icon: Filter, title: t("features.1.title"), desc: t("features.1.desc") },
+    { icon: ClipboardList, title: t("features.2.title"), desc: t("features.2.desc") },
+    { icon: BellRing, title: t("features.3.title"), desc: t("features.3.desc") },
+    { icon: Heart, title: t("features.4.title"), desc: t("features.4.desc") },
+    { icon: Globe, title: t("features.5.title"), desc: t("features.5.desc") },
+  ];
+
+  const journeySteps = [
+    { icon: Search, label: t("journey.0.label"), desc: t("journey.0.desc") },
+    { icon: ClipboardList, label: t("journey.1.label"), desc: t("journey.1.desc") },
+    { icon: BellRing, label: t("journey.2.label"), desc: t("journey.2.desc") },
+    { icon: Trophy, label: t("journey.3.label"), desc: t("journey.3.desc") },
+  ];
+
+  const forParents = [
+    t("parentsBenefits.0"),
+    t("parentsBenefits.1"),
+    t("parentsBenefits.2"),
+    t("parentsBenefits.3"),
+    t("parentsBenefits.4"),
+    t("parentsBenefits.5"),
+  ];
+
+  const eventTypes = [
+    { href: "/about/tournaments", icon: Trophy, label: t("eventTypes.0.label"), desc: t("eventTypes.0.desc") },
+    { href: "/about/camps", icon: Tent, label: t("eventTypes.1.label"), desc: t("eventTypes.1.desc") },
+    { href: "/about/academy-trials", icon: Target, label: t("eventTypes.2.label"), desc: t("eventTypes.2.desc") },
+    { href: "/about/training-camps", icon: Users, label: t("eventTypes.3.label"), desc: t("eventTypes.3.desc") },
+  ];
+
   return (
     <>
       <PageHeader
-        eyebrow="Для игроков и родителей"
-        title="Найди мероприятие мечты"
-        subtitle="Турниры, лагеря, просмотры в академиях — в одном каталоге. Фильтруй по возрасту, уровню и стране, подавай заявку онлайн без звонков."
+        eyebrow={t("eyebrow")}
+        title={t("title")}
+        subtitle={t("subtitle")}
         breadcrumbs={[
-          { href: "/", label: "Главная" },
-          { href: "/about", label: "О проекте" },
-          { label: "Для игроков" },
+          { href: "/", label: t("breadcrumbHome") },
+          { href: "/about", label: t("breadcrumbAbout") },
+          { label: t("breadcrumbCurrent") },
         ]}
       >
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="accent" size="lg">
-            <Link href="/events">Найти мероприятие</Link>
+            <Link href="/events">{t("ctaFind")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/sign-up">Создать аккаунт — бесплатно</Link>
+            <Link href="/sign-up">{t("ctaSignUp")}</Link>
           </Button>
         </div>
       </PageHeader>
@@ -127,10 +110,10 @@ export default async function ForPlayersPage({
       <Container className="py-16 sm:py-20">
         <div className="mb-10 text-center">
           <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Что найдёшь в каталоге
+            {t("catalogTitle")}
           </h2>
           <p className="mt-3 text-[var(--color-muted-strong)]">
-            Все форматы футбольных событий — в одном месте
+            {t("catalogSubtitle")}
           </p>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -159,7 +142,7 @@ export default async function ForPlayersPage({
       <div className="bg-[var(--color-surface-muted,#F4F6FA)] py-16 sm:py-20">
         <Container>
           <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-            Почему удобно искать на footballevents.eu
+            {t("featuresTitle")}
           </h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
@@ -185,7 +168,7 @@ export default async function ForPlayersPage({
       {/* Journey */}
       <Container className="py-16 sm:py-20">
         <h2 className="mb-10 font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-          От поиска до участия — 4 шага
+          {t("journeyTitle")}
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {journeySteps.map((s, i) => (
@@ -194,7 +177,7 @@ export default async function ForPlayersPage({
                 <s.icon className="h-5 w-5 text-[var(--color-pitch-700)]" />
               </div>
               <div className="mb-1 font-[family-name:var(--font-manrope)] text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">
-                Шаг {i + 1}
+                {t("journeyStep")} {i + 1}
               </div>
               <h3 className="font-[family-name:var(--font-manrope)] font-semibold text-[var(--color-foreground)]">
                 {s.label}
@@ -211,12 +194,10 @@ export default async function ForPlayersPage({
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
               <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
-                Для родителей: безопасно и прозрачно
+                {t("parentsTitle")}
               </h2>
               <p className="mt-4 leading-relaxed text-[var(--color-muted-strong)]">
-                Записать ребёнка в лагерь или на турнир — ответственное решение. footballevents.eu
-                делает этот процесс максимально понятным: проверенные организаторы, полная информация
-                о событии, безопасная оплата и прямая связь через платформу.
+                {t("parentsBody")}
               </p>
               <ul className="mt-6 space-y-2">
                 {forParents.map((b) => (
@@ -230,11 +211,9 @@ export default async function ForPlayersPage({
             <div className="rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8">
               <Star className="mb-4 h-8 w-8 text-amber-500" />
               <blockquote className="text-lg font-medium leading-relaxed text-[var(--color-foreground)]">
-                «Сын мечтал поехать в лагерь в Испании. Нашли через footballevents.eu — всё
-                прозрачно: тренеры, программа, фото, отзывы других родителей. Подали заявку,
-                получили ответ за день. Поехал — вернулся совсем другим игроком.»
+                &ldquo;{t("testimonialQuote")}&rdquo;
               </blockquote>
-              <div className="mt-4 text-sm text-[var(--color-muted)]">Мама игрока U13, Санкт-Петербург</div>
+              <div className="mt-4 text-sm text-[var(--color-muted)]">{t("testimonialAuthor")}</div>
             </div>
           </div>
         </Container>
@@ -245,15 +224,15 @@ export default async function ForPlayersPage({
         <Container>
           <div className="text-center">
             <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-white sm:text-3xl">
-              Регистрация бесплатна
+              {t("ctaTitle")}
             </h2>
-            <p className="mt-3 text-white/70">Создай аккаунт — сохраняй мероприятия и следи за заявками</p>
+            <p className="mt-3 text-white/70">{t("ctaSubtitle")}</p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button asChild variant="accent" size="lg">
-                <Link href="/events">Найти мероприятие</Link>
+                <Link href="/events">{t("ctaFind2")}</Link>
               </Button>
               <Button asChild variant="white" size="lg">
-                <Link href="/sign-up">Создать аккаунт</Link>
+                <Link href="/sign-up">{t("ctaAccount")}</Link>
               </Button>
             </div>
           </div>
