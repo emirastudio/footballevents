@@ -22,7 +22,8 @@ export default async function SignUpPage({
   if (session?.user) {
     const role = sp.role;
     if (role === "organizer") {
-      redirect(`/${locale}/onboarding/organizer`);
+      const promo = sp.promo ? `?promo=${encodeURIComponent(sp.promo)}` : "";
+      redirect(`/${locale}/onboarding/organizer${promo}`);
     }
     redirect(`/${locale}`);
   }
