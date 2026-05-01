@@ -70,7 +70,6 @@ export default async function ApplyPage({
               defaultName={session.user.name ?? ""}
               labels={{
                 participantName: t("participantName"),
-                participantAge: t("participantAge"),
                 teamName: t("teamName"),
                 partySize: t("partySize"),
                 contactEmail: t("contactEmail"),

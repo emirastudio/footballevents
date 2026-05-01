@@ -8,7 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { CheckCircle2 } from "lucide-react";
 
 type Labels = {
-  participantName: string; participantAge: string; teamName: string; partySize: string;
+  participantName: string; teamName: string; partySize: string;
   contactEmail: string; contactPhone: string;
   comment: string; commentHint: string;
   submit: string; submitting: string;
@@ -47,10 +47,7 @@ export function ApplyForm({
     <form action={action} className="space-y-4">
       <input type="hidden" name="eventId" value={eventId} />
       <Field name="participantName" required defaultValue={defaultName} label={labels.participantName} />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field name="participantAge" type="number" label={labels.participantAge} />
-        <Field name="partySize" type="number" defaultValue="1" label={labels.partySize} />
-      </div>
+      <Field name="partySize" type="number" defaultValue="1" label={labels.partySize} />
       <Field name="teamName" label={labels.teamName} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field name="contactEmail" type="email" required defaultValue={defaultEmail} label={labels.contactEmail} />
