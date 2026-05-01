@@ -1237,7 +1237,8 @@
       "allBookings": "All bookings",
       "organizers": "Organizers",
       "reviews": "Reviews",
-      "users": "Users"
+      "users": "Users",
+      "promotion": "Promotion"
     },
     "dashboard": {
       "title": "Admin overview",

@@ -1462,7 +1462,8 @@
       "allBookings": "Все заявки",
       "organizers": "Организаторы",
       "reviews": "Отзывы",
-      "users": "Пользователи"
+      "users": "Пользователи",
+      "promotion": "Продвижение"
     },
     "dashboard": {
       "title": "Обзор",

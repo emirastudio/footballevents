@@ -2012,7 +2012,8 @@
       "allBookings": "Todas las inscripciones",
       "organizers": "Organizadores",
       "reviews": "Reseñas",
-      "users": "Usuarios"
+      "users": "Usuarios",
+      "promotion": "Promoción"
     },
     "dashboard": {
       "title": "Resumen admin",

@@ -3,7 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
-import { Shield, Layers, Users, Inbox, Building2, Star } from "lucide-react";
+import { Shield, Layers, Users, Inbox, Building2, Star, Megaphone } from "lucide-react";
 
 export default async function AdminLayout({
   children,
@@ -28,6 +28,7 @@ export default async function AdminLayout({
     { href: "/admin/organizers",  icon: Building2, label: t("nav.organizers") },
     { href: "/admin/reviews",     icon: Star,      label: t("nav.reviews") },
     { href: "/admin/users",       icon: Users,     label: t("nav.users") },
+    { href: "/admin/promotion",   icon: Megaphone, label: t("nav.promotion") },
   ];
 
   return (
