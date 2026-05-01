@@ -17,11 +17,11 @@ export const PRICE_IDS = {
 // Boost prices stored as inline price_data so we don't need to manage them in Stripe dashboard.
 // (Subscriptions still need recurring Prices configured in Stripe.)
 export const BOOST_PRICES_CENTS = {
-  basic:    500,    // €5
-  featured: 1900,   // €19
-  premium:  5900,   // €59
-  bundle31: 8900,   // 3 Featured + 1 Premium = €89 (raw €116, save 23%)
-  bundle52: 11900,  // 5 Featured + 2 Premium = €119 (raw €213, save 44%)
+  basic:    900,    // €9
+  featured: 3900,   // €39
+  premium:  11900,  // €119
+  bundle31: 8900,   // 3 Featured + 1 Premium bundle
+  bundle52: 19900,  // 5 Featured + 2 Premium bundle
 } as const;
 
 export type BoostKind = keyof typeof BOOST_PRICES_CENTS;

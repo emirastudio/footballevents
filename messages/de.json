@@ -163,7 +163,7 @@
       "upgradeCta": "Boost upgraden",
       "premiumTitle": "Dein Premium-Tarif enthält 3 kostenlose Basic-Boosts pro Monat",
       "proTitle": "Dein Pro-Tarif enthält 1 kostenlosen Basic-Boost pro Monat",
-      "idleBody": "Wähle dein Flaggschiff-Event und setze einen Boost ein: Featured (€19) — Kategorie-Top, Premium (€59) — Startseiten-Karussell.",
+      "idleBody": "Wähle dein Flaggschiff-Event und setze einen Boost ein: Featured (€39) — Kategorie-Top, Premium (€119) — Startseiten-Karussell.",
       "pickEventCta": "Event auswählen",
       "quotaTitle": "{remaining} von {total} kostenlosen Boosts diesen Monat übrig",
       "quotaBody": "Dein Tarif enthält kostenlose Basic-Boosts. Wende einen mit einem Klick auf dein nächstes Event an.",
@@ -1609,9 +1609,9 @@
       "title": "Event nach oben pushen",
       "desc": "Brauchst du mehr Anmeldungen bis zu einem bestimmten Datum? Ein Boost hebt dein Event 1–4 Wochen in den Listings. Einmalig, ohne Abo.",
       "bullets": [
-        "Basic — 7 Tage höher in Listen, €19",
-        "Featured — 14 Tage Kategorie-Top, grünes Badge, €49",
-        "Premium — 30 Tage auf Homepage, goldenes Badge, €129",
+        "Basic — 7 Tage höher in Listen, €9",
+        "Featured — 14 Tage Kategorie-Top, grünes Badge, €39",
+        "Premium — 7 Tage auf Homepage, goldenes Badge, €119",
         "Bezahle bei Bedarf — keine Auto-Abbuchungen"
       ]
     },
@@ -1900,17 +1900,17 @@
     "boostSubtitle": "Einmalige Sichtbarkeitsschübe. Ohne Abo.",
     "boostBasic": {
       "name": "Basic Boost",
-      "price": "€5",
+      "price": "€9",
       "desc": "7 Tage höher in den Listings."
     },
     "boostFeatured": {
       "name": "Featured",
-      "price": "€19",
+      "price": "€39",
       "desc": "14 Tage Kategorie-Top + 'Featured'-Badge."
     },
     "boostPremium": {
       "name": "Premium Boost",
-      "price": "€59",
+      "price": "€119",
       "desc": "7 Tage in der Homepage-Hero-Rotation + featured + Goldrand."
     },
     "boostBundle1": {
@@ -1920,7 +1920,7 @@
     },
     "boostBundle2": {
       "name": "Bundle 5 + 2",
-      "price": "€119",
+      "price": "€199",
       "desc": "5 Featured + 2 Premium. Bestpreis — Spare 44%."
     },
     "adsTitle": "Werbung für Marken",

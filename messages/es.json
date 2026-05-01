@@ -163,7 +163,7 @@
       "upgradeCta": "Mejorar boost",
       "premiumTitle": "Tu plan Premium incluye 3 boosts Basic gratuitos al mes",
       "proTitle": "Tu plan Pro incluye 1 boost Basic gratuito al mes",
-      "idleBody": "Elige tu evento estrella y aplica un boost: Featured (€19) — top de categoría, Premium (€59) — carrusel de la portada.",
+      "idleBody": "Elige tu evento estrella y aplica un boost: Featured (€39) — top de categoría, Premium (€119) — carrusel de la portada.",
       "pickEventCta": "Elegir evento",
       "quotaTitle": "Quedan {remaining} de {total} boosts gratis este mes",
       "quotaBody": "Tu plan incluye boosts Basic gratuitos. Aplica uno a tu próximo evento en un clic.",
@@ -1609,9 +1609,9 @@
       "title": "Empuja tu evento arriba",
       "desc": "¿Necesitas más inscripciones para una fecha concreta? Un boost sube tu evento en los listados durante 1–4 semanas. Único, sin suscripción.",
       "bullets": [
-        "Basic — 7 días arriba en listas, €19",
-        "Featured — 14 días en top de categoría, insignia verde, €49",
-        "Premium — 30 días en home, insignia dorada, €129",
+        "Basic — 7 días arriba en listas, €9",
+        "Featured — 14 días en top de categoría, insignia verde, €39",
+        "Premium — 7 días en home, insignia dorada, €119",
         "Pagas cuando lo necesitas — sin cargos automáticos"
       ]
     },
@@ -1900,17 +1900,17 @@
     "boostSubtitle": "Mejoras puntuales sin suscripción.",
     "boostBasic": {
       "name": "Boost básico",
-      "price": "€5",
+      "price": "€9",
       "desc": "7 días destacado en listados."
     },
     "boostFeatured": {
       "name": "Featured",
-      "price": "€19",
+      "price": "€39",
       "desc": "14 días top de categoría + insignia 'Featured'."
     },
     "boostPremium": {
       "name": "Boost premium",
-      "price": "€59",
+      "price": "€119",
       "desc": "7 días en hero rotativo + featured + borde dorado."
     },
     "boostBundle1": {
@@ -1920,7 +1920,7 @@
     },
     "boostBundle2": {
       "name": "Bundle 5 + 2",
-      "price": "€119",
+      "price": "€199",
       "desc": "5 Featured + 2 Premium. Mejor precio — ahorra 44%."
     },
     "adsTitle": "Publicidad para marcas",
