@@ -16,7 +16,7 @@ export default async function PromotionPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   if (session.user.role !== "ADMIN") redirect("/");
-  if (session.user.email !== "Goality360@gmail.com") redirect("/admin/dashboard");
+  if (session.user.email?.toLowerCase() !== "goality360@gmail.com") redirect("/admin/dashboard");
 
   return (
     <div>

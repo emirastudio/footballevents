@@ -397,7 +397,7 @@ export async function GET(req: NextRequest) {
   if (!session?.user?.id || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (session.user.email !== "Goality360@gmail.com") {
+  if (session.user.email?.toLowerCase() !== "goality360@gmail.com") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
