@@ -24,8 +24,13 @@ import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
   ChevronRight, Clock, Building2, MessageSquare, Check, X as XIcon,
 } from "lucide-react";
+import { locales } from "@/i18n/config";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 300);
+}
 
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
@@ -39,24 +44,30 @@ export async function generateMetadata({
   const event = await getEventBySlug(slug, locale);
   if (!event) return {};
   const country = getCountry(event.countryCode);
-  const desc = event.shortDescription
-    || `${event.city ?? country?.name ?? ""} · ${event.startDate ? new Date(event.startDate).toISOString().slice(0, 10) : ""}`.trim();
+  const desc = stripHtml(event.description || event.shortDescription || "")
+    || [event.city, country?.name, event.startDate ? new Date(event.startDate).toISOString().slice(0, 10) : ""].filter(Boolean).join(" · ");
   const url = `${SITE_URL}/${locale}/events/${event.slug}`;
   const image = event.coverUrl || event.logoUrl || `${SITE_URL}/og-default.jpg`;
+  const title = `${event.title} | ${event.city || country?.name || ""}`.replace(/ \| $/, "");
   return {
-    title: event.title,
+    title,
     description: desc,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      languages: Object.fromEntries(
+        locales.map((l) => [l, `${SITE_URL}/${l}/events/${event.slug}`])
+      ),
+    },
     openGraph: {
       type: "website",
       url,
-      title: event.title,
+      title,
       description: desc,
       images: [{ url: image, width: 1200, height: 630, alt: event.title }],
     },
     twitter: {
       card: "summary_large_image",
-      title: event.title,
+      title,
       description: desc,
       images: [image],
     },
@@ -161,6 +172,50 @@ export default async function EventDetailPage({
       </section>
 
       <Container className="py-10">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Event",
+              "name": event.title,
+              "description": stripHtml(event.description || event.shortDescription || ""),
+              "startDate": event.startDate || undefined,
+              "endDate": event.endDate || undefined,
+              "url": `${SITE_URL}/${locale}/events/${event.slug}`,
+              "image": event.coverUrl || event.logoUrl || undefined,
+              "location": {
+                "@type": "Place",
+                "name": venue?.name || event.city || country?.name,
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": event.city || undefined,
+                  "addressCountry": event.countryCode || undefined,
+                },
+              },
+              "organizer": {
+                "@type": "Organization",
+                "name": organizer?.name || undefined,
+                "url": organizer ? `${SITE_URL}/${locale}/org/${organizer.slug}` : undefined,
+              },
+              ...(event.priceFrom != null || event.isFree
+                ? {
+                    "offers": {
+                      "@type": "Offer",
+                      "price": event.isFree ? 0 : event.priceFrom,
+                      "priceCurrency": event.currency || "EUR",
+                      "availability": capacity.isFull
+                        ? "https://schema.org/SoldOut"
+                        : "https://schema.org/InStock",
+                      "url": `${SITE_URL}/${locale}/events/${event.slug}/apply`,
+                    },
+                  }
+                : {}),
+              "eventStatus": "https://schema.org/EventScheduled",
+              "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+            }),
+          }}
+        />
         <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
           {/* Main column */}
           <div>

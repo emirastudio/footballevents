@@ -54,6 +54,7 @@ export type EventFormLabels = {
   contactEmail: string; contactPhone: string;
   acceptsBookings: string;
   videoUrl: string; videoUrlHint: string;
+  customSlug: string; customSlugHint: string;
   logo: string; cover: string;
   gallery: string; galleryHint: string;
   included: string; includedHint: string; includedAddItem: string;
@@ -105,6 +106,7 @@ export type EventDefaults = {
   notIncluded?: string;
   programme?: string;
   faq?: string;
+  slug?: string;
   secondLocale?: "" | "ru" | "de" | "es";
   titleSecond?: string;
   shortDescSecond?: string;
@@ -362,6 +364,17 @@ export function EventForm({
           <Field name="contactPhone" label={labels.contactPhone} placeholder="+49 …" defaultValue={defaults?.contactPhone} />
         </div>
       </Section>
+
+      {/* Custom URL slug — edit mode only */}
+      {isEdit && defaults?.slug && (
+        <Section title={labels.customSlug} hint={labels.customSlugHint}>
+          <SlugField
+            name="customSlug"
+            defaultValue={defaults.slug}
+            error={errMsg(fe.customSlug)}
+          />
+        </Section>
+      )}
 
       {state?.error && !state.fieldErrors && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -786,6 +799,44 @@ function FormFaqEditor({ name, labels, defaultValue }: {
       >
         <Plus className="h-4 w-4" /> {labels.faqAddQuestion}
       </button>
+    </div>
+  );
+}
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
+
+function SlugField({ name, defaultValue, error }: { name: string; defaultValue: string; error?: string }) {
+  const [val, setVal] = useState(defaultValue);
+
+  const normalise = (s: string) =>
+    s.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-{2,}/g, "-").replace(/^-|-$/g, "");
+
+  return (
+    <div>
+      <input type="hidden" name={name} value={val} />
+      <div
+        className={[
+          "flex overflow-hidden rounded-[var(--radius-md)] border bg-[var(--color-surface)]",
+          error ? "border-red-400" : "border-[var(--color-border-strong)]",
+        ].join(" ")}
+      >
+        <span className="flex shrink-0 items-center bg-[var(--color-bg-muted)] px-3 text-xs text-[var(--color-muted)] select-none">
+          footballevents.eu/events/
+        </span>
+        <input
+          type="text"
+          value={val}
+          onChange={(e) => setVal(normalise(e.target.value))}
+          onBlur={(e) => setVal(normalise(e.target.value))}
+          spellCheck={false}
+          autoComplete="off"
+          className="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm text-[var(--color-foreground)] outline-none"
+        />
+      </div>
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      <p className="mt-1.5 text-xs text-[var(--color-muted)]">
+        Preview: <a href={`${SITE_URL}/events/${val}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--color-pitch-700)]">{SITE_URL}/events/{val}</a>
+      </p>
     </div>
   );
 }

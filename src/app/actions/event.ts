@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { nanoid } from "nanoid";
 import { tierAllows, ACTIVE_EVENTS_LIMIT, type Tier } from "@/lib/tier";
 
 // Returns null if creation is allowed, or the limit number when reached.
@@ -119,10 +118,10 @@ async function upsertVenue(v: { name: string; countryCode: string; city: string 
   // Create a new venue with a unique slug.
   let baseSlug = slugify(trimmedName) || "venue";
   let slug = baseSlug;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 2; i <= 99; i++) {
     const taken = await db.venue.findUnique({ where: { slug } });
     if (!taken) break;
-    slug = `${baseSlug}-${nanoid(4).toLowerCase()}`;
+    slug = `${baseSlug}-${i}`;
   }
   const created = await db.venue.create({
     data: {
@@ -134,6 +133,19 @@ async function upsertVenue(v: { name: string; countryCode: string; city: string 
     },
   });
   return created.id;
+}
+
+async function uniqueEventSlug(base: string): Promise<string> {
+  const trySlug = async (s: string) =>
+    db.event.findUnique({ where: { slug: s }, select: { id: true } }).then(Boolean);
+
+  if (!(await trySlug(base))) return base;
+  for (let i = 2; i <= 99; i++) {
+    const candidate = `${base}-${i}`;
+    if (!(await trySlug(candidate))) return candidate;
+  }
+  // Last resort (extremely unlikely)
+  return `${base}-${Date.now()}`;
 }
 
 function slugify(s: string) {
@@ -307,9 +319,9 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
   const faqParsed        = tierAllows(tier, "faq")       ? parseFaq(d.faq)           : null;
   const videoUrlClean    = tierAllows(tier, "videoEmbed") ? (d.videoUrl ?? null)     : null;
 
-  // Slug — title-based with random suffix to avoid collisions.
+  // Slug — title-based with sequential collision-avoidance.
   const baseSlug = slugify(d.titleEn) || "event";
-  const slug = `${baseSlug}-${nanoid(6).toLowerCase()}`;
+  const slug = await uniqueEventSlug(baseSlug);
 
   // Upsert Venue by (countryCode + lowercased name) — auto-publishes to /stadiums catalog.
   const venueId = await upsertVenue({
@@ -365,7 +377,16 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
   redirect(`/organizer/events/${created.id}`);
 }
 
-const updateSchema = baseSchema.extend({ id: z.string().min(1) });
+const updateSchema = baseSchema.extend({
+  id: z.string().min(1),
+  customSlug: z
+    .string()
+    .toLowerCase()
+    .regex(/^[a-z0-9][a-z0-9-]*[a-z0-9]$/, "slugInvalid")
+    .max(100, "slugTooLong")
+    .optional()
+    .or(z.literal("")),
+});
 
 export async function updateEventAction(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
   // Catch ALL unhandled exceptions and return them as state so the client sees them.
@@ -427,6 +448,7 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
     programme:         formData.get("programme") || undefined,
     faq:               formData.get("faq") || undefined,
     intent:            formData.get("intent") || "draft",
+    customSlug:        (formData.get("customSlug") as string) || undefined,
   });
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
@@ -458,9 +480,18 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
   if (d.intent === "review" && existing.status === "DRAFT") nextStatus = "PENDING_REVIEW";
   if (d.intent === "review" && existing.status === "REJECTED") nextStatus = "PENDING_REVIEW";
 
+  // Custom slug: validate uniqueness then apply if different from existing.
+  let resolvedSlug = existing.slug;
+  if (d.customSlug && d.customSlug !== existing.slug) {
+    const conflict = await db.event.findUnique({ where: { slug: d.customSlug }, select: { id: true } });
+    if (conflict) return { error: "slugTaken", fieldErrors: { customSlug: "slugTaken" } };
+    resolvedSlug = d.customSlug;
+  }
+
   await db.event.update({
     where: { id },
     data: {
+      slug: resolvedSlug,
       categoryId: category.id,
       type: category.type,
       status: nextStatus,
@@ -510,6 +541,7 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
 
   revalidatePath("/organizer/events");
   revalidatePath(`/events/${existing.slug}`);
+  if (resolvedSlug !== existing.slug) revalidatePath(`/events/${resolvedSlug}`);
 
   // After submitting for review — go to the events list so the organizer
   // can see the updated status badge (PENDING_REVIEW). Staying on the edit
@@ -745,7 +777,7 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
     if (limit !== null) return { error: `eventLimitReached:${limit}:${organizer.subscriptionTier}` };
 
     const baseSlug = slugify(data.titleEn) || "event";
-    const slug = `${baseSlug}-${nanoid(6).toLowerCase()}`;
+    const slug = await uniqueEventSlug(baseSlug);
 
     const created = await db.event.create({
       data: {
