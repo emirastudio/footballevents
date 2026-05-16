@@ -137,10 +137,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (isNewUser) {
           const { getCountryFromIp } = await import("@/lib/signup-meta");
           const country = await getCountryFromIp(ip);
+          const method = account?.provider === "google" ? "google" : (account?.provider ?? "credentials");
           data.signupIp = ip || null;
           data.signupCountry = country;
           data.signupUserAgent = userAgent || null;
-          data.signupMethod = account?.provider === "google" ? "google" : (account?.provider ?? "credentials");
+          data.signupMethod = method;
+
+          // Telegram notification — fire-and-forget
+          const { tgNewUser } = await import("@/lib/telegram");
+          void tgNewUser({
+            name: user.name ?? "—",
+            email: user.email ?? "—",
+            method,
+            country: country ?? null,
+          });
         }
         await db.user.update({ where: { id: user.id }, data: data as never });
       } catch {

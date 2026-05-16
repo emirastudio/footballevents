@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { RefreshCw, LayoutDashboard } from "lucide-react";
+import { reportErrorAction } from "@/app/actions/report-error";
 
 export default function OrganizerError({
   error,
@@ -12,6 +13,11 @@ export default function OrganizerError({
 }) {
   useEffect(() => {
     console.error("[organizer error]", error);
+    void reportErrorAction({
+      digest: error.digest,
+      message: error.message,
+      url: typeof window !== "undefined" ? window.location.href : undefined,
+    });
   }, [error]);
 
   return (

@@ -557,6 +557,14 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
   // After submitting for review — go to the events list so the organizer
   // can see the updated status badge (PENDING_REVIEW). Staying on the edit
   // page looks like "nothing happened".
+  if (d.intent === "review" && nextStatus === "PENDING_REVIEW") {
+    // Notify admin via Telegram
+    const enTitle = d.titleEn;
+    import("@/lib/telegram").then(({ tgEventReview }) =>
+      tgEventReview({ title: enTitle, slug: resolvedSlug, organizer: organizer.name })
+    ).catch(() => {});
+    redirect(`/organizer/events?submitted=1`);
+  }
   if (d.intent === "review") {
     redirect(`/organizer/events?submitted=1`);
   }

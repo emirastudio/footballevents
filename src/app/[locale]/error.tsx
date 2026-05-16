@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { RefreshCw, Home } from "lucide-react";
+import { reportErrorAction } from "@/app/actions/report-error";
 
 export default function LocaleError({
   error,
@@ -12,6 +13,11 @@ export default function LocaleError({
 }) {
   useEffect(() => {
     console.error("[page error]", error);
+    void reportErrorAction({
+      digest: error.digest,
+      message: error.message,
+      url: typeof window !== "undefined" ? window.location.href : undefined,
+    });
   }, [error]);
 
   return (

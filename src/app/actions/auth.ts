@@ -79,6 +79,11 @@ export async function registerAction(_prev: AuthFormState, formData: FormData): 
 
   void welcomeEmail({ to: email, name });
 
+  // Telegram notification — fire-and-forget
+  import("@/lib/telegram").then(({ tgNewUser }) =>
+    tgNewUser({ name, email, method: "credentials", country })
+  ).catch(() => {});
+
   try {
     await signIn("credentials", { email, password, redirect: false });
   } catch (e) {
