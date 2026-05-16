@@ -73,7 +73,7 @@ export default async function EditEventPage({
     gender: ev.gender,
     skillLevel: ev.skillLevel,
     format: ev.format ?? undefined,
-    maxParticipants: ev.maxParticipants ?? undefined,
+
     isFree: ev.isFree,
     priceFrom: ev.priceFrom ? Number(ev.priceFrom) : undefined,
     priceTo: ev.priceTo ? Number(ev.priceTo) : undefined,
@@ -125,7 +125,7 @@ export default async function EditEventPage({
     venueName: t("venueName"), venueNameHint: t("venueNameHint"),
     venueAddress: t("venueAddress"), venueAddressHint: t("venueAddressHint"),
     ageGroups: t("ageGroups"), gender: t("gender"), skillLevel: t("skillLevel"),
-    format: t("format"), formatHint: t("formatHint"), formatAny: t("formatAny"), maxParticipants: t("maxParticipants"),
+    format: t("format"), formatHint: t("formatHint"), formatAny: t("formatAny"),
     isFree: t("isFree"), priceFrom: t("priceFrom"), priceTo: t("priceTo"), currency: t("currency"),
     externalUrl: t("externalUrl"), externalUrlHint: t("externalUrlHint"),
     contactEmail: t("contactEmail"), contactPhone: t("contactPhone"),

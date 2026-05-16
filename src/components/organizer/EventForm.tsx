@@ -47,7 +47,7 @@ export type EventFormLabels = {
   venueName: string; venueNameHint: string;
   venueAddress: string; venueAddressHint: string;
   ageGroups: string; gender: string; skillLevel: string;
-  format: string; formatHint: string; formatAny: string; maxParticipants: string;
+  format: string; formatHint: string; formatAny: string;
   isFree: string; priceFrom: string; priceTo: string; currency: string;
   externalUrl: string; externalUrlHint: string;
   contactEmail: string; contactPhone: string;
@@ -63,7 +63,9 @@ export type EventFormLabels = {
   errors: Record<string, string>;
 };
 
-const AGE_GROUPS = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT","ALL_AGES"];
+const _CY = new Date().getFullYear();
+const YEAR_GRID = [...Array.from({ length: 20 }, (_, i) => String(_CY - i)), "ADULT"];
+const FORMATS_LIST = ["5x5","6x6","7x7","8x8","9x9","11x11"];
 
 export type EventDefaults = {
   id?: string;
@@ -83,7 +85,7 @@ export type EventDefaults = {
   gender?: string;
   skillLevel?: string;
   format?: string;
-  maxParticipants?: number;
+  formats?: string[];
   isFree?: boolean;
   priceFrom?: number;
   priceTo?: number;
@@ -126,6 +128,12 @@ export function EventForm({
   const [countryCode, setCountryCode] = useState<string>(defaults?.countryCode ?? "");
   const [isFree, setIsFree] = useState(defaults?.isFree ?? false);
   const [secondLocale, setSecondLocale] = useState<string>(defaults?.secondLocale ?? "");
+  const [selectedAges, setSelectedAges] = useState<string[]>(defaults?.ageGroups ?? []);
+  const [selectedFormats, setSelectedFormats] = useState<string[]>(
+    defaults?.formats ?? (defaults?.format ? defaults.format.split(",").filter(Boolean) : [])
+  );
+  const toggleAge = (v: string) => setSelectedAges((p) => p.includes(v) ? p.filter((x) => x !== v) : [...p, v]);
+  const toggleFmt = (v: string) => setSelectedFormats((p) => p.includes(v) ? p.filter((x) => x !== v) : [...p, v]);
 
   const fe = state?.fieldErrors ?? {};
   const errMsg = (key?: string) => key ? labels.errors[key] ?? key : undefined;
@@ -219,39 +227,55 @@ export function EventForm({
 
       {/* Audience */}
       <Section title={labels.sections.audience} hint={labels.sections.audienceHint}>
+        {/* Age groups — year grid */}
         <fieldset>
-          <legend className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.ageGroups}</legend>
-          <div className="flex flex-wrap gap-2">
-            {AGE_GROUPS.map((a) => (
-              <label key={a} className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-muted-strong)] transition has-[:checked]:border-[var(--color-pitch-500)] has-[:checked]:bg-[var(--color-pitch-50)] has-[:checked]:text-[var(--color-pitch-700)]">
-                <input type="checkbox" name="ageGroups" value={a} defaultChecked={defaults?.ageGroups?.includes(a)} className="sr-only" />
-                {a}
-              </label>
-            ))}
+          <legend className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.ageGroups}</legend>
+          {selectedAges.map((v) => <input key={v} type="hidden" name="ageGroups" value={v} />)}
+          <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-7">
+            {YEAR_GRID.map((val) => {
+              const active = selectedAges.includes(val);
+              return (
+                <button key={val} type="button" onClick={() => toggleAge(val)}
+                  className={["h-10 rounded-[var(--radius-md)] border text-sm font-semibold tabular-nums transition", val === "ADULT" ? "col-span-2 sm:col-span-1" : "", active ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white" : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-400)] hover:text-[var(--color-foreground)]"].join(" ")}>
+                  {val === "ADULT" ? "Adult" : val}
+                </button>
+              );
+            })}
           </div>
         </fieldset>
-        <div className="grid gap-5 sm:grid-cols-3">
-          <RadioGroup name="gender" label={labels.gender} options={[
-            { value: "MALE", label: "Boys" },
-            { value: "FEMALE", label: "Girls" },
-            { value: "MIXED", label: "Mixed" },
-          ]} defaultValue={defaults?.gender ?? "MIXED"} />
-          <SelectField name="skillLevel" label={labels.skillLevel} options={[
-            { value: "ALL_LEVELS", label: "All levels" },
-            { value: "AMATEUR", label: "Amateur" },
-            { value: "SEMI_PRO", label: "Semi-pro" },
-            { value: "PROFESSIONAL", label: "Professional" },
-          ]} defaultValue={defaults?.skillLevel ?? "ALL_LEVELS"} />
-          <SelectField name="format" label={labels.format} defaultValue={defaults?.format ?? ""} options={[
-            { value: "",      label: labels.formatAny },
-            { value: "5x5",   label: "5×5"   },
-            { value: "7x7",   label: "7×7"   },
-            { value: "8x8",   label: "8×8"   },
-            { value: "9x9",   label: "9×9"   },
-            { value: "11x11", label: "11×11" },
-          ]} />
-        </div>
-        <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults?.maxParticipants} />
+
+        {/* Gender */}
+        <RadioGroup name="gender" label={labels.gender} options={[
+          { value: "MALE", label: "Boys/Men" },
+          { value: "FEMALE", label: "Girls/Women" },
+          { value: "MIXED", label: "Mixed" },
+        ]} defaultValue={defaults?.gender ?? "MIXED"} />
+
+        {/* Skill level */}
+        <RadioGroup name="skillLevel" label={labels.skillLevel} options={[
+          { value: "ALL_LEVELS", label: "All levels" },
+          { value: "AMATEUR", label: "Amateur" },
+          { value: "SEMI_PRO", label: "Semi-pro" },
+          { value: "PROFESSIONAL", label: "Professional" },
+        ]} defaultValue={defaults?.skillLevel ?? "ALL_LEVELS"} />
+
+        {/* Format — multi-select */}
+        <fieldset>
+          <legend className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.format}</legend>
+          <input type="hidden" name="format" value={selectedFormats.join(",")} />
+          <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+            {FORMATS_LIST.map((val) => {
+              const active = selectedFormats.includes(val);
+              const label = val.replace("x", "×");
+              return (
+                <button key={val} type="button" onClick={() => toggleFmt(val)}
+                  className={["h-10 rounded-[var(--radius-md)] border text-sm font-semibold transition", active ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white" : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-400)] hover:text-[var(--color-foreground)]"].join(" ")}>
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
       </Section>
 
       {/* Pricing */}
