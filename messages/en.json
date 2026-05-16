@@ -597,6 +597,13 @@
     "englishRequiredHint": "English is required — international visitors see it by default.",
     "langEn": "English",
     "uploadBlockedMessage": "Wait for the image upload to finish or click 'Save crop' to confirm it — otherwise it'll be lost.",
+    "divisionsTitle": "Divisions (optional)",
+    "divisionsHint": "Multiple age groups or formats? Add a division row for each — age group, format, and max teams.",
+    "addDivision": "Add division",
+    "divAgeGroup": "Age group",
+    "divFormat": "Format",
+    "divMaxTeams": "Max teams",
+    "divRemove": "Remove division",
     "errors": {
       "datesRequired": "Pick dates before publishing"
     }

@@ -37,6 +37,8 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     skillLevel: t("skillLevel"),
     skillAll: tw("skillAll"), skillAm: tw("skillAm"), skillSemiPro: tw("skillSemiPro"), skillPro: tw("skillPro"),
     format: t("format"), formatHint: t("formatHint"), formatAny: t("formatAny"), maxParticipants: t("maxParticipants"),
+    divisionsTitle: tw("divisionsTitle"), divisionsHint: tw("divisionsHint"), addDivision: tw("addDivision"),
+    divAgeGroup: tw("divAgeGroup"), divFormat: tw("divFormat"), divMaxTeams: tw("divMaxTeams"), divRemove: tw("divRemove"),
 
     isFree: t("isFree"), priceFrom: t("priceFrom"), priceTo: t("priceTo"), currency: t("currency"),
     externalUrl: t("externalUrl"), externalUrlHint: t("externalUrlHint"),

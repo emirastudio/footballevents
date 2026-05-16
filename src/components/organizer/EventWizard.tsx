@@ -77,6 +77,34 @@ type Country = { code: string; name: string; flag: string };
 
 const AGE_GROUPS = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT","ALL_AGES"];
 
+const FORMATS = [
+  { value: "5x5",   label: "5×5"   },
+  { value: "6x6",   label: "6×6"   },
+  { value: "7x7",   label: "7×7"   },
+  { value: "8x8",   label: "8×8"   },
+  { value: "9x9",   label: "9×9"   },
+  { value: "11x11", label: "11×11" },
+];
+
+/** Returns a chip label with the birth year for U-groups, e.g. "U14 · 2013". */
+function getAgeChipLabel(group: string): string {
+  if (group === "ALL_AGES") return "ALL";
+  if (group === "ADULT") return "Adult";
+  const m = group.match(/^U(\d+)$/);
+  if (m) {
+    const year = new Date().getFullYear() + 1 - parseInt(m[1], 10);
+    return `${group} · ${year}`;
+  }
+  return group;
+}
+
+export type DivisionDefault = {
+  id?: string;
+  ageGroup: string;
+  format: string;
+  maxTeams?: number;
+};
+
 export type WizardLabels = {
   steps: { 1: string; 2: string; 3: string; 4: string; 5: string };
   stepHints: { 1: string; 2: string; 3: string; 4: string; 5: string };
@@ -101,6 +129,8 @@ export type WizardLabels = {
   ageGroups: string; gender: string; genderMale: string; genderFemale: string; genderMixed: string;
   skillLevel: string; skillAll: string; skillAm: string; skillSemiPro: string; skillPro: string;
   format: string; formatHint: string; formatAny: string; maxParticipants: string;
+  divisionsTitle: string; divisionsHint: string; addDivision: string;
+  divAgeGroup: string; divFormat: string; divMaxTeams: string; divRemove: string;
   // Step 4
   isFree: string; priceFrom: string; priceTo: string; currency: string;
   externalUrl: string; externalUrlHint: string;
@@ -141,6 +171,7 @@ export type WizardDefaults = {
   // step 3
   ageGroups?: string[]; gender?: string; skillLevel?: string;
   format?: string; maxParticipants?: number;
+  divisions?: DivisionDefault[];
   // step 4
   isFree?: boolean; priceFrom?: number; priceTo?: number; currency?: string;
   externalUrl?: string; contactEmail?: string; contactPhone?: string;
@@ -470,13 +501,13 @@ function Step2({
 function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardLabels }) {
   return (
     <div className="space-y-7">
-      {/* Age — equal-width grid so every chip is the same size */}
+      {/* Age — birth year shown next to each chip so no manual calculation */}
       <PillCheckGroup
         legend={labels.ageGroups}
         name="ageGroups"
         defaultValues={defaults.ageGroups ?? []}
-        options={AGE_GROUPS.map((a) => ({ value: a, label: a === "ALL_AGES" ? "ALL" : a }))}
-        cols="grid-cols-6 sm:grid-cols-11"
+        options={AGE_GROUPS.map((a) => ({ value: a, label: getAgeChipLabel(a) }))}
+        cols="grid-cols-5 sm:grid-cols-10"
       />
 
       {/* Gender — 3 equal cells */}
@@ -506,25 +537,26 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
         ]}
       />
 
-      {/* Format */}
+      {/* Format — includes 6×6 */}
       <PillRadioGroup
         legend={labels.format}
         name="format"
         defaultValue={defaults.format ?? ""}
-        cols="grid-cols-3 sm:grid-cols-6"
+        cols="grid-cols-4 sm:grid-cols-7"
         options={[
-          { value: "",      label: labels.formatAny },
-          { value: "5x5",   label: "5×5"   },
-          { value: "7x7",   label: "7×7"   },
-          { value: "8x8",   label: "8×8"   },
-          { value: "9x9",   label: "9×9"   },
-          { value: "11x11", label: "11×11" },
+          { value: "", label: labels.formatAny },
+          ...FORMATS,
         ]}
       />
 
       {/* Max participants */}
       <div className="grid gap-5 sm:grid-cols-2">
         <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults.maxParticipants?.toString()} />
+      </div>
+
+      {/* Divisions builder */}
+      <div className="border-t border-[var(--color-border)] pt-6">
+        <DivisionsBuilder defaults={defaults.divisions ?? []} labels={labels} />
       </div>
     </div>
   );
@@ -553,6 +585,136 @@ function PillCheckGroup({
         ))}
       </div>
     </fieldset>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Divisions builder — optional section in Step 3
+// ─────────────────────────────────────────────────────────────
+type DivRow = { key: number; ageGroup: string; format: string; maxTeams: string };
+
+const selectCls =
+  "rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2.5 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20";
+
+function DivisionsBuilder({
+  defaults,
+  labels,
+}: {
+  defaults: DivisionDefault[];
+  labels: WizardLabels;
+}) {
+  const [rows, setRows] = useState<DivRow[]>(() =>
+    defaults.map((d, i) => ({
+      key: i,
+      ageGroup: d.ageGroup,
+      format: d.format,
+      maxTeams: d.maxTeams?.toString() ?? "",
+    }))
+  );
+  const nextKey = useRef(defaults.length);
+
+  const add = () => {
+    setRows((prev) => [...prev, { key: nextKey.current++, ageGroup: "U14", format: "11x11", maxTeams: "" }]);
+  };
+  const remove = (key: number) => setRows((prev) => prev.filter((r) => r.key !== key));
+  const update = (key: number, patch: Partial<DivRow>) =>
+    setRows((prev) => prev.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+
+  return (
+    <div>
+      {/* Section header */}
+      <div className="mb-1 flex items-center justify-between gap-3">
+        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+          {labels.divisionsTitle}
+        </span>
+      </div>
+      <p className="mb-4 text-xs text-[var(--color-muted)]">{labels.divisionsHint}</p>
+
+      {/* Hidden inputs — submitted with the form */}
+      <input type="hidden" name="div_count" value={rows.length} />
+      {rows.map((row, idx) => (
+        <span key={row.key}>
+          <input type="hidden" name={`div_${idx}_ageGroup`} value={row.ageGroup} />
+          <input type="hidden" name={`div_${idx}_format`}   value={row.format} />
+          <input type="hidden" name={`div_${idx}_maxTeams`} value={row.maxTeams} />
+        </span>
+      ))}
+
+      {/* Division rows */}
+      {rows.length > 0 && (
+        <div className="mb-3 space-y-2">
+          {rows.map((row, idx) => (
+            <div
+              key={row.key}
+              className="flex flex-wrap items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 py-2.5"
+            >
+              <span className="min-w-[1.5rem] text-xs font-bold text-[var(--color-muted)]">{idx + 1}.</span>
+
+              {/* Age group */}
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divAgeGroup}</span>
+                <select
+                  value={row.ageGroup}
+                  onChange={(e) => update(row.key, { ageGroup: e.target.value })}
+                  className={selectCls}
+                >
+                  {AGE_GROUPS.filter((a) => a !== "ALL_AGES").map((a) => (
+                    <option key={a} value={a}>{getAgeChipLabel(a)}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Format */}
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divFormat}</span>
+                <select
+                  value={row.format}
+                  onChange={(e) => update(row.key, { format: e.target.value })}
+                  className={selectCls}
+                >
+                  {FORMATS.map((f) => (
+                    <option key={f.value} value={f.value}>{f.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Max teams */}
+              <div className="flex flex-col gap-0.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divMaxTeams}</span>
+                <input
+                  type="number"
+                  min={2}
+                  max={256}
+                  placeholder="—"
+                  value={row.maxTeams}
+                  onChange={(e) => update(row.key, { maxTeams: e.target.value })}
+                  className={`${selectCls} w-20`}
+                />
+              </div>
+
+              {/* Remove */}
+              <button
+                type="button"
+                onClick={() => remove(row.key)}
+                aria-label={labels.divRemove}
+                className="ml-auto grid h-8 w-8 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add button */}
+      <button
+        type="button"
+        onClick={add}
+        className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-muted-strong)] transition hover:border-[var(--color-pitch-500)] hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"
+      >
+        <Plus className="h-4 w-4" /> {labels.addDivision}
+      </button>
+    </div>
   );
 }
 

@@ -28,7 +28,7 @@ export default async function SetupEventPage({
 
   const ev = await db.event.findUnique({
     where: { id },
-    include: { translations: true, category: true, venue: true },
+    include: { translations: true, category: true, venue: true, divisions: { orderBy: { order: "asc" } } },
   });
   if (!ev || ev.organizerId !== organizer.id) notFound();
 
@@ -92,6 +92,12 @@ export default async function SetupEventPage({
             skillLevel: ev.skillLevel,
             format: ev.format ?? undefined,
             maxParticipants: ev.maxParticipants ?? undefined,
+            divisions: ev.divisions.map((d) => ({
+              id: d.id,
+              ageGroup: d.ageGroup as string,
+              format: d.format,
+              maxTeams: d.maxTeams ?? undefined,
+            })),
             isFree: ev.isFree,
             priceFrom: ev.priceFrom ? Number(ev.priceFrom) : undefined,
             priceTo: ev.priceTo ? Number(ev.priceTo) : undefined,

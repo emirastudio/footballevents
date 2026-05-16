@@ -786,11 +786,44 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
     }
     case 3: {
       const data = parsed.data as z.infer<typeof stepSchemas[3]>;
-      update.ageGroups = data.ageGroups as never;
       update.gender = data.gender;
       update.skillLevel = data.skillLevel;
-      update.format = data.format || null;
       update.maxParticipants = data.maxParticipants ?? null;
+
+      // Parse divisions from formData directly (Zod schema strips them).
+      const divCount = Math.min(parseInt(String(formData.get("div_count") ?? "0"), 10) || 0, 20);
+      const divRows: { ageGroup: string; format: string; maxTeams: number | null }[] = [];
+      for (let i = 0; i < divCount; i++) {
+        const ag = String(formData.get(`div_${i}_ageGroup`) ?? "").trim();
+        const fmt = String(formData.get(`div_${i}_format`) ?? "").trim();
+        if (ag && fmt) {
+          const mt = parseInt(String(formData.get(`div_${i}_maxTeams`) ?? ""), 10);
+          divRows.push({ ageGroup: ag, format: fmt, maxTeams: Number.isNaN(mt) || mt < 1 ? null : mt });
+        }
+      }
+
+      // Sync divisions: delete all, then re-create in order.
+      await db.eventDivision.deleteMany({ where: { eventId: existing.id } });
+      if (divRows.length > 0) {
+        await db.eventDivision.createMany({
+          data: divRows.map((d, i) => ({
+            eventId: existing.id,
+            name: `${d.ageGroup} · ${d.format.replace("x", "×")}`,
+            ageGroup: d.ageGroup as never,
+            format: d.format,
+            maxTeams: d.maxTeams,
+            order: i,
+          })),
+        });
+        // When divisions exist, derive top-level fields from them.
+        const uniqueAges = [...new Set(divRows.map((d) => d.ageGroup))];
+        update.ageGroups = uniqueAges as never;
+        update.format = divRows[0]?.format ?? data.format ?? null;
+      } else {
+        // No divisions: use the explicitly selected checkboxes/radio.
+        update.ageGroups = data.ageGroups as never;
+        update.format = data.format || null;
+      }
       break;
     }
     case 4: {
@@ -898,13 +931,26 @@ function parseStepInput(step: WizardStep, formData: FormData) {
       venueName:            formData.get("venueName") || undefined,
       venueAddress:         formData.get("venueAddress") || undefined,
     };
-    case 3: return {
-      ageGroups:        formData.getAll("ageGroups").map(String),
-      gender:           formData.get("gender") || "MIXED",
-      skillLevel:       formData.get("skillLevel") || "ALL_LEVELS",
-      format:           formData.get("format") || undefined,
-      maxParticipants:  formData.get("maxParticipants") || undefined,
-    };
+    case 3: {
+      const divCount = Math.min(parseInt(String(formData.get("div_count") ?? "0"), 10) || 0, 20);
+      const divisions: { ageGroup: string; format: string; maxTeams: number | null }[] = [];
+      for (let i = 0; i < divCount; i++) {
+        const ag = String(formData.get(`div_${i}_ageGroup`) ?? "").trim();
+        const fmt = String(formData.get(`div_${i}_format`) ?? "").trim();
+        if (ag && fmt) {
+          const mt = parseInt(String(formData.get(`div_${i}_maxTeams`) ?? ""), 10);
+          divisions.push({ ageGroup: ag, format: fmt, maxTeams: isNaN(mt) || mt < 1 ? null : mt });
+        }
+      }
+      return {
+        ageGroups:        formData.getAll("ageGroups").map(String),
+        gender:           formData.get("gender") || "MIXED",
+        skillLevel:       formData.get("skillLevel") || "ALL_LEVELS",
+        format:           formData.get("format") || undefined,
+        maxParticipants:  formData.get("maxParticipants") || undefined,
+        divisions,
+      };
+    }
     case 4: return {
       isFree:           formData.get("isFree") === "on" || formData.get("isFree") === "true",
       priceFrom:        formData.get("priceFrom") || undefined,
