@@ -22,7 +22,7 @@ function SubmitBtn({ labels }: { labels: Labels }) {
   );
 }
 
-export function MagicLinkForm({ labels }: { labels: Labels }) {
+export function MagicLinkForm({ labels, callbackUrl }: { labels: Labels; callbackUrl?: string }) {
   const [state, action] = useActionState<MagicLinkState, FormData>(magicLinkAction, null);
   const startedAt = useMemo(() => Date.now(), []);
 
@@ -47,6 +47,7 @@ export function MagicLinkForm({ labels }: { labels: Labels }) {
         aria-hidden
       />
       <input type="hidden" name="startedAt" value={startedAt} />
+      {callbackUrl && <input type="hidden" name="callbackUrl" value={callbackUrl} />}
       <label className="block">
         <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
           {labels.email}

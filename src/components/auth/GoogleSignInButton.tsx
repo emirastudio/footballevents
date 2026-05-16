@@ -2,10 +2,11 @@ import { googleSignInAction } from "@/app/actions/auth";
 
 const GOOGLE_ENABLED = !!process.env.AUTH_GOOGLE_ID;
 
-export function GoogleSignInButton({ label }: { label: string }) {
+export function GoogleSignInButton({ label, callbackUrl }: { label: string; callbackUrl?: string }) {
   if (!GOOGLE_ENABLED) return null;
   return (
     <form action={googleSignInAction}>
+      {callbackUrl && <input type="hidden" name="callbackUrl" value={callbackUrl} />}
       <button
         type="submit"
         className="flex w-full items-center justify-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 py-2.5 text-sm font-semibold text-[var(--color-foreground)] shadow-[var(--shadow-xs)] transition hover:border-[var(--color-pitch-300)] hover:bg-[var(--color-surface-muted)]"

@@ -16,10 +16,11 @@ function SubmitBtn({ labels }: { labels: Labels }) {
   );
 }
 
-export function SignInForm({ labels }: { labels: Labels }) {
+export function SignInForm({ labels, callbackUrl }: { labels: Labels; callbackUrl?: string }) {
   const [state, action] = useActionState<AuthFormState, FormData>(signInAction, null);
   return (
     <form action={action} className="space-y-4">
+      {callbackUrl && <input type="hidden" name="callbackUrl" value={callbackUrl} />}
       <Field name="email" type="email" autoComplete="email" required label={labels.email} />
       <Field name="password" type="password" autoComplete="current-password" required label={labels.password} />
       {state?.error && (

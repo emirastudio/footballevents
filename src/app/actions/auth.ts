@@ -93,12 +93,23 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password required"),
 });
 
+/** Returns `path` if it's a safe relative URL, otherwise falls back to "/". */
+function safeCallbackUrl(raw: FormDataEntryValue | null): string {
+  if (typeof raw !== "string") return "/";
+  const trimmed = raw.trim();
+  // Only allow relative paths starting with "/" to prevent open-redirect attacks
+  if (/^\/[^/\\]/.test(trimmed) || trimmed === "/") return trimmed;
+  return "/";
+}
+
 export async function signInAction(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
   const parsed = signInSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+
+  const callbackUrl = safeCallbackUrl(formData.get("callbackUrl"));
 
   try {
     await signIn("credentials", {
@@ -110,7 +121,7 @@ export async function signInAction(_prev: AuthFormState, formData: FormData): Pr
     if (e instanceof AuthError) return { error: "Invalid email or password" };
     throw e;
   }
-  redirect("/");
+  redirect(callbackUrl);
 }
 
 export async function signOutAction() {
@@ -118,8 +129,9 @@ export async function signOutAction() {
   redirect("/");
 }
 
-export async function googleSignInAction() {
-  await signIn("google", { redirectTo: "/" });
+export async function googleSignInAction(formData: FormData) {
+  const callbackUrl = safeCallbackUrl(formData.get("callbackUrl"));
+  await signIn("google", { redirectTo: callbackUrl });
 }
 
 const magicLinkSchema = z.object({
@@ -171,9 +183,13 @@ export async function magicLinkAction(_prev: MagicLinkState, formData: FormData)
     }
   }
 
+  const callbackUrl = safeCallbackUrl(formData.get("callbackUrl"));
+
   try {
     // redirect: false — we render our own "check your inbox" UI via the form state.
-    await signIn("email", { email, redirect: false });
+    // callbackUrl is embedded in the magic link so after clicking the email the user
+    // lands back on the correct page (e.g. the event apply page they came from).
+    await signIn("email", { email, redirect: false, callbackUrl });
   } catch (e) {
     if (e instanceof AuthError) return { error: "Could not send sign-in link. Try again." };
     throw e;

@@ -7,12 +7,16 @@ import { MagicLinkForm } from "@/components/auth/MagicLinkForm";
 
 export default async function SignInPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams?: Promise<{ next?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("auth");
+  const sp = await searchParams;
+  const callbackUrl = sp?.next ?? undefined;
 
   return (
     <Container className="py-16">
@@ -23,12 +27,13 @@ export default async function SignInPage({
         <p className="mt-1 text-sm text-[var(--color-muted)]">{t("signInSubtitle")}</p>
 
         <div className="mt-6 space-y-4">
-          <GoogleSignInButton label={t("continueWithGoogle")} />
+          <GoogleSignInButton label={t("continueWithGoogle")} callbackUrl={callbackUrl} />
           <div className="relative text-center text-xs uppercase tracking-wider text-[var(--color-muted)]">
             <span className="relative z-10 bg-[var(--color-surface)] px-3">{t("or")}</span>
             <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--color-border)]" aria-hidden />
           </div>
           <SignInForm
+            callbackUrl={callbackUrl}
             labels={{
               email: t("email"),
               password: t("password"),
@@ -43,6 +48,7 @@ export default async function SignInPage({
           </div>
 
           <MagicLinkForm
+            callbackUrl={callbackUrl}
             labels={{
               email: t("email"),
               submit: t("magicLinkSubmit"),
