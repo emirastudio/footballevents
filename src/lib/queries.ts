@@ -5,7 +5,8 @@ import { Prisma, type EventType } from "@prisma/client";
 const eventInclude = {
   category: true,
   organizer: true,
-  venue: true,
+  venue: { include: { city: true } },
+  city: true,
   translations: true,
   divisions: { orderBy: { order: "asc" } },
   _count: { select: { saves: true } },
@@ -58,7 +59,7 @@ function toMockEvent(e: EventRow, preferredLocale: string = "en"): MockEvent {
     organizerSlug: e.organizer.slug,
     venueSlug: e.venue?.slug,
     countryCode: e.countryCode ?? "",
-    city: e.venue?.address?.split(",").pop()?.trim() ?? e.organizer.city ?? "",
+    city: e.city?.nameEn ?? e.venue?.city?.nameEn ?? e.organizer.city ?? "",
     startDate: e.startDate?.toISOString() ?? "",
     endDate: e.endDate?.toISOString() ?? "",
     ageGroups: e.ageGroups as unknown as string[],
@@ -142,6 +143,7 @@ function toMockOrganizer(o: OrganizerRow): MockOrganizer {
 
 const venueInclude = {
   translations: true,
+  city: true,
   events: { select: { id: true } },
 } satisfies Prisma.VenueInclude;
 
@@ -154,7 +156,7 @@ function toMockVenue(v: VenueRow): MockVenue {
     slug: v.slug,
     name: v.name,
     countryCode: v.countryCode,
-    city: v.address?.split(",").pop()?.trim() ?? "",
+    city: v.city?.nameEn ?? v.address?.split(",")[0]?.trim() ?? "",
     address: v.address ?? "",
     capacity: v.capacity ?? undefined,
     surfaceType: v.surfaceType ?? undefined,
