@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Bold, Italic, List, ListOrdered, Heading2, Heading3, Quote, Minus,
 } from "lucide-react";
@@ -38,17 +38,55 @@ function ToolbarBtn({
   );
 }
 
+// Convert plain text to HTML paragraphs (for legacy descriptions)
+function htmlOrText(raw: string): string {
+  if (!raw.trim()) return "";
+  if (/^\s*</.test(raw)) return raw; // already HTML
+  return raw
+    .split(/\n\n+/)
+    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
+    .join("");
+}
+
 export function RichEditor({ name, defaultValue, placeholder, className }: RichEditorProps) {
+  // Only mount Tiptap on the client to avoid SSR hydration issues
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // SSR / first paint: render a plain textarea as fallback.
+    // The form can still be submitted with the original value.
+    return (
+      <div className={["overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)]", className].join(" ")}>
+        <textarea
+          name={name}
+          defaultValue={defaultValue ?? ""}
+          placeholder={placeholder}
+          rows={7}
+          className="w-full resize-y px-4 py-3 text-sm text-[var(--color-foreground)] outline-none"
+        />
+      </div>
+    );
+  }
+
+  return <TiptapEditor name={name} defaultValue={defaultValue} placeholder={placeholder} className={className} />;
+}
+
+// Separate inner component so Tiptap only initializes after mount
+function TiptapEditor({ name, defaultValue, placeholder, className }: RichEditorProps) {
+  const initialContent = defaultValue ? htmlOrText(defaultValue) : "";
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        // Disable unsupported nodes
         code: false,
         codeBlock: false,
-        // Allow only safe marks
+        strike: false,
         bold: {},
         italic: {},
-        strike: false,
         bulletList: {},
         orderedList: {},
         blockquote: {},
@@ -56,12 +94,10 @@ export function RichEditor({ name, defaultValue, placeholder, className }: RichE
         horizontalRule: {},
         hardBreak: {},
       }),
-      Placeholder.configure({
-        placeholder: placeholder ?? "",
-      }),
+      Placeholder.configure({ placeholder: placeholder ?? "" }),
     ],
-    content: defaultValue ? htmlOrText(defaultValue) : "",
-    immediatelyRender: false,
+    content: initialContent,
+    immediatelyRender: true, // safe — we're already client-side
     editorProps: {
       attributes: {
         class: "min-h-[160px] px-4 py-3 text-sm text-[var(--color-foreground)] outline-none leading-relaxed focus:outline-none",
@@ -69,23 +105,31 @@ export function RichEditor({ name, defaultValue, placeholder, className }: RichE
     },
   });
 
-  // Keep hidden input in sync
-  const html = editor?.getHTML() ?? "";
-
   useEffect(() => {
     return () => { editor?.destroy(); };
   }, [editor]);
 
-  if (!editor) return null;
+  // While editor initializes, render hidden input with original value so form submission still works
+  if (!editor) {
+    return (
+      <div className={["overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)]", className].join(" ")}>
+        <input type="hidden" name={name} value={defaultValue ?? ""} />
+        <div className="min-h-[160px] animate-pulse bg-[var(--color-bg-muted)]" />
+      </div>
+    );
+  }
+
+  const html = editor.getHTML();
+  const value = html === "<p></p>" ? "" : html;
 
   return (
     <div className={["overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] transition focus-within:border-[var(--color-pitch-500)] focus-within:ring-2 focus-within:ring-[var(--color-pitch-500)]/20", className].join(" ")}>
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 border-b border-[var(--color-border)] bg-[var(--color-bg-muted)] px-2 py-1.5">
-        <ToolbarBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Bold (⌘B)">
+        <ToolbarBtn onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive("bold")} title="Bold">
           <Bold className="h-3.5 w-3.5" />
         </ToolbarBtn>
-        <ToolbarBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title="Italic (⌘I)">
+        <ToolbarBtn onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive("italic")} title="Italic">
           <Italic className="h-3.5 w-3.5" />
         </ToolbarBtn>
 
@@ -117,20 +161,8 @@ export function RichEditor({ name, defaultValue, placeholder, className }: RichE
       {/* Editor area */}
       <EditorContent editor={editor} />
 
-      {/* Hidden input for form submission */}
-      <input type="hidden" name={name} value={html === "<p></p>" ? "" : html} />
+      {/* Hidden input for form submission — always present */}
+      <input type="hidden" name={name} value={value} />
     </div>
   );
-}
-
-// ─── Detect if content is HTML or plain text and wrap accordingly ───
-function htmlOrText(raw: string): string {
-  if (!raw.trim()) return "";
-  // Already HTML if starts with a tag
-  if (/^\s*</.test(raw)) return raw;
-  // Convert plain text: double newlines → paragraphs, single → <br>
-  return raw
-    .split(/\n\n+/)
-    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
-    .join("");
 }
