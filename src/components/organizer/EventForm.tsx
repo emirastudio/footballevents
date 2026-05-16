@@ -149,6 +149,16 @@ export function EventForm({
         <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{labels.newTitle}</h1>
         <p className="mt-2 text-sm text-[var(--color-muted-strong)]">{labels.newSubtitle}</p>
       </header>
+      {state?.error && state.error !== "validation" && (
+        <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {formatError(state.error, labels.errors)}
+        </p>
+      )}
+      {state?.error === "validation" && Object.keys(fe).length > 0 && (
+        <p className="rounded-[var(--radius-md)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          {labels.errors.validationHint ?? "Please check the highlighted fields below."}
+        </p>
+      )}
 
       {/* Basics */}
       <Section title={labels.sections.basics} hint={labels.sections.basicsHint}>
@@ -480,18 +490,20 @@ function FormUrlField({ name, label, hint, defaultValue }: { name: string; label
     if (/^https?:\/\//i.test(t)) return t;
     return "https://" + t;
   };
-  const [val, setVal] = useState(defaultValue ?? "");
+  const [val, setVal] = useState(() => normalise(defaultValue ?? ""));
+  const fullUrl = val; // always has https:// or is empty
   return (
     <div>
       <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{label}</span>
+      {/* Hidden input submits the full normalised URL (with https://) */}
+      <input type="hidden" name={name} value={fullUrl} />
       <div className={`flex items-center overflow-hidden rounded-[var(--radius-md)] border transition focus-within:border-[var(--color-pitch-500)] focus-within:ring-2 focus-within:ring-[var(--color-pitch-500)]/20 ${val ? "border-[var(--color-pitch-500)]" : "border-[var(--color-border-strong)]"}`}>
         <span className="select-none border-r border-[var(--color-border)] bg-[var(--color-bg-muted)] px-3 py-2.5 text-sm text-[var(--color-muted)]">https://</span>
         <input
-          name={name}
           type="text"
           value={val.replace(/^https?:\/\//i, "")}
-          onChange={(e) => setVal(e.target.value ? "https://" + e.target.value.replace(/^https?:\/\//i, "") : "")}
-          onBlur={(e) => setVal(normalise(e.target.value.replace(/^https?:\/\//i, "")))}
+          onChange={(e) => setVal(e.target.value ? normalise(e.target.value) : "")}
+          onBlur={(e) => setVal(normalise(e.target.value))}
           placeholder="monkeycup.eu"
           className="flex-1 bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] outline-none"
           autoComplete="url"
