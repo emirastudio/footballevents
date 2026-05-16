@@ -92,8 +92,7 @@ function getAgeChipLabel(group: string): string {
   if (group === "ADULT") return "Adult";
   const m = group.match(/^U(\d+)$/);
   if (m) {
-    const year = new Date().getFullYear() + 1 - parseInt(m[1], 10);
-    return `${group} · ${year}`;
+    return String(new Date().getFullYear() + 1 - parseInt(m[1], 10));
   }
   return group;
 }
