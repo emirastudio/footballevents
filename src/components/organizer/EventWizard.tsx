@@ -575,15 +575,6 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
         defaultValues={defaults.formats ?? (defaults.format ? defaults.format.split(",").filter(Boolean) : [])}
       />
 
-      {/* Max participants */}
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field name="maxParticipants" type="number" label={labels.maxParticipants} placeholder="32" defaultValue={defaults.maxParticipants?.toString()} />
-      </div>
-
-      {/* Divisions builder */}
-      <div className="border-t border-[var(--color-border)] pt-6">
-        <DivisionsBuilder defaults={defaults.divisions ?? []} labels={labels} />
-      </div>
     </div>
   );
 }
