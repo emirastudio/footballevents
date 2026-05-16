@@ -91,6 +91,7 @@ export default async function SetupEventPage({
             gender: ev.gender,
             skillLevel: ev.skillLevel,
             format: ev.format ?? undefined,
+            formats: ev.format ? ev.format.split(",").filter(Boolean) : [],
             maxParticipants: ev.maxParticipants ?? undefined,
             divisions: ev.divisions.map((d) => ({
               id: d.id,

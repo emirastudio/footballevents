@@ -204,7 +204,7 @@ export type WizardDefaults = {
   venueName?: string; venueAddress?: string;
   // step 3
   ageGroups?: string[]; gender?: string; skillLevel?: string;
-  format?: string; maxParticipants?: number;
+  format?: string; formats?: string[]; maxParticipants?: number;
   divisions?: DivisionDefault[];
   // step 4
   isFree?: boolean; priceFrom?: number; priceTo?: number; currency?: string;
@@ -569,16 +569,10 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
         ]}
       />
 
-      {/* Format — includes 6×6 */}
-      <PillRadioGroup
+      {/* Format — multi-select, same style as age grid */}
+      <FormatPicker
         legend={labels.format}
-        name="format"
-        defaultValue={defaults.format ?? ""}
-        cols="grid-cols-4 sm:grid-cols-7"
-        options={[
-          { value: "", label: labels.formatAny },
-          ...FORMATS,
-        ]}
+        defaultValues={defaults.formats ?? (defaults.format ? defaults.format.split(",").filter(Boolean) : [])}
       />
 
       {/* Max participants */}
@@ -666,6 +660,48 @@ function AgeScrollPicker({ legend, adultLabel, defaultValues }: { legend: string
               ].join(" ")}
             >
               {isAdult ? adultLabel : val}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Format multi-select picker — same button style as age grid
+// ─────────────────────────────────────────────────────────────
+function FormatPicker({ legend, defaultValues }: { legend: string; defaultValues: string[] }) {
+  const [selected, setSelected] = useState<string[]>(defaultValues);
+
+  const toggle = (val: string) =>
+    setSelected((prev) =>
+      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
+    );
+
+  return (
+    <fieldset>
+      <legend className="mb-3 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {legend}
+      </legend>
+      {/* Stored as comma-separated in the single format field */}
+      <input type="hidden" name="format" value={selected.join(",")} />
+      <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+        {FORMATS.map((f) => {
+          const active = selected.includes(f.value);
+          return (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => toggle(f.value)}
+              className={[
+                "h-10 rounded-[var(--radius-md)] border text-sm font-semibold transition",
+                active
+                  ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white"
+                  : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-400)] hover:text-[var(--color-foreground)]",
+              ].join(" ")}
+            >
+              {f.label}
             </button>
           );
         })}
