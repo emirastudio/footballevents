@@ -31,7 +31,7 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     venueName: t("venueName"), venueNameHint: t("venueNameHint"),
     venueAddress: t("venueAddress"), venueAddressHint: t("venueAddressHint"),
 
-    ageGroups: t("ageGroups"),
+    ageGroups: t("ageGroups"), ageAdult: tw("ageAdult"),
     gender: t("gender"),
     genderMale: tw("genderMale"), genderFemale: tw("genderFemale"), genderMixed: tw("genderMixed"),
     skillLevel: t("skillLevel"),

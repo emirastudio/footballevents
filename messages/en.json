@@ -574,6 +574,7 @@
     "publishingDisabled": "Missing required fields: dates, country, and location name. Fill them in and try again.",
     "upgradeForPublish": "Your current plan can't publish this event. Upgrade to continue.",
     "upgradeCta": "Change plan",
+    "ageAdult": "Adult",
     "genderMale": "Boys/Men",
     "genderFemale": "Girls/Women",
     "genderMixed": "Mixed",

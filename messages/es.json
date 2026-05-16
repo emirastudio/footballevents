@@ -574,6 +574,7 @@
     "publishingDisabled": "Faltan campos obligatorios: fechas, país y nombre de la ubicación. Complétalos e inténtalo de nuevo.",
     "upgradeForPublish": "Tu plan actual no permite publicar este evento. Mejora para continuar.",
     "upgradeCta": "Cambiar plan",
+    "ageAdult": "Adulto",
     "genderMale": "Chicos/Hombres",
     "genderFemale": "Chicas/Mujeres",
     "genderMixed": "Mixto",

@@ -78,13 +78,16 @@ type Country = { code: string; name: string; flag: string };
 // Individual birth years for the wizard scroll picker.
 // 19 years back = oldest youth (U21 equivalent). "ADULT" covers men's/women's football.
 const CY = new Date().getFullYear();
-const AGE_YEAR_CHIPS: { value: string; label: string }[] = [
-  ...Array.from({ length: 20 }, (_, i) => {
-    const year = CY - i;
-    return { value: String(year), label: String(year) };
-  }),
-  { value: "ADULT", label: "Adult" },
-];
+// Adult label is injected at runtime from translations (see buildAgeYearChips)
+function buildAgeYearChips(adultLabel: string): { value: string; label: string }[] {
+  return [
+    ...Array.from({ length: 20 }, (_, i) => {
+      const year = CY - i;
+      return { value: String(year), label: String(year) };
+    }),
+    { value: "ADULT", label: adultLabel },
+  ];
+}
 
 // Legacy U-group → representative birth year (for loading old events saved before this migration)
 const U_GROUP_TO_YEAR: Record<string, string> = {
@@ -159,6 +162,7 @@ export type WizardLabels = {
   ageGroups: string; gender: string; genderMale: string; genderFemale: string; genderMixed: string;
   skillLevel: string; skillAll: string; skillAm: string; skillSemiPro: string; skillPro: string;
   format: string; formatHint: string; formatAny: string; maxParticipants: string;
+  ageAdult: string;
   divisionsTitle: string; divisionsHint: string; addDivision: string;
   divAgeGroup: string; divFormat: string; divMaxTeams: string; divRemove: string;
   // Step 4
@@ -534,6 +538,7 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
       {/* Age — horizontal scroll of individual birth years 2026 → 2007, then Adult */}
       <AgeScrollPicker
         legend={labels.ageGroups}
+        adultLabel={labels.ageAdult}
         defaultValues={(defaults.ageGroups ?? []).map(normaliseAge)}
       />
 
@@ -618,7 +623,7 @@ function PillCheckGroup({
 // ─────────────────────────────────────────────────────────────
 // Horizontal year scroll picker for age groups
 // ─────────────────────────────────────────────────────────────
-function AgeScrollPicker({ legend, defaultValues }: { legend: string; defaultValues: string[] }) {
+function AgeScrollPicker({ legend, adultLabel, defaultValues }: { legend: string; adultLabel: string; defaultValues: string[] }) {
   const [selected, setSelected] = useState<string[]>(defaultValues);
 
   const toggle = (val: string) =>
@@ -637,7 +642,7 @@ function AgeScrollPicker({ legend, defaultValues }: { legend: string; defaultVal
       ))}
       {/* Horizontal scroll row */}
       <div className="flex gap-1.5 overflow-x-auto pb-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {AGE_YEAR_CHIPS.map((chip) => {
+        {buildAgeYearChips(adultLabel).map((chip) => {
           const active = selected.includes(chip.value);
           return (
             <button
@@ -730,7 +735,7 @@ function DivisionsBuilder({
                   onChange={(e) => update(row.key, { ageGroup: e.target.value })}
                   className={fieldInputCls}
                 >
-                  {AGE_YEAR_CHIPS.map((chip) => (
+                  {buildAgeYearChips(labels.ageAdult).map((chip) => (
                     <option key={chip.value} value={chip.value}>{chip.label}</option>
                   ))}
                 </select>
