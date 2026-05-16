@@ -381,15 +381,6 @@ export async function updateEventAction(_prev: EventFormState, formData: FormDat
 }
 
 async function _updateEventActionInner(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
-  // Debug: log all incoming form keys
-  console.log("[updateEventAction] keys:", [...formData.keys()].join(", "));
-  console.log("[updateEventAction] intent:", formData.get("intent"), "id:", formData.get("id"));
-  console.log("[updateEventAction] descriptionEn length:", String(formData.get("descriptionEn") ?? "").length);
-  console.log("[updateEventAction] externalUrl:", formData.get("externalUrl"));
-  console.log("[updateEventAction] titleEn:", formData.get("titleEn"));
-  console.log("[updateEventAction] startDate:", formData.get("startDate"), "endDate:", formData.get("endDate"));
-  console.log("[updateEventAction] countryCode:", formData.get("countryCode"), "venueName:", formData.get("venueName"));
-
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
