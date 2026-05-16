@@ -11,7 +11,7 @@ export default async function OrganizerEventsListPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; submitted?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -27,6 +27,7 @@ export default async function OrganizerEventsListPage({
 
   const STATUSES = ["ALL", "DRAFT", "PENDING_REVIEW", "PUBLISHED", "ARCHIVED"] as const;
   const activeStatus = (sp.status?.toUpperCase() ?? "ALL") as (typeof STATUSES)[number];
+  const justSubmitted = sp.submitted === "1";
 
   const events = await db.event.findMany({
     where: {
@@ -50,6 +51,17 @@ export default async function OrganizerEventsListPage({
           </Link>
         </Button>
       </div>
+
+      {/* Submission success banner */}
+      {justSubmitted && (
+        <div className="mb-6 flex items-start gap-3 rounded-[var(--radius-lg)] border border-green-200 bg-green-50 px-4 py-3.5">
+          <span className="mt-0.5 text-lg">✅</span>
+          <div>
+            <p className="font-semibold text-green-800">{t("submittedTitle")}</p>
+            <p className="mt-0.5 text-sm text-green-700">{t("submittedHint")}</p>
+          </div>
+        </div>
+      )}
 
       {/* Status filter */}
       <div className="mb-5 flex flex-wrap gap-2">

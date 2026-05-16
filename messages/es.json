@@ -85,6 +85,8 @@
     "alreadyOrganizer": "Ya tienes un perfil de organizador.",
     "dashboard": "Panel",
     "myEvents": "Mis eventos",
+    "submittedTitle": "¡Evento enviado para revisión!",
+    "submittedHint": "Nuestro equipo lo revisará en 24 horas. Recibirás un correo una vez aprobado y publicado.",
     "venues": "Ubicaciones",
     "applications": "Inscripciones",
     "messages": "Mensajes",

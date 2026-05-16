@@ -510,6 +510,13 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
 
   revalidatePath("/organizer/events");
   revalidatePath(`/events/${existing.slug}`);
+
+  // After submitting for review — go to the events list so the organizer
+  // can see the updated status badge (PENDING_REVIEW). Staying on the edit
+  // page looks like "nothing happened".
+  if (d.intent === "review") {
+    redirect(`/organizer/events?submitted=1`);
+  }
   redirect(`/organizer/events/${id}`);
 }
 

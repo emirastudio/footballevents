@@ -85,6 +85,8 @@
     "alreadyOrganizer": "You already have an organizer profile.",
     "dashboard": "Dashboard",
     "myEvents": "My events",
+    "submittedTitle": "Event submitted for review!",
+    "submittedHint": "Our team will review it within 24 hours. You'll receive an email once it's approved and published.",
     "venues": "Locations",
     "applications": "Applications",
     "messages": "Messages",
