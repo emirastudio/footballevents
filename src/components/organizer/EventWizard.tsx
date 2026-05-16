@@ -621,27 +621,16 @@ function PillCheckGroup({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Age group picker — U-group chips with birth year shown below
+// Age group picker — compact year grid (2026→2007) + Adult
 // ─────────────────────────────────────────────────────────────
-const U_GROUPS: { value: string; label: string; year: string }[] = [
-  { value: "U6",  label: "U6",    year: String(CY - 5)  },
-  { value: "U8",  label: "U8",    year: String(CY - 7)  },
-  { value: "U10", label: "U10",   year: String(CY - 9)  },
-  { value: "U12", label: "U12",   year: String(CY - 11) },
-  { value: "U14", label: "U14",   year: String(CY - 13) },
-  { value: "U16", label: "U16",   year: String(CY - 15) },
-  { value: "U18", label: "U18",   year: String(CY - 17) },
-  { value: "U21", label: "U21",   year: String(CY - 20) },
-  { value: "ADULT", label: "",    year: ""               },
+// Years: CY down to CY-19 (19 yo), then Adult. No gaps, no U-group abstractions.
+const YEAR_GRID: string[] = [
+  ...Array.from({ length: 20 }, (_, i) => String(CY - i)),
+  "ADULT",
 ];
 
 function AgeScrollPicker({ legend, adultLabel, defaultValues }: { legend: string; adultLabel: string; defaultValues: string[] }) {
-  // Normalise legacy year strings back to U-group keys for display
-  const toKey = (v: string): string => {
-    const found = Object.entries(U_GROUP_TO_YEAR).find(([, yr]) => yr === v);
-    return found ? found[0] : v;
-  };
-  const [selected, setSelected] = useState<string[]>(defaultValues.map(toKey));
+  const [selected, setSelected] = useState<string[]>(defaultValues);
 
   const toggle = (val: string) =>
     setSelected((prev) =>
@@ -654,34 +643,29 @@ function AgeScrollPicker({ legend, adultLabel, defaultValues }: { legend: string
         {legend}
       </legend>
 
-      {/* Hidden inputs — store U-group keys (or "ADULT") */}
       {selected.map((v) => (
         <input key={v} type="hidden" name="ageGroups" value={v} />
       ))}
 
-      <div className="grid grid-cols-5 gap-2 sm:grid-cols-9">
-        {U_GROUPS.map((g) => {
-          const active = selected.includes(g.value);
+      {/* 5 cols → 4 rows of years + Adult in last cell */}
+      <div className="grid grid-cols-5 gap-1.5 sm:grid-cols-7">
+        {YEAR_GRID.map((val) => {
+          const active = selected.includes(val);
+          const isAdult = val === "ADULT";
           return (
             <button
-              key={g.value}
+              key={val}
               type="button"
-              onClick={() => toggle(g.value)}
+              onClick={() => toggle(val)}
               className={[
-                "flex flex-col items-center justify-center gap-0.5 rounded-[var(--radius-lg)] border py-2.5 transition",
+                "h-10 rounded-[var(--radius-md)] border text-sm font-semibold tabular-nums transition",
+                isAdult ? "col-span-2 sm:col-span-1" : "",
                 active
                   ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white"
-                  : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-foreground)] hover:border-[var(--color-pitch-400)]",
+                  : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-400)] hover:text-[var(--color-foreground)]",
               ].join(" ")}
             >
-              <span className="text-sm font-bold leading-none">
-                {g.value === "ADULT" ? adultLabel : g.label}
-              </span>
-              {g.year && (
-                <span className={["text-[11px] leading-none tabular-nums", active ? "text-white/70" : "text-[var(--color-muted)]"].join(" ")}>
-                  {g.year}
-                </span>
-              )}
+              {isAdult ? adultLabel : val}
             </button>
           );
         })}
@@ -760,9 +744,9 @@ function DivisionsBuilder({
                   onChange={(e) => update(row.key, { ageGroup: e.target.value })}
                   className={fieldInputCls}
                 >
-                  {U_GROUPS.map((g) => (
-                    <option key={g.value} value={g.value}>
-                      {g.value === "ADULT" ? labels.ageAdult : `${g.label}${g.year ? ` · ${g.year}` : ""}`}
+                  {YEAR_GRID.map((val) => (
+                    <option key={val} value={val}>
+                      {val === "ADULT" ? labels.ageAdult : val}
                     </option>
                   ))}
                 </select>
