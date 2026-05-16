@@ -27,13 +27,16 @@ export default async function OrganizerLayout({
   if (!organizer) redirect("/onboarding/organizer");
 
   const t = await getTranslations("organizer");
-  const unreadMessages = await countUnreadThreads(session.user.id);
+  const [unreadMessages, newBookings] = await Promise.all([
+    countUnreadThreads(session.user.id),
+    db.booking.count({ where: { event: { organizerId: organizer.id }, status: "NEW" } }),
+  ]);
 
   const nav = [
     { href: "/organizer/dashboard", icon: LayoutDashboard, label: t("dashboard"), badge: 0 },
     { href: "/organizer/events", icon: Calendar, label: t("myEvents"), badge: 0 },
     { href: "/organizer/venues", icon: MapPin, label: t("venues"), badge: 0 },
-    { href: "/organizer/bookings", icon: Inbox, label: t("applications"), badge: 0 },
+    { href: "/organizer/bookings", icon: Inbox, label: t("applications"), badge: newBookings },
     { href: "/organizer/messages", icon: MessageSquare, label: t("messages"), badge: unreadMessages },
     { href: "/organizer/marketing", icon: Megaphone, label: t("marketing"), badge: 0 },
     { href: "/organizer/analytics", icon: BarChart3, label: t("analyticsNav"), badge: 0 },

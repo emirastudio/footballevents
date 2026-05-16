@@ -169,6 +169,27 @@ export default async function OrganizerDashboardPage({
         </div>
       )}
 
+      {/* New applications alert */}
+      {bookingsNew > 0 && (
+        <Link
+          href="/organizer/bookings?status=new"
+          className="mb-6 flex items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-amber-300 bg-amber-50 px-5 py-4 transition hover:border-amber-400 hover:bg-amber-100"
+        >
+          <div className="flex items-center gap-3">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-amber-100 text-amber-700">
+              <Inbox className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="font-semibold text-amber-900">
+                {t("newApplicationsAlert", { count: bookingsNew })}
+              </div>
+              <div className="text-sm text-amber-700">{t("newApplicationsHint")}</div>
+            </div>
+          </div>
+          <span className="shrink-0 text-sm font-bold text-amber-700">{t("viewAll")} →</span>
+        </Link>
+      )}
+
       {/* Stats grid */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (
@@ -245,7 +266,15 @@ export default async function OrganizerDashboardPage({
                         {en?.title ?? b.event.slug} · {b.createdAt.toISOString().slice(0, 10)}
                       </div>
                     </div>
-                    <span className="rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-strong)]">
+                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                      b.status === "NEW"
+                        ? "bg-amber-100 text-amber-800"
+                        : b.status === "ACCEPTED"
+                        ? "bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]"
+                        : b.status === "DECLINED"
+                        ? "bg-red-50 text-red-700"
+                        : "bg-[var(--color-bg-muted)] text-[var(--color-muted-strong)]"
+                    }`}>
                       {b.status}
                     </span>
                   </li>

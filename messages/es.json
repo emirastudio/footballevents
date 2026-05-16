@@ -115,6 +115,9 @@
     "duplicateHint": "Clonar evento como borrador (fechas +1 año)",
     "noEventsYet": "Aún no hay eventos — crea el primero para empezar.",
     "noApplicationsYet": "Aún no hay inscripciones — aparecerán aquí cuando alguien se inscriba.",
+    "newApplicationsAlert": "{count, plural, one {# nueva inscripción} other {# nuevas inscripciones}} esperando tu respuesta",
+    "newApplicationsHint": "Revisa y acepta o rechaza",
+    "viewAll": "Ver todas",
     "stats": {
       "events": "Eventos",
       "published": "Publicados",
