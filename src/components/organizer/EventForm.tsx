@@ -298,7 +298,7 @@ export function EventForm({
             ]} />
           </div>
         )}
-        <Field name="externalUrl" type="url" label={labels.externalUrl} hint={labels.externalUrlHint} placeholder="https://…" defaultValue={defaults?.externalUrl} />
+        <FormUrlField name="externalUrl" label={labels.externalUrl} hint={labels.externalUrlHint} defaultValue={defaults?.externalUrl} />
       </Section>
 
       {/* Media */}
@@ -462,6 +462,35 @@ function SelectField({
         ))}
       </select>
     </label>
+  );
+}
+
+function FormUrlField({ name, label, hint, defaultValue }: { name: string; label: string; hint?: string; defaultValue?: string }) {
+  const normalise = (v: string) => {
+    const t = v.trim();
+    if (!t) return "";
+    if (/^https?:\/\//i.test(t)) return t;
+    return "https://" + t;
+  };
+  const [val, setVal] = useState(defaultValue ?? "");
+  return (
+    <div>
+      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{label}</span>
+      <div className={`flex items-center overflow-hidden rounded-[var(--radius-md)] border transition focus-within:border-[var(--color-pitch-500)] focus-within:ring-2 focus-within:ring-[var(--color-pitch-500)]/20 ${val ? "border-[var(--color-pitch-500)]" : "border-[var(--color-border-strong)]"}`}>
+        <span className="select-none border-r border-[var(--color-border)] bg-[var(--color-bg-muted)] px-3 py-2.5 text-sm text-[var(--color-muted)]">https://</span>
+        <input
+          name={name}
+          type="text"
+          value={val.replace(/^https?:\/\//i, "")}
+          onChange={(e) => setVal(e.target.value ? "https://" + e.target.value.replace(/^https?:\/\//i, "") : "")}
+          onBlur={(e) => setVal(normalise(e.target.value.replace(/^https?:\/\//i, "")))}
+          placeholder="monkeycup.eu"
+          className="flex-1 bg-[var(--color-surface)] px-3 py-2.5 text-sm text-[var(--color-foreground)] outline-none"
+          autoComplete="url"
+        />
+      </div>
+      {hint && <span className="mt-1 block text-xs text-[var(--color-muted)]">{hint}</span>}
+    </div>
   );
 }
 
