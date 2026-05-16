@@ -50,12 +50,9 @@ export default async function EditEventPage({
       ? second.locale
       : (locale === "ru" || locale === "de" || locale === "es" ? locale : "");
 
-  const programmeText = (ev.program as { day: number; title: string; items: string[] }[] | null)
-    ?.map((d) => [d.title, ...d.items].join("\n"))
-    .join("\n\n") ?? "";
-  const faqText = (ev.faq as { q: string; a: string }[] | null)
-    ?.map((p) => `Q: ${p.q}\nA: ${p.a}`)
-    .join("\n\n") ?? "";
+  // Pass programme/faq as JSON so the form builders can parse them directly
+  const programmeText = ev.program ? JSON.stringify(ev.program) : "";
+  const faqText = ev.faq ? JSON.stringify(ev.faq) : "";
 
   const defaults: EventDefaults = {
     id: ev.id,
@@ -133,10 +130,14 @@ export default async function EditEventPage({
     videoUrl: t("videoUrl"), videoUrlHint: t("videoUrlHint"),
     logo: t("logo"), cover: t("cover"),
     gallery: t("gallery"), galleryHint: t("galleryHint"),
-    included: t("included"), includedHint: t("includedHint"),
+    included: t("included"), includedHint: t("includedHint"), includedAddItem: t("includedAddItem"),
     notIncluded: t("notIncluded"), notIncludedHint: t("notIncludedHint"),
     programme: t("programme"), programmeHint: t("programmeHint"),
+    programmeDayTitle: t("programmeDayTitle"), programmeDayItems: t("programmeDayItems"),
+    programmeAddDay: t("programmeAddDay"), programmeRemoveDay: t("programmeRemoveDay"), programmeAddItem: t("programmeAddItem"),
     faq: t("faq"), faqHint: t("faqHint"),
+    faqQuestion: t("faqQuestion"), faqAnswer: t("faqAnswer"),
+    faqAddQuestion: t("faqAddQuestion"), faqRemoveQuestion: t("faqRemoveQuestion"),
     tierLockTitle: t("tierLockTitle"), tierLockBody: t("tierLockBody"), videoLockBody: t("videoLockBody"),
     errors: {
       titleRequired: t("errors.titleRequired"),

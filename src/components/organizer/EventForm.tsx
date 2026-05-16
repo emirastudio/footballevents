@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
 import { CityCombobox } from "@/components/ui/CityCombobox";
 import { ImageUpload } from "@/components/upload/ImageUpload";
-import { Lock } from "lucide-react";
+import { Lock, Plus, Trash2 } from "lucide-react";
 import type { Tier } from "@/lib/tier";
 import { tierAllows } from "@/lib/tier";
 
@@ -55,10 +55,13 @@ export type EventFormLabels = {
   videoUrl: string; videoUrlHint: string;
   logo: string; cover: string;
   gallery: string; galleryHint: string;
-  included: string; includedHint: string;
+  included: string; includedHint: string; includedAddItem: string;
   notIncluded: string; notIncludedHint: string;
   programme: string; programmeHint: string;
+  programmeDayTitle: string; programmeDayItems: string;
+  programmeAddDay: string; programmeRemoveDay: string; programmeAddItem: string;
   faq: string; faqHint: string;
+  faqQuestion: string; faqAnswer: string; faqAddQuestion: string; faqRemoveQuestion: string;
   tierLockTitle: string; tierLockBody: string; videoLockBody: string;
   errors: Record<string, string>;
 };
@@ -319,11 +322,11 @@ export function EventForm({
         {tierAllows(tier, "included") ? (
           <>
             <div className="grid gap-5 sm:grid-cols-2">
-              <Textarea name="included" label={labels.included} hint={labels.includedHint} rows={6} defaultValue={defaults?.included} />
-              <Textarea name="notIncluded" label={labels.notIncluded} hint={labels.notIncludedHint} rows={6} defaultValue={defaults?.notIncluded} />
+              <ListBuilder name="included" label={labels.included} hint={labels.includedHint} addLabel={labels.includedAddItem} defaultValue={defaults?.included} />
+              <ListBuilder name="notIncluded" label={labels.notIncluded} hint={labels.notIncludedHint} addLabel={labels.includedAddItem} defaultValue={defaults?.notIncluded} />
             </div>
-            <Textarea name="programme" label={labels.programme} hint={labels.programmeHint} rows={8} defaultValue={defaults?.programme} />
-            <Textarea name="faq" label={labels.faq} hint={labels.faqHint} rows={8} defaultValue={defaults?.faq} />
+            <FormProgrammeEditor name="programme" labels={labels} defaultValue={defaults?.programme} />
+            <FormFaqEditor name="faq" labels={labels} defaultValue={defaults?.faq} />
           </>
         ) : (
           <TierLock title={labels.tierLockTitle} body={labels.tierLockBody} />
@@ -477,5 +480,263 @@ function RadioGroup({
         ))}
       </div>
     </fieldset>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// List builder — "What's included" / "Not included"
+// ─────────────────────────────────────────────────────────────
+function ListBuilder({
+  name, label, hint, addLabel, defaultValue,
+}: { name: string; label: string; hint?: string; addLabel: string; defaultValue?: string }) {
+  const [items, setItems] = useState<string[]>(() =>
+    defaultValue?.split("\n").map((s) => s.trim()).filter(Boolean) ?? []
+  );
+
+  const add = () => setItems((p) => [...p, ""]);
+  const remove = (i: number) => setItems((p) => p.filter((_, idx) => idx !== i));
+  const update = (i: number, v: string) => setItems((p) => p.map((x, idx) => (idx === i ? v : x)));
+
+  return (
+    <div>
+      <input type="hidden" name={name} value={items.join("\n")} />
+      <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{label}</span>
+      <div className="overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)]">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-1.5 border-b border-[var(--color-border)] px-2 py-1.5 last:border-b-0">
+            <span className="text-[var(--color-muted)]">•</span>
+            <input
+              type="text"
+              value={item}
+              onChange={(e) => update(i, e.target.value)}
+              className="flex-1 bg-transparent px-1.5 py-0.5 text-sm outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => remove(i)}
+              className="grid h-6 w-6 place-items-center rounded text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-500"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ))}
+        {items.length === 0 && (
+          <div className="py-4 text-center text-sm text-[var(--color-muted)]">—</div>
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={add}
+        className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-pitch-600)] transition hover:text-[var(--color-pitch-800)]"
+      >
+        <Plus className="h-3.5 w-3.5" /> {addLabel}
+      </button>
+      {hint && <p className="mt-1 text-xs text-[var(--color-muted)]">{hint}</p>}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Programme builder — day-by-day schedule
+// ─────────────────────────────────────────────────────────────
+type PDay = { title: string; items: string[] };
+
+function parseProgrammeDefault(raw?: string): PDay[] {
+  if (!raw?.trim()) return [];
+  if (raw.trim().startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.map((d: unknown) => {
+          const obj = d as { title?: unknown; items?: unknown };
+          return {
+            title: typeof obj.title === "string" ? obj.title : "",
+            items: Array.isArray(obj.items) ? obj.items.filter((x): x is string => typeof x === "string") : [],
+          };
+        });
+      }
+    } catch { /* fall through */ }
+  }
+  // Legacy plain-text: blank line separates days
+  const days: PDay[] = [];
+  let cur: PDay | null = null;
+  for (const lineRaw of raw.split("\n")) {
+    const line = lineRaw.trim();
+    if (!line) { if (cur) { days.push(cur); cur = null; } continue; }
+    if (!cur) cur = { title: line, items: [] };
+    else cur.items.push(line);
+  }
+  if (cur) days.push(cur);
+  return days;
+}
+
+function FormProgrammeEditor({ name, labels, defaultValue }: {
+  name: string;
+  labels: Pick<EventFormLabels, "programme" | "programmeHint" | "programmeDayTitle" | "programmeDayItems" | "programmeAddDay" | "programmeRemoveDay" | "programmeAddItem">;
+  defaultValue?: string;
+}) {
+  const [days, setDays] = useState<PDay[]>(() => parseProgrammeDefault(defaultValue));
+
+  const updateDay = (idx: number, patch: Partial<PDay>) =>
+    setDays(days.map((d, i) => (i === idx ? { ...d, ...patch } : d)));
+  const updateItem = (di: number, ii: number, v: string) =>
+    setDays(days.map((d, i) => i === di ? { ...d, items: d.items.map((x, j) => (j === ii ? v : x)) } : d));
+  const addDay = () => setDays([...days, { title: "", items: [""] }]);
+  const removeDay = (idx: number) => setDays(days.filter((_, i) => i !== idx));
+  const addItem = (di: number) =>
+    setDays(days.map((d, i) => (i === di ? { ...d, items: [...d.items, ""] } : d)));
+  const removeItem = (di: number, ii: number) =>
+    setDays(days.map((d, i) => (i === di ? { ...d, items: d.items.filter((_, j) => j !== ii) } : d)));
+
+  return (
+    <div>
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.programme}</span>
+      <p className="mb-3 text-xs text-[var(--color-muted)]">{labels.programmeHint}</p>
+      <input type="hidden" name={name} value={JSON.stringify(days)} />
+      <div className="space-y-3">
+        {days.map((d, i) => (
+          <div key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--color-pitch-50)] text-xs font-bold text-[var(--color-pitch-700)]">{i + 1}</span>
+              <input
+                type="text"
+                value={d.title}
+                onChange={(e) => updateDay(i, { title: e.target.value })}
+                placeholder={labels.programmeDayTitle}
+                className="flex-1 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+              />
+              <button
+                type="button"
+                onClick={() => removeDay(i)}
+                className="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
+                aria-label={labels.programmeRemoveDay}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+            <ul className="space-y-2 pl-9">
+              {d.items.map((it, j) => (
+                <li key={j} className="flex items-center gap-2">
+                  <span className="text-[var(--color-muted)]">•</span>
+                  <input
+                    type="text"
+                    value={it}
+                    onChange={(e) => updateItem(i, j, e.target.value)}
+                    placeholder={labels.programmeDayItems}
+                    className="flex-1 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-muted)] px-3 py-1.5 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:bg-[var(--color-surface)]"
+                  />
+                  <button type="button" onClick={() => removeItem(i, j)} className="grid h-7 w-7 place-items-center rounded-full text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </li>
+              ))}
+              <li>
+                <button type="button" onClick={() => addItem(i)} className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] px-2 py-1 text-xs font-semibold text-[var(--color-pitch-700)] transition hover:bg-[var(--color-pitch-50)]">
+                  <Plus className="h-3.5 w-3.5" /> {labels.programmeAddItem}
+                </button>
+              </li>
+            </ul>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={addDay}
+        className="mt-3 inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-muted-strong)] transition hover:border-[var(--color-pitch-500)] hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"
+      >
+        <Plus className="h-4 w-4" /> {labels.programmeAddDay}
+      </button>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// FAQ builder — Q/A pairs
+// ─────────────────────────────────────────────────────────────
+type Qa = { q: string; a: string };
+
+function parseFaqDefault(raw?: string): Qa[] {
+  if (!raw?.trim()) return [];
+  if (raw.trim().startsWith("[")) {
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) {
+        return parsed.map((p: unknown) => {
+          const o = p as { q?: unknown; a?: unknown };
+          return { q: typeof o.q === "string" ? o.q : "", a: typeof o.a === "string" ? o.a : "" };
+        });
+      }
+    } catch { /* fall through */ }
+  }
+  // Legacy: "Q: …" / "A: …" pairs
+  const qas: Qa[] = [];
+  let cur: Partial<Qa> | null = null;
+  for (const lineRaw of raw.split("\n")) {
+    const line = lineRaw.trim();
+    if (!line) { if (cur?.q && cur.a) qas.push({ q: cur.q, a: cur.a }); cur = null; continue; }
+    if (line.toLowerCase().startsWith("q:")) cur = { q: line.slice(2).trim(), a: "" };
+    else if (line.toLowerCase().startsWith("a:") && cur) cur.a = line.slice(2).trim();
+  }
+  if (cur?.q && cur.a) qas.push({ q: cur.q, a: cur.a });
+  return qas;
+}
+
+function FormFaqEditor({ name, labels, defaultValue }: {
+  name: string;
+  labels: Pick<EventFormLabels, "faq" | "faqHint" | "faqQuestion" | "faqAnswer" | "faqAddQuestion" | "faqRemoveQuestion">;
+  defaultValue?: string;
+}) {
+  const [items, setItems] = useState<Qa[]>(() => parseFaqDefault(defaultValue));
+
+  const update = (i: number, patch: Partial<Qa>) =>
+    setItems(items.map((x, j) => (j === i ? { ...x, ...patch } : x)));
+  const add = () => setItems([...items, { q: "", a: "" }]);
+  const remove = (i: number) => setItems(items.filter((_, j) => j !== i));
+
+  return (
+    <div>
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.faq}</span>
+      <p className="mb-3 text-xs text-[var(--color-muted)]">{labels.faqHint}</p>
+      <input type="hidden" name={name} value={JSON.stringify(items)} />
+      <div className="space-y-3">
+        {items.map((qa, i) => (
+          <div key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="flex items-start gap-2">
+              <div className="flex-1 space-y-2">
+                <input
+                  type="text"
+                  value={qa.q}
+                  onChange={(e) => update(i, { q: e.target.value })}
+                  placeholder={labels.faqQuestion}
+                  className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
+                />
+                <textarea
+                  rows={2}
+                  value={qa.a}
+                  onChange={(e) => update(i, { a: e.target.value })}
+                  placeholder={labels.faqAnswer}
+                  className="w-full resize-none rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-muted)] px-3 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:bg-[var(--color-surface)]"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => remove(i)}
+                className="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
+                aria-label={labels.faqRemoveQuestion}
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={add}
+        className="mt-3 inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-muted-strong)] transition hover:border-[var(--color-pitch-500)] hover:bg-[var(--color-pitch-50)] hover:text-[var(--color-pitch-700)]"
+      >
+        <Plus className="h-4 w-4" /> {labels.faqAddQuestion}
+      </button>
+    </div>
   );
 }
