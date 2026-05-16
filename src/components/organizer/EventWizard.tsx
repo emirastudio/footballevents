@@ -66,6 +66,7 @@ import { VenueAutocomplete } from "@/components/ui/VenueAutocomplete";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
 import { LangTabs, LangPanel, type LocaleCode } from "@/components/ui/LangTabs";
 import { ImageUpload } from "@/components/upload/ImageUpload";
+import { RichEditor } from "@/components/ui/RichEditor";
 import { Check, ChevronLeft, ChevronRight, Lock, Send, Plus, Trash2 } from "lucide-react";
 import type { Tier } from "@/lib/tier";
 import { tierAllows } from "@/lib/tier";
@@ -454,13 +455,20 @@ function Step1({
             <LangPanel locale="en" active={active}>
               <Field name="titleEn" required label={labels.titleEn} hint={labels.titleEnHint} maxLength={120} error={errMsg(fe.titleEn)} defaultValue={defaults.titleEn} />
               <Field name="shortDescEn" label={labels.shortDescEn} hint={labels.shortDescEnHint} maxLength={240} defaultValue={defaults.shortDescEn} />
-              <Textarea name="descriptionEn" label={labels.descriptionEn} hint={labels.descriptionEnHint} rows={5} error={errMsg(fe.descriptionEn)} defaultValue={defaults.descriptionEn} />
+              <div>
+                <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.descriptionEn}</span>
+                <RichEditor name="descriptionEn" defaultValue={defaults.descriptionEn} placeholder={labels.descriptionEnHint} />
+                {fe.descriptionEn && <span className="mt-1 block text-xs text-red-600">{errMsg(fe.descriptionEn)}</span>}
+              </div>
             </LangPanel>
             {secondLocale && (
               <LangPanel locale={secondLocale as LocaleCode} active={active}>
                 <Field name="titleSecond" label={labels.titleSecond} maxLength={120} defaultValue={defaults.titleSecond} />
                 <Field name="shortDescSecond" label={labels.shortDescSecond} maxLength={240} defaultValue={defaults.shortDescSecond} />
-                <Textarea name="descriptionSecond" label={labels.descriptionSecond} rows={5} defaultValue={defaults.descriptionSecond} />
+                <div>
+                  <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.descriptionSecond}</span>
+                  <RichEditor name="descriptionSecond" defaultValue={defaults.descriptionSecond} />
+                </div>
               </LangPanel>
             )}
           </>

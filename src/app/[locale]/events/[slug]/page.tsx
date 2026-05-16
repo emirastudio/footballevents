@@ -18,6 +18,7 @@ import { FollowOrganizerButton, SaveEventButton } from "@/components/site/Follow
 import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { tierAllows } from "@/lib/tier";
 import { getEventCapacity } from "@/lib/event-capacity";
+import { RichText } from "@/components/ui/RichText";
 import { CapacityWidget } from "@/components/cards/CapacityWidget";
 import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
@@ -192,7 +193,7 @@ export default async function EventDetailPage({
                 </span>
               )}
             </div>
-            <p className="text-pretty leading-relaxed text-[var(--color-muted-strong)]">{event.description}</p>
+            <RichText html={event.description ?? ""} className="text-[var(--color-muted-strong)]" />
 
             {/* Save + Share row */}
             <div className="mt-6 flex flex-wrap items-center gap-3">
