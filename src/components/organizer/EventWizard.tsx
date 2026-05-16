@@ -592,8 +592,8 @@ function PillCheckGroup({
 // ─────────────────────────────────────────────────────────────
 type DivRow = { key: number; ageGroup: string; format: string; maxTeams: string };
 
-const selectCls =
-  "rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2.5 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20";
+const fieldInputCls =
+  "w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20";
 
 function DivisionsBuilder({
   defaults,
@@ -621,13 +621,10 @@ function DivisionsBuilder({
 
   return (
     <div>
-      {/* Section header */}
-      <div className="mb-1 flex items-center justify-between gap-3">
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-          {labels.divisionsTitle}
-        </span>
-      </div>
-      <p className="mb-4 text-xs text-[var(--color-muted)]">{labels.divisionsHint}</p>
+      <legend className="mb-1 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {labels.divisionsTitle}
+      </legend>
+      <p className="mb-5 text-xs text-[var(--color-muted)]">{labels.divisionsHint}</p>
 
       {/* Hidden inputs — submitted with the form */}
       <input type="hidden" name="div_count" value={rows.length} />
@@ -641,21 +638,24 @@ function DivisionsBuilder({
 
       {/* Division rows */}
       {rows.length > 0 && (
-        <div className="mb-3 space-y-2">
+        <div className="mb-4 space-y-3">
           {rows.map((row, idx) => (
             <div
               key={row.key}
-              className="flex flex-wrap items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] px-3 py-2.5"
+              className="grid grid-cols-[auto_1fr_1fr_1fr_auto] items-end gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4"
             >
-              <span className="min-w-[1.5rem] text-xs font-bold text-[var(--color-muted)]">{idx + 1}.</span>
+              {/* Index badge */}
+              <div className="flex h-9 w-7 items-center justify-center text-sm font-bold text-[var(--color-muted)]">
+                {idx + 1}
+              </div>
 
               {/* Age group */}
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divAgeGroup}</span>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divAgeGroup}</label>
                 <select
                   value={row.ageGroup}
                   onChange={(e) => update(row.key, { ageGroup: e.target.value })}
-                  className={selectCls}
+                  className={fieldInputCls}
                 >
                   {AGE_GROUPS.filter((a) => a !== "ALL_AGES").map((a) => (
                     <option key={a} value={a}>{getAgeChipLabel(a)}</option>
@@ -664,12 +664,12 @@ function DivisionsBuilder({
               </div>
 
               {/* Format */}
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divFormat}</span>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divFormat}</label>
                 <select
                   value={row.format}
                   onChange={(e) => update(row.key, { format: e.target.value })}
-                  className={selectCls}
+                  className={fieldInputCls}
                 >
                   {FORMATS.map((f) => (
                     <option key={f.value} value={f.value}>{f.label}</option>
@@ -678,8 +678,8 @@ function DivisionsBuilder({
               </div>
 
               {/* Max teams */}
-              <div className="flex flex-col gap-0.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divMaxTeams}</span>
+              <div>
+                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divMaxTeams}</label>
                 <input
                   type="number"
                   min={2}
@@ -687,7 +687,7 @@ function DivisionsBuilder({
                   placeholder="—"
                   value={row.maxTeams}
                   onChange={(e) => update(row.key, { maxTeams: e.target.value })}
-                  className={`${selectCls} w-20`}
+                  className={fieldInputCls}
                 />
               </div>
 
@@ -696,7 +696,7 @@ function DivisionsBuilder({
                 type="button"
                 onClick={() => remove(row.key)}
                 aria-label={labels.divRemove}
-                className="ml-auto grid h-8 w-8 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
+                className="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
