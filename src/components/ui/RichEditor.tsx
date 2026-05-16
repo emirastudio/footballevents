@@ -42,10 +42,41 @@ function ToolbarBtn({
 function htmlOrText(raw: string): string {
   if (!raw.trim()) return "";
   if (/^\s*</.test(raw)) return raw; // already HTML
-  return raw
-    .split(/\n\n+/)
-    .map((block) => `<p>${block.replace(/\n/g, "<br>")}</p>`)
-    .join("");
+
+  // Convert plain text to structured HTML for Tiptap.
+  // Handles legacy descriptions that used "* item" inline bullets and no newlines.
+  const blocks: string[] = [];
+
+  // Split into chunks by double newline (paragraphs) or single newline.
+  const paragraphs = raw.split(/\n\n+/);
+
+  for (const para of paragraphs) {
+    const trimmed = para.trim();
+    if (!trimmed) continue;
+
+    // Detect inline bullet pattern: "intro text * item1 * item2 * item3"
+    // or lines that start with "* " or "- "
+    const lines = trimmed.split(/\n/);
+    const allBullets = lines.every(l => /^[*\-•]\s/.test(l.trim()));
+
+    if (allBullets && lines.length > 1) {
+      // All lines are bullets → <ul>
+      const items = lines.map(l => `<li>${l.replace(/^[*\-•]\s+/, "").trim()}</li>`).join("");
+      blocks.push(`<ul>${items}</ul>`);
+    } else if (trimmed.includes(" * ")) {
+      // Inline "text * item * item" pattern — split into paragraph + list
+      const parts = trimmed.split(/\s+\*\s+/);
+      const intro = parts[0].trim();
+      const items = parts.slice(1);
+      if (intro) blocks.push(`<p>${intro}</p>`);
+      if (items.length) blocks.push(`<ul>${items.map(i => `<li>${i.trim()}</li>`).join("")}</ul>`);
+    } else {
+      // Regular paragraph — preserve single newlines as <br>
+      blocks.push(`<p>${trimmed.replace(/\n/g, "<br>")}</p>`);
+    }
+  }
+
+  return blocks.join("") || `<p>${raw}</p>`;
 }
 
 export function RichEditor({ name, defaultValue, placeholder, className }: RichEditorProps) {
