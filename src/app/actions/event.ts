@@ -368,6 +368,19 @@ export async function createEventAction(_prev: EventFormState, formData: FormDat
 const updateSchema = baseSchema.extend({ id: z.string().min(1) });
 
 export async function updateEventAction(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
+  // Catch ALL unhandled exceptions and return them as state so the client sees them.
+  try {
+    return await _updateEventActionInner(_prev, formData);
+  } catch (err: unknown) {
+    // next/navigation redirect() throws — let it propagate unchanged.
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[updateEventAction] unhandled error:", err);
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+async function _updateEventActionInner(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -418,7 +431,8 @@ export async function updateEventAction(_prev: EventFormState, formData: FormDat
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
     for (const issue of parsed.error.issues) fieldErrors[issue.path.join(".")] = issue.message;
-    return { error: parsed.error.issues[0]?.message ?? "Invalid input", fieldErrors };
+    console.error("[updateEventAction] validation failed:", JSON.stringify(fieldErrors));
+    return { error: "validation", fieldErrors };
   }
   const d = parsed.data;
   const start = new Date(d.startDate);
