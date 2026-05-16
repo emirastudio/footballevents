@@ -47,18 +47,6 @@ enum EventStatus {
   REJECTED
 }
 
-enum AgeGroup {
-  U6
-  U8
-  U10
-  U12
-  U14
-  U16
-  U18
-  U21
-  ADULT
-  ALL_AGES
-}
 
 enum Gender {
   MALE
@@ -480,7 +468,7 @@ model Event {
   wizardStep Int @default(1)
 
   // Audience
-  ageGroups       AgeGroup[] @default([])
+  ageGroups       String[]   @default([]) // birth years e.g. ["2013","2017"] or "ADULT"
   gender          Gender     @default(MIXED)
   skillLevel      SkillLevel @default(ALL_LEVELS)
   format          String? // "5x5", "8x8", "11x11", custom
@@ -567,7 +555,7 @@ model EventDivision {
   id                   String     @id @default(cuid())
   eventId              String
   name                 String // "Boys U10 5×5", "Girls U14 7×7"
-  ageGroup             AgeGroup
+  ageGroup             String // birth year e.g. "2013" or "ADULT"
   gender               Gender     @default(MIXED)
   skillLevel           SkillLevel @default(ALL_LEVELS)
   format               String // "5x5", "7x7", "11x11"

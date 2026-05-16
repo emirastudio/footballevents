@@ -75,7 +75,38 @@ import { Link } from "@/i18n/navigation";
 type Category = { id: string; slug: string; name: string };
 type Country = { code: string; name: string; flag: string };
 
-const AGE_GROUPS = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT","ALL_AGES"];
+// Individual birth years for the wizard scroll picker.
+// 19 years back = oldest youth (U21 equivalent). "ADULT" covers men's/women's football.
+const CY = new Date().getFullYear();
+const AGE_YEAR_CHIPS: { value: string; label: string }[] = [
+  ...Array.from({ length: 20 }, (_, i) => {
+    const year = CY - i;
+    return { value: String(year), label: String(year) };
+  }),
+  { value: "ADULT", label: "Adult" },
+];
+
+// Legacy U-group → representative birth year (for loading old events saved before this migration)
+const U_GROUP_TO_YEAR: Record<string, string> = {
+  U6:       String(CY - 5),
+  U8:       String(CY - 7),
+  U10:      String(CY - 9),
+  U12:      String(CY - 11),
+  U14:      String(CY - 13),
+  U16:      String(CY - 15),
+  U18:      String(CY - 17),
+  U21:      String(CY - 20),
+  ADULT:    "ADULT",
+  ALL_AGES: "ADULT",
+};
+
+/** Normalise a raw ageGroup value (may be old enum like "U14" or new year "2013") to a display value. */
+function normaliseAge(raw: string): string {
+  return U_GROUP_TO_YEAR[raw] ?? raw;
+}
+
+/** The DivisionBuilder uses this for its dropdown — same year list minus "ADULT". */
+const AGE_GROUPS = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT","ALL_AGES"]; // kept for DivisionsBuilder compat
 
 const FORMATS = [
   { value: "5x5",   label: "5×5"   },
@@ -500,13 +531,10 @@ function Step2({
 function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardLabels }) {
   return (
     <div className="space-y-7">
-      {/* Age — birth year shown next to each chip so no manual calculation */}
-      <PillCheckGroup
+      {/* Age — horizontal scroll of individual birth years 2026 → 2007, then Adult */}
+      <AgeScrollPicker
         legend={labels.ageGroups}
-        name="ageGroups"
-        defaultValues={defaults.ageGroups ?? []}
-        options={AGE_GROUPS.map((a) => ({ value: a, label: getAgeChipLabel(a) }))}
-        cols="grid-cols-5 sm:grid-cols-10"
+        defaultValues={(defaults.ageGroups ?? []).map(normaliseAge)}
       />
 
       {/* Gender — 3 equal cells */}
@@ -588,6 +616,51 @@ function PillCheckGroup({
 }
 
 // ─────────────────────────────────────────────────────────────
+// Horizontal year scroll picker for age groups
+// ─────────────────────────────────────────────────────────────
+function AgeScrollPicker({ legend, defaultValues }: { legend: string; defaultValues: string[] }) {
+  const [selected, setSelected] = useState<string[]>(defaultValues);
+
+  const toggle = (val: string) =>
+    setSelected((prev) =>
+      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
+    );
+
+  return (
+    <fieldset>
+      <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {legend}
+      </legend>
+      {/* Hidden checkboxes for form submission */}
+      {selected.map((v) => (
+        <input key={v} type="hidden" name="ageGroups" value={v} />
+      ))}
+      {/* Horizontal scroll row */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {AGE_YEAR_CHIPS.map((chip) => {
+          const active = selected.includes(chip.value);
+          return (
+            <button
+              key={chip.value}
+              type="button"
+              onClick={() => toggle(chip.value)}
+              className={[
+                "inline-flex h-10 shrink-0 cursor-pointer items-center justify-center rounded-full border px-4 text-sm font-semibold transition",
+                active
+                  ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white"
+                  : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)]",
+              ].join(" ")}
+            >
+              {chip.label}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
 // Divisions builder — optional section in Step 3
 // ─────────────────────────────────────────────────────────────
 type DivRow = { key: number; ageGroup: string; format: string; maxTeams: string };
@@ -605,7 +678,7 @@ function DivisionsBuilder({
   const [rows, setRows] = useState<DivRow[]>(() =>
     defaults.map((d, i) => ({
       key: i,
-      ageGroup: d.ageGroup,
+      ageGroup: normaliseAge(d.ageGroup),
       format: d.format,
       maxTeams: d.maxTeams?.toString() ?? "",
     }))
@@ -613,7 +686,7 @@ function DivisionsBuilder({
   const nextKey = useRef(defaults.length);
 
   const add = () => {
-    setRows((prev) => [...prev, { key: nextKey.current++, ageGroup: "U14", format: "11x11", maxTeams: "" }]);
+    setRows((prev) => [...prev, { key: nextKey.current++, ageGroup: String(CY - 13), format: "11x11", maxTeams: "" }]);
   };
   const remove = (key: number) => setRows((prev) => prev.filter((r) => r.key !== key));
   const update = (key: number, patch: Partial<DivRow>) =>
@@ -657,8 +730,8 @@ function DivisionsBuilder({
                   onChange={(e) => update(row.key, { ageGroup: e.target.value })}
                   className={fieldInputCls}
                 >
-                  {AGE_GROUPS.filter((a) => a !== "ALL_AGES").map((a) => (
-                    <option key={a} value={a}>{getAgeChipLabel(a)}</option>
+                  {AGE_YEAR_CHIPS.map((chip) => (
+                    <option key={chip.value} value={chip.value}>{chip.label}</option>
                   ))}
                 </select>
               </div>

@@ -134,7 +134,11 @@ export const countries = [
   { code: "JP", name: "Japan",       flag: "🇯🇵" },
 ];
 
-export const ageGroups = ["U6","U8","U10","U12","U14","U16","U18","U21","ADULT"];
+const _cy = new Date().getFullYear();
+export const ageGroups = [
+  ...Array.from({ length: 20 }, (_, i) => String(_cy - i)),
+  "ADULT",
+];
 export const formats = ["5x5", "6x6", "7x7", "8x8", "9x9", "11x11"];
 export const skillLevels = ["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"];
 
