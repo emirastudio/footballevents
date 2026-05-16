@@ -621,39 +621,93 @@ function PillCheckGroup({
 }
 
 // ─────────────────────────────────────────────────────────────
-// Horizontal year scroll picker for age groups
+// Age tag-input: type a year → add as chip. Quick-add scroll below.
 // ─────────────────────────────────────────────────────────────
 function AgeScrollPicker({ legend, adultLabel, defaultValues }: { legend: string; adultLabel: string; defaultValues: string[] }) {
   const [selected, setSelected] = useState<string[]>(defaultValues);
+  const [inputVal, setInputVal] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const toggle = (val: string) =>
-    setSelected((prev) =>
-      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
-    );
+  const add = (val: string) => {
+    const v = val.trim();
+    if (!v || selected.includes(v)) return;
+    setSelected((prev) => [...prev, v]);
+    setInputVal("");
+  };
+
+  const remove = (val: string) => setSelected((prev) => prev.filter((v) => v !== val));
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "," || e.key === " ") {
+      e.preventDefault();
+      add(inputVal);
+    }
+    if (e.key === "Backspace" && !inputVal && selected.length > 0) {
+      remove(selected[selected.length - 1]);
+    }
+  };
+
+  const allChips = buildAgeYearChips(adultLabel);
 
   return (
     <fieldset>
       <legend className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
         {legend}
       </legend>
-      {/* Hidden checkboxes for form submission */}
+
+      {/* Hidden inputs for form submission */}
       {selected.map((v) => (
         <input key={v} type="hidden" name="ageGroups" value={v} />
       ))}
-      {/* Horizontal scroll row */}
-      <div className="flex gap-1.5 overflow-x-auto pb-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {buildAgeYearChips(adultLabel).map((chip) => {
+
+      {/* Tag input box */}
+      <div
+        className="flex min-h-[44px] cursor-text flex-wrap items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 focus-within:border-[var(--color-pitch-500)] focus-within:ring-2 focus-within:ring-[var(--color-pitch-500)]/20"
+        onClick={() => inputRef.current?.focus()}
+      >
+        {selected.map((v) => (
+          <span
+            key={v}
+            className="inline-flex items-center gap-1 rounded-full bg-[var(--color-pitch-500)] px-3 py-0.5 text-sm font-semibold text-white"
+          >
+            {v === "ADULT" ? adultLabel : v}
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); remove(v); }}
+              className="ml-0.5 opacity-70 hover:opacity-100"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          maxLength={4}
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value.replace(/\D/g, ""))}
+          onKeyDown={onKeyDown}
+          onBlur={() => { if (inputVal.length === 4) add(inputVal); }}
+          placeholder={selected.length === 0 ? "2013, 2017…" : ""}
+          className="min-w-[80px] flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--color-muted)]"
+        />
+      </div>
+
+      {/* Quick-add scroll */}
+      <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {allChips.map((chip) => {
           const active = selected.includes(chip.value);
           return (
             <button
               key={chip.value}
               type="button"
-              onClick={() => toggle(chip.value)}
+              onClick={() => active ? remove(chip.value) : add(chip.value)}
               className={[
-                "inline-flex h-10 shrink-0 cursor-pointer items-center justify-center rounded-full border px-4 text-sm font-semibold transition",
+                "inline-flex h-7 shrink-0 items-center rounded-full border px-3 text-xs font-semibold transition",
                 active
-                  ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white"
-                  : "border-[var(--color-border-strong)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)]",
+                  ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]"
+                  : "border-[var(--color-border)] bg-transparent text-[var(--color-muted)] hover:border-[var(--color-pitch-300)] hover:text-[var(--color-pitch-600)]",
               ].join(" ")}
             >
               {chip.label}
