@@ -32,6 +32,16 @@ async function ensureCustomer(organizerId: string) {
 }
 
 export async function startSubscriptionCheckout(formData: FormData) {
+  try {
+    await _startSubscriptionCheckoutInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[startSubscriptionCheckout] unhandled error:", err);
+  }
+}
+
+async function _startSubscriptionCheckoutInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -67,6 +77,16 @@ export async function startSubscriptionCheckout(formData: FormData) {
 // Buys a bundle (no event chosen yet). Webhook credits N BoostCredit rows
 // to the organizer; redemption happens later in /organizer/credits.
 export async function startBundleCheckout(formData: FormData) {
+  try {
+    await _startBundleCheckoutInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[startBundleCheckout] unhandled error:", err);
+  }
+}
+
+async function _startBundleCheckoutInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -100,6 +120,16 @@ export async function startBundleCheckout(formData: FormData) {
 }
 
 export async function startBoostCheckout(formData: FormData) {
+  try {
+    await _startBoostCheckoutInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[startBoostCheckout] unhandled error:", err);
+  }
+}
+
+async function _startBoostCheckoutInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -262,6 +292,16 @@ export async function applyIncludedBoost(formData: FormData) {
 // Premium→Pro, monthly→annual etc) and let Stripe prorate. No new checkout.
 // Falls through to startSubscriptionCheckout when there's no live subscription.
 export async function changeSubscriptionPlan(formData: FormData) {
+  try {
+    await _changeSubscriptionPlanInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[changeSubscriptionPlan] unhandled error:", err);
+  }
+}
+
+async function _changeSubscriptionPlanInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -304,6 +344,16 @@ export async function changeSubscriptionPlan(formData: FormData) {
 }
 
 export async function openBillingPortal(formData?: FormData) {
+  try {
+    await _openBillingPortalInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[openBillingPortal] unhandled error:", err);
+  }
+}
+
+async function _openBillingPortalInner(formData?: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });

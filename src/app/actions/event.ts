@@ -238,6 +238,17 @@ function splitLines(raw?: string): string[] {
 }
 
 export async function createEventAction(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
+  try {
+    return await _createEventActionInner(_prev, formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[createEventAction] unhandled error:", err);
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+async function _createEventActionInner(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
@@ -554,6 +565,16 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
 
 export async function deleteEventAction(formData: FormData) {
   "use server";
+  try {
+    await _deleteEventActionInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[deleteEventAction] unhandled error:", err);
+  }
+}
+
+async function _deleteEventActionInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -569,6 +590,16 @@ export async function deleteEventAction(formData: FormData) {
 
 export async function archiveEventAction(formData: FormData) {
   "use server";
+  try {
+    await _archiveEventActionInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[archiveEventAction] unhandled error:", err);
+  }
+}
+
+async function _archiveEventActionInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -587,6 +618,16 @@ export async function archiveEventAction(formData: FormData) {
 // what changed. The slug gets a "-copy" suffix and becomes editable.
 export async function duplicateEventAction(formData: FormData) {
   "use server";
+  try {
+    await _duplicateEventActionInner(formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[duplicateEventAction] unhandled error:", err);
+  }
+}
+
+async function _duplicateEventActionInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
@@ -739,6 +780,17 @@ function isWizardStep(n: number): n is WizardStep {
 
 /** Save one step of the wizard. `direction`: "next" / "prev" / "publish". */
 export async function wizardSaveAction(_prev: WizardState, formData: FormData): Promise<WizardState> {
+  try {
+    return await _wizardSaveActionInner(_prev, formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[wizardSaveAction] unhandled error:", err);
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): Promise<WizardState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });

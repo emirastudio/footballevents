@@ -74,6 +74,17 @@ const settingsSchema = z.object({
 });
 
 export async function updateOrganizerSettingsAction(_prev: OrganizerSettingsState, formData: FormData): Promise<OrganizerSettingsState> {
+  try {
+    return await _updateOrganizerSettingsActionInner(_prev, formData);
+  } catch (err: unknown) {
+    const digest = (err as { digest?: string })?.digest ?? "";
+    if (digest.startsWith("NEXT_REDIRECT")) throw err;
+    console.error("[updateOrganizerSettingsAction] unhandled error:", err);
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+async function _updateOrganizerSettingsActionInner(_prev: OrganizerSettingsState, formData: FormData): Promise<OrganizerSettingsState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
   const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
