@@ -1,0 +1,77 @@
+name: Build & deploy
+
+# Builds the production Docker image in CI (NOT on the VPS — the 3.7GB server
+# OOMs on `next build`) and pushes it to GHCR. Coolify is configured to deploy
+# a prebuilt image and is triggered via its deploy webhook once the push lands.
+#
+# REQUIRED GITHUB SECRETS (Settings → Secrets and variables → Actions):
+# - COOLIFY_WEBHOOK         — Coolify app "Deploy Webhook" URL
+# - COOLIFY_TOKEN           — Coolify API token (Bearer for the webhook)
+# - NEXT_PUBLIC_SITE_URL          — e.g. https://footballevents.eu
+# - NEXT_PUBLIC_GA_ID             — optional, "" if unused
+# - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY — Stripe pk_live_… (client, build-time)
+# - NEXT_PUBLIC_PLAUSIBLE_DOMAIN  — optional
+# - NEXT_PUBLIC_PLAUSIBLE_SCRIPT  — optional
+# - NEXT_PUBLIC_UMAMI_WEBSITE_ID  — optional
+# - NEXT_PUBLIC_UMAMI_SCRIPT      — optional
+#
+# A failed build never pushes an image, so production keeps running the last
+# good one — effectively zero-downtime on bad deploys.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ secrets.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_GA_ID=${{ secrets.NEXT_PUBLIC_GA_ID }}
+            NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+            NEXT_PUBLIC_PLAUSIBLE_DOMAIN=${{ secrets.NEXT_PUBLIC_PLAUSIBLE_DOMAIN }}
+            NEXT_PUBLIC_PLAUSIBLE_SCRIPT=${{ secrets.NEXT_PUBLIC_PLAUSIBLE_SCRIPT }}
+            NEXT_PUBLIC_UMAMI_WEBSITE_ID=${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
+            NEXT_PUBLIC_UMAMI_SCRIPT=${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT }}
+
+      # Guard: only deploys once Coolify is reconfigured for image-pull and the
+      # GHCR package is pullable. Set repo variable DEPLOY_ENABLED=true to arm.
+      - name: Trigger Coolify deploy
+        if: vars.DEPLOY_ENABLED == 'true'
+        run: |
+          curl -fsS -X GET \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
+            "${{ secrets.COOLIFY_WEBHOOK }}"
