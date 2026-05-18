@@ -31,7 +31,7 @@ export async function moderateEventAction(formData: FormData) {
   const { eventId, decision, reason } = parsed.data;
   const ev = await db.event.findUnique({
     where: { id: eventId },
-    include: { organizer: true, translations: true },
+    include: { organizer: true, translations: true, city: true },
   });
   if (!ev) return;
 
@@ -43,6 +43,23 @@ export async function moderateEventAction(formData: FormData) {
   });
 
   const en = ev.translations.find((t) => t.locale === "en") ?? ev.translations[0];
+
+  // On approval — auto-post the event to the public Telegram channel.
+  // English translation is mandatory for every event, so use it directly.
+  if (decision === "approve") {
+    const enT = ev.translations.find((t) => t.locale === "en")!;
+    import("@/lib/telegram").then(({ tgEventPublished }) =>
+      tgEventPublished({
+        title: enT.title,
+        slug: ev.slug,
+        city: ev.city?.nameEn ?? ev.customLocation,
+        startDate: ev.startDate,
+        endDate: ev.endDate,
+        shortDescription: enT.shortDescription,
+        coverUrl: ev.coverUrl,
+      })
+    ).catch(() => {});
+  }
   void eventModerationEmail({
     organizerEmail: ev.organizer.email,
     organizerName: ev.organizer.name,
