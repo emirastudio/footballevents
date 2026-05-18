@@ -1,0 +1,57 @@
+name: Uptime monitor
+
+# External uptime check. Runs on GitHub's infrastructure (NOT the VPS), so it
+# keeps working even when the server is fully down — unlike the app's own
+# Telegram alerts, which can't fire when the app process is dead.
+#
+# Detection latency is ~5-15 min (GitHub cron minimum is 5 min and may be
+# delayed under load). It is a safety net, not a 1-min SLA monitor; pair with
+# UptimeRobot/Better Stack later if finer granularity is needed.
+#
+# REQUIRED GITHUB SECRETS:
+# - TELEGRAM_BOT_TOKEN       — bot token from @BotFather
+# - TELEGRAM_ALERT_CHAT_ID   — chat id to alert (personal admin chat)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: uptime
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe site (3 tries, 15s apart)
+        id: probe
+        run: |
+          URL="https://footballevents.eu/en"
+          for i in 1 2 3; do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 25 "$URL" || echo 000)
+            echo "attempt $i → HTTP $code"
+            if [ "$code" = "200" ]; then
+              echo "ok=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            [ "$i" -lt 3 ] && sleep 15
+          done
+          echo "ok=false" >> "$GITHUB_OUTPUT"
+          echo "last_code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: Alert Telegram on failure
+        if: steps.probe.outputs.ok == 'false'
+        run: |
+          TEXT="🔴 footballevents.eu DOWN
+Site did not return HTTP 200 after 3 attempts (last: ${{ steps.probe.outputs.last_code }}).
+$(date -u '+%Y-%m-%d %H:%M UTC') · checked by GitHub Actions"
+          curl -fsS -X POST \
+            "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d chat_id="${{ secrets.TELEGRAM_ALERT_CHAT_ID }}" \
+            --data-urlencode text="$TEXT"
+
+      - name: Fail the run if site is down
+        if: steps.probe.outputs.ok == 'false'
+        run: exit 1
