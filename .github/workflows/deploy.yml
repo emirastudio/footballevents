@@ -5,8 +5,8 @@ name: Build & deploy
 # a prebuilt image and is triggered via its deploy webhook once the push lands.
 #
 # REQUIRED GITHUB SECRETS (Settings → Secrets and variables → Actions):
-# - COOLIFY_WEBHOOK         — Coolify app "Deploy Webhook" URL
-# - COOLIFY_TOKEN           — Coolify API token (Bearer for the webhook)
+# - COOLIFY_WEBHOOK         — Coolify deploy URL (…/api/v1/deploy?uuid=…&force=true)
+# - COOLIFY_TOKEN           — Coolify API token (Bearer)
 # - NEXT_PUBLIC_SITE_URL          — e.g. https://footballevents.eu
 # - NEXT_PUBLIC_GA_ID             — optional, "" if unused
 # - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY — Stripe pk_live_… (client, build-time)
@@ -67,8 +67,14 @@ jobs:
             NEXT_PUBLIC_UMAMI_WEBSITE_ID=${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
             NEXT_PUBLIC_UMAMI_SCRIPT=${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT }}
 
-      # Guard: only deploys once Coolify is reconfigured for image-pull and the
-      # GHCR package is pullable. Set repo variable DEPLOY_ENABLED=true to arm.
+      # Coolify's build pack stays "dockerfile" but points at Dockerfile.deploy
+      # — a single `FROM ghcr.io/<repo>:latest` line, so its "build" is just an
+      # image pull (no `next build` on the 3.7GB VPS). COOLIFY_WEBHOOK uses
+      # force=true → Coolify rebuilds with --pull, so :latest is always fresh
+      # (CI builds then immediately deploys; runs are serialized).
+      #
+      # Guard: armed only once the GHCR package is pullable by the server.
+      # Set repo variable DEPLOY_ENABLED=true to enable.
       - name: Trigger Coolify deploy
         if: vars.DEPLOY_ENABLED == 'true'
         run: |

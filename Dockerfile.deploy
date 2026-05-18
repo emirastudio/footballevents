@@ -1,0 +1,10 @@
+# Deploy-only Dockerfile used by Coolify (build pack = dockerfile,
+# dockerfile_location = /Dockerfile.deploy).
+#
+# The real image is built in GitHub Actions (see .github/workflows/deploy.yml)
+# and pushed to GHCR. Here we only pull it, so Coolify never runs the heavy
+# `next build` on the 3.7GB VPS (which OOM'd and took the site down).
+#
+# ENTRYPOINT / CMD / HEALTHCHECK / EXPOSE are inherited from the base image,
+# so this single line is a complete, runnable image.
+FROM ghcr.io/emirastudio/footballevents:latest
