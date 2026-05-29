@@ -81,42 +81,51 @@ inventory exists**.
 - `ItemList` on the tournament block (when populated).
 - (Tournament pages later: `schema.org/Event`.)
 
-## 5. Data model conventions
+## 5. Content & data model (as implemented)
 
-Reuse existing entities (`Country`, `City`, `Category`, `Event`, `Organizer`,
-`Venue`). **Do not** create parallel tables. Localized content goes in
-`*Translation` tables following the existing `CategoryTranslation` pattern.
+Editorial SEO content (intro, facts, why-visit, history, FAQ, affiliate URLs)
+lives in **typed content modules**, NOT in the DB. Dynamic data (tournaments)
+is still queried live from Postgres and aggregated by `countryCode`.
 
-**`Country`** — add:
-```prisma
-slug   String  @unique          // URL
-facts  Json?                     // { capital, populationApprox, topLeague,
-                                  //   proClubsCount, uefaMember, nationalTeam }
+**Why typed modules, not a `CountryTranslation` table:** for structured,
+multi-locale editorial copy this is type-safe, reviewable in PRs, needs no
+migration, and avoids runtime filesystem reads. (The `content/` dir is reserved
+for legal markdown.) A DB-backed `CountryTranslation` remains a valid *future*
+option if non-developers need to edit copy in an admin UI — but only adopt it
+when that need is real.
+
+**Implemented layout** (reference: England):
 ```
-Facts are non-localized JSON; card labels come from i18n UI strings.
-
-**`CountryTranslation`** (new, mirrors `CategoryTranslation`):
-```prisma
-countryCode     String
-locale          Locale
-seoTitle        String
-metaDescription String
-introMd         String?  @db.Text   // section 1
-whyVisitMd      String?  @db.Text   // section 4
-historyMd       String?  @db.Text   // section 7
-faqJson         Json?               // [{ q, a }]
-isPublished     Boolean  @default(false)  // ← per-locale index gate (§2.5)
-@@unique([countryCode, locale])
+src/content/countries/types.ts      # CountryContent / CountryLocaleContent
+src/content/countries/england.ts     # one module per country (4 locales inline)
+src/content/countries/index.ts        # registry: getCountryContent(slug),
+                                       #           getPublishedCountrySlugs()
+src/app/[locale]/countries/[slug]/page.tsx   # the one template
+src/lib/queries.ts → getEventsByCountry(countryCode, locale)
+messages/{en,de,es,ru}.json → "countries" namespace (reusable UI labels)
 ```
 
-**`City`** — add `CityTranslation` (same shape) when building city pages (phase 2).
+`CountryContent` carries: `slug`, `countryCode` (ISO, for tournament queries),
+`flagEmoji`, `published` (index gate), `logistics` (affiliate URLs), and
+`locales: Record<Locale, {...}>` with `seoTitle`, `metaDescription`, `h1`,
+`intro`, `whyVisit[]`, `facts{}`, `historyHtml`, `faq[]`. Fact **values** are
+localized inside each locale block; fact **labels** come from the `countries`
+messages namespace.
 
-`Event` / `Category` / `Venue` — unchanged; used for queries.
+**Adding a country:** create `src/content/countries/{slug}.ts` and register it
+in `index.ts`. Nothing else.
 
-### Indexability rule (implementation)
-`indexable(country, locale) == CountryTranslation.isPublished` →
-- if false: render `noindex` and **omit** from `sitemap.ts`.
+### Indexability rule (implemented)
+`indexable == CountryContent.published` →
+- if false: `generateMetadata` sets `robots: { index: false, follow: true }`
+  AND the slug is omitted from `sitemap.ts` (`getPublishedCountrySlugs()`).
 - tournament count is irrelevant to indexability.
+
+### Country vs ISO modeling
+Football nations ≠ ISO countries. England has no ISO code; the `Country` table
+only has `GB` (United Kingdom). The country **page** is keyed by its own `slug`
+("england") in the content module, decoupled from the ISO table; tournaments
+aggregate by `countryCode` (`GB`). Apply the same pattern for Scotland/Wales/NI.
 
 ## 6. Affiliate slots (monetization)
 
@@ -127,8 +136,8 @@ Types: `accommodation` (Booking), `flights`, `transfer`, `facility_rental`,
 
 ## 7. Internal linking & sitemap
 - Link Country → Cities → Tournaments → Organizer, bidirectionally.
-- Extend existing `src/app/sitemap.ts`: include only pages whose
-  `*Translation.isPublished = true` for that locale.
+- Extend existing `src/app/sitemap.ts`: include only `getPublishedCountrySlugs()`
+  (done for countries; same pattern for future page types).
 - Breadcrumbs on every catalog page.
 
 ## 8. Known gotchas / open decisions
@@ -140,18 +149,24 @@ Types: `accommodation` (Booking), `flights`, `transfer`, `facility_rental`,
 - **Faceted explosion**: country × age × type × city is tens of thousands of
   URLs. Only generate/index combos with **both demand and content**;
   canonicalize empties to the parent; protect crawl budget.
-- **Open decision — fill locales**: EN-pilot first (recommended) vs all 4 at
-  once.
-- **Open decision — lead capture in empty state**: reuse existing
-  email/saved-search system vs a new simple "notify me".
-- App routes are `/[locale]/...` (next-intl). This Next.js is non-standard —
-  check `node_modules/next/dist/docs/` before writing route code.
+- **Locales — DECIDED**: fill all 4 locales per country (en/de/es/ru), as done
+  for England.
+- **Empty-state lead capture — interim**: dual CTA links to existing routes
+  (`/organizer/events/new` to list, `/events` to explore). A dedicated
+  "notify me" capture is still open for later.
+- App routes are `/[locale]/...` (next-intl). This Next.js is non-standard
+  (v16). The local `node_modules/next/dist/docs/` may be empty — the most
+  reliable reference is existing working pages (e.g. `events/[slug]/page.tsx`):
+  `params` is a `Promise`, call `setRequestLocale`, `dynamic = "force-dynamic"`,
+  `generateStaticParams` returns `[]`.
 
 ## 9. Build phases
-1. Schema (`Country.slug/facts`, `CountryTranslation`) + one country template
-   rendering from DB.
-2. Fill 5–10 top football countries deeply (EN): Spain, Portugal, Germany,
-   Italy, Netherlands, England. Enable index, submit to GSC.
+1. ✅ **DONE** — country template + typed content module + `countries` messages
+   + sitemap. Reference country live: **England** (`/{locale}/countries/england`,
+   all 4 locales).
+2. Fill the other top football countries deeply (4 locales each): Spain,
+   Portugal, Germany, Italy, Netherlands. Just add a content module + register.
+   Then submit to GSC.
 3. Affiliate slots (Booking) in logistics.
 4. City pages (`CityTranslation`).
 5. Age axis (fix the taxonomy first) → `/age` and country+age pages.
