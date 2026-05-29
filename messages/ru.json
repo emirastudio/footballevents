@@ -1,4 +1,31 @@
 {
+  "countries": {
+    "breadcrumbHome": "Главная",
+    "breadcrumbCountries": "Страны",
+    "tournamentsHeading": "Турниры: {country}",
+    "emptyTitle": "Пока нет турниров: {country}",
+    "emptyText": "Будьте первыми. Опубликуйте свой турнир бесплатно и привлеките команды со всей Европы — или подпишитесь на уведомления о новых турнирах.",
+    "ctaList": "Опубликовать турнир",
+    "ctaExplore": "Все турниры",
+    "factsHeading": "Футбольные факты",
+    "factLabels": {
+      "capital": "Столица",
+      "population": "Население",
+      "uefaMember": "Член УЕФА",
+      "nationalTeam": "Сборная",
+      "topLeague": "Высшая лига",
+      "proClubs": "Профессиональные клубы",
+      "faFounded": "Футбольная ассоциация"
+    },
+    "whyVisitHeading": "Зачем ехать с командой: {country}",
+    "logisticsHeading": "Планирование поездки",
+    "logisticsText": "Планируете привезти команду? Бронируйте жильё и билеты заранее — в сезон турниров места для групп рядом с полями разбирают быстро.",
+    "bookingCta": "Найти жильё для команды",
+    "flightsCta": "Искать авиабилеты",
+    "historyHeading": "Футбол: {country}",
+    "faqHeading": "Частые вопросы",
+    "disclaimer": "Факты приведены для общего ориентира и могут меняться."
+  },
   "about": {
     "title": "О нас",
     "subtitle": "footballevents.eu — премиум-каталог футбольных мероприятий по всему миру.",

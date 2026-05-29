@@ -222,6 +222,14 @@ export async function getEventsByOrganizer(slug: string, locale: string = "en"):
   return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
 }
 
+export async function getEventsByCountry(countryCode: string, locale: string = "en"): Promise<MockEvent[]> {
+  const rows = await db.event.findMany({
+    where: { status: "PUBLISHED", countryCode, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
+    include: eventInclude,
+  });
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
+}
+
 export async function getEventsByVenue(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", venue: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },

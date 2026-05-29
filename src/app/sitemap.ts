@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { routing } from "@/i18n/routing";
+import { getPublishedCountrySlugs } from "@/content/countries";
 
 export const revalidate = 3600;
 
@@ -25,8 +26,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.warn("[sitemap] DB query failed, returning static paths only:", e);
   }
 
+  const countrySlugs = getPublishedCountrySlugs();
+
   const out: MetadataRoute.Sitemap = [];
   for (const locale of locales) {
+    for (const slug of countrySlugs) {
+      out.push({
+        url: `${SITE}/${locale}/countries/${slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.8,
+      });
+    }
     for (const p of staticPaths) {
       out.push({
         url: `${SITE}/${locale}${p}`,

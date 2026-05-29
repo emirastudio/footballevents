@@ -1,4 +1,31 @@
 {
+  "countries": {
+    "breadcrumbHome": "Start",
+    "breadcrumbCountries": "Länder",
+    "tournamentsHeading": "Turniere in {country}",
+    "emptyTitle": "Noch keine Turniere in {country}",
+    "emptyText": "Sei der Erste. Trage dein Turnier kostenlos ein und erreiche reisende Teams in ganz Europa — oder lass dich benachrichtigen, sobald neue Turniere hinzukommen.",
+    "ctaList": "Turnier eintragen",
+    "ctaExplore": "Alle Turniere ansehen",
+    "factsHeading": "Fußball-Fakten",
+    "factLabels": {
+      "capital": "Hauptstadt",
+      "population": "Einwohner",
+      "uefaMember": "UEFA-Mitglied",
+      "nationalTeam": "Nationalmannschaft",
+      "topLeague": "Höchste Liga",
+      "proClubs": "Profiklubs",
+      "faFounded": "Fußballverband"
+    },
+    "whyVisitHeading": "Warum mit deinem Team nach {country}",
+    "logisticsHeading": "Reise planen",
+    "logisticsText": "Du reist mit einem Team nach {country}? Kümmere dich früh um Unterkunft und Anreise — gruppentaugliche Quartiere in Platznähe sind in der Turniersaison schnell ausgebucht.",
+    "bookingCta": "Unterkunft fürs Team finden",
+    "flightsCta": "Flüge suchen",
+    "historyHeading": "Fußball in {country}",
+    "faqHeading": "Häufige Fragen",
+    "disclaimer": "Die Angaben dienen der allgemeinen Orientierung und können sich ändern."
+  },
   "about": {
     "title": "Über uns",
     "subtitle": "footballevents.eu — der Premium-Katalog für Fußballveranstaltungen weltweit.",
