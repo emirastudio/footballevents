@@ -382,6 +382,19 @@ export function EventForm({
         </p>
       )}
 
+      {/* Validation errors repeated right above the buttons — the top banner is
+          off-screen when the user clicks submit at the bottom ("nothing happens"). */}
+      {state?.error === "validation" && Object.keys(fe).length > 0 && (
+        <div className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p className="font-semibold">{labels.errors.validationHint ?? "Please fix the following:"}</p>
+          <ul className="mt-1 list-disc pl-5">
+            {Object.entries(fe).map(([k, v]) => (
+              <li key={k}>{labels.errors[v] ?? labels.errors[k] ?? v}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 px-4 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-[var(--color-muted)]">
           {defaults?.status === "PUBLISHED" ? labels.publishedHint : labels.draftHint}
