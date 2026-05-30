@@ -19,6 +19,7 @@ import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { tierAllows } from "@/lib/tier";
 import { getEventCapacity } from "@/lib/event-capacity";
 import { RichText } from "@/components/ui/RichText";
+import { MerchPromoBanner } from "@/components/site/MerchPromoBanner";
 import { CapacityWidget } from "@/components/cards/CapacityWidget";
 import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
@@ -427,6 +428,11 @@ export default async function EventDetailPage({
                 </ul>
               )}
             </section>
+
+            {/* Fan merch promo (Goalbazza) */}
+            <div className="mt-12">
+              <MerchPromoBanner />
+            </div>
 
             {/* Similar */}
             {similar.length > 0 && (

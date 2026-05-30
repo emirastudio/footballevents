@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { RichText } from "@/components/ui/RichText";
+import { MerchPromoBanner } from "@/components/site/MerchPromoBanner";
 import { getWorldCupFixtures, getWorldCupStandings, getWorldCupTeams, getWorldCupTopScorers } from "@/lib/api-football";
 import { WC2026 } from "@/content/world-cup-2026";
 import { locales, type Locale } from "@/i18n/config";
@@ -62,27 +63,31 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
   return (
     <>
       {/* Gold hero */}
-      <section className="relative overflow-hidden border-b border-[var(--color-gold-300)] bg-[var(--color-navy-900)]">
-        <div
-          className="absolute inset-0 opacity-90"
-          style={{ background: "radial-gradient(1200px 400px at 50% -10%, rgba(212,175,55,0.35), transparent 60%)" }}
-          aria-hidden
-        />
-        <Container className="relative py-12 sm:py-16">
+      <section className="relative overflow-hidden bg-[var(--color-navy-900)]">
+        {/* gold top accent bar */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-[var(--color-gold-400)] to-transparent" aria-hidden />
+        {/* layered gold glows */}
+        <div className="absolute inset-0" aria-hidden style={{ background: "radial-gradient(900px 360px at 15% -20%, rgba(212,175,55,0.40), transparent 60%), radial-gradient(900px 360px at 95% 120%, rgba(212,175,55,0.28), transparent 55%)" }} />
+        {/* faint trophy watermark */}
+        <Trophy className="pointer-events-none absolute -right-8 -top-6 h-64 w-64 text-[var(--color-gold-500)]/10" aria-hidden />
+        <Container className="relative py-14 sm:py-20">
           <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1 text-xs text-white/70">
             <Link href="/" className="hover:text-white">{t("breadcrumbHome")}</Link>
             <ChevronRight className="h-3 w-3" />
             <span className="text-white">{c.h1}</span>
           </nav>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-gold-400)] bg-[var(--color-gold-500)]/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-gold-300)]">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[var(--color-gold-500)] to-[var(--color-gold-400)] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-navy-900)] shadow-[0_0_20px_rgba(212,175,55,0.45)]">
             <Trophy className="h-3.5 w-3.5 fill-current" /> {t("badge")}
           </span>
-          <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-manrope)] text-4xl font-bold text-white sm:text-6xl">
+          <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-manrope)] text-4xl font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)] sm:text-6xl">
             {c.h1}
           </h1>
-          <p className="mt-3 max-w-2xl text-base text-[var(--color-gold-200)] sm:text-lg">{c.tagline}</p>
+          <div className="mt-4 h-0.5 w-24 rounded-full bg-gradient-to-r from-[var(--color-gold-400)] to-transparent" aria-hidden />
+          <p className="mt-4 max-w-2xl text-base font-semibold text-[var(--color-gold-200)] sm:text-lg">{c.tagline}</p>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85">{c.intro}</p>
         </Container>
+        {/* gold bottom divider */}
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--color-gold-400)]/60 to-transparent" aria-hidden />
       </section>
 
       <Container className="py-10">
@@ -262,6 +267,11 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Fan merch promo (Goalbazza) */}
+        <section className="mb-12">
+          <MerchPromoBanner />
         </section>
 
         {/* History */}

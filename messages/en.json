@@ -48,6 +48,15 @@
     "faqHeading": "Frequently asked questions",
     "dataCredit": "Live match data by API-Football."
   },
+  "merch": {
+    "badge": "Goalbazza · Fan merch",
+    "title": "Got a fan collection? Get it in the game.",
+    "text": "Scarves, jerseys, tickets — trade, auction and sell football merch with fans worldwide on Goalbazza.",
+    "cta": "List your collection",
+    "trade": "Trade",
+    "auction": "Auction",
+    "sell": "Sell"
+  },
   "about": {
     "title": "About",
     "subtitle": "footballevents.eu — the premium catalog of football events worldwide.",

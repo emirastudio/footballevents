@@ -25,14 +25,14 @@ export type WcFixture = {
   awayGoals: number | null;
 };
 
-// Cache 15min — PRO plan allows 7,500 req/day, so we keep data fresh. Even
-// ~6 endpoints × 96 regenerations/day ≈ 600 req/day, well within budget.
+// Cache 12h (~twice a day) — fresh enough before the tournament starts; we'll
+// drop this to minutes/seconds once matches go live in June 2026.
 async function call(path: string): Promise<unknown[]> {
   if (!KEY) return [];
   try {
     const res = await fetch(`${BASE}${path}`, {
       headers: { "x-apisports-key": KEY },
-      next: { revalidate: 900 },
+      next: { revalidate: 43200 },
     });
     if (!res.ok) return [];
     const json = (await res.json()) as { response?: unknown[] };

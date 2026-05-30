@@ -48,6 +48,15 @@
     "faqHeading": "Preguntas frecuentes",
     "dataCredit": "Datos de partidos en vivo de API-Football."
   },
+  "merch": {
+    "badge": "Goalbazza · Merch de fans",
+    "title": "¿Tienes una colección? Ponla en juego.",
+    "text": "Bufandas, camisetas, entradas — intercambia, subasta y vende merch con aficionados de todo el mundo en Goalbazza.",
+    "cta": "Publicar tu colección",
+    "trade": "Intercambiar",
+    "auction": "Subasta",
+    "sell": "Vender"
+  },
   "about": {
     "title": "Sobre nosotros",
     "subtitle": "footballevents.eu — el catálogo premium de eventos de fútbol en todo el mundo.",
