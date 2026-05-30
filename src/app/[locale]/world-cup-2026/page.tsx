@@ -2,10 +2,10 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { RichText } from "@/components/ui/RichText";
-import { getWorldCupFixtures } from "@/lib/api-football";
+import { getWorldCupFixtures, getWorldCupStandings, getWorldCupTeams } from "@/lib/api-football";
 import { WC2026 } from "@/content/world-cup-2026";
 import { locales, type Locale } from "@/i18n/config";
-import { Trophy, CalendarDays, MapPin, Users, ChevronRight, Globe2 } from "lucide-react";
+import { Trophy, CalendarDays, MapPin, Users, ChevronRight, Globe2, ListOrdered, Flag } from "lucide-react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
@@ -42,7 +42,9 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
 
   const c = WC2026.locales[locale as Locale] ?? WC2026.locales.en;
   const t = await getTranslations("worldCup");
-  const fixtures = await getWorldCupFixtures();
+  const [fixtures, groups, teams] = await Promise.all([
+    getWorldCupFixtures(), getWorldCupStandings(), getWorldCupTeams(),
+  ]);
   const upcoming = fixtures.filter((f) => f.status === "NS").slice(0, 16);
   const shown = upcoming.length > 0 ? upcoming : fixtures.slice(0, 16);
 
@@ -153,6 +155,74 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
             </p>
           )}
         </section>
+
+        {/* Group standings */}
+        {groups.length > 0 && (
+          <section className="mb-12">
+            <div className="mb-5 flex items-center gap-2">
+              <ListOrdered className="h-5 w-5 text-[var(--color-gold-600)]" />
+              <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
+                {t("groupsHeading")}
+              </h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {groups.map((g) => (
+                <div key={g.name} className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+                  <div className="border-b border-[var(--color-border)] bg-[var(--color-gold-500)]/10 px-3 py-2 text-sm font-bold text-[var(--color-foreground)]">
+                    {g.name}
+                  </div>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-[var(--color-muted)]">
+                        <th className="px-2 py-1.5 text-left font-semibold">#</th>
+                        <th className="px-1 py-1.5 text-left font-semibold">{t("colTeam")}</th>
+                        <th className="px-1 py-1.5 text-center font-semibold">{t("colPlayed")}</th>
+                        <th className="px-1 py-1.5 text-center font-semibold">{t("colGd")}</th>
+                        <th className="px-2 py-1.5 text-center font-semibold">{t("colPts")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {g.rows.map((r) => (
+                        <tr key={r.team} className="border-t border-[var(--color-border)]">
+                          <td className="px-2 py-1.5 tabular-nums text-[var(--color-muted)]">{r.rank}</td>
+                          <td className="px-1 py-1.5">
+                            <span className="flex items-center gap-1.5">
+                              {r.logo && <img src={r.logo} alt="" width={16} height={16} className="h-4 w-4 object-contain" />}
+                              <span className="truncate font-medium text-[var(--color-foreground)]">{r.team}</span>
+                            </span>
+                          </td>
+                          <td className="px-1 py-1.5 text-center tabular-nums text-[var(--color-muted-strong)]">{r.played}</td>
+                          <td className="px-1 py-1.5 text-center tabular-nums text-[var(--color-muted-strong)]">{r.gd > 0 ? `+${r.gd}` : r.gd}</td>
+                          <td className="px-2 py-1.5 text-center font-bold tabular-nums text-[var(--color-foreground)]">{r.points}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Teams */}
+        {teams.length > 0 && (
+          <section className="mb-12">
+            <div className="mb-5 flex items-center gap-2">
+              <Flag className="h-5 w-5 text-[var(--color-gold-600)]" />
+              <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
+                {t("teamsHeading", { count: teams.length })}
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+              {teams.map((tm) => (
+                <div key={tm.name} className="flex items-center gap-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
+                  {tm.logo && <img src={tm.logo} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" />}
+                  <span className="truncate text-sm font-medium text-[var(--color-foreground)]">{tm.name}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Why follow */}
         <section className="mb-12">

@@ -25,12 +25,14 @@ export type WcFixture = {
   awayGoals: number | null;
 };
 
+// Cache 6h: 3 endpoints × 4 regenerations/day = ~12 req/day, well under the
+// free-tier ~100/day quota (raise the limit before adding live-score polling).
 async function call(path: string): Promise<unknown[]> {
   if (!KEY) return [];
   try {
     const res = await fetch(`${BASE}${path}`, {
       headers: { "x-apisports-key": KEY },
-      next: { revalidate: 3600 },
+      next: { revalidate: 21600 },
     });
     if (!res.ok) return [];
     const json = (await res.json()) as { response?: unknown[] };
@@ -66,4 +68,45 @@ export async function getWorldCupFixtures(): Promise<WcFixture[]> {
     } satisfies WcFixture;
   });
   return rows.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+}
+
+export type WcStandingRow = {
+  rank: number; team: string; logo: string;
+  played: number; win: number; draw: number; lose: number;
+  gd: number; points: number;
+};
+export type WcGroup = { name: string; rows: WcStandingRow[] };
+
+/** World Cup 2026 group standings (12 groups). */
+export async function getWorldCupStandings(): Promise<WcGroup[]> {
+  const raw = await call(`/standings?league=${WORLD_CUP_LEAGUE}&season=${WORLD_CUP_SEASON}`);
+  const league = (raw[0] as { league?: { standings?: unknown[][] } })?.league;
+  const groups = (league?.standings ?? []) as Array<Array<{
+    rank: number; group: string; points: number; goalsDiff: number;
+    team: { name: string; logo: string };
+    all: { played: number; win: number; draw: number; lose: number };
+  }>>;
+  return groups
+    .map((rows) => ({
+      name: rows[0]?.group ?? "",
+      rows: rows.map((r) => ({
+        rank: r.rank, team: r.team.name, logo: r.team.logo,
+        played: r.all.played, win: r.all.win, draw: r.all.draw, lose: r.all.lose,
+        gd: r.goalsDiff, points: r.points,
+      })),
+    }))
+    .filter((g) => /^Group /i.test(g.name));
+}
+
+export type WcTeam = { name: string; code: string | null; logo: string };
+
+/** The 48 teams of World Cup 2026. */
+export async function getWorldCupTeams(): Promise<WcTeam[]> {
+  const raw = await call(`/teams?league=${WORLD_CUP_LEAGUE}&season=${WORLD_CUP_SEASON}`);
+  return raw
+    .map((r) => {
+      const t = (r as { team: { name: string; code: string | null; logo: string } }).team;
+      return { name: t.name, code: t.code, logo: t.logo };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
