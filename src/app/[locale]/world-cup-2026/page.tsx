@@ -2,10 +2,10 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { RichText } from "@/components/ui/RichText";
-import { getWorldCupFixtures, getWorldCupStandings, getWorldCupTeams } from "@/lib/api-football";
+import { getWorldCupFixtures, getWorldCupStandings, getWorldCupTeams, getWorldCupTopScorers } from "@/lib/api-football";
 import { WC2026 } from "@/content/world-cup-2026";
 import { locales, type Locale } from "@/i18n/config";
-import { Trophy, CalendarDays, MapPin, Users, ChevronRight, Globe2, ListOrdered, Flag } from "lucide-react";
+import { Trophy, CalendarDays, MapPin, Users, ChevronRight, Globe2, ListOrdered, Flag, Goal } from "lucide-react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
@@ -42,8 +42,8 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
 
   const c = WC2026.locales[locale as Locale] ?? WC2026.locales.en;
   const t = await getTranslations("worldCup");
-  const [fixtures, groups, teams] = await Promise.all([
-    getWorldCupFixtures(), getWorldCupStandings(), getWorldCupTeams(),
+  const [fixtures, groups, teams, scorers] = await Promise.all([
+    getWorldCupFixtures(), getWorldCupStandings(), getWorldCupTeams(), getWorldCupTopScorers(),
   ]);
   const upcoming = fixtures.filter((f) => f.status === "NS").slice(0, 16);
   const shown = upcoming.length > 0 ? upcoming : fixtures.slice(0, 16);
@@ -218,6 +218,31 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
                 <div key={tm.name} className="flex items-center gap-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
                   {tm.logo && <img src={tm.logo} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" />}
                   <span className="truncate text-sm font-medium text-[var(--color-foreground)]">{tm.name}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Top scorers — appears once the tournament is under way */}
+        {scorers.length > 0 && (
+          <section className="mb-12">
+            <div className="mb-5 flex items-center gap-2">
+              <Goal className="h-5 w-5 text-[var(--color-gold-600)]" />
+              <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
+                {t("scorersHeading")}
+              </h2>
+            </div>
+            <div className="divide-y divide-[var(--color-border)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]">
+              {scorers.map((s) => (
+                <div key={s.rank} className="flex items-center gap-3 p-3 text-sm">
+                  <span className="w-6 shrink-0 text-center font-bold tabular-nums text-[var(--color-muted)]">{s.rank}</span>
+                  {s.photo && <img src={s.photo} alt="" width={28} height={28} className="h-7 w-7 shrink-0 rounded-full object-cover" />}
+                  <span className="flex-1 truncate font-semibold text-[var(--color-foreground)]">{s.name}</span>
+                  <span className="hidden truncate text-xs text-[var(--color-muted)] sm:block">{s.team}</span>
+                  <span className="shrink-0 rounded bg-[var(--color-gold-500)]/15 px-2 py-0.5 text-xs font-bold tabular-nums text-[var(--color-gold-700)]">
+                    {s.goals} {t("goalsAbbr")}
+                  </span>
                 </div>
               ))}
             </div>

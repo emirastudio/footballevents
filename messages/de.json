@@ -39,6 +39,8 @@
     "colPlayed": "Sp",
     "colGd": "TD",
     "colPts": "Pkt",
+    "scorersHeading": "Torjäger",
+    "goalsAbbr": "T",
     "scheduleHeading": "Spielplan",
     "scheduleEmpty": "Der vollständige Spielplan erscheint hier, sobald die Spiele feststehen.",
     "whyHeading": "Warum hier verfolgen",

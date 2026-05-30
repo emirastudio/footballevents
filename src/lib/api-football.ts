@@ -25,14 +25,14 @@ export type WcFixture = {
   awayGoals: number | null;
 };
 
-// Cache 6h: 3 endpoints × 4 regenerations/day = ~12 req/day, well under the
-// free-tier ~100/day quota (raise the limit before adding live-score polling).
+// Cache 15min — PRO plan allows 7,500 req/day, so we keep data fresh. Even
+// ~6 endpoints × 96 regenerations/day ≈ 600 req/day, well within budget.
 async function call(path: string): Promise<unknown[]> {
   if (!KEY) return [];
   try {
     const res = await fetch(`${BASE}${path}`, {
       headers: { "x-apisports-key": KEY },
-      next: { revalidate: 21600 },
+      next: { revalidate: 900 },
     });
     if (!res.ok) return [];
     const json = (await res.json()) as { response?: unknown[] };
@@ -96,6 +96,28 @@ export async function getWorldCupStandings(): Promise<WcGroup[]> {
       })),
     }))
     .filter((g) => /^Group /i.test(g.name));
+}
+
+export type WcScorer = { rank: number; name: string; photo: string; team: string; goals: number; assists: number };
+
+/** Top scorers of World Cup 2026 (empty until the tournament starts). */
+export async function getWorldCupTopScorers(): Promise<WcScorer[]> {
+  const raw = await call(`/players/topscorers?league=${WORLD_CUP_LEAGUE}&season=${WORLD_CUP_SEASON}`);
+  return raw.slice(0, 10).map((r, i) => {
+    const p = r as {
+      player: { name: string; photo: string };
+      statistics: Array<{ team: { name: string }; goals: { total: number | null; assists: number | null } }>;
+    };
+    const s = p.statistics?.[0];
+    return {
+      rank: i + 1,
+      name: p.player.name,
+      photo: p.player.photo,
+      team: s?.team?.name ?? "",
+      goals: s?.goals?.total ?? 0,
+      assists: s?.goals?.assists ?? 0,
+    };
+  });
 }
 
 export type WcTeam = { name: string; code: string | null; logo: string };

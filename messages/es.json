@@ -39,6 +39,8 @@
     "colPlayed": "PJ",
     "colGd": "DG",
     "colPts": "Pts",
+    "scorersHeading": "Goleadores",
+    "goalsAbbr": "G",
     "scheduleHeading": "Calendario de partidos",
     "scheduleEmpty": "El calendario completo aparecerá aquí a medida que se confirmen los partidos.",
     "whyHeading": "Por qué seguirlo aquí",

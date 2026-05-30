@@ -39,6 +39,8 @@
     "colPlayed": "P",
     "colGd": "GD",
     "colPts": "Pts",
+    "scorersHeading": "Top scorers",
+    "goalsAbbr": "G",
     "scheduleHeading": "Match schedule",
     "scheduleEmpty": "The full schedule will appear here as fixtures are confirmed.",
     "whyHeading": "Why follow it here",
