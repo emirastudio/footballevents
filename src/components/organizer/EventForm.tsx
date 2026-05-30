@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
 import { createEventAction, updateEventAction, type EventFormState } from "@/app/actions/event";
 import { Button } from "@/components/ui/Button";
@@ -144,8 +144,21 @@ export function EventForm({
   const fe = state?.fieldErrors ?? {};
   const errMsg = (key?: string) => key ? labels.errors[key] ?? key : undefined;
 
+  // On a failed submit, jump to the first field with an error and focus it —
+  // otherwise the error is off-screen and the submit looks like it did nothing.
+  const formRef = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    const firstKey = state?.fieldErrors && Object.keys(state.fieldErrors)[0];
+    if (!firstKey || !formRef.current) return;
+    const el = formRef.current.querySelector<HTMLElement>(`[name="${firstKey}"]`);
+    if (!el) return;
+    const target = el.closest("label") ?? el;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    el.focus?.({ preventScroll: true });
+  }, [state]);
+
   return (
-    <form action={action} className="space-y-12">
+    <form ref={formRef} action={action} className="space-y-12">
       {isEdit && <input type="hidden" name="id" value={defaults!.id} />}
       <header>
         <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{labels.newTitle}</h1>
