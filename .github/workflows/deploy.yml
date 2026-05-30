@@ -67,12 +67,20 @@ jobs:
             NEXT_PUBLIC_UMAMI_WEBSITE_ID=${{ secrets.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
             NEXT_PUBLIC_UMAMI_SCRIPT=${{ secrets.NEXT_PUBLIC_UMAMI_SCRIPT }}
 
-      # Coolify's build pack stays "dockerfile" but points at Dockerfile.deploy
-      # — a single `FROM ghcr.io/<repo>:latest` line, so its "build" is just an
-      # image pull (no `next build` on the 3.7GB VPS). COOLIFY_WEBHOOK uses
-      # force=true → Coolify rebuilds with --pull, so :latest is always fresh
-      # (CI builds then immediately deploys; runs are serialized).
-      #
+      # Coolify "builds" Dockerfile.deploy (`FROM ghcr.io/<repo>:latest`), which
+      # is just an image pull — but `docker build` does NOT re-pull the base
+      # image, so Coolify would reuse a stale local :latest. We therefore refresh
+      # :latest on the server over SSH first. The SSH key is locked to a forced
+      # command (docker pull only) on the server, so it can do nothing else.
+      - name: Refresh :latest on server (defeat stale base-image cache)
+        if: vars.DEPLOY_ENABLED == 'true'
+        run: |
+          install -m 600 /dev/null deploy_key
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > deploy_key
+          ssh -i deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30 \
+            "root@${{ secrets.DEPLOY_SSH_HOST }}" true
+          rm -f deploy_key
+
       # Guard: armed only once the GHCR package is pullable by the server.
       # Set repo variable DEPLOY_ENABLED=true to enable.
       - name: Trigger Coolify deploy
