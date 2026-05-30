@@ -66,6 +66,7 @@ function toMockEvent(e: EventRow, preferredLocale: string = "en"): MockEvent {
     gender: e.gender as MockEvent["gender"],
     format: e.format ?? undefined,
     skillLevel: e.skillLevel as MockEvent["skillLevel"],
+    skillLevels: e.skillLevels.length ? e.skillLevels : [e.skillLevel],
     priceFrom: e.priceFrom ? Number(e.priceFrom) : 0,
     priceTo: e.priceTo ? Number(e.priceTo) : undefined,
     currency: e.currency,

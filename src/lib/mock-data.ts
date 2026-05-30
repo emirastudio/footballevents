@@ -23,6 +23,7 @@ export type MockEvent = {
   gender: "MALE" | "FEMALE" | "MIXED";
   format?: string;     // 5x5, 8x8, 11x11
   skillLevel: "AMATEUR" | "SEMI_PRO" | "PROFESSIONAL" | "ALL_LEVELS";
+  skillLevels?: string[];
   priceFrom: number;
   priceTo?: number;
   currency: string;

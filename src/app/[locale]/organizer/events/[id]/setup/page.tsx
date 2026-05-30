@@ -90,6 +90,7 @@ export default async function SetupEventPage({
             ageGroups: ev.ageGroups as unknown as string[],
             gender: ev.gender,
             skillLevel: ev.skillLevel,
+            skillLevels: ev.skillLevels?.length ? ev.skillLevels : (ev.skillLevel ? [ev.skillLevel] : []),
             format: ev.format ?? undefined,
             formats: ev.format ? ev.format.split(",").filter(Boolean) : [],
             maxParticipants: ev.maxParticipants ?? undefined,

@@ -35,6 +35,7 @@ const baseSchema = z.object({
   ageGroups:         z.array(z.string()).default([]),
   gender:            z.enum(["MALE", "FEMALE", "MIXED"]).default("MIXED"),
   skillLevel:        z.enum(["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"]).default("ALL_LEVELS"),
+  skillLevels:       z.array(z.enum(["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"])).default([]),
   format:            z.string().optional(),
   maxParticipants:   z.coerce.number().int().positive().optional(),
   isFree:            z.coerce.boolean().default(false),
@@ -275,6 +276,7 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
     ageGroups:         ageGroupsRaw,
     gender:            formData.get("gender") || "MIXED",
     skillLevel:        formData.get("skillLevel") || "ALL_LEVELS",
+    skillLevels:       formData.getAll("skillLevels").map((v) => String(v)),
     format:            formData.get("format") || undefined,
     maxParticipants:   formData.get("maxParticipants") || undefined,
     isFree:            formData.get("isFree") === "on" || formData.get("isFree") === "true",
@@ -358,7 +360,8 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
       customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
       gender: d.gender,
-      skillLevel: d.skillLevel,
+      skillLevels: d.skillLevels,
+      skillLevel: d.skillLevels[0] ?? d.skillLevel,
       format: d.format || null,
       maxParticipants: d.maxParticipants ?? null,
       priceFrom: d.isFree ? null : d.priceFrom ?? null,
@@ -441,6 +444,7 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
     ageGroups:         ageGroupsRaw,
     gender:            formData.get("gender") || "MIXED",
     skillLevel:        formData.get("skillLevel") || "ALL_LEVELS",
+    skillLevels:       formData.getAll("skillLevels").map((v) => String(v)),
     format:            formData.get("format") || undefined,
     maxParticipants:   formData.get("maxParticipants") || undefined,
     isFree:            formData.get("isFree") === "on" || formData.get("isFree") === "true",
@@ -520,7 +524,8 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
       customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
       gender: d.gender,
-      skillLevel: d.skillLevel,
+      skillLevels: d.skillLevels,
+      skillLevel: d.skillLevels[0] ?? d.skillLevel,
       format: d.format || null,
       maxParticipants: d.maxParticipants ?? null,
       priceFrom: d.isFree ? null : d.priceFrom ?? null,
@@ -679,6 +684,7 @@ async function _duplicateEventActionInner(formData: FormData) {
       customLocation: source.customLocation,
       ageGroups: source.ageGroups,
       gender: source.gender,
+      skillLevels: source.skillLevels,
       skillLevel: source.skillLevel,
       format: source.format,
       maxParticipants: source.maxParticipants,
@@ -751,6 +757,7 @@ const stepSchemas = {
     ageGroups:       z.array(z.string()).default([]),
     gender:          z.enum(["MALE", "FEMALE", "MIXED"]).default("MIXED"),
     skillLevel:      z.enum(["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"]).default("ALL_LEVELS"),
+    skillLevels:     z.array(z.enum(["AMATEUR", "SEMI_PRO", "PROFESSIONAL", "ALL_LEVELS"])).default([]),
     format:          z.string().optional(),
     maxParticipants: z.coerce.number().int().positive().optional(),
   }),
@@ -900,7 +907,8 @@ async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): P
     case 3: {
       const data = parsed.data as z.infer<typeof stepSchemas[3]>;
       update.gender = data.gender;
-      update.skillLevel = data.skillLevel;
+      update.skillLevels = data.skillLevels;
+      update.skillLevel = data.skillLevels[0] ?? data.skillLevel;
       update.maxParticipants = data.maxParticipants ?? null;
 
       // Parse divisions from formData directly (Zod schema strips them).
@@ -1059,6 +1067,7 @@ function parseStepInput(step: WizardStep, formData: FormData) {
         ageGroups:        formData.getAll("ageGroups").map(String),
         gender:           formData.get("gender") || "MIXED",
         skillLevel:       formData.get("skillLevel") || "ALL_LEVELS",
+        skillLevels:      formData.getAll("skillLevels").map(String),
         format:           formData.get("format") || undefined,
         maxParticipants:  formData.get("maxParticipants") || undefined,
         divisions,

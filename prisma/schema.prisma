@@ -470,7 +470,8 @@ model Event {
   // Audience
   ageGroups       String[]   @default([]) // birth years e.g. ["2013","2017"] or "ADULT"
   gender          Gender     @default(MIXED)
-  skillLevel      SkillLevel @default(ALL_LEVELS)
+  skillLevel      SkillLevel @default(ALL_LEVELS) // legacy single; kept in sync = skillLevels[0]
+  skillLevels     String[]   @default([]) // multi-select, e.g. ["AMATEUR","SEMI_PRO"] (divisions can differ)
   format          String? // "5x5", "8x8", "11x11", custom
   maxParticipants Int?
 

@@ -204,7 +204,7 @@ export type WizardDefaults = {
   countryCode?: string; city?: string;
   venueName?: string; venueAddress?: string;
   // step 3
-  ageGroups?: string[]; gender?: string; skillLevel?: string;
+  ageGroups?: string[]; gender?: string; skillLevel?: string; skillLevels?: string[];
   format?: string; formats?: string[]; maxParticipants?: number;
   divisions?: DivisionDefault[];
   // step 4
@@ -563,11 +563,11 @@ function Step3({ defaults, labels }: { defaults: WizardDefaults; labels: WizardL
         ]}
       />
 
-      {/* Skill level — 2 cols on mobile, 4 on desktop, equal */}
-      <PillRadioGroup
+      {/* Skill level — multi-select (a tournament's divisions can span levels) */}
+      <PillCheckGroup
         legend={labels.skillLevel}
-        name="skillLevel"
-        defaultValue={defaults.skillLevel ?? "ALL_LEVELS"}
+        name="skillLevels"
+        defaultValues={defaults.skillLevels ?? (defaults.skillLevel ? [defaults.skillLevel] : [])}
         cols="grid-cols-2 sm:grid-cols-4"
         options={[
           { value: "ALL_LEVELS",   label: labels.skillAll },
