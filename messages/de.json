@@ -26,6 +26,20 @@
     "faqHeading": "Häufige Fragen",
     "disclaimer": "Die Angaben dienen der allgemeinen Orientierung und können sich ändern."
   },
+  "worldCup": {
+    "badge": "WM 2026",
+    "breadcrumbHome": "Start",
+    "bannerTitle": "FIFA Fußball-WM 2026 — verfolge das Turnier",
+    "bannerText": "USA · Kanada · Mexiko — 48 Teams, 104 Spiele. Spielplan, Teams und Live-Spiele.",
+    "bannerCta": "Turnier verfolgen",
+    "factLabels": { "hosts": "Gastgeber", "dates": "Termine", "teams": "Teams", "matches": "Spiele", "format": "Format", "final": "Finale" },
+    "scheduleHeading": "Spielplan",
+    "scheduleEmpty": "Der vollständige Spielplan erscheint hier, sobald die Spiele feststehen.",
+    "whyHeading": "Warum hier verfolgen",
+    "aboutHeading": "Über die WM 2026",
+    "faqHeading": "Häufige Fragen",
+    "dataCredit": "Live-Spieldaten von API-Football."
+  },
   "about": {
     "title": "Über uns",
     "subtitle": "footballevents.eu — der Premium-Katalog für Fußballveranstaltungen weltweit.",

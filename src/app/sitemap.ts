@@ -10,7 +10,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locales = routing.locales;
   const staticPaths = [
-    "", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/contact",
+    "", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/contact", "/world-cup-2026",
     // About / informational landing pages (linked from the footer)
     "/about", "/about/tournaments", "/about/camps", "/about/festivals", "/about/match-tours",
     "/about/for-organizers", "/about/for-clubs", "/about/academy-trials",

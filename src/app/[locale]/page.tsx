@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { LaunchPromo } from "@/components/site/LaunchPromo";
+import { WorldCupBanner } from "@/components/site/WorldCupBanner";
 import { EventCard } from "@/components/cards/EventCard";
 import { db } from "@/lib/db";
 import { getEvents } from "@/lib/queries";
@@ -168,6 +169,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </Container>
         </section>
       )}
+
+      {/* WORLD CUP 2026 — gold promo banner */}
+      <section className="py-6">
+        <Container>
+          <WorldCupBanner />
+        </Container>
+      </section>
 
       {/* CATEGORIES */}
       <section className="py-20 sm:py-24">

@@ -26,6 +26,20 @@
     "faqHeading": "Preguntas frecuentes",
     "disclaimer": "Los datos son orientativos y pueden cambiar."
   },
+  "worldCup": {
+    "badge": "Mundial 2026",
+    "breadcrumbHome": "Inicio",
+    "bannerTitle": "Copa Mundial FIFA 2026 — sigue el torneo",
+    "bannerText": "EE. UU. · Canadá · México — 48 equipos, 104 partidos. Calendario, equipos y partidos en vivo.",
+    "bannerCta": "Seguir el torneo",
+    "factLabels": { "hosts": "Anfitriones", "dates": "Fechas", "teams": "Equipos", "matches": "Partidos", "format": "Formato", "final": "Final" },
+    "scheduleHeading": "Calendario de partidos",
+    "scheduleEmpty": "El calendario completo aparecerá aquí a medida que se confirmen los partidos.",
+    "whyHeading": "Por qué seguirlo aquí",
+    "aboutHeading": "Sobre el Mundial 2026",
+    "faqHeading": "Preguntas frecuentes",
+    "dataCredit": "Datos de partidos en vivo de API-Football."
+  },
   "about": {
     "title": "Sobre nosotros",
     "subtitle": "footballevents.eu — el catálogo premium de eventos de fútbol en todo el mundo.",

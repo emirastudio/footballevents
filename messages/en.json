@@ -26,6 +26,20 @@
     "faqHeading": "Frequently asked questions",
     "disclaimer": "Facts are provided for general guidance and may change."
   },
+  "worldCup": {
+    "badge": "World Cup 2026",
+    "breadcrumbHome": "Home",
+    "bannerTitle": "FIFA World Cup 2026 — follow the tournament",
+    "bannerText": "USA · Canada · Mexico — 48 teams, 104 matches. Schedule, teams and live fixtures.",
+    "bannerCta": "Follow the tournament",
+    "factLabels": { "hosts": "Hosts", "dates": "Dates", "teams": "Teams", "matches": "Matches", "format": "Format", "final": "Final" },
+    "scheduleHeading": "Match schedule",
+    "scheduleEmpty": "The full schedule will appear here as fixtures are confirmed.",
+    "whyHeading": "Why follow it here",
+    "aboutHeading": "About the 2026 World Cup",
+    "faqHeading": "Frequently asked questions",
+    "dataCredit": "Live match data by API-Football."
+  },
   "about": {
     "title": "About",
     "subtitle": "footballevents.eu — the premium catalog of football events worldwide.",
