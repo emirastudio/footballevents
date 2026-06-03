@@ -71,20 +71,34 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
         {/* faint trophy watermark */}
         <Trophy className="pointer-events-none absolute -right-8 -top-6 h-64 w-64 text-[var(--color-gold-500)]/10" aria-hidden />
         <Container className="relative py-14 sm:py-20">
-          <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1 text-xs text-white/70">
-            <Link href="/" className="hover:text-white">{t("breadcrumbHome")}</Link>
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-white">{c.h1}</span>
-          </nav>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[var(--color-gold-500)] to-[var(--color-gold-400)] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-navy-900)] shadow-[0_0_20px_rgba(212,175,55,0.45)]">
-            <Trophy className="h-3.5 w-3.5 fill-current" /> {t("badge")}
-          </span>
-          <h1 className="mt-4 max-w-3xl font-[family-name:var(--font-manrope)] text-4xl font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)] sm:text-6xl">
-            {c.h1}
-          </h1>
-          <div className="mt-4 h-0.5 w-24 rounded-full bg-gradient-to-r from-[var(--color-gold-400)] to-transparent" aria-hidden />
-          <p className="mt-4 max-w-2xl text-base font-semibold text-[var(--color-gold-200)] sm:text-lg">{c.tagline}</p>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85">{c.intro}</p>
+          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+            {/* Left — hero text */}
+            <div>
+              <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1 text-xs text-white/70">
+                <Link href="/" className="hover:text-white">{t("breadcrumbHome")}</Link>
+                <ChevronRight className="h-3 w-3" />
+                <span className="text-white">{c.h1}</span>
+              </nav>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[var(--color-gold-500)] to-[var(--color-gold-400)] px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-navy-900)] shadow-[0_0_20px_rgba(212,175,55,0.45)]">
+                <Trophy className="h-3.5 w-3.5 fill-current" /> {t("badge")}
+              </span>
+              <h1 className="mt-4 font-[family-name:var(--font-manrope)] text-4xl font-extrabold leading-[1.05] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.4)] sm:text-6xl">
+                {c.h1}
+              </h1>
+              <div className="mt-4 h-0.5 w-24 rounded-full bg-gradient-to-r from-[var(--color-gold-400)] to-transparent" aria-hidden />
+              <p className="mt-4 max-w-xl text-base font-semibold text-[var(--color-gold-200)] sm:text-lg">{c.tagline}</p>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/85">{c.intro}</p>
+            </div>
+            {/* Right — cover image, edges faded smoothly into the dark hero */}
+            <div className="relative hidden lg:block">
+              <img
+                src="/wc2026.png" alt={c.h1} width={1152} height={648}
+                className="w-full rounded-[var(--radius-xl)] object-cover shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+                style={{ WebkitMaskImage: "radial-gradient(120% 120% at 60% 50%, #000 55%, transparent 92%)", maskImage: "radial-gradient(120% 120% at 60% 50%, #000 55%, transparent 92%)" }}
+              />
+              <div className="pointer-events-none absolute inset-0 rounded-[var(--radius-xl)]" style={{ background: "linear-gradient(90deg, var(--color-navy-900) 0%, rgba(10,22,40,0.15) 28%, transparent 55%)" }} aria-hidden />
+            </div>
+          </div>
         </Container>
         {/* gold bottom divider */}
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--color-gold-400)]/60 to-transparent" aria-hidden />
