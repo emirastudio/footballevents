@@ -80,7 +80,7 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
       const vals = formData.getAll(key).map(String).filter(Boolean);
       if (f.required && vals.length === 0) return { error: `«${f.label}» — required` };
       if (vals.length) customFields[f.id] = vals;
-    } else if (f.type === "consent") {
+    } else if (f.type === "consent" || f.type === "rules") {
       const checked = formData.get(key) === "yes";
       if (f.required && !checked) return { error: `«${f.label}» — required` };
       customFields[f.id] = checked;
@@ -184,7 +184,7 @@ export async function submitPublicRegistrationAction(_prev: BookingFormState, fo
       const vals = formData.getAll(key).map(String).filter(Boolean);
       if (f.required && vals.length === 0) return { error: `«${f.label}» — required` };
       if (vals.length) customFields[f.id] = vals;
-    } else if (f.type === "consent") {
+    } else if (f.type === "consent" || f.type === "rules") {
       const checked = formData.get(key) === "yes";
       if (f.required && !checked) return { error: `«${f.label}» — required` };
       customFields[f.id] = checked;

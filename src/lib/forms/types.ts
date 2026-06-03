@@ -16,6 +16,7 @@ export type FieldType =
   | "checkboxes"  // multiple choice (array)
   | "radio"       // single choice
   | "consent"     // single required checkbox (agree)
+  | "rules"       // event rules text + an agreement checkbox
   | "size"        // apparel size pick + optional size chart
   | "country"     // country name (free text / list)
   | "heading"     // section heading — display only
@@ -58,6 +59,7 @@ export const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   checkboxes: "Checkboxes",
   radio: "Single choice",
   consent: "Consent checkbox",
+  rules: "Event rules (+ agree)",
   size: "Size (with chart)",
   country: "Country",
   heading: "Section heading",

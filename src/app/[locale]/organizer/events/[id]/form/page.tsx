@@ -42,7 +42,7 @@ export default async function EventFormBuilderPage({
           title: t("title"), subtitle: t("subtitle"), addField: t("addField"),
           fieldLabel: t("fieldLabel"), required: t("required"), help: t("help"),
           options: t("options"), optionsHint: t("optionsHint"),
-          sizeChart: t("sizeChart"), sizeChartHint: t("sizeChartHint"),
+          sizeChart: t("sizeChart"), sizeChartHint: t("sizeChartHint"), rulesText: t("rulesText"),
           save: t("save"), saving: t("saving"), saved: t("saved"), empty: t("empty"),
         }}
       />

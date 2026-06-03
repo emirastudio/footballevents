@@ -69,6 +69,7 @@
     "optionsHint": "eine pro Zeile",
     "sizeChart": "Größentabelle",
     "sizeChartHint": "erste Zeile = Spaltenköpfe, kommagetrennt",
+    "rulesText": "Text der Event-Regeln",
     "save": "Formular speichern",
     "saving": "Speichern…",
     "saved": "Gespeichert",

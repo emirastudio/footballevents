@@ -182,6 +182,21 @@ export function DynField({ f }: { f: FormField }) {
       </FieldShell>
     );
 
+  if (f.type === "rules")
+    return (
+      <div className="space-y-2">
+        {f.help && (
+          <div className="max-h-44 overflow-y-auto whitespace-pre-line rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-muted)] p-3 text-sm text-[var(--color-muted-strong)]">
+            {f.help}
+          </div>
+        )}
+        <label className="flex items-start gap-2 text-sm text-[var(--color-foreground)]">
+          <input type="checkbox" name={name} value="yes" required={f.required} className="mt-0.5" />
+          <span>{f.label}{f.required ? " *" : ""}</span>
+        </label>
+      </div>
+    );
+
   if (f.type === "consent")
     return (
       <label className="flex items-start gap-2 text-sm text-[var(--color-muted-strong)]">

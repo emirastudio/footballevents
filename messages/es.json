@@ -69,6 +69,7 @@
     "optionsHint": "una por línea",
     "sizeChart": "Tabla de tallas",
     "sizeChartHint": "primera fila = encabezados, separados por comas",
+    "rulesText": "Texto del reglamento del evento",
     "save": "Guardar formulario",
     "saving": "Guardando…",
     "saved": "Guardado",

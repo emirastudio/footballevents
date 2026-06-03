@@ -35,7 +35,7 @@ export function FormBuilder({
 }: {
   eventId: string;
   initialFields: FormField[];
-  labels: { title: string; subtitle: string; addField: string; fieldLabel: string; required: string; help: string; options: string; optionsHint: string; sizeChart: string; sizeChartHint: string; save: string; saving: string; saved: string; empty: string };
+  labels: { title: string; subtitle: string; addField: string; fieldLabel: string; required: string; help: string; options: string; optionsHint: string; sizeChart: string; sizeChartHint: string; rulesText: string; save: string; saving: string; saved: string; empty: string };
 }) {
   const [fields, setFields] = useState<FormField[]>(initialFields);
   const [type, setType] = useState<FieldType>("text");
@@ -95,7 +95,14 @@ export function FormBuilder({
             <label className="mb-1 block text-xs font-semibold text-[var(--color-muted)]">{labels.fieldLabel}</label>
             <input className={inputCls} value={f.label} onChange={(e) => update(i, { label: e.target.value })} />
 
-            {!isDisplayField(f.type) && (
+            {f.type === "rules" ? (
+              <textarea
+                className={`${inputCls} mt-2`} rows={4}
+                placeholder={labels.rulesText}
+                value={f.help ?? ""}
+                onChange={(e) => update(i, { help: e.target.value })}
+              />
+            ) : !isDisplayField(f.type) && (
               <input
                 className={`${inputCls} mt-2`}
                 placeholder={labels.help}

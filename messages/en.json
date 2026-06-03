@@ -69,6 +69,7 @@
     "optionsHint": "one per line",
     "sizeChart": "Size chart",
     "sizeChartHint": "first row = headers, comma-separated",
+    "rulesText": "Event rules text",
     "save": "Save form",
     "saving": "Saving…",
     "saved": "Saved",
