@@ -9,6 +9,7 @@ import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { getCountry } from "@/lib/mock-data";
 import { getOrganizerBySlug, getOrganizerSlugs, getEventsByOrganizer } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
+import { hreflang } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
@@ -30,7 +31,7 @@ export async function generateMetadata({
   return {
     title: o.name,
     description: desc,
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages: hreflang(`/org/${o.slug}`) },
     openGraph: { type: "website", url, title: o.name, description: desc, images: [{ url: image, width: 1200, height: 630, alt: o.name }] },
     twitter: { card: "summary_large_image", title: o.name, description: desc, images: [image] },
   };
@@ -60,6 +61,17 @@ export default async function OrganizerDetailPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org", "@type": "Organization",
+          name: o.name,
+          url: `${SITE_URL}/${locale}/org/${o.slug}`,
+          logo: o.logoUrl || undefined,
+          description: o.tagline || undefined,
+          sameAs: Object.values(o.socials ?? {}).filter(Boolean),
+        }) }}
+      />
       {/* Cover hero */}
       <section className="relative">
         <div

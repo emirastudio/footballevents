@@ -6,6 +6,7 @@ import { ChevronRight, MapPin, Users, Sprout, Calendar } from "lucide-react";
 import { getCountry } from "@/lib/mock-data";
 import { getVenueBySlug, getVenueSlugs, getEventsByVenue } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
+import { hreflang } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
@@ -27,7 +28,7 @@ export async function generateMetadata({
   return {
     title: v.name,
     description: desc,
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages: hreflang(`/stadiums/${v.slug}`) },
     openGraph: { type: "website", url, title: v.name, description: desc, images: [{ url: image, width: 1200, height: 630, alt: v.name }] },
     twitter: { card: "summary_large_image", title: v.name, description: desc, images: [image] },
   };
@@ -57,6 +58,17 @@ export default async function StadiumDetailPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org", "@type": "SportsActivityLocation",
+          name: v.name,
+          url: `${SITE_URL}/${locale}/stadiums/${v.slug}`,
+          address: { "@type": "PostalAddress", addressLocality: v.city || undefined, addressCountry: v.countryCode || undefined },
+          ...(v.lat && v.lng ? { geo: { "@type": "GeoCoordinates", latitude: v.lat, longitude: v.lng } } : {}),
+          ...(v.coverUrl ? { image: v.coverUrl } : {}),
+        }) }}
+      />
       <section className="relative">
         <div
           className="relative h-[44vh] min-h-[340px] w-full bg-cover bg-center"

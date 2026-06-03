@@ -3,6 +3,23 @@ import { locales } from "@/i18n/config";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+export const siteUrl = SITE;
+
+/** hreflang map for alternates.languages, given a locale-less path. */
+export function hreflang(path: string): Record<string, string> {
+  const clean = path === "" || path === "/" ? "" : (path.startsWith("/") ? path : `/${path}`);
+  return Object.fromEntries(locales.map((l) => [l, `${SITE}/${l}${clean}`]));
+}
+
+/** schema.org BreadcrumbList object from a list of {name, url}. */
+export function breadcrumbLd(items: { name: string; url: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: it.url })),
+  };
+}
+
 /**
  * Standard page metadata: self-canonical + hreflang for all locales + OpenGraph.
  * `path` is the locale-less path (e.g. "/events", "/org"). The layout applies

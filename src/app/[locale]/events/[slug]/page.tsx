@@ -217,6 +217,26 @@ export default async function EventDetailPage({
             }),
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org", "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/${locale}` },
+              { "@type": "ListItem", position: 2, name: "Events", item: `${SITE_URL}/${locale}/events` },
+              { "@type": "ListItem", position: 3, name: event.title, item: `${SITE_URL}/${locale}/events/${event.slug}` },
+            ],
+          }) }}
+        />
+        {event.faq && event.faq.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify({
+              "@context": "https://schema.org", "@type": "FAQPage",
+              mainEntity: event.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+            }) }}
+          />
+        )}
         <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
           {/* Main column */}
           <div>
