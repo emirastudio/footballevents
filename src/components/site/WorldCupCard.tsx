@@ -15,13 +15,11 @@ export async function WorldCupCard({ locale }: { locale: string }) {
       className="group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-gold-400)] bg-[var(--color-surface)] shadow-[var(--shadow-xs)] ring-1 ring-[var(--color-gold-400)]/30 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-md)]"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-[var(--color-navy-900)]">
-        <div className="absolute inset-0" style={{ background: "radial-gradient(420px 200px at 50% 0%, rgba(212,175,55,0.5), transparent 65%)" }} aria-hidden />
-        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[var(--color-gold-500)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-navy-900)]">
+        <img src="/wc2026.webp" alt={c.h1} className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,22,40,0.15) 0%, rgba(10,22,40,0.55) 100%)" }} aria-hidden />
+        <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[var(--color-gold-500)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-navy-900)] shadow-[var(--shadow-sm)]">
           <Trophy className="h-3 w-3 fill-current" /> {t("badge")}
         </span>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Trophy className="h-12 w-12 text-[var(--color-gold-400)]" />
-        </div>
       </div>
       <div className="flex flex-1 flex-col p-3.5">
         <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-[var(--color-foreground)] group-hover:text-[var(--color-gold-700)]">
