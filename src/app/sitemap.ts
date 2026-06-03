@@ -3,7 +3,11 @@ import { db } from "@/lib/db";
 import { routing } from "@/i18n/routing";
 import { getPublishedCountrySlugs } from "@/content/countries";
 
-export const revalidate = 3600;
+// Build at request time, never at build time: the CI build has no database, so
+// a prerendered sitemap would silently fall back to static paths only (missing
+// every event/category/organizer/venue URL). force-dynamic keeps it DB-backed.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
