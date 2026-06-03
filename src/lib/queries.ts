@@ -71,6 +71,8 @@ function toMockEvent(e: EventRow, preferredLocale: string = "en"): MockEvent {
     priceTo: e.priceTo ? Number(e.priceTo) : undefined,
     currency: e.currency,
     isFree: e.isFree,
+    externalUrl: e.externalUrl ?? undefined,
+    acceptsBookings: e.acceptsBookings,
     coverUrl: e.coverUrl ?? "",
     galleryUrls: e.galleryUrls,
     rating: e.ratingAvg,

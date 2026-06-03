@@ -481,11 +481,19 @@ export default async function EventDetailPage({
                 )}
               </div>
 
-              <Button variant="accent" size="lg" className="mt-4 w-full" asChild>
-                <Link href={`/events/${event.slug}/apply`}>
-                  {capacity.isFull ? t("joinWaitlist") : t("applyNow")}
-                </Link>
-              </Button>
+              {event.acceptsBookings !== false ? (
+                <Button variant="accent" size="lg" className="mt-4 w-full" asChild>
+                  <Link href={`/events/${event.slug}/apply`}>
+                    {capacity.isFull ? t("joinWaitlist") : t("applyNow")}
+                  </Link>
+                </Button>
+              ) : event.externalUrl ? (
+                <Button variant="accent" size="lg" className="mt-4 w-full" asChild>
+                  <a href={event.externalUrl} target="_blank" rel="noopener noreferrer nofollow">
+                    {t("registerExternal")}
+                  </a>
+                </Button>
+              ) : null}
               <Button variant="outline" size="lg" className="mt-2 w-full" asChild>
                 <Link href={`/events/${event.slug}/contact`}>
                   <MessageSquare className="h-4 w-4" /> {t("contactOrganizer")}

@@ -331,7 +331,6 @@ export function EventForm({
             ]} />
           </div>
         )}
-        <FormUrlField name="externalUrl" label={labels.externalUrl} hint={labels.externalUrlHint} defaultValue={defaults?.externalUrl} />
       </Section>
 
       {/* Media */}
@@ -368,10 +367,13 @@ export function EventForm({
 
       {/* Booking */}
       <Section title={labels.sections.booking} hint={labels.sections.bookingHint}>
-        <label className="flex cursor-pointer items-center gap-2 text-sm">
-          <input type="checkbox" name="acceptsBookings" defaultChecked={defaults?.acceptsBookings ?? true} className="h-4 w-4 rounded border-[var(--color-border-strong)]" />
-          {labels.acceptsBookings}
-        </label>
+        <RegistrationChooser
+          platformLabel={labels.acceptsBookings}
+          externalLabel={labels.externalUrl}
+          externalHint={labels.externalUrlHint}
+          defaultAccepts={defaults?.acceptsBookings ?? true}
+          defaultExternalUrl={defaults?.externalUrl}
+        />
         <div className="grid gap-5 sm:grid-cols-2">
           <Field name="contactEmail" type="email" label={labels.contactEmail} placeholder="info@…" defaultValue={defaults?.contactEmail} />
           <Field name="contactPhone" label={labels.contactPhone} placeholder="+49 …" defaultValue={defaults?.contactPhone} />
@@ -433,6 +435,46 @@ function SubmitBtn({ intent, label, loadingLabel, variant }: { intent: "draft" |
     <Button type="submit" name="intent" value={intent} variant={variant} size="lg" disabled={pending}>
       {pending ? loadingLabel : label}
     </Button>
+  );
+}
+
+function RegistrationChooser({
+  platformLabel, externalLabel, externalHint, defaultAccepts, defaultExternalUrl,
+}: {
+  platformLabel: string; externalLabel: string; externalHint: string;
+  defaultAccepts: boolean; defaultExternalUrl?: string;
+}) {
+  const [mode, setMode] = useState<"platform" | "external">(
+    !defaultAccepts && defaultExternalUrl ? "external" : "platform",
+  );
+  return (
+    <div>
+      <input type="hidden" name="acceptsBookings" value={mode === "platform" ? "true" : "false"} />
+      <div className="grid gap-2 sm:grid-cols-2">
+        <ModeBtn active={mode === "platform"} onClick={() => setMode("platform")} title={platformLabel} />
+        <ModeBtn active={mode === "external"} onClick={() => setMode("external")} title={externalLabel} />
+      </div>
+      {mode === "external" && (
+        <div className="mt-3">
+          <FormUrlField name="externalUrl" label={externalLabel} hint={externalHint} defaultValue={defaultExternalUrl} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ModeBtn({ active, onClick, title }: { active: boolean; onClick: () => void; title: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex items-center gap-2 rounded-[var(--radius-md)] border px-3.5 py-2.5 text-left text-sm font-medium transition ${active ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]" : "border-[var(--color-border-strong)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)]"}`}
+    >
+      <span className={`grid h-4 w-4 shrink-0 place-items-center rounded-full border ${active ? "border-[var(--color-pitch-500)]" : "border-[var(--color-border-strong)]"}`}>
+        {active && <span className="h-2 w-2 rounded-full bg-[var(--color-pitch-500)]" />}
+      </span>
+      {title}
+    </button>
   );
 }
 

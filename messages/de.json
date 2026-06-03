@@ -1535,6 +1535,7 @@
       "viewOrganizer": "Zum Veranstalter",
       "viewVenue": "Zum Stadion",
       "applyNow": "Jetzt anmelden",
+      "registerExternal": "Registrieren",
       "joinWaitlist": "Auf Warteliste",
       "capacity": {
         "joined": "{count} angemeldet",

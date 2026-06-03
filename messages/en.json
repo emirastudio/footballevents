@@ -1013,6 +1013,7 @@
       "viewOrganizer": "View organizer",
       "viewVenue": "View venue",
       "applyNow": "Apply now",
+      "registerExternal": "Register",
       "joinWaitlist": "Join waitlist",
       "capacity": {
         "joined": "{count} joined",

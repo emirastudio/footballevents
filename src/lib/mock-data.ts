@@ -40,6 +40,8 @@ export type MockEvent = {
   included?: string[];
   notIncluded?: string[];
   faq?: { q: string; a: string }[];
+  externalUrl?: string;
+  acceptsBookings?: boolean;
   divisions?: MockDivision[];
 };
 

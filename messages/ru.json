@@ -1013,6 +1013,7 @@
       "viewOrganizer": "К организатору",
       "viewVenue": "К стадиону",
       "applyNow": "Подать заявку",
+      "registerExternal": "Зарегистрироваться",
       "joinWaitlist": "Встать в лист ожидания",
       "capacity": {
         "joined": "{count} записались",
