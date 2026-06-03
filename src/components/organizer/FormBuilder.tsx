@@ -43,10 +43,11 @@ function textToChart(t: string): SizeChart | undefined {
 }
 
 export function FormBuilder({
-  eventId, initialFields, labels, typeLabels,
+  eventId, initialFields, labels, typeLabels, baseLocale,
 }: {
   eventId: string;
   initialFields: FormField[];
+  baseLocale: string;
   typeLabels: Record<FieldType, string>;
   labels: { title: string; subtitle: string; addField: string; fieldLabel: string; required: string; help: string; options: string; optionsHint: string; sizeChart: string; sizeChartHint: string; rulesText: string; save: string; saving: string; saved: string; empty: string };
 }) {
@@ -70,6 +71,7 @@ export function FormBuilder({
   return (
     <form action={action} className="space-y-5">
       <input type="hidden" name="eventId" value={eventId} />
+      <input type="hidden" name="baseLocale" value={baseLocale} />
       <input type="hidden" name="form" value={JSON.stringify({ fields })} />
 
       <div>

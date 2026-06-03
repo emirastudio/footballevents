@@ -37,7 +37,16 @@ export type FormField = {
   sizeChart?: SizeChart; // size only
 };
 
-export type RegistrationForm = { fields: FormField[] };
+/** Per-locale text overrides for a field (filled by auto-translation). */
+export type FieldI18n = Partial<Pick<FormField, "label" | "help" | "placeholder" | "options">> & {
+  sizeChart?: SizeChart;
+};
+
+export type RegistrationForm = {
+  fields: FormField[];          // base language (as authored)
+  baseLocale?: string;          // locale the fields were authored in
+  i18n?: Record<string, Record<string, FieldI18n>>; // locale → fieldId → overrides
+};
 
 /** Field types that don't collect input (display only). */
 export const DISPLAY_TYPES: FieldType[] = ["heading", "info"];
@@ -81,7 +90,31 @@ export function isMultiValue(t: FieldType): boolean {
 /** Parse Event.registrationForm JSON into a typed form (safe). */
 export function parseForm(raw: unknown): RegistrationForm {
   if (raw && typeof raw === "object" && Array.isArray((raw as RegistrationForm).fields)) {
-    return { fields: (raw as RegistrationForm).fields.filter((f) => f && f.id && f.type && f.label) };
+    const r = raw as RegistrationForm;
+    return {
+      fields: r.fields.filter((f) => f && f.id && f.type && f.label),
+      baseLocale: typeof r.baseLocale === "string" ? r.baseLocale : undefined,
+      i18n: r.i18n && typeof r.i18n === "object" ? r.i18n : undefined,
+    };
   }
   return { fields: [] };
+}
+
+/** Apply auto-translation overrides for `locale`, falling back to base text. */
+export function localizeFields(form: RegistrationForm, locale: string): FormField[] {
+  if (!form.i18n || locale === form.baseLocale) return form.fields;
+  const overrides = form.i18n[locale];
+  if (!overrides) return form.fields;
+  return form.fields.map((f) => {
+    const o = overrides[f.id];
+    if (!o) return f;
+    return {
+      ...f,
+      label: o.label ?? f.label,
+      help: o.help ?? f.help,
+      placeholder: o.placeholder ?? f.placeholder,
+      options: o.options ?? f.options,
+      sizeChart: o.sizeChart ?? f.sizeChart,
+    };
+  });
 }

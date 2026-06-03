@@ -42,6 +42,7 @@ export default async function EventFormBuilderPage({
       <FormBuilder
         eventId={id}
         initialFields={fields}
+        baseLocale={locale}
         typeLabels={typeLabels}
         labels={{
           title: t("title"), subtitle: t("subtitle"), addField: t("addField"),

@@ -2,7 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { EmbedForm } from "@/components/booking/EmbedForm";
-import { parseForm } from "@/lib/forms/types";
+import { parseForm, localizeFields } from "@/lib/forms/types";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,7 @@ export default async function EmbedRegistrationPage({
       {open ? (
         <EmbedForm
           eventId={event.id}
-          fields={parseForm(event.registrationForm).fields}
+          fields={localizeFields(parseForm(event.registrationForm), locale)}
           labels={{
             participantName: t("participantName"),
             teamName: t("teamName"),
