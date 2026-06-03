@@ -57,6 +57,23 @@
     "auction": "Subasta",
     "sell": "Vender"
   },
+  "formBuilder": {
+    "back": "Volver al evento",
+    "title": "Formulario de inscripción",
+    "subtitle": "Crea el formulario que rellenarán los participantes. Reordena con las flechas — las respuestas llegan a tu tabla de solicitudes.",
+    "addField": "Añadir campo",
+    "fieldLabel": "Etiqueta",
+    "required": "Obligatorio",
+    "help": "Texto de ayuda (opcional)",
+    "options": "Opciones",
+    "optionsHint": "una por línea",
+    "sizeChart": "Tabla de tallas",
+    "sizeChartHint": "primera fila = encabezados, separados por comas",
+    "save": "Guardar formulario",
+    "saving": "Guardando…",
+    "saved": "Guardado",
+    "empty": "Aún no hay campos. Añade tu primer campo arriba."
+  },
   "about": {
     "title": "Sobre nosotros",
     "subtitle": "footballevents.eu — el catálogo premium de eventos de fútbol en todo el mundo.",
@@ -170,6 +187,7 @@
     "createFirstEvent": "Crear el primer evento",
     "newEvent": "Nuevo evento",
     "duplicate": "Duplicar",
+    "registrationForm": "Formulario de inscripción",
     "duplicateHint": "Clonar evento como borrador (fechas +1 año)",
     "noEventsYet": "Aún no hay eventos — crea el primero para empezar.",
     "noApplicationsYet": "Aún no hay inscripciones — aparecerán aquí cuando alguien se inscriba.",

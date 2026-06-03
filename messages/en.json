@@ -57,6 +57,23 @@
     "auction": "Auction",
     "sell": "Sell"
   },
+  "formBuilder": {
+    "back": "Back to event",
+    "title": "Registration form",
+    "subtitle": "Build the form applicants fill in. Reorder with the arrows — answers land in your applications table.",
+    "addField": "Add field",
+    "fieldLabel": "Label",
+    "required": "Required",
+    "help": "Help text (optional)",
+    "options": "Options",
+    "optionsHint": "one per line",
+    "sizeChart": "Size chart",
+    "sizeChartHint": "first row = headers, comma-separated",
+    "save": "Save form",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "empty": "No fields yet. Add your first field above."
+  },
   "about": {
     "title": "About",
     "subtitle": "footballevents.eu — the premium catalog of football events worldwide.",
@@ -170,6 +187,7 @@
     "createFirstEvent": "Create your first event",
     "newEvent": "New event",
     "duplicate": "Duplicate",
+    "registrationForm": "Registration form",
     "duplicateHint": "Clone this event as a new draft (dates shifted +1 year)",
     "noEventsYet": "No events yet — create your first to get started.",
     "noApplicationsYet": "No applications yet — they'll appear here once people start applying.",

@@ -503,6 +503,8 @@ model Event {
 
   // Booking via platform
   acceptsBookings Boolean @default(true)
+  // Custom registration form definition: { fields: FormField[] } — see src/lib/forms/types.ts
+  registrationForm Json?
 
   // Future: ticketing (v3)
   ticketsEnabled Boolean @default(false)

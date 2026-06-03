@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { newApplicationEmail, bookingResponseEmail } from "@/lib/email";
+import { parseForm, isMultiValue, isDisplayField } from "@/lib/forms/types";
 
 const applySchema = z.object({
   eventId:         z.string().min(1),
@@ -69,6 +70,27 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
     if (confirmed + d.partySize > event.maxParticipants) initialStatus = "WAITLIST";
   }
 
+  // Collect + validate the organizer's custom form fields → Booking.customFields.
+  const form = parseForm(event.registrationForm);
+  const customFields: Record<string, unknown> = {};
+  for (const f of form.fields) {
+    if (isDisplayField(f.type)) continue;
+    const key = `cf_${f.id}`;
+    if (isMultiValue(f.type)) {
+      const vals = formData.getAll(key).map(String).filter(Boolean);
+      if (f.required && vals.length === 0) return { error: `«${f.label}» — required` };
+      if (vals.length) customFields[f.id] = vals;
+    } else if (f.type === "consent") {
+      const checked = formData.get(key) === "yes";
+      if (f.required && !checked) return { error: `«${f.label}» — required` };
+      customFields[f.id] = checked;
+    } else {
+      const v = String(formData.get(key) ?? "").trim();
+      if (f.required && !v) return { error: `«${f.label}» — required` };
+      if (v) customFields[f.id] = v;
+    }
+  }
+
   const booking = await db.booking.create({
     data: {
       eventId: d.eventId,
@@ -80,6 +102,7 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
       contactEmail: d.contactEmail,
       contactPhone: d.contactPhone ?? null,
       comment: d.comment ?? null,
+      customFields: Object.keys(customFields).length ? (customFields as never) : undefined,
       status: initialStatus,
     },
   });

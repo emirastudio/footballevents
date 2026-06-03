@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { ApplyForm } from "@/components/booking/ApplyForm";
+import { parseForm } from "@/lib/forms/types";
 import { ChevronLeft } from "lucide-react";
 
 export default async function ApplyPage({
@@ -68,6 +69,7 @@ export default async function ApplyPage({
               eventId={event.id}
               defaultEmail={session.user.email ?? ""}
               defaultName={session.user.name ?? ""}
+              fields={parseForm(event.registrationForm).fields}
               labels={{
                 participantName: t("participantName"),
                 teamName: t("teamName"),

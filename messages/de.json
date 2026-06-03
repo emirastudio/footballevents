@@ -57,6 +57,23 @@
     "auction": "Auktion",
     "sell": "Verkaufen"
   },
+  "formBuilder": {
+    "back": "Zurück zum Event",
+    "title": "Anmeldeformular",
+    "subtitle": "Erstelle das Formular für Bewerber. Reihenfolge mit den Pfeilen ändern — Antworten landen in deiner Bewerbungstabelle.",
+    "addField": "Feld hinzufügen",
+    "fieldLabel": "Bezeichnung",
+    "required": "Pflichtfeld",
+    "help": "Hilfetext (optional)",
+    "options": "Optionen",
+    "optionsHint": "eine pro Zeile",
+    "sizeChart": "Größentabelle",
+    "sizeChartHint": "erste Zeile = Spaltenköpfe, kommagetrennt",
+    "save": "Formular speichern",
+    "saving": "Speichern…",
+    "saved": "Gespeichert",
+    "empty": "Noch keine Felder. Füge oben dein erstes Feld hinzu."
+  },
   "about": {
     "title": "Über uns",
     "subtitle": "footballevents.eu — der Premium-Katalog für Fußballveranstaltungen weltweit.",
@@ -168,6 +185,7 @@
     "createFirstEvent": "Erstes Event erstellen",
     "newEvent": "Neues Event",
     "duplicate": "Duplizieren",
+    "registrationForm": "Anmeldeformular",
     "duplicateHint": "Event als Entwurf klonen (Datum +1 Jahr)",
     "noEventsYet": "Noch keine Events — leg los und erstelle dein erstes.",
     "noApplicationsYet": "Noch keine Anmeldungen — sie erscheinen hier, sobald jemand sich anmeldet.",

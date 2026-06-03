@@ -7,7 +7,7 @@ import { EventForm, type EventDefaults } from "@/components/organizer/EventForm"
 import type { Tier } from "@/lib/tier";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
-import { Trash2, Archive, ExternalLink, Copy } from "lucide-react";
+import { Trash2, Archive, ExternalLink, Copy, ListChecks } from "lucide-react";
 import { deleteEventAction, archiveEventAction, duplicateEventAction } from "@/app/actions/event";
 import { startBoostCheckout, applyIncludedBoost } from "@/app/actions/billing";
 import { Rocket, Gift, Image as ImageIcon, Download, Lock } from "lucide-react";
@@ -185,6 +185,11 @@ export default async function EditEventPage({
               </Link>
             </Button>
           )}
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/organizer/events/${ev.id}/form`}>
+              <ListChecks className="h-3.5 w-3.5" /> {tOrg("registrationForm")}
+            </Link>
+          </Button>
           <form action={duplicateEventAction}>
             <input type="hidden" name="id" value={ev.id} />
             <Button type="submit" variant="outline" size="sm" title={tOrg("duplicateHint")}>

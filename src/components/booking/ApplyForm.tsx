@@ -6,6 +6,10 @@ import { applyEventAction, type BookingFormState } from "@/app/actions/booking";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle2 } from "lucide-react";
+import type { FormField } from "@/lib/forms/types";
+
+const dynInputCls =
+  "w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20";
 
 type Labels = {
   participantName: string; teamName: string; partySize: string;
@@ -20,11 +24,13 @@ export function ApplyForm({
   defaultEmail,
   defaultName,
   labels,
+  fields = [],
 }: {
   eventId: string;
   defaultEmail: string;
   defaultName: string;
   labels: Labels;
+  fields?: FormField[];
 }) {
   const [state, action] = useActionState<BookingFormState, FormData>(applyEventAction, null);
 
@@ -55,6 +61,8 @@ export function ApplyForm({
       </div>
       <Textarea name="comment" rows={4} label={labels.comment} hint={labels.commentHint} />
 
+      {fields.map((f) => <DynField key={f.id} f={f} />)}
+
       {state?.error && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
       )}
@@ -84,6 +92,110 @@ function Field({
         className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
       />
     </label>
+  );
+}
+
+function FieldShell({ f, children }: { f: FormField; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {f.label}{f.required ? " *" : ""}
+      </span>
+      {children}
+      {f.help && <span className="mt-1 block text-xs text-[var(--color-muted)]">{f.help}</span>}
+    </label>
+  );
+}
+
+/** Renders one custom field. Inputs are named cf_<id> so the action reads them. */
+function DynField({ f }: { f: FormField }) {
+  const name = `cf_${f.id}`;
+  const opts = f.options ?? [];
+
+  if (f.type === "heading")
+    return <h3 className="pt-2 font-[family-name:var(--font-manrope)] text-base font-bold text-[var(--color-foreground)]">{f.label}</h3>;
+  if (f.type === "info")
+    return <p className="text-sm text-[var(--color-muted-strong)]">{f.label}</p>;
+
+  if (f.type === "textarea")
+    return <FieldShell f={f}><textarea name={name} rows={4} required={f.required} placeholder={f.placeholder} className={dynInputCls} /></FieldShell>;
+
+  if (f.type === "select" || f.type === "country")
+    return (
+      <FieldShell f={f}>
+        <select name={name} required={f.required} defaultValue="" className={dynInputCls}>
+          <option value="" disabled>—</option>
+          {opts.map((o) => <option key={o} value={o}>{o}</option>)}
+        </select>
+      </FieldShell>
+    );
+
+  if (f.type === "size")
+    return (
+      <FieldShell f={f}>
+        <select name={name} required={f.required} defaultValue="" className={dynInputCls}>
+          <option value="" disabled>—</option>
+          {opts.map((o) => <option key={o} value={o}>{o}</option>)}
+        </select>
+        {f.sizeChart && f.sizeChart.headers.length > 0 && (
+          <div className="mt-2 overflow-x-auto rounded-[var(--radius-md)] border border-[var(--color-border)]">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-[var(--color-bg-muted)] text-[var(--color-muted-strong)]">
+                {f.sizeChart.headers.map((h, i) => <th key={i} className="px-2.5 py-1.5 text-left font-semibold">{h}</th>)}
+              </tr></thead>
+              <tbody>
+                {f.sizeChart.rows.map((r, ri) => (
+                  <tr key={ri} className="border-t border-[var(--color-border)]">
+                    {r.map((c, ci) => <td key={ci} className="px-2.5 py-1.5 tabular-nums text-[var(--color-foreground)]">{c}</td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </FieldShell>
+    );
+
+  if (f.type === "radio")
+    return (
+      <FieldShell f={f}>
+        <div className="space-y-1.5">
+          {opts.map((o) => (
+            <label key={o} className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
+              <input type="radio" name={name} value={o} required={f.required} /> {o}
+            </label>
+          ))}
+        </div>
+      </FieldShell>
+    );
+
+  if (f.type === "checkboxes" || f.type === "multiselect")
+    return (
+      <FieldShell f={f}>
+        <div className="grid gap-1.5 sm:grid-cols-2">
+          {opts.map((o) => (
+            <label key={o} className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
+              <input type="checkbox" name={name} value={o} /> {o}
+            </label>
+          ))}
+        </div>
+      </FieldShell>
+    );
+
+  if (f.type === "consent")
+    return (
+      <label className="flex items-start gap-2 text-sm text-[var(--color-muted-strong)]">
+        <input type="checkbox" name={name} value="yes" required={f.required} className="mt-0.5" />
+        <span>{f.label}{f.required ? " *" : ""}</span>
+      </label>
+    );
+
+  // text / email / phone / number / date
+  const inputType = f.type === "phone" ? "tel" : f.type;
+  return (
+    <FieldShell f={f}>
+      <input name={name} type={inputType} required={f.required} placeholder={f.placeholder} className={dynInputCls} />
+    </FieldShell>
   );
 }
 
