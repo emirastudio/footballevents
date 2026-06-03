@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { ChevronLeft } from "lucide-react";
 import { FormBuilder } from "@/components/organizer/FormBuilder";
 import { CopyField } from "@/components/organizer/CopyField";
-import { parseForm } from "@/lib/forms/types";
+import { parseForm, FIELD_TYPE_LABELS, type FieldType } from "@/lib/forms/types";
 
 export default async function EventFormBuilderPage({
   params,
@@ -27,6 +27,9 @@ export default async function EventFormBuilderPage({
 
   const t = await getTranslations("formBuilder");
   const fields = parseForm(ev.registrationForm).fields;
+  const typeLabels = Object.fromEntries(
+    (Object.keys(FIELD_TYPE_LABELS) as FieldType[]).map((k) => [k, t(`types.${k}`)]),
+  ) as Record<FieldType, string>;
 
   const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://footballevents.eu";
   const embedSnippet = `<iframe src="${SITE}/${locale}/embed/${ev.slug}" width="100%" height="760" style="border:1px solid #e5e9f0;border-radius:12px" loading="lazy" title="Registration"></iframe>`;
@@ -39,6 +42,7 @@ export default async function EventFormBuilderPage({
       <FormBuilder
         eventId={id}
         initialFields={fields}
+        typeLabels={typeLabels}
         labels={{
           title: t("title"), subtitle: t("subtitle"), addField: t("addField"),
           fieldLabel: t("fieldLabel"), required: t("required"), help: t("help"),

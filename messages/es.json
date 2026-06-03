@@ -60,6 +60,7 @@
   "formBuilder": {
     "back": "Volver al evento",
     "title": "Formulario de inscripción",
+    "types": { "text": "Texto corto", "textarea": "Párrafo", "email": "Email", "phone": "Teléfono", "number": "Número", "date": "Fecha", "select": "Desplegable", "multiselect": "Selección múltiple", "checkboxes": "Casillas", "radio": "Opción única", "consent": "Consentimiento (casilla)", "rules": "Reglas del evento (+ aceptar)", "size": "Talla (+ tabla)", "country": "País", "heading": "Encabezado de sección", "info": "Texto informativo", "file": "Subir archivo" },
     "subtitle": "Crea el formulario que rellenarán los participantes. Reordena con las flechas — las respuestas llegan a tu tabla de solicitudes.",
     "addField": "Añadir campo",
     "fieldLabel": "Etiqueta",

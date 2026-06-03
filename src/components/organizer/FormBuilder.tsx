@@ -43,17 +43,18 @@ function textToChart(t: string): SizeChart | undefined {
 }
 
 export function FormBuilder({
-  eventId, initialFields, labels,
+  eventId, initialFields, labels, typeLabels,
 }: {
   eventId: string;
   initialFields: FormField[];
+  typeLabels: Record<FieldType, string>;
   labels: { title: string; subtitle: string; addField: string; fieldLabel: string; required: string; help: string; options: string; optionsHint: string; sizeChart: string; sizeChartHint: string; rulesText: string; save: string; saving: string; saved: string; empty: string };
 }) {
   const [fields, setFields] = useState<FormField[]>(initialFields);
   const [state, action] = useActionState<FormBuilderState, FormData>(saveRegistrationFormAction, null);
 
   const addType = (t: FieldType) =>
-    setFields((p) => [...p, { id: newId(), type: t, label: FIELD_TYPE_LABELS[t], required: false }]);
+    setFields((p) => [...p, { id: newId(), type: t, label: typeLabels[t], required: false }]);
   const update = (i: number, patch: Partial<FormField>) =>
     setFields((p) => p.map((f, idx) => (idx === i ? { ...f, ...patch } : f)));
   const remove = (i: number) => setFields((p) => p.filter((_, idx) => idx !== i));
@@ -92,7 +93,7 @@ export function FormBuilder({
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] text-[var(--color-muted-strong)] transition group-hover:bg-[var(--color-pitch-100)] group-hover:text-[var(--color-pitch-700)]">
                   <Icon className="h-4 w-4" />
                 </span>
-                <span className="truncate text-sm font-medium text-[var(--color-foreground)]">{FIELD_TYPE_LABELS[t]}</span>
+                <span className="truncate text-sm font-medium text-[var(--color-foreground)]">{typeLabels[t]}</span>
               </button>
             );
           })}
@@ -111,7 +112,7 @@ export function FormBuilder({
           <div key={f.id} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-pitch-50)] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-pitch-700)]">
-                <Icon className="h-3.5 w-3.5" /> {FIELD_TYPE_LABELS[f.type]}
+                <Icon className="h-3.5 w-3.5" /> {typeLabels[f.type]}
               </span>
               <span className="ml-auto mr-1 text-[var(--color-border-strong)]"><GripVertical className="h-4 w-4" /></span>
               <div className="flex items-center gap-1">

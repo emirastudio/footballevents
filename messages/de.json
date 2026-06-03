@@ -60,6 +60,7 @@
   "formBuilder": {
     "back": "Zurück zum Event",
     "title": "Anmeldeformular",
+    "types": { "text": "Kurztext", "textarea": "Absatz", "email": "E-Mail", "phone": "Telefon", "number": "Zahl", "date": "Datum", "select": "Dropdown", "multiselect": "Mehrfachauswahl", "checkboxes": "Checkboxen", "radio": "Einzelauswahl", "consent": "Einwilligung (Checkbox)", "rules": "Event-Regeln (+ Zustimmung)", "size": "Größe (+ Tabelle)", "country": "Land", "heading": "Abschnittsüberschrift", "info": "Infotext", "file": "Datei-Upload" },
     "subtitle": "Erstelle das Formular für Bewerber. Reihenfolge mit den Pfeilen ändern — Antworten landen in deiner Bewerbungstabelle.",
     "addField": "Feld hinzufügen",
     "fieldLabel": "Bezeichnung",
