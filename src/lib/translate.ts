@@ -25,8 +25,8 @@ export async function translateBatch(texts: string[], target: string, source?: s
     `You are a professional translator for a football events platform. ` +
     `Translate each string in the input array into ${LOCALE_NAMES[target] ?? target}` +
     (source ? ` from ${LOCALE_NAMES[source] ?? source}` : "") +
-    `. Keep translations natural and concise. Preserve numbers, placeholders like {name}, ` +
-    `URLs and proper nouns. Return ONLY JSON: {"t": [ ...translated strings... ]} ` +
+    `. Keep translations natural and concise. Preserve any HTML tags/markup, numbers, ` +
+    `placeholders like {name}, URLs and proper nouns. Return ONLY JSON: {"t": [ ...translated strings... ]} ` +
     `with exactly ${payload.length} items in the same order.`;
 
   try {

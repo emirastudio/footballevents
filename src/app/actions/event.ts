@@ -546,13 +546,19 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
     },
   });
 
-  // Upsert each translation (en + optional second locale).
+  // Upsert each translation (en + optional second locale) — organizer-provided,
+  // so marked auto:false and protected from machine-translation overwrites.
   for (const tr of buildEventTranslations(d)) {
     await db.eventTranslation.upsert({
       where: { eventId_locale: { eventId: id, locale: tr.locale } },
-      create: { eventId: id, locale: tr.locale, title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
-      update: { title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
+      create: { eventId: id, locale: tr.locale, title: tr.title, shortDescription: tr.shortDescription, description: tr.description, auto: false },
+      update: { title: tr.title, shortDescription: tr.shortDescription, description: tr.description, auto: false },
     });
+  }
+
+  // Refresh machine-translated locales for a live event (best-effort).
+  if (existing.status === "PUBLISHED") {
+    void import("@/lib/event-translate").then(({ autoTranslateEvent }) => autoTranslateEvent(id)).catch(() => {});
   }
 
   revalidatePath("/organizer/events");
@@ -874,13 +880,14 @@ async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): P
       for (const tr of buildEventTranslations(data)) {
         await db.eventTranslation.upsert({
           where: { eventId_locale: { eventId: existing.id, locale: tr.locale } },
-          create: { eventId: existing.id, locale: tr.locale, title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
-          update: { title: tr.title, shortDescription: tr.shortDescription, description: tr.description },
+          create: { eventId: existing.id, locale: tr.locale, title: tr.title, shortDescription: tr.shortDescription, description: tr.description, auto: false },
+          update: { title: tr.title, shortDescription: tr.shortDescription, description: tr.description, auto: false },
         });
       }
-      // Drop secondary translation if user cleared the picker.
+      // Drop the organizer's manual secondary translation if they cleared the
+      // picker — but keep machine-translated (auto) locales.
       if (!data.secondLocale) {
-        await db.eventTranslation.deleteMany({ where: { eventId: existing.id, locale: { not: "en" } } });
+        await db.eventTranslation.deleteMany({ where: { eventId: existing.id, locale: { not: "en" }, auto: false } });
       }
       break;
     }

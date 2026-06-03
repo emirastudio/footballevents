@@ -590,6 +590,7 @@ model EventTranslation {
   title            String
   shortDescription String? @db.Text
   description      String  @db.Text
+  auto             Boolean @default(false) // machine-translated (auto-fill), not organizer-provided
 
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 

@@ -44,6 +44,11 @@ export async function moderateEventAction(formData: FormData) {
 
   const en = ev.translations.find((t) => t.locale === "en") ?? ev.translations[0];
 
+  // On approval — fill missing locales by machine-translating the EN base.
+  if (decision === "approve") {
+    void import("@/lib/event-translate").then(({ autoTranslateEvent }) => autoTranslateEvent(eventId)).catch(() => {});
+  }
+
   // On approval — auto-post the event to the public Telegram channel.
   // English translation is mandatory for every event, so use it directly.
   if (decision === "approve") {
