@@ -16,6 +16,19 @@ import {
 const HIDE_DEMO = process.env.HIDE_DEMO === "1";
 const eventWhere = HIDE_DEMO ? { status: "PUBLISHED" as const, isDemo: false } : { status: "PUBLISHED" as const };
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const LOCALES = ["en", "de", "es", "ru"];
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return {
+    alternates: {
+      canonical: `${SITE_URL}/${locale}`,
+      languages: Object.fromEntries(LOCALES.map((l) => [l, `${SITE_URL}/${l}`])),
+    },
+  };
+}
+
 const ICONS: Record<string, typeof Trophy> = {
   tournaments: Trophy, camps: Tent, festivals: PartyPopper,
   masterclasses: GraduationCap, "match-tours": Plane, showcases: Sparkles,

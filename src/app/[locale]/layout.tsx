@@ -61,10 +61,9 @@ export async function generateMetadata({
       description: t("tagline"),
       images: ["/og-default.jpg"],
     },
-    alternates: {
-      canonical: `${siteUrl}/${locale}`,
-      languages: Object.fromEntries(routing.locales.map((l) => [l, `${siteUrl}/${l}`])),
-    },
+    // NOTE: no canonical/hreflang here — those are PAGE-specific. Setting them
+    // in the shared layout canonicalised every page without its own metadata to
+    // the homepage. The homepage sets its own alternates (see [locale]/page.tsx).
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
       other: process.env.BING_SITE_VERIFICATION
