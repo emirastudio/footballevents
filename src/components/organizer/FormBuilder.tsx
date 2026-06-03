@@ -8,9 +8,21 @@ import {
   FIELD_TYPE_LABELS, hasOptions, isDisplayField,
   type FieldType, type FormField, type SizeChart,
 } from "@/lib/forms/types";
-import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react";
+import {
+  Trash2, ChevronUp, ChevronDown, GripVertical,
+  Type, AlignLeft, Mail, Phone, Hash, Calendar, ChevronDownSquare, ListChecks,
+  CheckSquare, CircleDot, SquareCheck, ScrollText, Shirt, Globe, Heading, Info, Paperclip,
+  type LucideIcon,
+} from "lucide-react";
 
 const ALL_TYPES = Object.keys(FIELD_TYPE_LABELS) as FieldType[];
+
+const TYPE_ICONS: Record<FieldType, LucideIcon> = {
+  text: Type, textarea: AlignLeft, email: Mail, phone: Phone, number: Hash,
+  date: Calendar, select: ChevronDownSquare, multiselect: ListChecks,
+  checkboxes: CheckSquare, radio: CircleDot, consent: SquareCheck,
+  rules: ScrollText, size: Shirt, country: Globe, heading: Heading, info: Info, file: Paperclip,
+};
 
 function newId() {
   try { return crypto.randomUUID().slice(0, 8); } catch { return Math.abs(Date.now() % 1e8).toString(36); }
@@ -38,11 +50,10 @@ export function FormBuilder({
   labels: { title: string; subtitle: string; addField: string; fieldLabel: string; required: string; help: string; options: string; optionsHint: string; sizeChart: string; sizeChartHint: string; rulesText: string; save: string; saving: string; saved: string; empty: string };
 }) {
   const [fields, setFields] = useState<FormField[]>(initialFields);
-  const [type, setType] = useState<FieldType>("text");
   const [state, action] = useActionState<FormBuilderState, FormData>(saveRegistrationFormAction, null);
 
-  const add = () =>
-    setFields((p) => [...p, { id: newId(), type, label: FIELD_TYPE_LABELS[type], required: false }]);
+  const addType = (t: FieldType) =>
+    setFields((p) => [...p, { id: newId(), type: t, label: FIELD_TYPE_LABELS[t], required: false }]);
   const update = (i: number, patch: Partial<FormField>) =>
     setFields((p) => p.map((f, idx) => (idx === i ? { ...f, ...patch } : f)));
   const remove = (i: number) => setFields((p) => p.filter((_, idx) => idx !== i));
@@ -65,12 +76,27 @@ export function FormBuilder({
         <p className="mt-1 text-sm text-[var(--color-muted-strong)]">{labels.subtitle}</p>
       </div>
 
-      {/* Add field */}
-      <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
-        <select value={type} onChange={(e) => setType(e.target.value as FieldType)} className={`${inputCls} max-w-[220px]`}>
-          {ALL_TYPES.map((t) => <option key={t} value={t}>{FIELD_TYPE_LABELS[t]}</option>)}
-        </select>
-        <Button type="button" variant="outline" size="md" onClick={add}><Plus className="h-4 w-4" /> {labels.addField}</Button>
+      {/* Add field — click a type tile to append it */}
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.addField}</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+          {ALL_TYPES.map((t) => {
+            const Icon = TYPE_ICONS[t];
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => addType(t)}
+                className="group flex items-center gap-2.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2.5 text-left transition hover:border-[var(--color-pitch-400)] hover:bg-[var(--color-pitch-50)]"
+              >
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] text-[var(--color-muted-strong)] transition group-hover:bg-[var(--color-pitch-100)] group-hover:text-[var(--color-pitch-700)]">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="truncate text-sm font-medium text-[var(--color-foreground)]">{FIELD_TYPE_LABELS[t]}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {fields.length === 0 && (
@@ -79,12 +105,15 @@ export function FormBuilder({
 
       {/* Field list */}
       <div className="space-y-3">
-        {fields.map((f, i) => (
+        {fields.map((f, i) => {
+          const Icon = TYPE_ICONS[f.type];
+          return (
           <div key={f.id} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
             <div className="mb-3 flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-bg-muted)] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-muted-strong)]">
-                <GripVertical className="h-3.5 w-3.5" /> {FIELD_TYPE_LABELS[f.type]}
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-pitch-50)] px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-[var(--color-pitch-700)]">
+                <Icon className="h-3.5 w-3.5" /> {FIELD_TYPE_LABELS[f.type]}
               </span>
+              <span className="ml-auto mr-1 text-[var(--color-border-strong)]"><GripVertical className="h-4 w-4" /></span>
               <div className="flex items-center gap-1">
                 <button type="button" onClick={() => move(i, -1)} className="rounded p-1.5 text-[var(--color-muted)] hover:bg-[var(--color-bg-muted)]" aria-label="up"><ChevronUp className="h-4 w-4" /></button>
                 <button type="button" onClick={() => move(i, 1)} className="rounded p-1.5 text-[var(--color-muted)] hover:bg-[var(--color-bg-muted)]" aria-label="down"><ChevronDown className="h-4 w-4" /></button>
@@ -141,7 +170,8 @@ export function FormBuilder({
               </label>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="sticky bottom-0 flex items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 py-3 backdrop-blur">
