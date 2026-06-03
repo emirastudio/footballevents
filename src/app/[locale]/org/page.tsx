@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { pageMeta } from "@/lib/seo";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/site/PageHeader";
 import { OrganizerCard } from "@/components/cards/OrganizerCard";
@@ -31,6 +32,12 @@ const ACTIVITY_TO_CAT_KEY: Record<ActivityType, string> = {
   MASTERCLASS: "masterclasses", MATCH_TOUR: "match-tours", SHOWCASE: "showcases",
   TRAINING_CAMP: "training-camps", TRYOUT: "tryouts",
 };
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return pageMeta({ locale, path: "/org", title: t("orgTitle"), description: t("orgDesc") });
+}
 
 export default async function OrganizersPage({
   params,

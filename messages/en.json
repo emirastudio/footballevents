@@ -80,6 +80,14 @@
     "copy": "Copy",
     "copied": "Copied!"
   },
+  "seo": {
+    "eventsTitle": "Football Tournaments, Camps & Events",
+    "eventsDesc": "Browse youth and amateur football tournaments, camps, festivals and match tours worldwide. Filter by country, age and date.",
+    "orgTitle": "Football Event Organizers",
+    "orgDesc": "Discover verified organizers running football tournaments, camps and events around the world.",
+    "stadiumsTitle": "Football Stadiums & Venues",
+    "stadiumsDesc": "Explore football stadiums and venues that host tournaments and events worldwide."
+  },
   "about": {
     "title": "About",
     "subtitle": "footballevents.eu — the premium catalog of football events worldwide.",

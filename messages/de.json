@@ -80,6 +80,14 @@
     "copy": "Kopieren",
     "copied": "Kopiert!"
   },
+  "seo": {
+    "eventsTitle": "Fußball-Turniere, Camps & Events",
+    "eventsDesc": "Jugend- und Amateur-Fußballturniere, Camps, Festivals und Match-Touren weltweit. Filtere nach Land, Alter und Datum.",
+    "orgTitle": "Veranstalter von Fußball-Events",
+    "orgDesc": "Geprüfte Veranstalter von Fußballturnieren, Camps und Events weltweit.",
+    "stadiumsTitle": "Fußballstadien & Spielstätten",
+    "stadiumsDesc": "Fußballstadien und Spielstätten, die Turniere und Events weltweit ausrichten."
+  },
   "about": {
     "title": "Über uns",
     "subtitle": "footballevents.eu — der Premium-Katalog für Fußballveranstaltungen weltweit.",

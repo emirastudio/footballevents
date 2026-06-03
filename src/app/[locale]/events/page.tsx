@@ -10,6 +10,13 @@ import { Search } from "lucide-react";
 import { auth } from "@/auth";
 import { filtersFromSearchParams, summarizeFilters, isEmptyFilters } from "@/lib/saved-search";
 import { getCountries } from "@/lib/countries";
+import { pageMeta } from "@/lib/seo";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return pageMeta({ locale, path: "/events", title: t("eventsTitle"), description: t("eventsDesc") });
+}
 
 export default async function EventsPage({
   params,

@@ -80,6 +80,14 @@
     "copy": "Copiar",
     "copied": "¡Copiado!"
   },
+  "seo": {
+    "eventsTitle": "Torneos, campus y eventos de fútbol",
+    "eventsDesc": "Torneos de fútbol juvenil y amateur, campus, festivales y match tours en todo el mundo. Filtra por país, edad y fecha.",
+    "orgTitle": "Organizadores de eventos de fútbol",
+    "orgDesc": "Organizadores verificados de torneos, campus y eventos de fútbol en todo el mundo.",
+    "stadiumsTitle": "Estadios y sedes de fútbol",
+    "stadiumsDesc": "Estadios y sedes de fútbol que acogen torneos y eventos en todo el mundo."
+  },
   "about": {
     "title": "Sobre nosotros",
     "subtitle": "footballevents.eu — el catálogo premium de eventos de fútbol en todo el mundo.",

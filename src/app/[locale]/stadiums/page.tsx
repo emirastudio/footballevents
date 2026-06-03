@@ -5,7 +5,14 @@ import { StadiumCard } from "@/components/cards/StadiumCard";
 import { StadiumFilters } from "@/components/site/StadiumFilters";
 import { countries } from "@/lib/mock-data";
 import { getVenues, getStadiumsByCountry } from "@/lib/queries";
+import { pageMeta } from "@/lib/seo";
 import { Search } from "lucide-react";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "seo" });
+  return pageMeta({ locale, path: "/stadiums", title: t("stadiumsTitle"), description: t("stadiumsDesc") });
+}
 
 export default async function StadiumsPage({
   params,

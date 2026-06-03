@@ -84,6 +84,27 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
+      {/* SEO: WebSite (sitelinks search box) + Organization */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org", "@type": "WebSite",
+              name: "FootballEvents.eu", url: `${SITE_URL}/${locale}`,
+              potentialAction: {
+                "@type": "SearchAction",
+                target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}/${locale}/events?q={search_term_string}` },
+                "query-input": "required name=search_term_string",
+              },
+            },
+            {
+              "@context": "https://schema.org", "@type": "Organization",
+              name: "FootballEvents.eu", url: SITE_URL, logo: `${SITE_URL}/icon.png`,
+            },
+          ]),
+        }}
+      />
       {/* HERO */}
       <section className="relative overflow-hidden bg-hero-stadium">
         <div className="bg-grid absolute inset-0 opacity-40" aria-hidden />
