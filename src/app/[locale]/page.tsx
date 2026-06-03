@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { LaunchPromo } from "@/components/site/LaunchPromo";
 import { WorldCupBanner } from "@/components/site/WorldCupBanner";
+import { WorldCupCard } from "@/components/site/WorldCupCard";
 import { EventCard } from "@/components/cards/EventCard";
 import { db } from "@/lib/db";
 import { getEvents } from "@/lib/queries";
@@ -300,6 +301,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
+              <WorldCupCard locale={locale} />
               {top.map((e, i) => (
                 <EventCard key={e.id} event={e} locale={locale} rank={i + 1} size="sm" labels={cardLabels} />
               ))}
