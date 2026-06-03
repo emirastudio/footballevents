@@ -46,7 +46,12 @@
     "whyHeading": "Por qué seguirlo aquí",
     "aboutHeading": "Sobre el Mundial 2026",
     "faqHeading": "Preguntas frecuentes",
-    "dataCredit": "Datos de partidos en vivo de API-Football."
+    "dataCredit": "Datos de partidos en vivo de API-Football.",
+    "teamTitle": "{team} en el Mundial 2026",
+    "teamDesc": "Plantilla, entrenador y partidos de {team} en la Copa Mundial 2026.",
+    "teamTagline": "Copa Mundial 2026",
+    "coachHeading": "Entrenador",
+    "squadHeading": "Plantilla"
   },
   "merch": {
     "badge": "Goalbazza · Merch de fans",

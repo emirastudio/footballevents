@@ -120,15 +120,41 @@ export async function getWorldCupTopScorers(): Promise<WcScorer[]> {
   });
 }
 
-export type WcTeam = { name: string; code: string | null; logo: string };
+export type WcTeam = { id: number; name: string; code: string | null; logo: string; slug: string };
+
+export function teamSlug(name: string): string {
+  return name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
 
 /** The 48 teams of World Cup 2026. */
 export async function getWorldCupTeams(): Promise<WcTeam[]> {
   const raw = await call(`/teams?league=${WORLD_CUP_LEAGUE}&season=${WORLD_CUP_SEASON}`);
   return raw
     .map((r) => {
-      const t = (r as { team: { name: string; code: string | null; logo: string } }).team;
-      return { name: t.name, code: t.code, logo: t.logo };
+      const t = (r as { team: { id: number; name: string; code: string | null; logo: string } }).team;
+      return { id: t.id, name: t.name, code: t.code, logo: t.logo, slug: teamSlug(t.name) };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export async function getWorldCupTeamBySlug(slug: string): Promise<WcTeam | null> {
+  const teams = await getWorldCupTeams();
+  return teams.find((t) => t.slug === slug) ?? null;
+}
+
+export type WcPlayer = { name: string; number: number | null; position: string | null; photo: string | null };
+
+/** Squad of a World Cup team (single /players/squads call). */
+export async function getWorldCupSquad(teamId: number): Promise<WcPlayer[]> {
+  const raw = await call(`/players/squads?team=${teamId}`);
+  const players = (raw[0] as { players?: Array<{ name: string; number: number | null; position: string | null; photo: string | null }> })?.players ?? [];
+  return players.map((p) => ({ name: p.name, number: p.number ?? null, position: p.position ?? null, photo: p.photo ?? null }));
+}
+
+export type WcCoach = { name: string; nationality: string | null; photo: string | null };
+
+export async function getWorldCupCoach(teamId: number): Promise<WcCoach | null> {
+  const raw = await call(`/coachs?team=${teamId}`);
+  const c = raw[0] as { name: string; nationality: string | null; photo: string | null } | undefined;
+  return c ? { name: c.name, nationality: c.nationality ?? null, photo: c.photo ?? null } : null;
 }

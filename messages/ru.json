@@ -46,7 +46,12 @@
     "whyHeading": "Почему следить здесь",
     "aboutHeading": "О чемпионате мира 2026",
     "faqHeading": "Частые вопросы",
-    "dataCredit": "Данные матчей — API-Football."
+    "dataCredit": "Данные матчей — API-Football.",
+    "teamTitle": "{team} на ЧМ-2026 по футболу",
+    "teamDesc": "Состав, главный тренер и матчи сборной {team} на чемпионате мира 2026.",
+    "teamTagline": "Чемпионат мира 2026",
+    "coachHeading": "Главный тренер",
+    "squadHeading": "Состав"
   },
   "merch": {
     "badge": "Goalbazza · Фан-мерч",

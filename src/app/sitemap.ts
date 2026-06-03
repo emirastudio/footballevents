@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { routing } from "@/i18n/routing";
 import { getPublishedCountrySlugs } from "@/content/countries";
+import { getWorldCupTeams } from "@/lib/api-football";
 
 // Build at request time, never at build time: the CI build has no database, so
 // a prerendered sitemap would silently fall back to static paths only (missing
@@ -40,6 +41,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const countrySlugs = getPublishedCountrySlugs();
+  let wcTeamSlugs: string[] = [];
+  try { wcTeamSlugs = (await getWorldCupTeams()).map((t) => t.slug); } catch { /* API down — skip */ }
 
   const out: MetadataRoute.Sitemap = [];
   for (const locale of locales) {
@@ -50,6 +53,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly",
         priority: 0.8,
       });
+    }
+    for (const slug of wcTeamSlugs) {
+      out.push({ url: `${SITE}/${locale}/world-cup-2026/teams/${slug}`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.6 });
     }
     for (const p of staticPaths) {
       out.push({

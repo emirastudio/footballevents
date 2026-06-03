@@ -46,7 +46,12 @@
     "whyHeading": "Why follow it here",
     "aboutHeading": "About the 2026 World Cup",
     "faqHeading": "Frequently asked questions",
-    "dataCredit": "Live match data by API-Football."
+    "dataCredit": "Live match data by API-Football.",
+    "teamTitle": "{team} at the FIFA World Cup 2026",
+    "teamDesc": "{team} squad, head coach and fixtures at the FIFA World Cup 2026.",
+    "teamTagline": "FIFA World Cup 2026",
+    "coachHeading": "Head coach",
+    "squadHeading": "Squad"
   },
   "merch": {
     "badge": "Goalbazza · Fan merch",

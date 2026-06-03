@@ -46,7 +46,12 @@
     "whyHeading": "Warum hier verfolgen",
     "aboutHeading": "Über die WM 2026",
     "faqHeading": "Häufige Fragen",
-    "dataCredit": "Live-Spieldaten von API-Football."
+    "dataCredit": "Live-Spieldaten von API-Football.",
+    "teamTitle": "{team} bei der Fußball-WM 2026",
+    "teamDesc": "Kader, Cheftrainer und Spiele von {team} bei der Fußball-WM 2026.",
+    "teamTagline": "Fußball-WM 2026",
+    "coachHeading": "Cheftrainer",
+    "squadHeading": "Kader"
   },
   "merch": {
     "badge": "Goalbazza · Fan-Merch",

@@ -220,10 +220,14 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
             </div>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
               {teams.map((tm) => (
-                <div key={tm.name} className="flex items-center gap-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5">
+                <Link
+                  key={tm.name}
+                  href={`/world-cup-2026/teams/${tm.slug}`}
+                  className="flex items-center gap-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2.5 transition hover:border-[var(--color-gold-400)] hover:bg-[var(--color-gold-500)]/5"
+                >
                   {tm.logo && <img src={tm.logo} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" />}
                   <span className="truncate text-sm font-medium text-[var(--color-foreground)]">{tm.name}</span>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
