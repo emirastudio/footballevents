@@ -4,7 +4,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { nanoid } from "nanoid";
 import { auth } from "@/auth";
 import { s3, ensureBucket, S3_BUCKET, publicUrl } from "@/lib/s3";
-import { presignLimiter, consume } from "@/lib/ratelimit";
+import { presignLimiter, applyLimiter, consume, clientKey } from "@/lib/ratelimit";
 
 const ALLOWED_KINDS = new Set([
   "organizer-logo",
@@ -19,7 +19,40 @@ const ALLOWED_KINDS = new Set([
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB after client-side compression
 
+// Registration-form file uploads: allowed without auth (embedded forms on
+// third-party sites have no session), so they are IP-rate-limited and accept
+// a slightly wider, document-friendly MIME set.
+const REG_FILE_KIND = "registration-file";
+const REG_FILE_MIME: Record<string, string> = {
+  "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
+  "application/pdf": "pdf",
+};
+const REG_FILE_MAX = 10 * 1024 * 1024; // 10MB
+
 export async function POST(req: NextRequest) {
+  const body = await req.json().catch(() => null);
+  const { kind, contentType, size } = body ?? {};
+
+  // ── Public (anonymous-capable) registration-file branch ──
+  if (kind === REG_FILE_KIND) {
+    const rl = await consume(applyLimiter, `regfile:${clientKey(req.headers)}`);
+    if (!rl.ok) return NextResponse.json({ error: "Too many uploads, slow down" }, { status: 429 });
+    const ext = REG_FILE_MIME[contentType];
+    if (!ext) return NextResponse.json({ error: "Unsupported file type" }, { status: 400 });
+    if (typeof size !== "number" || size <= 0 || size > REG_FILE_MAX) {
+      return NextResponse.json({ error: "File too large" }, { status: 400 });
+    }
+    await ensureBucket();
+    const key = `${REG_FILE_KIND}/${Date.now()}-${nanoid(10)}.${ext}`;
+    const presignedUrl = await getSignedUrl(
+      s3,
+      new PutObjectCommand({ Bucket: S3_BUCKET, Key: key, ContentType: contentType }),
+      { expiresIn: 60 },
+    );
+    return NextResponse.json({ uploadUrl: presignedUrl, publicUrl: publicUrl(key), key });
+  }
+
+  // ── Authenticated image-upload branch (existing behaviour) ──
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -29,9 +62,6 @@ export async function POST(req: NextRequest) {
   if (!rl.ok) {
     return NextResponse.json({ error: "Too many uploads, slow down" }, { status: 429 });
   }
-
-  const body = await req.json().catch(() => null);
-  const { kind, contentType, size } = body ?? {};
 
   if (!ALLOWED_KINDS.has(kind)) {
     return NextResponse.json({ error: "Invalid kind" }, { status: 400 });

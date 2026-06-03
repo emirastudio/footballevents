@@ -75,7 +75,9 @@
     "saved": "Gespeichert",
     "empty": "Noch keine Felder. Füge oben dein erstes Feld hinzu.",
     "embedTitle": "Auf deiner Website einbetten",
-    "embedHint": "Füge diesen Code auf einer beliebigen Website ein — das Formular erscheint in einem iframe."
+    "embedHint": "Füge diesen Code auf einer beliebigen Website ein — das Formular erscheint in einem iframe.",
+    "copy": "Kopieren",
+    "copied": "Kopiert!"
   },
   "about": {
     "title": "Über uns",

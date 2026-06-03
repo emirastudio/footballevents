@@ -75,7 +75,9 @@
     "saved": "Saved",
     "empty": "No fields yet. Add your first field above.",
     "embedTitle": "Embed on your site",
-    "embedHint": "Paste this code on any website to show the registration form in an iframe."
+    "embedHint": "Paste this code on any website to show the registration form in an iframe.",
+    "copy": "Copy",
+    "copied": "Copied!"
   },
   "about": {
     "title": "About",

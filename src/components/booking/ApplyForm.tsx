@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { applyEventAction, type BookingFormState } from "@/app/actions/booking";
 import { Button } from "@/components/ui/Button";
@@ -205,11 +205,53 @@ export function DynField({ f }: { f: FormField }) {
       </label>
     );
 
+  if (f.type === "file") return <FileUpload f={f} name={name} />;
+
   // text / email / phone / number / date
   const inputType = f.type === "phone" ? "tel" : f.type;
   return (
     <FieldShell f={f}>
       <input name={name} type={inputType} required={f.required} placeholder={f.placeholder} className={dynInputCls} />
+    </FieldShell>
+  );
+}
+
+function FileUpload({ f, name }: { f: FormField; name: string }) {
+  const [url, setUrl] = useState("");
+  const [status, setStatus] = useState<"idle" | "uploading" | "error">("idle");
+
+  async function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setStatus("uploading");
+    setUrl("");
+    try {
+      const pres = await fetch("/api/upload/presign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "registration-file", contentType: file.type, size: file.size }),
+      });
+      if (!pres.ok) throw new Error("presign");
+      const { uploadUrl, publicUrl } = await pres.json();
+      const put = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      if (!put.ok) throw new Error("put");
+      setUrl(publicUrl);
+      setStatus("idle");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <FieldShell f={f}>
+      <input type="hidden" name={name} value={url} />
+      <input
+        type="file" accept="image/jpeg,image/png,image/webp,application/pdf" onChange={onChange}
+        className="block w-full text-sm text-[var(--color-muted-strong)] file:mr-3 file:rounded-[var(--radius-md)] file:border-0 file:bg-[var(--color-pitch-50)] file:px-3 file:py-2 file:text-sm file:font-semibold file:text-[var(--color-pitch-700)]"
+      />
+      {status === "uploading" && <span className="mt-1 block text-xs text-[var(--color-muted)]">…</span>}
+      {url && <a href={url} target="_blank" rel="noopener noreferrer" className="mt-1 block text-xs font-semibold text-[var(--color-pitch-700)]">✓</a>}
+      {status === "error" && <span className="mt-1 block text-xs text-red-600">upload failed</span>}
     </FieldShell>
   );
 }

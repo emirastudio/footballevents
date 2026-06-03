@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft } from "lucide-react";
 import { FormBuilder } from "@/components/organizer/FormBuilder";
+import { CopyField } from "@/components/organizer/CopyField";
 import { parseForm } from "@/lib/forms/types";
 
 export default async function EventFormBuilderPage({
@@ -51,12 +52,7 @@ export default async function EventFormBuilderPage({
       <section className="mt-10 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
         <h2 className="font-[family-name:var(--font-manrope)] text-lg font-bold text-[var(--color-foreground)]">{t("embedTitle")}</h2>
         <p className="mt-1 text-sm text-[var(--color-muted-strong)]">{t("embedHint")}</p>
-        <textarea
-          readOnly
-          rows={3}
-          defaultValue={embedSnippet}
-          className="mt-3 w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-bg-muted)] p-3 font-[family-name:var(--font-mono,monospace)] text-xs text-[var(--color-foreground)]"
-        />
+        <CopyField value={embedSnippet} copyLabel={t("copy")} copiedLabel={t("copied")} />
       </section>
     </Container>
   );
