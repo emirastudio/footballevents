@@ -148,6 +148,94 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
   return { ok: true };
 }
 
+/**
+ * Anonymous registration from an embedded form on a third-party site.
+ * No session required — a lightweight guest user is created/reused by email.
+ * Honeypot (`website` field) silently absorbs bots.
+ */
+export async function submitPublicRegistrationAction(_prev: BookingFormState, formData: FormData): Promise<BookingFormState> {
+  // Honeypot: real users never fill this hidden field.
+  if (String(formData.get("website") ?? "").trim()) return { ok: true };
+
+  const parsed = applySchema.safeParse({
+    eventId:         formData.get("eventId"),
+    participantName: formData.get("participantName"),
+    teamName:        formData.get("teamName") || undefined,
+    partySize:       formData.get("partySize") || 1,
+    contactEmail:    formData.get("contactEmail"),
+    contactPhone:    formData.get("contactPhone") || undefined,
+    comment:         formData.get("comment") || undefined,
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  const d = parsed.data;
+
+  const event = await db.event.findUnique({ where: { id: d.eventId }, include: { organizer: true } });
+  if (!event) return { error: "Event not found" };
+  if (!event.acceptsBookings) return { error: "This event doesn't accept applications" };
+  if (event.status !== "PUBLISHED") return { error: "This event is not published" };
+
+  // Collect + validate custom fields.
+  const form = parseForm(event.registrationForm);
+  const customFields: Record<string, unknown> = {};
+  for (const f of form.fields) {
+    if (isDisplayField(f.type)) continue;
+    const key = `cf_${f.id}`;
+    if (isMultiValue(f.type)) {
+      const vals = formData.getAll(key).map(String).filter(Boolean);
+      if (f.required && vals.length === 0) return { error: `«${f.label}» — required` };
+      if (vals.length) customFields[f.id] = vals;
+    } else if (f.type === "consent") {
+      const checked = formData.get(key) === "yes";
+      if (f.required && !checked) return { error: `«${f.label}» — required` };
+      customFields[f.id] = checked;
+    } else {
+      const v = String(formData.get(key) ?? "").trim();
+      if (f.required && !v) return { error: `«${f.label}» — required` };
+      if (v) customFields[f.id] = v;
+    }
+  }
+
+  // Guest user (find-or-create by email) so the booking has an owner and the
+  // person can later sign in with the same email to see their applications.
+  const guest = await db.user.upsert({
+    where: { email: d.contactEmail.toLowerCase() },
+    create: { email: d.contactEmail.toLowerCase(), name: d.participantName },
+    update: {},
+    select: { id: true },
+  });
+
+  const existing = await db.booking.findFirst({ where: { eventId: d.eventId, userId: guest.id } });
+  if (existing) return { ok: true };
+
+  await db.booking.create({
+    data: {
+      eventId: d.eventId,
+      userId: guest.id,
+      participantName: d.participantName,
+      teamName: d.teamName ?? null,
+      partySize: d.partySize,
+      contactEmail: d.contactEmail,
+      contactPhone: d.contactPhone ?? null,
+      comment: d.comment ?? null,
+      customFields: Object.keys(customFields).length ? (customFields as never) : undefined,
+      status: "NEW",
+    },
+  });
+
+  const en = await db.eventTranslation.findFirst({ where: { eventId: d.eventId, locale: "en" } });
+  void newApplicationEmail({
+    organizerEmail: event.organizer.email,
+    organizerName: event.organizer.name,
+    eventTitle: en?.title ?? event.slug,
+    applicantName: d.participantName,
+    applicantEmail: d.contactEmail,
+    comment: d.comment,
+    eventId: event.id,
+  });
+  revalidatePath("/organizer/bookings");
+  return { ok: true };
+}
+
 const respondSchema = z.object({
   bookingId: z.string().min(1),
   decision:  z.enum(["accept", "decline"]),

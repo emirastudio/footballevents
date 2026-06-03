@@ -72,7 +72,9 @@
     "save": "Save form",
     "saving": "Saving…",
     "saved": "Saved",
-    "empty": "No fields yet. Add your first field above."
+    "empty": "No fields yet. Add your first field above.",
+    "embedTitle": "Embed on your site",
+    "embedHint": "Paste this code on any website to show the registration form in an iframe."
   },
   "about": {
     "title": "About",

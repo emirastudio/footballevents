@@ -72,7 +72,9 @@
     "save": "Guardar formulario",
     "saving": "Guardando…",
     "saved": "Guardado",
-    "empty": "Aún no hay campos. Añade tu primer campo arriba."
+    "empty": "Aún no hay campos. Añade tu primer campo arriba.",
+    "embedTitle": "Insertar en tu sitio",
+    "embedHint": "Pega este código en cualquier sitio web para mostrar el formulario en un iframe."
   },
   "about": {
     "title": "Sobre nosotros",

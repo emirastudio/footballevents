@@ -87,6 +87,12 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
+  // Embed routes (/[locale]/embed/...) render without site chrome so they sit
+  // cleanly inside a third-party <iframe>.
+  const { headers } = await import("next/headers");
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const isEmbed = /\/embed(\/|$)/.test(pathname);
+
   return (
     <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
       <head>
@@ -144,10 +150,16 @@ export default async function LocaleLayout({
       </head>
       <body className="flex min-h-screen flex-col bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-          <CookieBanner />
+          {isEmbed ? (
+            <main className="flex-1">{children}</main>
+          ) : (
+            <>
+              <SiteHeader />
+              <main className="flex-1">{children}</main>
+              <SiteFooter />
+              <CookieBanner />
+            </>
+          )}
         </NextIntlClientProvider>
       </body>
     </html>

@@ -108,7 +108,7 @@ function FieldShell({ f, children }: { f: FormField; children: React.ReactNode }
 }
 
 /** Renders one custom field. Inputs are named cf_<id> so the action reads them. */
-function DynField({ f }: { f: FormField }) {
+export function DynField({ f }: { f: FormField }) {
   const name = `cf_${f.id}`;
   const opts = f.options ?? [];
 
