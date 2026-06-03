@@ -92,7 +92,7 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
             {/* Right — cover image, edges faded smoothly into the dark hero */}
             <div className="relative hidden lg:block">
               <img
-                src="/wc2026.png" alt={c.h1} width={1152} height={648}
+                src="/wc2026.webp" alt={c.h1} width={1280} height={854}
                 className="w-full rounded-[var(--radius-xl)] object-cover shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
                 style={{ WebkitMaskImage: "radial-gradient(120% 120% at 60% 50%, #000 55%, transparent 92%)", maskImage: "radial-gradient(120% 120% at 60% 50%, #000 55%, transparent 92%)" }}
               />
