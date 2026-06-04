@@ -101,7 +101,7 @@ async function ensureCountry(code: string): Promise<boolean> {
   return true;
 }
 
-async function upsertVenue(v: { name: string; countryCode: string; city: string | null; address: string | null }): Promise<string> {
+async function upsertVenue(v: { name: string; countryCode: string; city: string | null; address: string | null }, organizerId?: string): Promise<string> {
   await ensureCountry(v.countryCode);
   const trimmedName = v.name.trim();
   // Match existing venue case-insensitively within the same country.
@@ -134,6 +134,8 @@ async function upsertVenue(v: { name: string; countryCode: string; city: string 
       countryCode: v.countryCode,
       address: v.address,
       isStadium: false,
+      // Record who created it so they keep edit rights even before linking an event.
+      createdByOrganizerId: organizerId ?? null,
     },
   });
   return created.id;
@@ -334,7 +336,7 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
     countryCode: d.countryCode,
     city: d.city ?? null,
     address: d.venueAddress ?? null,
-  });
+  }, organizer.id);
 
   const created = await db.event.create({
     data: {
@@ -514,7 +516,7 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
         countryCode: d.countryCode,
         city: d.city ?? null,
         address: d.venueAddress ?? null,
-      }),
+      }, organizer.id),
       customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
       gender: d.gender,
@@ -904,7 +906,7 @@ async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): P
           countryCode: data.countryCode,
           city: data.city ?? null,
           address: data.venueAddress ?? null,
-        });
+        }, organizer.id);
       } else {
         update.venueId = null;
       }
