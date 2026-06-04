@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { MapPin, Calendar, Star, Sparkles, ShieldCheck, Users } from "lucide-react";
 import { formatDateRange, formatPrice } from "@/lib/format";
@@ -8,6 +9,8 @@ type Props = {
   event: MockEvent;
   locale: string;
   rank?: number;
+  /** Hint that this card is above the fold so we set priority + remove lazy. */
+  priority?: boolean;
   size?: "sm" | "md" | "lg";
   labels: {
     from: string;
@@ -17,7 +20,7 @@ type Props = {
   };
 };
 
-export function EventCard({ event: e, locale, rank, size = "md", labels }: Props) {
+export function EventCard({ event: e, locale, rank, size = "md", priority, labels }: Props) {
   const country = getCountry(e.countryCode);
   const isCompact = size === "sm";
 
@@ -29,23 +32,35 @@ export function EventCard({ event: e, locale, rank, size = "md", labels }: Props
     ? "border-[var(--color-pitch-500)] ring-1 ring-[var(--color-pitch-500)]/20"
     : "border-[var(--color-border)] shadow-[var(--shadow-xs)]";
 
+  // Responsive sizes: 1 col on mobile, 2 on tablet, 3-4 on desktop — matches grid usage.
+  const sizes = isCompact
+    ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+    : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+
   return (
     <Link
       href={`/events/${e.slug}`}
       className={`group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border bg-[var(--color-surface)] transition-all hover:-translate-y-1 hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-md)] ${cardBorder}`}
     >
       <div
-        className={`relative ${isCompact ? "aspect-[4/3]" : "aspect-[16/10]"} overflow-hidden bg-[var(--color-pitch-50)] bg-cover bg-center`}
-        style={e.coverUrl ? { backgroundImage: `url(${e.coverUrl})` } : undefined}
+        className={`relative ${isCompact ? "aspect-[4/3]" : "aspect-[16/10]"} overflow-hidden bg-[var(--color-pitch-50)]`}
       >
-        {/* Fallback: centered logo on a soft pitch tint when no cover yet. */}
-        {!e.coverUrl && e.logoUrl && (
-          <div
-            className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-[var(--radius-md)] bg-cover bg-center bg-[var(--color-surface)] shadow-[var(--shadow-sm)]"
-            style={{ backgroundImage: `url(${e.logoUrl})` }}
-            aria-hidden
+        {e.coverUrl ? (
+          <Image
+            src={e.coverUrl}
+            alt={e.title}
+            fill
+            sizes={sizes}
+            priority={priority}
+            loading={priority ? undefined : "lazy"}
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-        )}
+        ) : e.logoUrl ? (
+          // Fallback: centered logo on a soft pitch tint when no cover yet.
+          <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[var(--radius-md)] bg-[var(--color-surface)] shadow-[var(--shadow-sm)]">
+            <Image src={e.logoUrl} alt="" fill sizes="80px" className="object-cover" />
+          </div>
+        ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
         {rank !== undefined && (

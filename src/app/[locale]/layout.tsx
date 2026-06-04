@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale, getMessages, getTranslations } from "next-intl/server";
@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CookieBanner } from "@/components/site/CookieBanner";
+import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
 import "../globals.css";
 
 const inter = Inter({
@@ -24,6 +25,16 @@ const manrope = Manrope({
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#00D26A" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A1628" },
+  ],
+  colorScheme: "light",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export async function generateMetadata({
   params,
@@ -45,6 +56,9 @@ export async function generateMetadata({
     applicationName: t("siteName"),
     keywords: ["football events", "football tournaments", "football camps", "soccer events", "youth football"],
     icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
+    other: {
+      "format-detection": "telephone=no",
+    },
     openGraph: {
       type: "website",
       siteName: t("siteName"),
@@ -64,11 +78,23 @@ export async function generateMetadata({
     // NOTE: no canonical/hreflang here — those are PAGE-specific. Setting them
     // in the shared layout canonicalised every page without its own metadata to
     // the homepage. The homepage sets its own alternates (see [locale]/page.tsx).
+    // RSS auto-discovery (page-agnostic) stays here.
+    alternates: {
+      types: {
+        "application/rss+xml": `${siteUrl}/feed.xml`,
+      },
+    },
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
-      other: process.env.BING_SITE_VERIFICATION
-        ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
-        : undefined,
+      yandex: process.env.YANDEX_SITE_VERIFICATION || undefined,
+      other: {
+        ...(process.env.BING_SITE_VERIFICATION
+          ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+          : {}),
+        ...(process.env.YANDEX_SITE_VERIFICATION
+          ? { "yandex-verification": process.env.YANDEX_SITE_VERIFICATION }
+          : {}),
+      },
     },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   };
@@ -146,8 +172,35 @@ export default async function LocaleLayout({
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
           </>
         )}
+        {/* Yandex.Metrika — primary analytics for RU/CIS audience. webvisor + clickmap on.
+            Counter ID via NEXT_PUBLIC_YANDEX_METRIKA_ID. */}
+        {process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID && (
+          <>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                  m[i].l=1*new Date();
+                  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+                  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+                  ym(${process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID}, "init", {
+                    clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true
+                  });
+                `,
+              }}
+            />
+            <noscript>
+              <div>
+                <img src={`https://mc.yandex.ru/watch/${process.env.NEXT_PUBLIC_YANDEX_METRIKA_ID}`} style={{ position: "absolute", left: "-9999px" }} alt="" />
+              </div>
+            </noscript>
+          </>
+        )}
       </head>
       <body className="flex min-h-screen flex-col overflow-x-clip bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
+        <WebSiteJsonLd locale={locale} />
+        <OrganizationJsonLd locale={locale} />
         <NextIntlClientProvider locale={locale} messages={messages}>
           {isEmbed ? (
             <main className="flex-1">{children}</main>

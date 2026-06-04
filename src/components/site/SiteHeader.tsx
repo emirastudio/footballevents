@@ -5,14 +5,32 @@ import { Logo } from "./Logo";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { UserMenu } from "./UserMenu";
 import { MobileNav } from "./MobileNav";
+import { DestinationsMenu } from "./DestinationsMenu";
 
 export async function SiteHeader() {
   const t = await getTranslations("nav");
   const tAuth = await getTranslations("auth");
   const tOrg = await getTranslations("organizer");
+  const tCommon = await getTranslations("common");
 
-  const links = [
+  // Try locale-specific labels with sensible English fallbacks so missing
+  // translation keys never crash the header.
+  const safe = (fn: () => string, fallback: string) => {
+    try { return fn(); } catch { return fallback; }
+  };
+  const byCountryLabel = safe(() => t("byCountry"), "By country");
+  const byCityLabel    = safe(() => t("byCity"),    "By city");
+  const viewAllLabel   = safe(() => t("viewAll"),   safe(() => tCommon("viewAll"), "View all events"));
+
+  // Mobile drawer keeps Events as a top-level item (no hover-menu room).
+  // Desktop replaces it with the DestinationsMenu dropdown below.
+  const mobileLinks = [
     { href: "/events", label: t("events") },
+    { href: "/org", label: t("organizers") },
+    { href: "/stadiums", label: t("stadiums") },
+    { href: "/advertise", label: t("advertise") },
+  ];
+  const desktopSecondaryLinks = [
     { href: "/org", label: t("organizers") },
     { href: "/stadiums", label: t("stadiums") },
     { href: "/advertise", label: t("advertise") },
@@ -25,7 +43,14 @@ export async function SiteHeader() {
           <div className="flex items-center gap-8">
             <Logo />
             <nav className="hidden items-center gap-1 lg:flex">
-              {links.map((l) => (
+              {/* Destinations dropdown — exposes city/country pSEO hubs to crawlers */}
+              <DestinationsMenu
+                label={t("events")}
+                byCountryLabel={byCountryLabel}
+                byCityLabel={byCityLabel}
+                viewAllLabel={viewAllLabel}
+              />
+              {desktopSecondaryLinks.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
@@ -51,7 +76,7 @@ export async function SiteHeader() {
             </div>
 
             {/* Mobile: hamburger → full-screen drawer */}
-            <MobileNav links={links} />
+            <MobileNav links={mobileLinks} />
           </div>
         </div>
       </Container>

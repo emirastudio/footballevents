@@ -225,20 +225,87 @@ export async function getEventsByOrganizer(slug: string, locale: string = "en"):
   return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
 }
 
-export async function getEventsByCountry(countryCode: string, locale: string = "en"): Promise<MockEvent[]> {
-  const rows = await db.event.findMany({
-    where: { status: "PUBLISHED", countryCode, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
-    include: eventInclude,
-  });
-  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
-}
-
 export async function getEventsByVenue(slug: string, locale: string = "en"): Promise<MockEvent[]> {
   const rows = await db.event.findMany({
     where: { status: "PUBLISHED", venue: { slug }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
     include: eventInclude,
   });
   return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
+}
+
+/** All events in a given country (ISO 3166-1 alpha-2, case-insensitive). */
+export async function getEventsByCountry(code: string, locale: string = "en"): Promise<MockEvent[]> {
+  const upper = code.toUpperCase();
+  const rows = await db.event.findMany({
+    where: { status: "PUBLISHED", countryCode: upper, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
+    include: eventInclude,
+  });
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
+}
+
+/** All events in a city (matched by City.slug + countryCode for uniqueness). */
+export async function getEventsByCity(citySlug: string, locale: string = "en"): Promise<MockEvent[]> {
+  const rows = await db.event.findMany({
+    where: {
+      status: "PUBLISHED",
+      city: { slug: citySlug },
+      ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}),
+    },
+    include: eventInclude,
+  });
+  return sortByBoostThenDate(rows).map((r) => toMockEvent(r, locale));
+}
+
+/** City lookup by slug — returns the first matching city (slug is unique per country, but useful as a hub key). */
+export async function getCityBySlug(citySlug: string): Promise<{ id: string; slug: string; nameEn: string; countryCode: string } | null> {
+  const c = await db.city.findFirst({
+    where: { slug: citySlug },
+    select: { id: true, slug: true, nameEn: true, countryCode: true },
+  });
+  return c;
+}
+
+/** All cities that have at least one published event — for pSEO hub-page generation. */
+export async function getCitiesWithEvents(): Promise<Array<{ slug: string; nameEn: string; countryCode: string; eventCount: number }>> {
+  const rows = await db.city.findMany({
+    where: {
+      events: {
+        some: {
+          status: "PUBLISHED",
+          ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}),
+        },
+      },
+    },
+    select: {
+      slug: true,
+      nameEn: true,
+      countryCode: true,
+      _count: {
+        select: {
+          events: { where: { status: "PUBLISHED", ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) } },
+        },
+      },
+    },
+  });
+  return rows.map((c) => ({
+    slug: c.slug,
+    nameEn: c.nameEn,
+    countryCode: c.countryCode,
+    eventCount: c._count.events,
+  }));
+}
+
+/** Distinct country codes that have at least one published event. */
+export async function getCountryCodesWithEvents(): Promise<Array<{ code: string; eventCount: number }>> {
+  const rows = await db.event.groupBy({
+    by: ["countryCode"],
+    where: { status: "PUBLISHED", countryCode: { not: null }, ...(process.env.HIDE_DEMO === "1" ? { isDemo: false } : {}) },
+    _count: { _all: true },
+  });
+  return rows
+    .filter((r): r is typeof r & { countryCode: string } => !!r.countryCode)
+    .map((r) => ({ code: r.countryCode, eventCount: r._count._all }))
+    .sort((a, b) => b.eventCount - a.eventCount);
 }
 
 // ─── Organizers ───────────────────────────────────────

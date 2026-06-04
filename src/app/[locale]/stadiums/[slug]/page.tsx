@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { ChevronRight, MapPin, Users, Sprout, Calendar } from "lucide-react";
@@ -7,6 +8,7 @@ import { getCountry } from "@/lib/mock-data";
 import { getVenueBySlug, getVenueSlugs, getEventsByVenue } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
 import { hreflang } from "@/lib/seo";
+import { BreadcrumbJsonLd, PlaceJsonLd } from "@/components/seo/JsonLd";
 
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
@@ -70,10 +72,10 @@ export default async function StadiumDetailPage({
         }) }}
       />
       <section className="relative">
-        <div
-          className="relative h-[44vh] min-h-[340px] w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${v.coverUrl})` }}
-        >
+        <div className="relative h-[44vh] min-h-[340px] w-full overflow-hidden">
+          {v.coverUrl && (
+            <Image src={v.coverUrl} alt={v.name} fill priority sizes="100vw" className="object-cover" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
           <Container className="relative flex h-full flex-col justify-end pb-8">
             <nav aria-label="Breadcrumb" className="mb-3 flex items-center gap-1 text-xs text-white/80">
@@ -94,6 +96,24 @@ export default async function StadiumDetailPage({
       </section>
 
       <Container className="py-10">
+        <PlaceJsonLd
+          name={v.name}
+          url={`${SITE_URL}/${locale}/stadiums/${v.slug}`}
+          image={v.coverUrl || v.galleryUrls?.[0]}
+          address={{ city: v.city, country: v.countryCode, street: v.address }}
+          geo={v.lat != null && v.lng != null ? { lat: v.lat, lng: v.lng } : undefined}
+          capacity={v.capacity}
+        />
+        <BreadcrumbJsonLd
+          items={[
+            { name: "Home", url: `${SITE_URL}/${locale}` },
+            { name: tNav("stadiums"), url: `${SITE_URL}/${locale}/stadiums` },
+            ...(country?.name && v.countryCode
+              ? [{ name: country.name, url: `${SITE_URL}/${locale}/stadiums?country=${v.countryCode}` }]
+              : []),
+            { name: v.name, url: `${SITE_URL}/${locale}/stadiums/${v.slug}` },
+          ]}
+        />
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div>
             <h2 className="mb-3 font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
@@ -106,9 +126,17 @@ export default async function StadiumDetailPage({
                 {v.galleryUrls.map((url, i) => (
                   <div
                     key={i}
-                    className="aspect-square overflow-hidden rounded-[var(--radius-md)] bg-cover bg-center shadow-[var(--shadow-xs)]"
-                    style={{ backgroundImage: `url(${url})` }}
-                  />
+                    className="relative aspect-square overflow-hidden rounded-[var(--radius-md)] shadow-[var(--shadow-xs)]"
+                  >
+                    <Image
+                      src={url}
+                      alt={`${v.name} — gallery ${i + 1}`}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                      loading="lazy"
+                      className="object-cover"
+                    />
+                  </div>
                 ))}
               </div>
             )}

@@ -76,6 +76,10 @@ declare module "next-auth" {
     user: {
       id: string;
       role: Role;
+      // Capability handles — null when the user does not have that hat.
+      // Dual-hat is supported: both may be non-null. See docs/architecture/0001-clubs.md.
+      organizerId: string | null;
+      clubId: string | null;
     } & DefaultSession["user"];
   }
   interface User {
@@ -109,9 +113,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const tokenRole = (token as { role?: Role }).role;
       if (tokenId) {
         session.user.id = tokenId;
-        // Read role from DB so role flips (e.g. USER → ORGANIZER after onboarding) take effect immediately.
-        const fresh = await db.user.findUnique({ where: { id: tokenId }, select: { role: true } });
+        // Read role + capability handles from DB so newly-onboarded hats
+        // (USER → ORGANIZER, or adding a CLUB to an existing ORGANIZER)
+        // become visible immediately without re-login.
+        const fresh = await db.user.findUnique({
+          where: { id: tokenId },
+          select: {
+            role: true,
+            organizer: { select: { id: true } },
+            club: { select: { id: true } },
+          },
+        });
         session.user.role = fresh?.role ?? tokenRole ?? "USER";
+        session.user.organizerId = fresh?.organizer?.id ?? null;
+        session.user.clubId = fresh?.club?.id ?? null;
+      } else {
+        session.user.organizerId = null;
+        session.user.clubId = null;
       }
       return session;
     },

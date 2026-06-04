@@ -824,7 +824,10 @@
     "advertise": "Capabilities",
     "signIn": "Sign in",
     "signUp": "Get started",
-    "postEvent": "Post event"
+    "postEvent": "Post event",
+    "byCountry": "By country",
+    "byCity": "By city",
+    "viewAll": "View all events"
   },
   "homeTop": {
     "badge": "Top {count}",

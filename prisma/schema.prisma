@@ -137,6 +137,12 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum RfqStatus {
+  OPEN
+  CLOSED
+  EXPIRED
+}
+
 // ─────────────────────────────────────────────────────────────
 // AUTH (NextAuth v5 compatible)
 // ─────────────────────────────────────────────────────────────
@@ -166,6 +172,7 @@ model User {
   updatedAt       DateTime  @updatedAt
 
   organizer            Organizer?
+  club                 Club?
   accounts             Account[]
   sessions             Session[]
   reviews              Review[]
@@ -373,6 +380,170 @@ model OrganizerTranslation {
 }
 
 // ─────────────────────────────────────────────────────────────
+// CLUB — football clubs that follow events, save favorites,
+// apply on behalf of their teams, and post RFQs.
+// A User may be both ORGANIZER and CLUB simultaneously (dual hat).
+// See: docs/architecture/0001-clubs.md
+// ─────────────────────────────────────────────────────────────
+
+model Club {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  slug        String  @unique
+  name        String
+  legalName   String?
+  email       String?
+  phone       String?
+  website     String?
+  logoUrl     String?
+  coverUrl    String?
+
+  countryCode String
+  cityId      String?
+
+  foundedYear Int?
+  isVerified  Boolean @default(false) // manual moderation; gates the verified badge
+
+  // Social links
+  instagramUrl String?
+  facebookUrl  String?
+  xUrl         String?
+  tiktokUrl    String?
+  youtubeUrl   String?
+  whatsappUrl  String?
+
+  // ── Monetization hooks (all FREE / unlimited at launch) ────
+  // See ADR 0001 §D4. Never gate directly on subscriptionTier —
+  // always go through src/lib/permissions/club.ts helpers.
+  subscriptionTier   SubscriptionTier @default(FREE)
+  stripeCustomerId   String?          @unique
+  subscriptionId     String?
+  subscriptionEndsAt DateTime?
+
+  // null = unlimited (current state for all clubs). Switching to PRO
+  // gating later = change defaults in a single config, not a code hunt.
+  quotaApplicationsPerMonth Int?
+  quotaRfqPerMonth          Int?
+  quotaFavoritesMax         Int?
+  quotaTeamsMax             Int?
+  // ───────────────────────────────────────────────────────────
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  country      Country           @relation(fields: [countryCode], references: [code])
+  city         City?             @relation(fields: [cityId], references: [id])
+  translations ClubTranslation[]
+  teams        ClubTeam[]
+  bookings     Booking[]
+  rfqs         Rfq[]
+  usage        ClubUsage?
+
+  @@index([slug])
+  @@index([countryCode])
+  @@index([cityId])
+}
+
+model ClubTranslation {
+  id      String  @id @default(cuid())
+  clubId  String
+  locale  Locale
+  about   String? @db.Text
+  tagline String?
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@unique([clubId, locale])
+}
+
+// A persistent team within a club (e.g. "U-13 A"). Reused across many
+// Bookings — a single team applies to many events over time.
+model ClubTeam {
+  id            String      @id @default(cuid())
+  clubId        String
+  name          String                                      // "U-13 «A»"
+  ageGroup      String                                      // "U13", "ADULT", "2013" — same convention as Event.ageGroups
+  gender        Gender      @default(MIXED)
+  format        String?                                     // "5x5", "8x8", "11x11"
+  skillLevel    SkillLevel  @default(ALL_LEVELS)
+  birthYearFrom Int?
+  birthYearTo   Int?
+  notes         String?     @db.Text
+  isActive      Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  club     Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+  rfqs     Rfq[]
+
+  @@index([clubId])
+}
+
+// Usage counters for monetization. Collected from day 1 so when we
+// decide on Free-tier limits, we set them from real data, not guesses.
+// Current-period counters reset by a monthly cron on periodStart.
+model ClubUsage {
+  id     String @id @default(cuid())
+  clubId String @unique
+
+  applicationsThisMonth Int      @default(0)
+  rfqThisMonth          Int      @default(0)
+  periodStart           DateTime @default(now())
+
+  applicationsTotal Int @default(0)
+  rfqTotal          Int @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+}
+
+// Request-for-quote — a club publishes "looking for X", organizers see it
+// and respond out-of-band (email/phone). In v1 there is no on-platform
+// chat; a future RfqResponse model is intentionally deferred (ADR §D6).
+model Rfq {
+  id     String    @id @default(cuid())
+  clubId String
+  teamId String?
+
+  // What
+  eventType  EventType
+  ageGroup   String?
+  format     String?
+  skillLevel SkillLevel?
+  gender     Gender?
+
+  // Where & when
+  targetCountries String[] @default([]) // ISO2; empty = any
+  targetRegion    String?               // free-text context, e.g. "Northern Europe"
+  dateFrom        DateTime?
+  dateTo          DateTime?
+  durationDays    Int?
+
+  // Budget (optional)
+  budgetPerTeamCents Int?
+  currency           String?
+
+  comment String? @db.Text
+
+  status    RfqStatus @default(OPEN)
+  expiresAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  club Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  team ClubTeam? @relation(fields: [teamId], references: [id], onDelete: SetNull)
+
+  @@index([status, eventType])
+  @@index([clubId])
+  @@index([expiresAt])
+}
+
+// ─────────────────────────────────────────────────────────────
 // GEOGRAPHY
 // ─────────────────────────────────────────────────────────────
 
@@ -383,6 +554,7 @@ model Country {
   cities    City[]
   venues    Venue[]
   events    Event[]
+  clubs     Club[]
 
   @@index([nameEn])
 }
@@ -398,6 +570,7 @@ model City {
   country Country @relation(fields: [countryCode], references: [code])
   venues  Venue[]
   events  Event[]
+  clubs   Club[]
 
   @@unique([countryCode, slug])
   @@index([nameEn])
@@ -706,6 +879,20 @@ model Booking {
   userId     String
   status     BookingStatus @default(NEW)
 
+  // Club context (optional). When set, the application is on behalf of
+  // a registered club and one of its persistent teams. userId is always
+  // the submitting human; clubId/clubTeamId describe the entity applying.
+  // See ADR 0001 §D2 (docs/architecture/0001-clubs.md).
+  clubId     String?
+  clubTeamId String?
+
+  // ── Monetization hooks (no-op at launch) ──
+  // priority: Pro-tier clubs get 1+ → ranked above 0 in organizer dashboard.
+  // visibleToOrganizer: when Free-organizer caps land, extra applications
+  // beyond the cap are hidden behind upsell rather than deleted.
+  priority           Int     @default(0)
+  visibleToOrganizer Boolean @default(true)
+
   // Application data
   participantName String
   participantAge  Int?
@@ -729,11 +916,16 @@ model Booking {
   event    Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
   division EventDivision? @relation(fields: [divisionId], references: [id], onDelete: SetNull)
   user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club     Club?          @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  clubTeam ClubTeam?      @relation(fields: [clubTeamId], references: [id], onDelete: SetNull)
   thread   Thread?
 
   @@index([eventId, status])
+  @@index([eventId, priority, createdAt])
   @@index([divisionId])
   @@index([userId, status])
+  @@index([clubId, status])
+  @@index([clubTeamId])
 }
 
 // ─────────────────────────────────────────────────────────────

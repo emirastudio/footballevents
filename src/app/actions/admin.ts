@@ -6,6 +6,10 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { eventModerationEmail } from "@/lib/email";
+import { notifyIndexNow } from "@/lib/indexnow";
+import { routing } from "@/i18n/routing";
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
 async function requireAdmin() {
   const session = await auth();
@@ -77,6 +81,17 @@ export async function moderateEventAction(formData: FormData) {
   revalidatePath("/admin/events");
   revalidatePath("/organizer/events");
   revalidatePath(`/events/${ev.slug}`);
+
+  // Fire-and-forget IndexNow ping for fresh-published events so Bing / Yandex /
+  // Seznam can index the URL within minutes instead of waiting for the next
+  // crawl. Includes all locale variants + the sitemap.
+  if (decision === "approve") {
+    const urls = [
+      ...routing.locales.map((l) => `${SITE}/${l}/events/${ev.slug}`),
+      `${SITE}/sitemap.xml`,
+    ];
+    void notifyIndexNow(urls).catch(() => {});
+  }
 }
 
 export async function setUserRoleAction(formData: FormData) {

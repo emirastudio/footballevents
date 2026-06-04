@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { db } from "@/lib/db";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -23,6 +24,7 @@ import { parsePartners, type Partner } from "@/lib/partners";
 import { RichText } from "@/components/ui/RichText";
 import { MerchPromoBanner } from "@/components/site/MerchPromoBanner";
 import { CapacityWidget } from "@/components/cards/CapacityWidget";
+import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
 import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
   ChevronRight, Clock, Building2, MessageSquare, Check, X as XIcon,
@@ -141,6 +143,17 @@ export default async function EventDetailPage({
               <Link href="/" className="hover:text-white">Home</Link>
               <ChevronRight className="h-3 w-3" />
               <Link href="/events" className="hover:text-white">{tNav("events")}</Link>
+              {event.countryCode && country?.name && (
+                <>
+                  <ChevronRight className="h-3 w-3" />
+                  <Link
+                    href={`/events/country/${event.countryCode.toLowerCase()}`}
+                    className="hover:text-white"
+                  >
+                    {country.name}
+                  </Link>
+                </>
+              )}
               <ChevronRight className="h-3 w-3" />
               <span className="line-clamp-1 text-white">{event.title}</span>
             </nav>
@@ -155,9 +168,18 @@ export default async function EventDetailPage({
                   {tCommon("featured")}
                 </Badge>
               )}
-              <Badge variant="neutral" className="bg-white/15 text-white border-white/20 backdrop-blur">
-                <MapPin className="h-3 w-3" /> {country?.flag} {event.city}
-              </Badge>
+              {event.countryCode ? (
+                <Link
+                  href={`/events/country/${event.countryCode.toLowerCase()}`}
+                  className="inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/15 px-2 py-0.5 text-xs text-white backdrop-blur transition hover:bg-white/25"
+                >
+                  <MapPin className="h-3 w-3" /> {country?.flag} {event.city}
+                </Link>
+              ) : (
+                <Badge variant="neutral" className="bg-white/15 text-white border-white/20 backdrop-blur">
+                  <MapPin className="h-3 w-3" /> {country?.flag} {event.city}
+                </Badge>
+              )}
             </div>
           </Container>
           {event.coverUrl && (
@@ -195,18 +217,20 @@ export default async function EventDetailPage({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Event",
+              "@type": "SportsEvent",
+              "sport": "Soccer",
               "name": event.title,
               "description": stripHtml(event.description || event.shortDescription || ""),
               "startDate": event.startDate || undefined,
               "endDate": event.endDate || undefined,
               "url": `${SITE_URL}/${locale}/events/${event.slug}`,
-              "image": event.coverUrl || event.logoUrl || undefined,
+              "image": [event.coverUrl, event.logoUrl, ...(event.galleryUrls ?? [])].filter(Boolean),
               "location": {
                 "@type": "Place",
                 "name": venue?.name || event.city || country?.name,
                 "address": {
                   "@type": "PostalAddress",
+                  "streetAddress": venue?.address || undefined,
                   "addressLocality": event.city || undefined,
                   "addressCountry": event.countryCode || undefined,
                 },
@@ -215,6 +239,7 @@ export default async function EventDetailPage({
                 "@type": "Organization",
                 "name": organizer?.name || undefined,
                 "url": organizer ? `${SITE_URL}/${locale}/org/${organizer.slug}` : undefined,
+                "logo": organizer?.logoUrl || undefined,
               },
               ...(event.priceFrom != null || event.isFree
                 ? {
@@ -226,33 +251,39 @@ export default async function EventDetailPage({
                         ? "https://schema.org/SoldOut"
                         : "https://schema.org/InStock",
                       "url": `${SITE_URL}/${locale}/events/${event.slug}/apply`,
+                      "validFrom": event.startDate || undefined,
+                    },
+                  }
+                : {}),
+              ...(event.reviewsCount > 0
+                ? {
+                    "aggregateRating": {
+                      "@type": "AggregateRating",
+                      "ratingValue": event.rating,
+                      "reviewCount": event.reviewsCount,
+                      "bestRating": 5,
+                      "worstRating": 1,
                     },
                   }
                 : {}),
               "eventStatus": "https://schema.org/EventScheduled",
               "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+              "inLanguage": locale,
             }),
           }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify({
-            "@context": "https://schema.org", "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/${locale}` },
-              { "@type": "ListItem", position: 2, name: "Events", item: `${SITE_URL}/${locale}/events` },
-              { "@type": "ListItem", position: 3, name: event.title, item: `${SITE_URL}/${locale}/events/${event.slug}` },
-            ],
-          }) }}
+        <BreadcrumbJsonLd
+          items={[
+            { name: "Home", url: `${SITE_URL}/${locale}` },
+            { name: tNav("events"), url: `${SITE_URL}/${locale}/events` },
+            ...(country?.name && event.countryCode
+              ? [{ name: country.name, url: `${SITE_URL}/${locale}/events/country/${event.countryCode.toLowerCase()}` }]
+              : []),
+            { name: event.title, url: `${SITE_URL}/${locale}/events/${event.slug}` },
+          ]}
         />
-        {event.faq && event.faq.length > 0 && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify({
-              "@context": "https://schema.org", "@type": "FAQPage",
-              mainEntity: event.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
-            }) }}
-          />
+        {event.faq && event.faq.length > 0 && tierAllows(organizer?.subscriptionTier, "faq") && (
+          <FaqJsonLd items={event.faq} />
         )}
         <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
           {/* Main column — on mobile it comes AFTER the apply sidebar (order-2) */}
@@ -398,9 +429,17 @@ export default async function EventDetailPage({
                 {event.galleryUrls.map((url, i) => (
                   <div
                     key={i}
-                    className="aspect-square overflow-hidden rounded-[var(--radius-md)] bg-cover bg-center shadow-[var(--shadow-xs)]"
-                    style={{ backgroundImage: `url(${url})` }}
-                  />
+                    className="relative aspect-square overflow-hidden rounded-[var(--radius-md)] shadow-[var(--shadow-xs)]"
+                  >
+                    <Image
+                      src={url}
+                      alt={`${event.title} — gallery ${i + 1}`}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                      loading="lazy"
+                      className="object-cover"
+                    />
+                  </div>
                 ))}
               </div>
             )}
@@ -530,10 +569,11 @@ export default async function EventDetailPage({
                   href={`/org/${organizer.slug}`}
                   className="mt-3 flex items-center gap-3 transition-colors hover:text-[var(--color-pitch-700)]"
                 >
-                  <div
-                    className="h-12 w-12 shrink-0 rounded-[var(--radius-md)] bg-cover bg-center"
-                    style={{ backgroundImage: `url(${organizer.logoUrl})` }}
-                  />
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-[var(--radius-md)]">
+                    {organizer.logoUrl && (
+                      <Image src={organizer.logoUrl} alt={organizer.name} fill sizes="48px" className="object-cover" />
+                    )}
+                  </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-sm font-semibold text-[var(--color-foreground)]">{organizer.name}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import NextImage from "next/image";
 import { Download, Upload, Image as ImageIcon, Bell, ChevronDown, Loader2 } from "lucide-react";
 
 type Format = "square" | "portrait" | "story" | "landscape";
@@ -217,15 +218,14 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
                   <button
                     onClick={() => pickImage(event.coverUrl)}
                     className={[
-                      "h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border-2 transition",
+                      "relative h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border-2 transition",
                       selectedImage === event.coverUrl
                         ? "border-[var(--color-pitch-500)]"
                         : "border-transparent hover:border-[var(--color-pitch-300)]",
                     ].join(" ")}
                     title={labels.socialImage.useEventCover}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={event.coverUrl} alt="" className="h-full w-full object-cover" />
+                    <NextImage src={event.coverUrl} alt="" fill sizes="64px" className="object-cover" />
                   </button>
                 )}
 
@@ -235,15 +235,14 @@ export function MarketingClient({ events, tier, locale, labels }: Props) {
                     key={url}
                     onClick={() => pickImage(url)}
                     className={[
-                      "h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border-2 transition",
+                      "relative h-16 w-16 overflow-hidden rounded-[var(--radius-md)] border-2 transition",
                       selectedImage === url
                         ? "border-[var(--color-pitch-500)]"
                         : "border-transparent hover:border-[var(--color-pitch-300)]",
                     ].join(" ")}
                     title={`${labels.socialImage.fromGallery} ${i + 1}`}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={url} alt="" className="h-full w-full object-cover" />
+                    <NextImage src={url} alt="" fill sizes="64px" className="object-cover" />
                   </button>
                 ))}
 

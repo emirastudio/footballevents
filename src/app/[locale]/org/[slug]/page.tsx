@@ -1,5 +1,6 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { ChevronRight, MapPin, Star, Mail, Calendar } from "lucide-react";
@@ -10,6 +11,7 @@ import { getCountry } from "@/lib/mock-data";
 import { getOrganizerBySlug, getOrganizerSlugs, getEventsByOrganizer } from "@/lib/queries";
 import { EventCard } from "@/components/cards/EventCard";
 import { hreflang } from "@/lib/seo";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
 export const dynamic = "force-dynamic";
 export async function generateStaticParams() { return []; }
@@ -74,10 +76,10 @@ export default async function OrganizerDetailPage({
       />
       {/* Cover hero */}
       <section className="relative">
-        <div
-          className="relative h-[36vh] min-h-[280px] w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${o.coverUrl})` }}
-        >
+        <div className="relative h-[36vh] min-h-[280px] w-full overflow-hidden">
+          {o.coverUrl && (
+            <Image src={o.coverUrl} alt={o.name} fill priority sizes="100vw" className="object-cover" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <Container className="relative flex h-full flex-col justify-start pt-5">
             <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-white/80">
@@ -92,10 +94,11 @@ export default async function OrganizerDetailPage({
 
         <Container className="relative -mt-12">
           <div className="flex flex-col items-start gap-5 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-md)] sm:flex-row sm:items-center">
-            <div
-              className="h-24 w-24 shrink-0 rounded-[var(--radius-lg)] border-4 border-[var(--color-surface)] bg-cover bg-center shadow-[var(--shadow-sm)]"
-              style={{ backgroundImage: `url(${o.logoUrl})` }}
-            />
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-[var(--radius-lg)] border-4 border-[var(--color-surface)] shadow-[var(--shadow-sm)]">
+              {o.logoUrl && (
+                <Image src={o.logoUrl} alt={o.name} fill sizes="96px" className="object-cover" />
+              )}
+            </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-3xl">
@@ -133,6 +136,43 @@ export default async function OrganizerDetailPage({
       </section>
 
       <Container className="py-10">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": ["Organization", "SportsOrganization"],
+              "@id": `${SITE_URL}/${locale}/org/${o.slug}`,
+              name: o.name,
+              description: o.about || o.tagline,
+              url: `${SITE_URL}/${locale}/org/${o.slug}`,
+              logo: o.logoUrl,
+              image: o.coverUrl,
+              address: o.city || o.countryCode ? {
+                "@type": "PostalAddress",
+                addressLocality: o.city,
+                addressCountry: o.countryCode,
+              } : undefined,
+              ...(o.website ? { sameAs: [o.website, ...Object.values(o.socials ?? {}).filter(Boolean)] } : {}),
+              ...(o.reviewsCount > 0 ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: o.rating,
+                  reviewCount: o.reviewsCount,
+                  bestRating: 5,
+                  worstRating: 1,
+                },
+              } : {}),
+            }),
+          }}
+        />
+        <BreadcrumbJsonLd
+          items={[
+            { name: "Home", url: `${SITE_URL}/${locale}` },
+            { name: tNav("organizers"), url: `${SITE_URL}/${locale}/org` },
+            { name: o.name, url: `${SITE_URL}/${locale}/org/${o.slug}` },
+          ]}
+        />
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div>
             <h2 className="mb-3 font-[family-name:var(--font-manrope)] text-xl font-bold tracking-tight text-[var(--color-foreground)]">

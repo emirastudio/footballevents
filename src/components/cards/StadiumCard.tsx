@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { MapPin, Users } from "lucide-react";
 import type { MockVenue } from "@/lib/mock-data";
@@ -28,10 +29,15 @@ export function StadiumCard({ venue: v, labels }: Props) {
       href={`/stadiums/${v.slug}`}
       className="group relative flex flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-xs)] transition-all hover:-translate-y-1 hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-md)]"
     >
-      <div
-        className="relative aspect-[16/9] overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `url(${bg})` }}
-      >
+      <div className="relative aspect-[16/9] overflow-hidden">
+        <Image
+          src={bg}
+          alt={v.name}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          loading="lazy"
+          className="object-cover"
+        />
         {isDefault ? (
           <>
             <div className="absolute inset-0 bg-gradient-to-t from-navy-900/60 via-navy-900/10 to-transparent" />

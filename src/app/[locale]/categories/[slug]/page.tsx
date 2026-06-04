@@ -28,12 +28,13 @@ export async function generateMetadata({
     description = t("subtitle");
   } catch { /* fall back to slug if translation missing */ }
   const url = `${SITE_URL}/${locale}/categories/${slug}`;
+  const ogImage = `${SITE_URL}/${locale}/categories/${slug}/opengraph-image`;
   return {
     title,
     description,
     alternates: { canonical: url, languages: hreflang(`/categories/${slug}`) },
-    openGraph: { type: "website", url, title, description, images: [{ url: `${SITE_URL}/og-default.jpg`, width: 1200, height: 630, alt: title }] },
-    twitter: { card: "summary_large_image", title, description, images: [`${SITE_URL}/og-default.jpg`] },
+    openGraph: { type: "website", url, title, description, images: [{ url: ogImage, width: 1200, height: 630, alt: title }] },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 

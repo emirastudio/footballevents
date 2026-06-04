@@ -796,7 +796,10 @@
     "advertise": "Möglichkeiten",
     "signIn": "Anmelden",
     "signUp": "Loslegen",
-    "postEvent": "Event eintragen"
+    "postEvent": "Event eintragen",
+    "byCountry": "Nach Land",
+    "byCity": "Nach Stadt",
+    "viewAll": "Alle Events ansehen"
   },
   "homeTop": {
     "badge": "Top {count}",

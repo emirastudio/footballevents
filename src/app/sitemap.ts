@@ -29,6 +29,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let venues: Array<{ slug: string; updatedAt: Date }> = [];
   let categories: Array<{ slug: string }> = [];
   let articles: Array<{ slug: string; updatedAt: Date }> = [];
+  // pSEO hub data — only emit URLs that have at least one event,
+  // so we never publish empty hubs in the sitemap.
+  let cityRows: Array<{ slug: string; countryCode: string; eventCount: number }> = [];
+  let countryRows: Array<{ countryCode: string; eventCount: number }> = [];
   try {
     [events, organizers, venues, categories, articles] = await Promise.all([
       db.event.findMany({ where, select: { slug: true, updatedAt: true }, take: 5000 }),
@@ -37,6 +41,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       db.category.findMany({ select: { slug: true } }),
       db.article.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true }, take: 5000 }),
     ]);
+    const [cities, countries] = await Promise.all([
+      db.city.findMany({
+        where: { events: { some: where } },
+        select: {
+          slug: true,
+          countryCode: true,
+          _count: { select: { events: { where } } },
+        },
+        take: 2000,
+      }),
+      db.event.groupBy({
+        by: ["countryCode"],
+        where: { ...where, countryCode: { not: null } },
+        _count: { _all: true },
+      }),
+    ]);
+    cityRows = cities.map((c) => ({ slug: c.slug, countryCode: c.countryCode, eventCount: c._count.events }));
+    countryRows = countries
+      .filter((c): c is typeof c & { countryCode: string } => !!c.countryCode)
+      .map((c) => ({ countryCode: c.countryCode, eventCount: c._count._all }));
   } catch (e) {
     // Build-time / DB unavailable — fall back to static paths only.
     console.warn("[sitemap] DB query failed, returning static paths only:", e);
@@ -67,9 +91,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: p === "" ? 1 : 0.7,
       });
     }
+    // Categories — fixed list of hub pages
     for (const c of categories) {
       out.push({
         url: `${SITE}/${locale}/categories/${c.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.7,
+      });
+    }
+    // pSEO country hubs
+    for (const c of countryRows) {
+      out.push({
+        url: `${SITE}/${locale}/events/country/${c.countryCode.toLowerCase()}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.75,
+      });
+    }
+    // pSEO city hubs
+    for (const c of cityRows) {
+      out.push({
+        url: `${SITE}/${locale}/events/city/${c.slug}`,
         lastModified: new Date(),
         changeFrequency: "weekly",
         priority: 0.7,

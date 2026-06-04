@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { Star, Calendar, MapPin } from "lucide-react";
 import type { MockOrganizer } from "@/lib/mock-data";
@@ -19,13 +20,26 @@ export function OrganizerCard({ organizer: o, labels }: Props) {
     >
       {/* Cover — wraps cover bg + premium badge; logo lives outside so it can overlap */}
       <div className="relative">
-        <div
-          className="aspect-[3/1] w-full min-h-[110px] overflow-hidden bg-[var(--color-surface-muted)] bg-cover bg-center"
-          style={{
-            backgroundImage: `linear-gradient(135deg, var(--color-pitch-100) 0%, var(--color-pitch-50) 50%, var(--color-navy-50) 100%), url(${o.coverUrl})`,
-            backgroundBlendMode: "multiply",
-          }}
-        >
+        <div className="relative aspect-[3/1] w-full min-h-[110px] overflow-hidden bg-[var(--color-surface-muted)]">
+          {o.coverUrl && (
+            <Image
+              src={o.coverUrl}
+              alt=""
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              loading="lazy"
+              className="object-cover"
+            />
+          )}
+          {/* Brand-tint blend on top of cover */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(135deg, var(--color-pitch-100) 0%, var(--color-pitch-50) 50%, var(--color-navy-50) 100%)",
+              mixBlendMode: "multiply",
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
 
           {o.subscriptionTier === "PREMIUM" && (
@@ -36,11 +50,11 @@ export function OrganizerCard({ organizer: o, labels }: Props) {
         </div>
 
         {/* Logo overlaps cover bottom-left */}
-        <div
-          className="absolute -bottom-7 left-4 h-20 w-20 shrink-0 overflow-hidden rounded-[var(--radius-md)] border-4 border-[var(--color-surface)] bg-[var(--color-surface)] bg-cover bg-center shadow-[var(--shadow-md)]"
-          style={{ backgroundImage: `url(${o.logoUrl})` }}
-          aria-hidden
-        />
+        <div className="absolute -bottom-7 left-4 h-20 w-20 shrink-0 overflow-hidden rounded-[var(--radius-md)] border-4 border-[var(--color-surface)] bg-[var(--color-surface)] shadow-[var(--shadow-md)]">
+          {o.logoUrl && (
+            <Image src={o.logoUrl} alt={o.name} fill sizes="80px" className="object-cover" />
+          )}
+        </div>
       </div>
 
       {/* Body — leave room for the logo overhang on the left */}

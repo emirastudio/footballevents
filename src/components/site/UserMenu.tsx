@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { auth } from "@/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
@@ -63,7 +64,14 @@ export async function UserMenu({
         title={session.user.email ?? undefined}
       >
         {session.user.image ? (
-          <img src={session.user.image} alt="" className="h-7 w-7 rounded-full" />
+          <Image
+            src={session.user.image}
+            alt=""
+            width={28}
+            height={28}
+            sizes="28px"
+            className="h-7 w-7 rounded-full object-cover"
+          />
         ) : (
           <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--color-pitch-50)] text-xs font-bold text-[var(--color-pitch-700)]">
             {initials || <User className="h-3.5 w-3.5" />}

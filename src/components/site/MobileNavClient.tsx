@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { X, Menu, LogOut, LayoutDashboard, ChevronRight, User } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
@@ -130,7 +131,14 @@ export function MobileNavClient({ links, user, labels }: Props) {
                 </div>
                 <div className="flex items-center gap-3 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-4">
                   {user.image ? (
-                    <img src={user.image} alt="" className="h-10 w-10 rounded-full shrink-0 object-cover" />
+                    <Image
+                      src={user.image}
+                      alt=""
+                      width={40}
+                      height={40}
+                      sizes="40px"
+                      className="h-10 w-10 rounded-full shrink-0 object-cover"
+                    />
                   ) : (
                     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[var(--color-pitch-50)] text-sm font-bold text-[var(--color-pitch-700)]">
                       {user.initials || <User className="h-4 w-4" />}

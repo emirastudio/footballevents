@@ -824,7 +824,10 @@
     "advertise": "Возможности",
     "signIn": "Войти",
     "signUp": "Создать аккаунт",
-    "postEvent": "Разместить"
+    "postEvent": "Разместить",
+    "byCountry": "По стране",
+    "byCity": "По городу",
+    "viewAll": "Все мероприятия"
   },
   "homeTop": {
     "badge": "Топ {count}",
