@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { useLocale } from "next-intl";
 import { useFormStatus } from "react-dom";
 import {
-  inviteTeamMemberAction, removeTeamMemberAction, cancelInviteAction,
+  inviteTeamMemberAction, removeTeamMemberAction, cancelInviteAction, changeMemberRoleAction,
   type TeamState,
 } from "@/app/actions/team";
 import { UserPlus, Trash2, Mail, Check } from "lucide-react";
@@ -16,28 +16,28 @@ type Invite = { id: string; email: string; role: Role };
 const L: Record<string, {
   title: string; subtitle: string; email: string; manager: string; staff: string;
   managerHint: string; staffHint: string; invite: string; inviting: string; sent: string;
-  members: string; pending: string; remove: string; cancel: string; none: string; owner: string;
+  members: string; pending: string; remove: string; cancel: string; none: string; owner: string; role: string;
 }> = {
   en: { title: "Team access", subtitle: "Invite colleagues to help run your events. They sign in with their own account.",
     email: "colleague@email.com", manager: "Manager", staff: "Staff",
     managerHint: "Full event operations — events, applications, messages, venues, marketing. No billing or team.",
     staffHint: "Applications & messages only.", invite: "Send invite", inviting: "Sending…", sent: "Invitation sent ✓",
-    members: "Members", pending: "Pending invites", remove: "Remove", cancel: "Cancel", none: "No team members yet.", owner: "Owner" },
+    members: "Members", pending: "Pending invites", remove: "Remove", cancel: "Cancel", none: "No team members yet.", owner: "Owner", role: "Role" },
   ru: { title: "Доступ команды", subtitle: "Пригласите коллег помогать с событиями. Они входят под своим аккаунтом.",
     email: "коллега@почта.com", manager: "Менеджер", staff: "Сотрудник",
     managerHint: "Полные операции — события, заявки, сообщения, площадки, маркетинг. Без биллинга и команды.",
     staffHint: "Только заявки и сообщения.", invite: "Отправить приглашение", inviting: "Отправка…", sent: "Приглашение отправлено ✓",
-    members: "Участники", pending: "Ожидают приглашения", remove: "Удалить", cancel: "Отменить", none: "Пока нет участников команды.", owner: "Владелец" },
+    members: "Участники", pending: "Ожидают приглашения", remove: "Удалить", cancel: "Отменить", none: "Пока нет участников команды.", owner: "Владелец", role: "Роль" },
   de: { title: "Team-Zugang", subtitle: "Lade Kollegen ein, die bei deinen Events helfen. Sie melden sich mit eigenem Konto an.",
     email: "kollege@email.com", manager: "Manager", staff: "Mitarbeiter",
     managerHint: "Volle Event-Operationen — Events, Bewerbungen, Nachrichten, Orte, Marketing. Kein Billing/Team.",
     staffHint: "Nur Bewerbungen & Nachrichten.", invite: "Einladung senden", inviting: "Senden…", sent: "Einladung gesendet ✓",
-    members: "Mitglieder", pending: "Offene Einladungen", remove: "Entfernen", cancel: "Abbrechen", none: "Noch keine Teammitglieder.", owner: "Inhaber" },
+    members: "Mitglieder", pending: "Offene Einladungen", remove: "Entfernen", cancel: "Abbrechen", none: "Noch keine Teammitglieder.", owner: "Inhaber", role: "Rolle" },
   es: { title: "Acceso del equipo", subtitle: "Invita a colegas a ayudar con tus eventos. Inician sesión con su propia cuenta.",
     email: "colega@email.com", manager: "Mánager", staff: "Personal",
     managerHint: "Operaciones completas — eventos, solicitudes, mensajes, sedes, marketing. Sin facturación ni equipo.",
     staffHint: "Solo solicitudes y mensajes.", invite: "Enviar invitación", inviting: "Enviando…", sent: "Invitación enviada ✓",
-    members: "Miembros", pending: "Invitaciones pendientes", remove: "Quitar", cancel: "Cancelar", none: "Aún no hay miembros.", owner: "Propietario" },
+    members: "Miembros", pending: "Invitaciones pendientes", remove: "Quitar", cancel: "Cancelar", none: "Aún no hay miembros.", owner: "Propietario", role: "Rol" },
 };
 
 const inputCls =
@@ -83,7 +83,19 @@ export function TeamManager({ members, invites }: { members: Member[]; invites: 
                   <div className="truncate text-xs text-[var(--color-muted)]">{m.user.email}</div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <span className="rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted-strong)]">{roleLabel(m.role)}</span>
+                  <form action={changeMemberRoleAction}>
+                    <input type="hidden" name="id" value={m.id} />
+                    <select
+                      name="role"
+                      defaultValue={m.role === "MANAGER" ? "MANAGER" : "STAFF"}
+                      onChange={(e) => e.currentTarget.form?.requestSubmit()}
+                      className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-xs font-semibold text-[var(--color-muted-strong)]"
+                      aria-label={t.role}
+                    >
+                      <option value="STAFF">{t.staff}</option>
+                      <option value="MANAGER">{t.manager}</option>
+                    </select>
+                  </form>
                   <form action={removeTeamMemberAction}>
                     <input type="hidden" name="id" value={m.id} />
                     <button type="submit" className="rounded p-1.5 text-red-500 hover:bg-red-50" aria-label={t.remove}><Trash2 className="h-4 w-4" /></button>
