@@ -17,11 +17,11 @@ export function Logo({
       aria-label="FootballEvents"
     >
       <img
-        src="/brand.png"
+        src="/brand.svg"
         alt=""
-        width={32}
-        height={32}
-        className="h-8 w-8 shrink-0 rounded-[var(--radius-md)] shadow-[var(--shadow-xs)] transition-transform group-hover:scale-[1.04]"
+        width={28}
+        height={34}
+        className="h-9 w-auto shrink-0 transition-transform group-hover:scale-[1.04]"
         aria-hidden
       />
       <span className="flex flex-col leading-none">

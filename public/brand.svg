@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 220">
+  <defs>
+    <linearGradient id="feBrandPin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#14C079"/>
+      <stop offset="55%" stop-color="#0EA865"/>
+      <stop offset="100%" stop-color="#0A8A52"/>
+    </linearGradient>
+    <linearGradient id="feBrandField" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#1B3258"/>
+      <stop offset="100%" stop-color="#0F1E3A"/>
+    </linearGradient>
+
+    <!-- Outer pin (teardrop) -->
+    <path id="fePinOuter"
+      d="M90 6
+         C136.392 6 174 43.608 174 90
+         C174 126 152 154 124 182
+         L94 215
+         C92 217 88 217 86 215
+         L56 182
+         C28 154 6 126 6 90
+         C6 43.608 43.608 6 90 6 Z"/>
+
+    <!-- Inner field (smaller teardrop, same silhouette inset ~18px) -->
+    <path id="fePinInner"
+      d="M90 24
+         C126.45 24 156 53.55 156 90
+         C156 119 138 142 116 164
+         L92.5 192
+         C91.2 193.5 88.8 193.5 87.5 192
+         L64 164
+         C42 142 24 119 24 90
+         C24 53.55 53.55 24 90 24 Z"/>
+
+    <clipPath id="feFieldClip">
+      <use href="#fePinInner"/>
+    </clipPath>
+  </defs>
+
+  <!-- Outer green pin -->
+  <use href="#fePinOuter" fill="url(#feBrandPin)"/>
+
+  <!-- Inner navy field -->
+  <use href="#fePinInner" fill="url(#feBrandField)"/>
+
+  <!-- Minimal markings: halfway line + large center circle + spot, clipped to teardrop -->
+  <g clip-path="url(#feFieldClip)" fill="none" stroke="#FFFFFF" stroke-linecap="square">
+    <!-- Subtle touchline echoing the teardrop -->
+    <use href="#fePinInner" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+    <!-- Halfway line across the widest part -->
+    <line x1="24" y1="90" x2="156" y2="90" stroke-width="3.2" stroke-opacity="0.92"/>
+    <!-- Big center circle (fills the head zone) -->
+    <circle cx="90" cy="90" r="44" stroke-width="3.4" stroke-opacity="0.95"/>
+    <!-- Center spot -->
+    <circle cx="90" cy="90" r="4.5" fill="#FFFFFF" stroke="none"/>
+  </g>
+
+  <!-- Soft highlight on the green pin -->
+  <path d="M58 28 C72 18 92 16 108 22 C92 24 76 32 66 44 C60 42 56 36 58 28 Z"
+        fill="#FFFFFF" fill-opacity="0.18"/>
+</svg>
