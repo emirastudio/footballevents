@@ -177,6 +177,8 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
     eventTitle: titleForApplicant,
     eventSlug: event.slug,
     organizerName: event.organizer.name,
+    eventStart: event.startDate,
+    eventEnd: event.endDate,
     locale: applicantLocale,
   });
   // Public marketing signal to the Telegram channels (no personal details).
@@ -285,6 +287,8 @@ export async function submitPublicRegistrationAction(_prev: BookingFormState, fo
     eventTitle: titleFor(event.translations, applicantLocale, event.slug),
     eventSlug: event.slug,
     organizerName: event.organizer.name,
+    eventStart: event.startDate,
+    eventEnd: event.endDate,
     locale: applicantLocale,
   });
   void tgEventActivity({ title: titleFor(event.translations, "en", event.slug), slug: event.slug });
@@ -340,6 +344,8 @@ export async function respondBookingAction(formData: FormData) {
     organizerName: organizer.name,
     organizerEmail: organizer.email,
     note,
+    eventStart: booking.event.startDate,
+    eventEnd: booking.event.endDate,
     locale: applicantLocale,
   });
 

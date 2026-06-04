@@ -12,6 +12,7 @@ import {
   Trash2, ChevronUp, ChevronDown, GripVertical,
   Type, AlignLeft, Mail, Phone, Hash, Calendar, ChevronDownSquare, ListChecks,
   CheckSquare, CircleDot, SquareCheck, ScrollText, Shirt, Globe, Heading, Info, Paperclip,
+  MapPin, ToggleRight,
   type LucideIcon,
 } from "lucide-react";
 
@@ -21,7 +22,8 @@ const TYPE_ICONS: Record<FieldType, LucideIcon> = {
   text: Type, textarea: AlignLeft, email: Mail, phone: Phone, number: Hash,
   date: Calendar, select: ChevronDownSquare, multiselect: ListChecks,
   checkboxes: CheckSquare, radio: CircleDot, consent: SquareCheck,
-  rules: ScrollText, size: Shirt, country: Globe, heading: Heading, info: Info, file: Paperclip,
+  rules: ScrollText, size: Shirt, country: Globe, countrycity: MapPin, yesno: ToggleRight,
+  heading: Heading, info: Info, file: Paperclip,
 };
 
 function newId() {

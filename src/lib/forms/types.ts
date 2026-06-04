@@ -20,6 +20,8 @@ export type FieldType =
   | "file"        // file upload (image / PDF) → stores a URL
   | "size"        // apparel size pick + optional size chart
   | "country"     // country name (free text / list)
+  | "countrycity" // combined: searchable country (with flag) + city
+  | "yesno"       // a single Yes / No choice
   | "heading"     // section heading — display only
   | "info";       // info paragraph — display only
 
@@ -73,6 +75,8 @@ export const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   file: "File upload",
   size: "Size (with chart)",
   country: "Country",
+  countrycity: "Country & city",
+  yesno: "Yes / No",
   heading: "Section heading",
   info: "Info text",
 };

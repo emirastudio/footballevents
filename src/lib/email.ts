@@ -164,6 +164,55 @@ function noteBlock(label: string, text: string, color = "#00d26a") {
   return `<p style="background:#fafbfc;border-left:4px solid ${color};padding:12px;border-radius:4px"><strong>${escape(label)}:</strong> ${escape(text)}</p>`;
 }
 
+/** "Kind regards, the <organizer> team" — localised email sign-off. */
+function signature(locale: EmailLocale, organizerName?: string) {
+  const org = organizerName ? escape(organizerName) : "FootballEvents.eu";
+  const t = {
+    en: `Kind regards,<br>The ${org} team`,
+    ru: `С уважением,<br>команда ${org}`,
+    de: `Mit freundlichen Grüßen,<br>das Team von ${org}`,
+    es: `Un saludo,<br>el equipo de ${org}`,
+  }[locale];
+  return `<p style="margin-top:20px;color:#475569">${t}</p>`;
+}
+
+const CAL = {
+  en: { add: "Add to calendar", when: "When" },
+  ru: { add: "Добавить в календарь", when: "Когда" },
+  de: { add: "Zum Kalender hinzufügen", when: "Wann" },
+  es: { add: "Añadir al calendario", when: "Cuándo" },
+};
+
+function fmtRange(locale: EmailLocale, start: Date, end?: Date | null): string {
+  const tag = { en: "en-GB", ru: "ru-RU", de: "de-DE", es: "es-ES" }[locale];
+  const f = (d: Date) => d.toLocaleDateString(tag, { day: "numeric", month: "long", year: "numeric" });
+  return end && end.getTime() !== start.getTime() ? `${f(start)} — ${f(end)}` : f(start);
+}
+
+function gcalUrl(title: string, start: Date, end?: Date | null, location?: string | null): string {
+  const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const endDate = end && end.getTime() > start.getTime() ? end : new Date(start.getTime() + 2 * 3600_000);
+  const p = new URLSearchParams({ action: "TEMPLATE", text: title, dates: `${stamp(start)}/${stamp(endDate)}` });
+  if (location) p.set("location", location);
+  return `https://calendar.google.com/calendar/render?${p.toString()}`;
+}
+
+/** Optional "when + add to calendar" block for confirmation emails. */
+function eventDetailsBlock(
+  locale: EmailLocale,
+  ev?: { title: string; start?: Date | null; end?: Date | null; location?: string | null },
+): string {
+  if (!ev?.start) return "";
+  const c = CAL[locale];
+  return (
+    `<p style="background:#f4f7fa;border-radius:8px;padding:14px;margin:16px 0">` +
+    `🗓 <strong>${escape(c.when)}:</strong> ${escape(fmtRange(locale, ev.start, ev.end))}` +
+    (ev.location ? `<br>📍 ${escape(ev.location)}` : "") +
+    `</p>` +
+    `<p style="margin:8px 0"><a href="${gcalUrl(ev.title, ev.start, ev.end, ev.location)}" style="display:inline-block;background:#ffffff;color:#0a1628;border:1px solid #cbd5e1;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">📅 ${escape(c.add)}</a></p>`
+  );
+}
+
 /** 📋 New application landed — to the ORGANIZER, in the organizer's language. */
 export function newApplicationEmail(opts: {
   organizerEmail: string;
@@ -208,6 +257,9 @@ export function applicationReceivedEmail(opts: {
   eventTitle: string;
   eventSlug: string;
   organizerName?: string;
+  eventStart?: Date | null;
+  eventEnd?: Date | null;
+  eventLocation?: string | null;
   locale?: string;
 }) {
   const L = loc(opts.locale);
@@ -225,7 +277,11 @@ export function applicationReceivedEmail(opts: {
       p1: `¡Gracias por inscribirte en <strong>${escape(opts.eventTitle)}</strong>! Tu solicitud se ha enviado al organizador y ahora estás en la lista de candidatos.`,
       p2: "Te escribiremos en cuanto el organizador revise tu solicitud. Por ahora no tienes que hacer nada.", btn: "Ver evento" },
   }[L];
-  const html = shell(T.title, `<p>${T.hi}</p><p>${T.p1}</p><p>${T.p2}</p>${btn(`${SITE}/${L}/events/${opts.eventSlug}`, T.btn, true)}`);
+  const details = eventDetailsBlock(L, { title: opts.eventTitle, start: opts.eventStart, end: opts.eventEnd, location: opts.eventLocation });
+  const html = shell(
+    T.title,
+    `<p>${T.hi}</p><p>${T.p1}</p>${details}<p>${T.p2}</p>${btn(`${SITE}/${L}/events/${opts.eventSlug}`, T.btn, true)}${signature(L, opts.organizerName)}`,
+  );
   return sendEmail({ to: opts.applicantEmail, subject: T.subj, html });
 }
 
@@ -239,6 +295,9 @@ export function bookingResponseEmail(opts: {
   organizerName: string;
   organizerEmail: string;
   note?: string | null;
+  eventStart?: Date | null;
+  eventEnd?: Date | null;
+  eventLocation?: string | null;
   locale?: string;
 }) {
   const L = loc(opts.locale);
@@ -272,11 +331,16 @@ export function bookingResponseEmail(opts: {
       note: "Mensaje del organizador", btn: accepted ? "Ver evento" : "Buscar otros eventos" },
   }[L];
   const url = accepted ? `${SITE}/${L}/events/${opts.eventSlug}` : `${SITE}/${L}/events`;
+  const details = accepted
+    ? eventDetailsBlock(L, { title: opts.eventTitle, start: opts.eventStart, end: opts.eventEnd, location: opts.eventLocation })
+    : "";
   const html = shell(
     T.title,
     `<p>${T.body}</p>
      ${opts.note ? noteBlock(T.note, opts.note, accepted ? "#00d26a" : "#dc2626") : ""}
-     ${btn(url, T.btn, accepted)}`,
+     ${details}
+     ${btn(url, T.btn, accepted)}
+     ${signature(L, opts.organizerName)}`,
   );
   return sendEmail({ to: opts.applicantEmail, subject: T.subj, html, replyTo: opts.organizerEmail });
 }

@@ -4,7 +4,13 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { respondBookingAction } from "@/app/actions/booking";
+import { parseForm, localizeFields, isDisplayField, type FormField } from "@/lib/forms/types";
 import { Check, X } from "lucide-react";
+
+const YESNO: Record<string, { yes: string; no: string }> = {
+  en: { yes: "Yes", no: "No" }, ru: { yes: "Да", no: "Нет" },
+  de: { yes: "Ja", no: "Nein" }, es: { yes: "Sí", no: "No" },
+};
 
 const STATUSES = ["ALL", "NEW", "ACCEPTED", "DECLINED"] as const;
 
@@ -90,6 +96,7 @@ export default async function BookingsPage({
                       {b.participantAge && <Field label="Age" value={String(b.participantAge)} />}
                       {b.partySize > 1 && <Field label="Party" value={String(b.partySize)} />}
                     </dl>
+                    <CustomAnswers registrationForm={b.event.registrationForm} answers={b.customFields} locale={locale} />
                     {b.comment && (
                       <p className="mt-3 rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] p-3 text-sm text-[var(--color-muted-strong)]">
                         {b.comment}
@@ -151,5 +158,62 @@ function Field({ label, value }: { label: string; value: string }) {
       <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{label}</dt>
       <dd className="text-[var(--color-foreground)]">{value}</dd>
     </div>
+  );
+}
+
+/** Renders the answers an applicant gave to the organizer's custom form fields,
+ *  labelled in the organizer's language. This is what lets the organizer see the
+ *  full submission (country/city, accommodation, age group, …) before deciding. */
+function CustomAnswers({
+  registrationForm, answers, locale,
+}: { registrationForm: unknown; answers: unknown; locale: string }) {
+  if (!answers || typeof answers !== "object") return null;
+  const data = answers as Record<string, unknown>;
+  if (Object.keys(data).length === 0) return null;
+
+  const fields = localizeFields(parseForm(registrationForm), locale).filter((f) => !isDisplayField(f.type));
+  const yn = YESNO[locale] ?? YESNO.en;
+
+  const fmt = (f: FormField | undefined, v: unknown): string => {
+    if (Array.isArray(v)) return v.map(String).join(", ");
+    if (typeof v === "boolean") return v ? yn.yes : yn.no;
+    const s = String(v ?? "").trim();
+    if (f?.type === "yesno") return s === "yes" ? yn.yes : s === "no" ? yn.no : s;
+    return s;
+  };
+
+  // Keep the organizer's field order; show answered fields, then any stray keys.
+  const ordered = fields.filter((f) => f.id in data);
+  const extraKeys = Object.keys(data).filter((k) => !fields.some((f) => f.id === k));
+  if (ordered.length === 0 && extraKeys.length === 0) return null;
+
+  const isUrl = (v: unknown) => typeof v === "string" && /^https?:\/\//.test(v);
+
+  return (
+    <dl className="mt-3 grid gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-muted)] p-3 text-xs sm:grid-cols-2">
+      {ordered.map((f) => {
+        const v = data[f.id];
+        return (
+          <div key={f.id}>
+            <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{f.label}</dt>
+            <dd className="break-words text-[var(--color-foreground)]">
+              {isUrl(v) ? (
+                <a href={String(v)} target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-pitch-700)] underline">
+                  {f.type === "file" ? "📎 file" : String(v)}
+                </a>
+              ) : (
+                fmt(f, v) || "—"
+              )}
+            </dd>
+          </div>
+        );
+      })}
+      {extraKeys.map((k) => (
+        <div key={k}>
+          <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{k}</dt>
+          <dd className="break-words text-[var(--color-foreground)]">{fmt(undefined, data[k]) || "—"}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

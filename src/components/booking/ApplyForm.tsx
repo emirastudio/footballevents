@@ -8,6 +8,18 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle2 } from "lucide-react";
 import type { FormField } from "@/lib/forms/types";
+import { COUNTRY_OPTIONS } from "@/lib/forms/country-options";
+
+// Small localised UI strings for built-in field widgets (not organizer-authored).
+const UI_STRINGS: Record<string, { country: string; city: string; yes: string; no: string }> = {
+  en: { country: "Country", city: "City", yes: "Yes", no: "No" },
+  ru: { country: "Страна", city: "Город", yes: "Да", no: "Нет" },
+  de: { country: "Land", city: "Stadt", yes: "Ja", no: "Nein" },
+  es: { country: "País", city: "Ciudad", yes: "Sí", no: "No" },
+};
+function uiStrings(locale: string) {
+  return UI_STRINGS[locale] ?? UI_STRINGS.en;
+}
 
 const dynInputCls =
   "w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20";
@@ -214,6 +226,10 @@ export function DynField({ f }: { f: FormField }) {
       </label>
     );
 
+  if (f.type === "countrycity") return <CountryCityField f={f} name={name} />;
+
+  if (f.type === "yesno") return <YesNoField f={f} name={name} />;
+
   if (f.type === "file") return <FileUpload f={f} name={name} />;
 
   // text / email / phone / number / date
@@ -261,6 +277,60 @@ function FileUpload({ f, name }: { f: FormField; name: string }) {
       {status === "uploading" && <span className="mt-1 block text-xs text-[var(--color-muted)]">…</span>}
       {url && <a href={url} target="_blank" rel="noopener noreferrer" className="mt-1 block text-xs font-semibold text-[var(--color-pitch-700)]">✓</a>}
       {status === "error" && <span className="mt-1 block text-xs text-red-600">upload failed</span>}
+    </FieldShell>
+  );
+}
+
+/** Combined Country (searchable, with flag) + City. Submits one combined value
+ *  ("🇩🇪 Germany — Berlin") in the hidden cf_<id> input. */
+function CountryCityField({ f, name }: { f: FormField; name: string }) {
+  const s = uiStrings(useLocale());
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const combined = country.trim() ? (city.trim() ? `${country.trim()} — ${city.trim()}` : country.trim()) : "";
+  const listId = `cc-${f.id}`;
+  return (
+    <FieldShell f={f}>
+      <input type="hidden" name={name} value={combined} />
+      <div className="grid gap-2 sm:grid-cols-2">
+        <input
+          list={listId}
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+          required={f.required}
+          placeholder={s.country}
+          autoComplete="off"
+          className={dynInputCls}
+        />
+        <datalist id={listId}>
+          {COUNTRY_OPTIONS.map((c) => (
+            <option key={c.n} value={`${c.f} ${c.n}`} />
+          ))}
+        </datalist>
+        <input
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder={s.city}
+          autoComplete="off"
+          className={dynInputCls}
+        />
+      </div>
+    </FieldShell>
+  );
+}
+
+/** A single Yes / No choice (submits "yes" or "no" in cf_<id>). */
+function YesNoField({ f, name }: { f: FormField; name: string }) {
+  const s = uiStrings(useLocale());
+  return (
+    <FieldShell f={f}>
+      <div className="flex gap-5">
+        {([["yes", s.yes], ["no", s.no]] as const).map(([v, lbl]) => (
+          <label key={v} className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
+            <input type="radio" name={name} value={v} required={f.required} /> {lbl}
+          </label>
+        ))}
+      </div>
     </FieldShell>
   );
 }
