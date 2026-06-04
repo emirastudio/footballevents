@@ -52,16 +52,22 @@ export function ApplyForm({
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="eventId" value={eventId} />
-      <Field name="participantName" required defaultValue={defaultName} label={labels.participantName} />
-      <Field name="partySize" type="number" defaultValue="1" label={labels.partySize} />
-      <Field name="teamName" label={labels.teamName} />
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field name="contactEmail" type="email" required defaultValue={defaultEmail} label={labels.contactEmail} />
-        <Field name="contactPhone" label={labels.contactPhone} />
-      </div>
-      <Textarea name="comment" rows={4} label={labels.comment} hint={labels.commentHint} />
-
-      {fields.map((f) => <DynField key={f.id} f={f} />)}
+      {/* Custom form (built by the organizer) fully replaces the standard fields.
+          Name + email come from the signed-in account server-side. */}
+      {fields.length > 0 ? (
+        fields.map((f) => <DynField key={f.id} f={f} />)
+      ) : (
+        <>
+          <Field name="participantName" required defaultValue={defaultName} label={labels.participantName} />
+          <Field name="partySize" type="number" defaultValue="1" label={labels.partySize} />
+          <Field name="teamName" label={labels.teamName} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field name="contactEmail" type="email" required defaultValue={defaultEmail} label={labels.contactEmail} />
+            <Field name="contactPhone" label={labels.contactPhone} />
+          </div>
+          <Textarea name="comment" rows={4} label={labels.comment} hint={labels.commentHint} />
+        </>
+      )}
 
       {state?.error && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>

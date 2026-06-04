@@ -28,13 +28,15 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
     redirect(`/sign-in?next=/events/${eventId}/apply`);
   }
 
+  // When the organizer's custom form replaces the standard fields, the base
+  // contact fields aren't in the form — fall back to the signed-in account.
   const parsed = applySchema.safeParse({
     eventId:         formData.get("eventId"),
-    participantName: formData.get("participantName"),
+    participantName: formData.get("participantName") || session.user.name || "Participant",
     participantAge:  formData.get("participantAge") || undefined,
     teamName:        formData.get("teamName") || undefined,
     partySize:       formData.get("partySize") || 1,
-    contactEmail:    formData.get("contactEmail"),
+    contactEmail:    formData.get("contactEmail") || session.user.email,
     contactPhone:    formData.get("contactPhone") || undefined,
     comment:         formData.get("comment") || undefined,
   });

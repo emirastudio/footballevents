@@ -38,16 +38,22 @@ export function EmbedForm({ eventId, fields, labels }: { eventId: string; fields
       {/* Honeypot — hidden from humans, bots fill it and get silently dropped. */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
 
+      {/* Name + email are always required (needed to create the guest application). */}
       <L label={labels.participantName} req><input name="participantName" required className={cls} /></L>
       <div className="grid gap-4 sm:grid-cols-2">
         <L label={labels.contactEmail} req><input name="contactEmail" type="email" required className={cls} /></L>
         <L label={labels.contactPhone}><input name="contactPhone" className={cls} /></L>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <L label={labels.teamName}><input name="teamName" className={cls} /></L>
-        <L label={labels.partySize}><input name="partySize" type="number" defaultValue="1" min={1} className={cls} /></L>
-      </div>
-      <L label={labels.comment}><textarea name="comment" rows={3} className={cls} /></L>
+      {/* The rest of the standard fields show only when there's no custom form. */}
+      {fields.length === 0 && (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <L label={labels.teamName}><input name="teamName" className={cls} /></L>
+            <L label={labels.partySize}><input name="partySize" type="number" defaultValue="1" min={1} className={cls} /></L>
+          </div>
+          <L label={labels.comment}><textarea name="comment" rows={3} className={cls} /></L>
+        </>
+      )}
 
       {fields.map((f) => <DynField key={f.id} f={f} />)}
 
