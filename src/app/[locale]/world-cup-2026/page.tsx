@@ -6,7 +6,9 @@ import { MerchPromoBanner } from "@/components/site/MerchPromoBanner";
 import { getWorldCupFixtures, getWorldCupStandings, getWorldCupTeams, getWorldCupTopScorers } from "@/lib/api-football";
 import { WC2026 } from "@/content/world-cup-2026";
 import { locales, type Locale } from "@/i18n/config";
-import { Trophy, CalendarDays, MapPin, Users, ChevronRight, Globe2, ListOrdered, Flag, Goal } from "lucide-react";
+import { db } from "@/lib/db";
+import { ArticleCard, type ArticleCardData } from "@/components/cards/ArticleCard";
+import { Trophy, CalendarDays, MapPin, Users, ChevronRight, Globe2, ListOrdered, Flag, Goal, Newspaper } from "lucide-react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 
@@ -43,9 +45,30 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
 
   const c = WC2026.locales[locale as Locale] ?? WC2026.locales.en;
   const t = await getTranslations("worldCup");
-  const [fixtures, groups, teams, scorers] = await Promise.all([
+  const [fixtures, groups, teams, scorers, newsRows] = await Promise.all([
     getWorldCupFixtures(), getWorldCupStandings(), getWorldCupTeams(), getWorldCupTopScorers(),
+    db.article.findMany({
+      where: { category: "WC2026", status: "PUBLISHED" },
+      orderBy: { publishedAt: "desc" },
+      take: 6,
+      include: {
+        translations: {
+          where: { locale: { in: [locale as Locale, "en"] } },
+          select: { locale: true, title: true, lead: true },
+        },
+      },
+    }),
   ]);
+  const news: ArticleCardData[] = newsRows.map((a) => {
+    const tr = a.translations.find((t) => t.locale === (locale as Locale)) ?? a.translations.find((t) => t.locale === "en");
+    return {
+      slug: a.slug,
+      category: a.category,
+      title: tr?.title ?? a.slug,
+      lead: tr?.lead ?? "",
+      publishedAt: a.publishedAt,
+    };
+  });
   const upcoming = fixtures.filter((f) => f.status === "NS").slice(0, 16);
   const shown = upcoming.length > 0 ? upcoming : fixtures.slice(0, 16);
 
@@ -267,6 +290,28 @@ export default async function WorldCup2026Page({ params }: { params: Promise<{ l
                     {s.goals} {t("goalsAbbr")}
                   </span>
                 </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Latest news — published WC2026 articles from the daily pipeline */}
+        {news.length > 0 && (
+          <section className="mb-12">
+            <div className="mb-5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Newspaper className="h-5 w-5 text-[var(--color-gold-600)]" />
+                <h2 className="font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">
+                  Latest news
+                </h2>
+              </div>
+              <Link href="/blog?cat=wc2026" className="text-sm font-semibold text-[var(--color-foreground)] hover:underline">
+                All World Cup 2026 news →
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {news.map((a) => (
+                <ArticleCard key={a.slug} article={a} locale={locale} />
               ))}
             </div>
           </section>

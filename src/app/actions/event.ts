@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { tierAllows, ACTIVE_EVENTS_LIMIT, type Tier } from "@/lib/tier";
+import { slugify } from "@/lib/slug";
 
 // Returns null if creation is allowed, or the limit number when reached.
 async function activeEventsLimitReached(organizerId: string, tier: Tier | string): Promise<number | null> {
@@ -147,18 +148,6 @@ async function uniqueEventSlug(base: string): Promise<string> {
   }
   // Last resort (extremely unlikely)
   return `${base}-${Date.now()}`;
-}
-
-function slugify(s: string) {
-  return s
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .slice(0, 60);
 }
 
 function parseProgramme(raw?: string): { day: number; title: string; items: string[] }[] | null {

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { nanoid } from "nanoid";
+import { slugify } from "@/lib/slug";
 
 export type VenueFormState = { error?: string; fieldErrors?: Record<string, string> } | null;
 
@@ -21,11 +22,6 @@ const schema = z.object({
   isStadium:    z.coerce.boolean().default(false),
   coverUrl:     z.string().url().optional().or(z.literal("")),
 });
-
-function slugify(s: string) {
-  return s.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "").trim().replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 60);
-}
 
 async function ensureCountry(code: string) {
   const exists = await db.country.findUnique({ where: { code } });

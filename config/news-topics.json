@@ -1,0 +1,66 @@
+{
+  "_comment": "Single source of truth for what the news pipeline ingests. Edit this file to add/remove sources, search queries, or keywords. Next cron run (06:00 UTC) picks up changes — no migration needed. See plan: toasty-petting-steele.md §3.5.",
+  "wc2026": {
+    "rss": [
+      "https://www.fifa.com/api/contentApi/feeds/rss/en/posts.xml",
+      "https://www.espn.com/espn/rss/soccer/news",
+      "https://feeds.bbci.co.uk/sport/football/world-cup/rss.xml"
+    ],
+    "newsapi": [
+      "\"World Cup 2026\" OR \"FIFA 2026\"",
+      "\"Copa Mundial 2026\"",
+      "World Cup 2026 qualifier",
+      "FIFA World Cup host city United States Canada Mexico"
+    ],
+    "keywords": [
+      "world cup 2026",
+      "wc2026",
+      "fifa 2026",
+      "copa mundial 2026",
+      "mundial 2026",
+      "wm 2026",
+      "чм 2026",
+      "чемпионат мира 2026",
+      "мундиаль 2026"
+    ]
+  },
+  "general": {
+    "rss": [
+      "https://feeds.bbci.co.uk/sport/football/rss.xml",
+      "https://www.espn.com/espn/rss/soccer/news",
+      "https://www.theguardian.com/football/rss",
+      "https://www.skysports.com/rss/12040"
+    ],
+    "newsapi": [
+      "Champions League",
+      "Premier League transfer",
+      "La Liga",
+      "Bundesliga",
+      "Serie A football",
+      "Copa Libertadores",
+      "AFCON African Cup"
+    ],
+    "keywords": [
+      "champions league",
+      "premier league",
+      "la liga",
+      "bundesliga",
+      "serie a",
+      "ligue 1",
+      "copa libertadores",
+      "afcon",
+      "europa league",
+      "transfer",
+      "qualifier"
+    ],
+    "exclude": [
+      "betting",
+      "casino",
+      "fantasy",
+      "porn",
+      "obituary",
+      "convicted",
+      "arrested"
+    ]
+  }
+}

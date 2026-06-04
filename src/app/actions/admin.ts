@@ -245,6 +245,23 @@ export async function grantBoostAction(formData: FormData) {
 // Review moderation
 // ─────────────────────────────────────────────────────────────
 
+// Moderate a draft news article from the daily AI pipeline. WC2026 articles
+// auto-publish; GENERAL ones land as DRAFT and pass through here.
+export async function moderateArticleAction(formData: FormData) {
+  await requireAdmin();
+  const articleId = formData.get("articleId") as string;
+  const decision  = formData.get("decision")  as string;
+  if (!articleId || (decision !== "approve" && decision !== "reject")) return;
+  await db.article.update({
+    where: { id: articleId },
+    data:
+      decision === "approve"
+        ? { status: "PUBLISHED", publishedAt: new Date() }
+        : { status: "REJECTED" },
+  });
+  revalidatePath("/admin/news");
+}
+
 export async function moderateReviewAction(formData: FormData) {
   const adminId = await requireAdmin();
   const reviewId = formData.get("reviewId") as string;

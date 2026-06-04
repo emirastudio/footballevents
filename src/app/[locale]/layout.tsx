@@ -147,7 +147,7 @@ export default async function LocaleLayout({
           </>
         )}
       </head>
-      <body className="flex min-h-screen flex-col bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
+      <body className="flex min-h-screen flex-col overflow-x-clip bg-[var(--color-background)] text-[var(--color-foreground)] antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {isEmbed ? (
             <main className="flex-1">{children}</main>

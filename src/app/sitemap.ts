@@ -15,7 +15,7 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locales = routing.locales;
   const staticPaths = [
-    "", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/contact", "/world-cup-2026",
+    "", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/contact", "/world-cup-2026", "/blog",
     // About / informational landing pages (linked from the footer)
     "/about", "/about/tournaments", "/about/camps", "/about/festivals", "/about/match-tours",
     "/about/for-organizers", "/about/for-clubs", "/about/academy-trials",
@@ -28,12 +28,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let organizers: Array<{ slug: string; updatedAt: Date }> = [];
   let venues: Array<{ slug: string; updatedAt: Date }> = [];
   let categories: Array<{ slug: string }> = [];
+  let articles: Array<{ slug: string; updatedAt: Date }> = [];
   try {
-    [events, organizers, venues, categories] = await Promise.all([
+    [events, organizers, venues, categories, articles] = await Promise.all([
       db.event.findMany({ where, select: { slug: true, updatedAt: true }, take: 5000 }),
       db.organizer.findMany({ select: { slug: true, updatedAt: true } }),
       db.venue.findMany({ select: { slug: true, updatedAt: true } }),
       db.category.findMany({ select: { slug: true } }),
+      db.article.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true }, take: 5000 }),
     ]);
   } catch (e) {
     // Build-time / DB unavailable — fall back to static paths only.
@@ -95,6 +97,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: v.updatedAt,
         changeFrequency: "monthly",
         priority: 0.5,
+      });
+    }
+    for (const a of articles) {
+      out.push({
+        url: `${SITE}/${locale}/blog/${a.slug}`,
+        lastModified: a.updatedAt,
+        changeFrequency: "weekly",
+        priority: 0.7,
       });
     }
   }

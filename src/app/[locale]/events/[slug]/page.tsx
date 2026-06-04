@@ -251,8 +251,8 @@ export default async function EventDetailPage({
           />
         )}
         <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
-          {/* Main column */}
-          <div>
+          {/* Main column — on mobile it comes AFTER the apply sidebar (order-2) */}
+          <div className="order-2 min-w-0 lg:order-1">
             {/* Quick details strip */}
             <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
@@ -483,7 +483,7 @@ export default async function EventDetailPage({
           </div>
 
           {/* Sidebar */}
-          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <aside className="order-1 space-y-4 lg:order-2 lg:sticky lg:top-24 lg:self-start">
             <CapacityWidget snap={capacity} labels={capacityLabels} />
             <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-sm)]">
               <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{t("price")}</div>

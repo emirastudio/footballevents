@@ -109,6 +109,17 @@ enum AdStatus {
   REJECTED
 }
 
+enum ArticleCategory {
+  WC2026
+  GENERAL
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  REJECTED
+}
+
 enum PaymentStatus {
   PENDING
   SUCCEEDED
@@ -891,4 +902,61 @@ model Ticket {
   createdAt DateTime  @default(now())
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// ─────────────────────────────────────────────────────────────
+// NEWS — AI-rewritten daily ingest (WC2026 + general football)
+// One Article = one SEO page; ArticleTranslation per locale (EN
+// generated at create-time, RU/DE/ES generated on-demand on first
+// non-EN page hit).  IngestedSource tracks the upstream feed item
+// for dedup + provenance.
+// ─────────────────────────────────────────────────────────────
+
+model Article {
+  id          String          @id @default(cuid())
+  slug        String          @unique // EN-normalized; same URL across all locales
+  category    ArticleCategory
+  status      ArticleStatus   @default(DRAFT)
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  tags        String[]        @default([]) // ["Messi","Argentina","qualifiers"]
+
+  sourceId String?         @unique
+  source   IngestedSource? @relation(fields: [sourceId], references: [id])
+
+  translations ArticleTranslation[]
+
+  @@index([category, status, publishedAt])
+}
+
+model ArticleTranslation {
+  id              String   @id @default(cuid())
+  articleId       String
+  locale          Locale
+  title           String
+  metaDescription String   @db.Text
+  lead            String   @db.Text
+  body            String   @db.Text // markdown
+  generatedByAi   Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, locale])
+  @@index([locale])
+}
+
+model IngestedSource {
+  id         String   @id @default(cuid())
+  externalId String   @unique // URL or RSS guid — uniqueness guard
+  url        String
+  publisher  String // "fifa.com" | "newsapi:bbc-sport"
+  fetchedAt  DateTime @default(now())
+  titleHash  String // sha256(normalized title) for fast dedup
+
+  article Article?
+
+  @@index([titleHash])
+  @@index([fetchedAt])
 }

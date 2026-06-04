@@ -5,13 +5,14 @@ export const runtime = "nodejs";
 export const contentType = "image/png";
 export const size = { width: 1200, height: 630 };
 
-export default async function Image({ params }: { params: { locale: string; slug: string } }) {
+export default async function Image({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = await params;
   const ev = await db.event.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     include: { translations: true, organizer: true },
   });
-  const en = ev?.translations.find((t) => t.locale === params.locale) ?? ev?.translations.find((t) => t.locale === "en");
-  const title = en?.title ?? params.slug;
+  const en = ev?.translations.find((t) => t.locale === locale) ?? ev?.translations.find((t) => t.locale === "en");
+  const title = en?.title ?? slug;
   const subtitle = en?.shortDescription ?? "";
   const organizer = ev?.organizer.name ?? "";
   const cover = ev?.coverUrl;

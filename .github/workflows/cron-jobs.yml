@@ -21,6 +21,8 @@ on:
     - cron: "0 9 * * *"
     # Daily 10:00 UTC: clear stale boosts, downgrade expired subscriptions, send 7-day expiry warnings
     - cron: "0 10 * * *"
+    # Daily 06:00 UTC: ingest WC2026 + general football news (RSS+NewsAPI → AI rewrite → publish/draft)
+    - cron: "0 6 * * *"
   workflow_dispatch: # manual trigger from the Actions tab
 
 jobs:
@@ -63,3 +65,15 @@ jobs:
           curl -fsS -X POST \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "${{ secrets.SITE_URL }}/api/cron/expire-boosts"
+
+  ingest-news:
+    if: github.event.schedule == '0 6 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/ingest-news
+        run: |
+          # Pipeline can take several minutes (multiple OpenAI calls). Give it
+          # up to 6 minutes; on the server side maxDuration caps at 5.
+          curl -fsS --max-time 360 -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/ingest-news"
