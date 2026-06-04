@@ -1014,6 +1014,7 @@
       "viewVenue": "К стадиону",
       "applyNow": "Подать заявку",
       "registerExternal": "Зарегистрироваться",
+      "expandCover": "Развернуть обложку",
       "joinWaitlist": "Встать в лист ожидания",
       "capacity": {
         "joined": "{count} записались",

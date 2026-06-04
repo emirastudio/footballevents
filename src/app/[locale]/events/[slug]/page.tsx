@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { CoverExpand } from "@/components/site/CoverExpand";
 import { Link } from "@/i18n/navigation";
 import { getCountry } from "@/lib/mock-data";
 import {
@@ -123,22 +124,23 @@ export default async function EventDetailPage({
 
   return (
     <>
-      {/* Hero with cover */}
+      {/* Cover — taller, image stays visible; full view via the expand button */}
       <section className="relative">
         <div
-          className="relative h-[44vh] min-h-[360px] w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${event.coverUrl})` }}
+          className="relative h-[58vh] min-h-[460px] w-full bg-cover bg-center bg-[var(--color-navy-900)]"
+          style={event.coverUrl ? { backgroundImage: `url(${event.coverUrl})` } : undefined}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
-          <Container className="relative flex h-full flex-col justify-end pb-8">
-            <nav aria-label="Breadcrumb" className="mb-3 flex items-center gap-1 text-xs text-white/80">
+          {/* light top gradient only, so the poster stays readable */}
+          <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/55 to-transparent" />
+          <Container className="relative pt-5">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-white/85 drop-shadow">
               <Link href="/" className="hover:text-white">Home</Link>
               <ChevronRight className="h-3 w-3" />
               <Link href="/events" className="hover:text-white">{tNav("events")}</Link>
               <ChevronRight className="h-3 w-3" />
               <span className="line-clamp-1 text-white">{event.title}</span>
             </nav>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               {event.isPremium && (
                 <Badge variant="premium" className="bg-[var(--color-premium)] text-white border-transparent">
                   <Star className="h-3 w-3 fill-current" /> {tCommon("premium")}
@@ -153,24 +155,35 @@ export default async function EventDetailPage({
                 <MapPin className="h-3 w-3" /> {country?.flag} {event.city}
               </Badge>
             </div>
-            <div className="mt-3 flex items-end gap-4">
-              {event.logoUrl && (
-                <div
-                  className="hidden h-20 w-20 shrink-0 rounded-[var(--radius-lg)] border-4 border-white/90 bg-white bg-cover bg-center shadow-[var(--shadow-md)] sm:block sm:h-24 sm:w-24"
-                  style={{ backgroundImage: `url(${event.logoUrl})` }}
-                  aria-hidden
-                />
-              )}
-              <div className="min-w-0">
-                <h1 className="max-w-3xl text-balance font-[family-name:var(--font-manrope)] text-3xl font-bold text-white drop-shadow-md sm:text-5xl">
-                  {event.title}
-                </h1>
-                <p className="mt-2 max-w-2xl text-sm text-white/85 sm:text-base">{event.shortDescription}</p>
-              </div>
-            </div>
           </Container>
+          {event.coverUrl && (
+            <div className="absolute bottom-16 right-4 z-10 sm:bottom-4">
+              <CoverExpand src={event.coverUrl} label={t("expandCover")} />
+            </div>
+          )}
         </div>
       </section>
+
+      {/* Title card on white — readable name + logo + short description */}
+      <Container className="relative z-10 -mt-12">
+        <div className="flex items-start gap-4 rounded-[var(--radius-xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-[var(--shadow-md)] sm:p-6">
+          {event.logoUrl && (
+            <div
+              className="hidden h-20 w-20 shrink-0 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-white bg-contain bg-center bg-no-repeat shadow-[var(--shadow-xs)] sm:block sm:h-24 sm:w-24"
+              style={{ backgroundImage: `url(${event.logoUrl})` }}
+              aria-hidden
+            />
+          )}
+          <div className="min-w-0">
+            <h1 className="text-balance font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-4xl">
+              {event.title}
+            </h1>
+            {event.shortDescription && (
+              <p className="mt-2 text-sm text-[var(--color-muted-strong)] sm:text-base">{event.shortDescription}</p>
+            )}
+          </div>
+        </div>
+      </Container>
 
       <Container className="py-10">
         <script

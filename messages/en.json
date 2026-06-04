@@ -1014,6 +1014,7 @@
       "viewVenue": "View venue",
       "applyNow": "Apply now",
       "registerExternal": "Register",
+      "expandCover": "View full cover",
       "joinWaitlist": "Join waitlist",
       "capacity": {
         "joined": "{count} joined",
