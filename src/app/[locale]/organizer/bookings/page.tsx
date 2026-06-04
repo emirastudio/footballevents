@@ -5,11 +5,14 @@ import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { respondBookingAction } from "@/app/actions/booking";
 import { parseForm, localizeFields, isDisplayField, type FormField } from "@/lib/forms/types";
-import { Check, X } from "lucide-react";
+import { Check, X, ChevronRight } from "lucide-react";
 
 const YESNO: Record<string, { yes: string; no: string }> = {
   en: { yes: "Yes", no: "No" }, ru: { yes: "Да", no: "Нет" },
   de: { yes: "Ja", no: "Nein" }, es: { yes: "Sí", no: "No" },
+};
+const DETAILS_LABEL: Record<string, string> = {
+  en: "View details", ru: "Раскрыть детали", de: "Details anzeigen", es: "Ver detalles",
 };
 
 const STATUSES = ["ALL", "NEW", "ACCEPTED", "DECLINED"] as const;
@@ -89,19 +92,25 @@ export default async function BookingsPage({
                     <div className="mt-1 text-xs text-[var(--color-muted)]">
                       <span className="font-semibold text-[var(--color-foreground)]">{en?.title ?? b.event.slug}</span> · {b.createdAt.toISOString().slice(0, 10)}
                     </div>
-                    <dl className="mt-3 grid gap-1 text-xs sm:grid-cols-3">
-                      <Field label="Email" value={b.contactEmail} />
-                      {b.contactPhone && <Field label="Phone" value={b.contactPhone} />}
-                      {b.teamName && <Field label="Team" value={b.teamName} />}
-                      {b.participantAge && <Field label="Age" value={String(b.participantAge)} />}
-                      {b.partySize > 1 && <Field label="Party" value={String(b.partySize)} />}
-                    </dl>
-                    <CustomAnswers registrationForm={b.event.registrationForm} answers={b.customFields} locale={locale} />
-                    {b.comment && (
-                      <p className="mt-3 rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] p-3 text-sm text-[var(--color-muted-strong)]">
-                        {b.comment}
-                      </p>
-                    )}
+                    <details className="group mt-3">
+                      <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-xs font-semibold text-[var(--color-pitch-700)] hover:underline [&::-webkit-details-marker]:hidden">
+                        <ChevronRight className="h-3.5 w-3.5 transition-transform group-open:rotate-90" />
+                        {DETAILS_LABEL[locale] ?? DETAILS_LABEL.en}
+                      </summary>
+                      <dl className="mt-3 grid gap-1 text-xs sm:grid-cols-3">
+                        <Field label="Email" value={b.contactEmail} />
+                        {b.contactPhone && <Field label="Phone" value={b.contactPhone} />}
+                        {b.teamName && <Field label="Team" value={b.teamName} />}
+                        {b.participantAge && <Field label="Age" value={String(b.participantAge)} />}
+                        {b.partySize > 1 && <Field label="Party" value={String(b.partySize)} />}
+                      </dl>
+                      <CustomAnswers registrationForm={b.event.registrationForm} answers={b.customFields} locale={locale} />
+                      {b.comment && (
+                        <p className="mt-3 rounded-[var(--radius-md)] bg-[var(--color-bg-muted)] p-3 text-sm text-[var(--color-muted-strong)]">
+                          {b.comment}
+                        </p>
+                      )}
+                    </details>
                     {b.organizerNote && (
                       <p className="mt-3 rounded-[var(--radius-md)] border-l-4 border-[var(--color-pitch-400)] bg-[var(--color-pitch-50)] p-3 text-sm text-[var(--color-foreground)]">
                         <strong className="text-xs uppercase tracking-wider text-[var(--color-pitch-700)]">Your reply:</strong>{" "}
