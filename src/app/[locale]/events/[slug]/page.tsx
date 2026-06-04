@@ -49,7 +49,6 @@ export async function generateMetadata({
   const desc = stripHtml(event.description || event.shortDescription || "")
     || [event.city, country?.name, event.startDate ? new Date(event.startDate).toISOString().slice(0, 10) : ""].filter(Boolean).join(" · ");
   const url = `${SITE_URL}/${locale}/events/${event.slug}`;
-  const image = event.coverUrl || event.logoUrl || `${SITE_URL}/og-default.jpg`;
   const title = `${event.title} | ${event.city || country?.name || ""}`.replace(/ \| $/, "");
   return {
     title,
@@ -60,18 +59,19 @@ export async function generateMetadata({
         locales.map((l) => [l, `${SITE_URL}/${l}/events/${event.slug}`])
       ),
     },
+    // og:image / twitter:image come from opengraph-image.tsx (a generated
+    // 1200×630 card built from the cover — reliably renders in link previews,
+    // unlike the raw multi-MB cover which scrapers like Telegram skip).
     openGraph: {
       type: "website",
       url,
       title,
       description: desc,
-      images: [{ url: image, width: 1200, height: 630, alt: event.title }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description: desc,
-      images: [image],
     },
   };
 }
