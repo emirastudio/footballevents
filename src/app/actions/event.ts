@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { getOrgForAction } from "@/lib/organizer-access";
+import { parsePartners } from "@/lib/partners";
 import { tierAllows, ACTIVE_EVENTS_LIMIT, type Tier } from "@/lib/tier";
 import { slugify } from "@/lib/slug";
 
@@ -370,6 +371,7 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
       notIncluded: notIncludedClean,
       program: parseProgramme(d.programme) as never,
       faq: faqParsed as never,
+      partners: parsePartners(formData.get("partners")) as never,
       translations: {
         create: buildEventTranslations(d),
       },
@@ -535,6 +537,7 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
       notIncluded: notIncludedClean,
       program: parseProgramme(d.programme) as never,
       faq: faqParsed as never,
+      partners: parsePartners(formData.get("partners")) as never,
     },
   });
 
@@ -703,6 +706,7 @@ async function _duplicateEventActionInner(formData: FormData) {
       galleryUrls: source.galleryUrls,
       included: source.included,
       notIncluded: source.notIncluded,
+      partners: source.partners ?? undefined,
       program: source.program ?? undefined,
       faq: source.faq ?? undefined,
       // Stats reset — this is a new event

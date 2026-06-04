@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
+import { useLocale } from "next-intl";
 import { createEventAction, updateEventAction, type EventFormState } from "@/app/actions/event";
 import { Button } from "@/components/ui/Button";
 import { Combobox } from "@/components/ui/Combobox";
@@ -11,6 +12,7 @@ import { RichEditor } from "@/components/ui/RichEditor";
 import { Lock, Plus, Trash2 } from "lucide-react";
 import type { Tier } from "@/lib/tier";
 import { tierAllows } from "@/lib/tier";
+import { parsePartners, type Partner } from "@/lib/partners";
 
 type Category = { id: string; slug: string; name: string };
 type Country = { code: string; name: string; flag: string };
@@ -106,6 +108,7 @@ export type EventDefaults = {
   notIncluded?: string;
   programme?: string;
   faq?: string;
+  partners?: string;
   slug?: string;
   secondLocale?: "" | "ru" | "de" | "es";
   titleSecond?: string;
@@ -339,6 +342,9 @@ export function EventForm({
         <ImageUpload name="coverUrl" kind="event-cover" label={labels.cover} defaultUrl={defaults?.coverUrl} />
         <p className="text-xs text-[var(--color-muted)]">{labels.galleryHint}</p>
       </Section>
+
+      {/* Co-organizers & partners (display on the public event page) */}
+      <FormPartnersEditor name="partners" defaultValue={defaults?.partners} />
 
       {/* Video — Premium */}
       <Section title={labels.sections.video} hint={labels.sections.videoHint}>
@@ -905,6 +911,107 @@ function SlugField({ name, defaultValue, error }: { name: string; defaultValue: 
       <p className="mt-1.5 text-xs text-[var(--color-muted)]">
         Preview: <a href={`${SITE_URL}/events/${val}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--color-pitch-700)]">{SITE_URL}/events/{val}</a>
       </p>
+    </div>
+  );
+}
+
+// ── Co-organizers & partners editor ──────────────────────────────
+const PARTNER_L: Record<string, {
+  title: string; hint: string; coorganizer: string; partner: string;
+  namePh: string; urlPh: string; logo: string; logoBusy: string; addCo: string; addPartner: string; remove: string;
+}> = {
+  en: { title: "Co-organizers & partners", hint: "Show partner / co-organizer logos on the public event page.",
+    coorganizer: "Co-organizer", partner: "Partner", namePh: "Name", urlPh: "Website (optional)",
+    logo: "Upload logo", logoBusy: "Uploading…", addCo: "Add co-organizer", addPartner: "Add partner", remove: "Remove" },
+  ru: { title: "Со-организаторы и партнёры", hint: "Покажите логотипы партнёров / со-организаторов на странице турнира.",
+    coorganizer: "Со-организатор", partner: "Партнёр", namePh: "Название", urlPh: "Сайт (необязательно)",
+    logo: "Загрузить лого", logoBusy: "Загрузка…", addCo: "Добавить со-организатора", addPartner: "Добавить партнёра", remove: "Удалить" },
+  de: { title: "Co-Organisatoren & Partner", hint: "Zeige Partner-/Co-Organisator-Logos auf der Event-Seite.",
+    coorganizer: "Co-Organisator", partner: "Partner", namePh: "Name", urlPh: "Website (optional)",
+    logo: "Logo hochladen", logoBusy: "Lädt…", addCo: "Co-Organisator hinzufügen", addPartner: "Partner hinzufügen", remove: "Entfernen" },
+  es: { title: "Coorganizadores y socios", hint: "Muestra logos de socios / coorganizadores en la página del evento.",
+    coorganizer: "Coorganizador", partner: "Socio", namePh: "Nombre", urlPh: "Sitio web (opcional)",
+    logo: "Subir logo", logoBusy: "Subiendo…", addCo: "Añadir coorganizador", addPartner: "Añadir socio", remove: "Quitar" },
+};
+
+function FormPartnersEditor({ name, defaultValue }: { name: string; defaultValue?: string }) {
+  const t = PARTNER_L[useLocale()] ?? PARTNER_L.en;
+  const [items, setItems] = useState<Partner[]>(() => parsePartners(defaultValue));
+  const update = (i: number, patch: Partial<Partner>) => setItems((p) => p.map((x, idx) => (idx === i ? { ...x, ...patch } : x)));
+  const add = (kind: Partner["kind"]) => setItems((p) => [...p, { kind, name: "" }]);
+  const remove = (i: number) => setItems((p) => p.filter((_, idx) => idx !== i));
+
+  const inputCls = "min-w-0 flex-1 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)]";
+
+  return (
+    <Section title={t.title} hint={t.hint}>
+      <input type="hidden" name={name} value={JSON.stringify(items.filter((x) => x.name.trim()))} />
+      {items.length > 0 && (
+        <div className="space-y-3">
+          {items.map((it, i) => (
+            <div key={i} className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  value={it.kind}
+                  onChange={(e) => update(i, { kind: e.target.value as Partner["kind"] })}
+                  className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-2 py-2 text-sm"
+                >
+                  <option value="coorganizer">{t.coorganizer}</option>
+                  <option value="partner">{t.partner}</option>
+                </select>
+                <input value={it.name} onChange={(e) => update(i, { name: e.target.value })} placeholder={t.namePh} className={inputCls} />
+                <button type="button" onClick={() => remove(i)} className="rounded p-1.5 text-red-500 hover:bg-red-50" aria-label={t.remove}><Trash2 className="h-4 w-4" /></button>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <input value={it.url ?? ""} onChange={(e) => update(i, { url: e.target.value })} placeholder={t.urlPh} className={inputCls} />
+                <PartnerLogoUpload url={it.logoUrl} onChange={(u) => update(i, { logoUrl: u })} label={t.logo} busyLabel={t.logoBusy} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button type="button" onClick={() => add("coorganizer")} className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-500)]"><Plus className="h-4 w-4" /> {t.addCo}</button>
+        <button type="button" onClick={() => add("partner")} className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-500)]"><Plus className="h-4 w-4" /> {t.addPartner}</button>
+      </div>
+    </Section>
+  );
+}
+
+function PartnerLogoUpload({ url, onChange, label, busyLabel }: { url?: string; onChange: (u: string) => void; label: string; busyLabel: string }) {
+  const ref = useRef<HTMLInputElement | null>(null);
+  const [busy, setBusy] = useState(false);
+  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) return;
+    setBusy(true);
+    try {
+      const pres = await fetch("/api/upload/presign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "event-logo", contentType: file.type, size: file.size }),
+      });
+      if (!pres.ok) throw new Error("presign");
+      const { uploadUrl, publicUrl } = await pres.json();
+      const put = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      if (!put.ok) throw new Error("put");
+      onChange(publicUrl);
+    } catch {
+      /* non-fatal */
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="flex items-center gap-2" data-pending-upload={busy ? "1" : "0"}>
+      {url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={url} alt="" className="h-10 w-10 rounded-[var(--radius-md)] border border-[var(--color-border)] object-contain bg-white" />
+      )}
+      <button type="button" onClick={() => ref.current?.click()} className="rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-xs font-semibold text-[var(--color-foreground)] hover:border-[var(--color-pitch-500)]">
+        {busy ? busyLabel : label}
+      </button>
+      <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp" onChange={onFile} className="sr-only" />
     </div>
   );
 }

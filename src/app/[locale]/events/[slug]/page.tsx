@@ -19,6 +19,7 @@ import { FollowOrganizerButton, SaveEventButton } from "@/components/site/Follow
 import { VerifiedBadge } from "@/components/site/VerifiedBadge";
 import { tierAllows } from "@/lib/tier";
 import { getEventCapacity } from "@/lib/event-capacity";
+import { parsePartners, type Partner } from "@/lib/partners";
 import { RichText } from "@/components/ui/RichText";
 import { MerchPromoBanner } from "@/components/site/MerchPromoBanner";
 import { CapacityWidget } from "@/components/cards/CapacityWidget";
@@ -98,9 +99,12 @@ export default async function EventDetailPage({
 
   const eventRow = await db.event.findUnique({
     where: { id: event.id },
-    select: { maxParticipants: true },
+    select: { maxParticipants: true, partners: true },
   });
   const capacity = await getEventCapacity(event.id, eventRow?.maxParticipants ?? null);
+  const partners = parsePartners(eventRow?.partners);
+  const coorganizers = partners.filter((p) => p.kind === "coorganizer");
+  const partnersOnly = partners.filter((p) => p.kind === "partner");
 
   // Fire-and-forget: bump the public view counter for the organizer's analytics.
   // Atomic Prisma increment, no awaiting; a failed bump never blocks the page.
@@ -463,6 +467,10 @@ export default async function EventDetailPage({
             </section>
 
             {/* Fan merch promo (Goalbazza) */}
+            {partners.length > 0 && (
+              <PartnersSection coorganizers={coorganizers} partners={partnersOnly} locale={locale} />
+            )}
+
             <div className="mt-12">
               <MerchPromoBanner />
             </div>
@@ -585,5 +593,57 @@ export default async function EventDetailPage({
         </div>
       </Container>
     </>
+  );
+}
+
+const PARTNER_HEADINGS: Record<string, { co: string; partners: string }> = {
+  en: { co: "Co-organizers", partners: "Partners" },
+  ru: { co: "Со-организаторы", partners: "Партнёры" },
+  de: { co: "Co-Organisatoren", partners: "Partner" },
+  es: { co: "Coorganizadores", partners: "Socios" },
+};
+
+function PartnersSection({ coorganizers, partners, locale }: { coorganizers: Partner[]; partners: Partner[]; locale: string }) {
+  const h = PARTNER_HEADINGS[locale] ?? PARTNER_HEADINGS.en;
+  return (
+    <section className="mt-12 space-y-8">
+      {coorganizers.length > 0 && <PartnerGroup title={h.co} items={coorganizers} />}
+      {partners.length > 0 && <PartnerGroup title={h.partners} items={partners} />}
+    </section>
+  );
+}
+
+function PartnerGroup({ title, items }: { title: string; items: Partner[] }) {
+  return (
+    <div>
+      <h2 className="mb-4 font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">{title}</h2>
+      <div className="flex flex-wrap gap-3">
+        {items.map((p, i) => {
+          const inner = (
+            <>
+              {p.logoUrl ? (
+                <div
+                  className="h-12 w-12 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-white bg-contain bg-center bg-no-repeat"
+                  style={{ backgroundImage: `url(${p.logoUrl})` }}
+                />
+              ) : (
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-pitch-50)] text-sm font-bold text-[var(--color-pitch-700)]">
+                  {p.name.slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <span className="text-sm font-semibold text-[var(--color-foreground)]">{p.name}</span>
+            </>
+          );
+          const cls = "flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3";
+          return p.url ? (
+            <a key={i} href={p.url} target="_blank" rel="noopener noreferrer nofollow" className={`${cls} transition hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-sm)]`}>
+              {inner}
+            </a>
+          ) : (
+            <div key={i} className={cls}>{inner}</div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

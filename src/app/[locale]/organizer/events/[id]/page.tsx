@@ -86,6 +86,7 @@ export default async function EditEventPage({
     notIncluded: ev.notIncluded.join("\n"),
     programme: programmeText,
     faq: faqText,
+    partners: ev.partners ? JSON.stringify(ev.partners) : "",
     slug: ev.slug,
     secondLocale: defaultSecondLocale,
     titleSecond: second?.title ?? "",

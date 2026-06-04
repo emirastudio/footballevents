@@ -556,6 +556,9 @@ model Event {
   includedI18n    Json? // { en: string[], ru?: string[], … }
   notIncludedI18n Json? // { en: string[], ru?: string[], … }
   faq             Json? // { en: Qa[], ru?: Qa[], … } where Qa = { q, a }
+  // Co-organizers & partners shown on the public event page (display only):
+  // [{ kind: "coorganizer" | "partner", name, logoUrl?, url? }]
+  partners        Json?
 
   // Booking via platform
   acceptsBookings Boolean @default(true)
