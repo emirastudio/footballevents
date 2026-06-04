@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { respondBookingAction } from "@/app/actions/booking";
-import { parseForm, localizeFields, isDisplayField, type FormField } from "@/lib/forms/types";
+import { parseForm, localizeFields, isDisplayField, fieldLabel, type FormField } from "@/lib/forms/types";
 import { Check, X, ChevronRight } from "lucide-react";
 
 const YESNO: Record<string, { yes: string; no: string }> = {
@@ -204,7 +204,7 @@ function CustomAnswers({
         const v = data[f.id];
         return (
           <div key={f.id}>
-            <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{f.label}</dt>
+            <dt className="text-[10px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{fieldLabel(f.label)}</dt>
             <dd className="break-words text-[var(--color-foreground)]">
               {isUrl(v) ? (
                 <a href={String(v)} target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-pitch-700)] underline">

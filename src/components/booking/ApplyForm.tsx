@@ -7,7 +7,7 @@ import { applyEventAction, type BookingFormState } from "@/app/actions/booking";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle2 } from "lucide-react";
-import type { FormField } from "@/lib/forms/types";
+import { fieldLabel, type FormField } from "@/lib/forms/types";
 import { COUNTRY_OPTIONS } from "@/lib/forms/country-options";
 
 // Small localised UI strings for built-in field widgets (not organizer-authored).
@@ -126,7 +126,7 @@ function FieldShell({ f, children }: { f: FormField; children: React.ReactNode }
   return (
     <label className="block">
       <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-        {f.label}{f.required ? " *" : ""}
+        {fieldLabel(f.label)}{f.required ? " *" : ""}
       </span>
       {children}
       {f.help && <span className="mt-1 block text-xs text-[var(--color-muted)]">{f.help}</span>}

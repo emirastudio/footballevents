@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { saveRegistrationFormAction, type FormBuilderState } from "@/app/actions/registration-form";
 import {
-  FIELD_TYPE_LABELS, hasOptions, isDisplayField,
+  FIELD_TYPE_LABELS, hasOptions, isDisplayField, fieldLabel,
   type FieldType, type FormField, type SizeChart,
 } from "@/lib/forms/types";
 import {
@@ -53,7 +53,11 @@ export function FormBuilder({
   typeLabels: Record<FieldType, string>;
   labels: { title: string; subtitle: string; addField: string; fieldLabel: string; required: string; help: string; options: string; optionsHint: string; sizeChart: string; sizeChartHint: string; rulesText: string; save: string; saving: string; saved: string; empty: string };
 }) {
-  const [fields, setFields] = useState<FormField[]>(initialFields);
+  // Heal any field labels that were saved as a raw i18n key (before the type's
+  // translation existed) so the editor shows — and re-saves — a clean label.
+  const [fields, setFields] = useState<FormField[]>(
+    () => initialFields.map((f) => ({ ...f, label: fieldLabel(f.label, typeLabels) })),
+  );
   const [state, action] = useActionState<FormBuilderState, FormData>(saveRegistrationFormAction, null);
 
   const addType = (t: FieldType) =>

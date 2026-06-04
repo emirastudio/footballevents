@@ -81,6 +81,16 @@ export const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   info: "Info text",
 };
 
+/** Some older saved forms stored the raw i18n key ("formBuilder.types.yesno") as
+ *  the field label because the translation was missing when the field was added.
+ *  Fall back to a readable type label so a raw key is never shown to users. */
+export function fieldLabel(label: string, typeLabels?: Partial<Record<FieldType, string>>): string {
+  const m = /^formBuilder\.types\.([a-z]+)$/.exec(label ?? "");
+  if (!m) return label;
+  const t = m[1] as FieldType;
+  return typeLabels?.[t] ?? FIELD_TYPE_LABELS[t] ?? label;
+}
+
 export function isDisplayField(t: FieldType): boolean {
   return DISPLAY_TYPES.includes(t);
 }
