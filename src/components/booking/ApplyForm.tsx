@@ -29,7 +29,7 @@ type Labels = {
   contactEmail: string; contactPhone: string;
   comment: string; commentHint: string;
   submit: string; submitting: string;
-  successTitle: string; successBody: string; viewMine: string;
+  successTitle: string; successBody: string; viewMine: string; another: string;
 };
 
 export function ApplyForm({
@@ -56,9 +56,15 @@ export function ApplyForm({
         </div>
         <h2 className="font-[family-name:var(--font-manrope)] text-xl font-bold text-[var(--color-foreground)]">{labels.successTitle}</h2>
         <p className="mt-2 text-sm text-[var(--color-muted-strong)]">{labels.successBody}</p>
-        <Button asChild variant="accent" size="lg" className="mt-6">
-          <Link href="/me/applications">{labels.viewMine}</Link>
-        </Button>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          {/* Reload the page for a fresh, empty form — e.g. to register a 2nd child. */}
+          <Button variant="accent" size="lg" onClick={() => window.location.reload()}>
+            {labels.another}
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/me/applications">{labels.viewMine}</Link>
+          </Button>
+        </div>
       </div>
     );
   }

@@ -77,9 +77,8 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
   // Prevent the organizer from applying to their own event
   if (event.organizer.userId === session.user.id) return { error: "You can't apply to your own event" };
 
-  // Idempotent: if a booking already exists for (event, user) — return its existing state.
-  const existing = await db.booking.findFirst({ where: { eventId: d.eventId, userId: session.user.id } });
-  if (existing) return { ok: true };
+  // Multiple applications per account are allowed on purpose — e.g. a parent
+  // registering several children. Each submission is its own booking.
 
   // Capacity check: if maxParticipants is set and the new partySize would
   // overflow it, route to WAITLIST. Organizers can promote from waitlist
@@ -252,9 +251,7 @@ export async function submitPublicRegistrationAction(_prev: BookingFormState, fo
     select: { id: true },
   });
 
-  const existing = await db.booking.findFirst({ where: { eventId: d.eventId, userId: guest.id } });
-  if (existing) return { ok: true };
-
+  // Multiple registrations from the same email are allowed (e.g. several children).
   await db.booking.create({
     data: {
       eventId: d.eventId,
