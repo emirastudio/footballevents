@@ -65,7 +65,7 @@
   "formBuilder": {
     "back": "Back to event",
     "title": "Registration form",
-    "types": { "text": "Short text", "textarea": "Paragraph", "email": "Email", "phone": "Phone", "number": "Number", "date": "Date", "select": "Dropdown", "multiselect": "Multi-select", "checkboxes": "Checkboxes", "radio": "Single choice", "consent": "Consent checkbox", "rules": "Event rules (+ agree)", "size": "Size (with chart)", "country": "Country", "heading": "Section heading", "info": "Info text", "file": "File upload" },
+    "types": { "text": "Short text", "textarea": "Paragraph", "email": "Email", "phone": "Phone", "number": "Number", "date": "Date", "select": "Dropdown", "multiselect": "Multi-select", "checkboxes": "Checkboxes", "radio": "Single choice", "consent": "Consent checkbox", "rules": "Event rules (+ agree)", "size": "Size (with chart)", "country": "Country", "countrycity": "Country & city", "yesno": "Yes / No", "heading": "Section heading", "info": "Info text", "file": "File upload" },
     "subtitle": "Build the form applicants fill in. Reorder with the arrows — answers land in your applications table.",
     "addField": "Add field",
     "fieldLabel": "Label",
