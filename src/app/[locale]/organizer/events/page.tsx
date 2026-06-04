@@ -107,7 +107,12 @@ export default async function OrganizerEventsListPage({
                     <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-[var(--color-muted)]">
                       <span>{e.startDate?.toISOString().slice(0, 10) ?? "—"} → {e.endDate?.toISOString().slice(0, 10) ?? "—"}</span>
                       {e._count.divisions > 0 && <span>{e._count.divisions} divisions</span>}
-                      <span>{e._count.bookings} {tCommon("results")}</span>
+                      <Link
+                        href={`/organizer/bookings?event=${e.slug}`}
+                        className="font-semibold text-[var(--color-pitch-700)] hover:underline"
+                      >
+                        {e._count.bookings} {tCommon("results")} →
+                      </Link>
                     </div>
                   </div>
                   <div className="flex shrink-0 gap-2">

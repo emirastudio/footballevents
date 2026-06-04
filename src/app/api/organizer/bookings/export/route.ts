@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { parseForm } from "@/lib/forms/types";
+import { parseForm, fieldLabel } from "@/lib/forms/types";
 
 function csvCell(v: unknown): string {
   let s: string;
@@ -37,7 +37,7 @@ export async function GET(req: Request) {
   );
 
   const baseCols = ["Date", "Status", "Name", "Team", "Party size", "Email", "Phone", "Comment"];
-  const header = [...baseCols, ...customFields.map((f) => f.label)];
+  const header = [...baseCols, ...customFields.map((f) => fieldLabel(f.label))];
 
   const rows = bookings.map((b) => {
     const cf = (b.customFields ?? {}) as Record<string, unknown>;

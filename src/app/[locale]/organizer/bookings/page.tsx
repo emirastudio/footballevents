@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { respondBookingAction } from "@/app/actions/booking";
 import { parseForm, localizeFields, isDisplayField, fieldLabel, type FormField } from "@/lib/forms/types";
-import { Check, X, ChevronRight } from "lucide-react";
+import { Check, X, ChevronRight, Download } from "lucide-react";
 
 const YESNO: Record<string, { yes: string; no: string }> = {
   en: { yes: "Yes", no: "No" }, ru: { yes: "Да", no: "Нет" },
@@ -17,12 +17,19 @@ const DETAILS_LABEL: Record<string, string> = {
 
 const STATUSES = ["ALL", "NEW", "ACCEPTED", "DECLINED"] as const;
 
+const UI: Record<string, { all: string; export: string }> = {
+  en: { all: "All events", export: "Export CSV" },
+  ru: { all: "Все события", export: "Экспорт CSV" },
+  de: { all: "Alle Events", export: "CSV-Export" },
+  es: { all: "Todos los eventos", export: "Exportar CSV" },
+};
+
 export default async function BookingsPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; event?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -34,12 +41,26 @@ export default async function BookingsPage({
 
   const t = await getTranslations("bookings");
   const tOrg = await getTranslations("organizer");
+  const ui = UI[locale] ?? UI.en;
 
   const activeStatus = (sp.status?.toUpperCase() ?? "ALL") as (typeof STATUSES)[number];
+
+  // The organizer's events drive the per-event filter + CSV export button.
+  const events = await db.event.findMany({
+    where: { organizerId: organizer.id },
+    select: { id: true, slug: true, translations: { select: { locale: true, title: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+  const eventTitle = (e: (typeof events)[number]) =>
+    e.translations.find((tr) => tr.locale === locale)?.title ??
+    e.translations.find((tr) => tr.locale === "en")?.title ??
+    e.slug;
+  const activeEvent = sp.event ? events.find((e) => e.slug === sp.event) ?? null : null;
 
   const bookings = await db.booking.findMany({
     where: {
       event: { organizerId: organizer.id },
+      ...(activeEvent ? { eventId: activeEvent.id } : {}),
       ...(activeStatus !== "ALL" ? { status: activeStatus as never } : {}),
     },
     include: {
@@ -48,29 +69,60 @@ export default async function BookingsPage({
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
   });
 
+  // Build a URL that keeps current filters except the overridden ones.
+  const hrefWith = (over: { status?: string | null; event?: string | null }) => {
+    const status = over.status === undefined ? (activeStatus === "ALL" ? null : activeStatus.toLowerCase()) : over.status;
+    const event = over.event === undefined ? (activeEvent?.slug ?? null) : over.event;
+    const p = new URLSearchParams();
+    if (status) p.set("status", status);
+    if (event) p.set("event", event);
+    const q = p.toString();
+    return `/organizer/bookings${q ? `?${q}` : ""}`;
+  };
+  const chip = (active: boolean) =>
+    `rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+      active
+        ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]"
+        : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)]"
+    }`;
+
   return (
     <div>
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)]">{tOrg("applications")}</h1>
+        {activeEvent && (
+          <a
+            href={`/api/organizer/bookings/export?eventId=${activeEvent.id}`}
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2 text-xs font-bold text-[var(--color-foreground)] transition hover:border-[var(--color-pitch-300)] hover:text-[var(--color-pitch-700)]"
+          >
+            <Download className="h-3.5 w-3.5" /> {ui.export}
+          </a>
+        )}
       </div>
 
-      <div className="mb-5 flex flex-wrap gap-2">
-        {STATUSES.map((s) => {
-          const isActive = activeStatus === s;
-          return (
-            <Link
-              key={s}
-              href={s === "ALL" ? "/organizer/bookings" : `/organizer/bookings?status=${s.toLowerCase()}`}
-              className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
-                isActive
-                  ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-50)] text-[var(--color-pitch-700)]"
-                  : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-strong)] hover:border-[var(--color-pitch-300)]"
-              }`}
-            >
-              {s === "ALL" ? t("filterAll") : t(`applicantStatus.${s}`)}
+      {/* Per-event filter — shown when the organizer runs more than one event */}
+      {events.length > 1 && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          <Link href={hrefWith({ event: null })} className={chip(!activeEvent)}>{ui.all}</Link>
+          {events.map((e) => (
+            <Link key={e.id} href={hrefWith({ event: e.slug })} className={chip(activeEvent?.id === e.id)}>
+              {eventTitle(e)}
             </Link>
-          );
-        })}
+          ))}
+        </div>
+      )}
+
+      {/* Status filter */}
+      <div className="mb-5 flex flex-wrap gap-2">
+        {STATUSES.map((s) => (
+          <Link
+            key={s}
+            href={hrefWith({ status: s === "ALL" ? null : s.toLowerCase() })}
+            className={`${chip(activeStatus === s)} uppercase tracking-wider`}
+          >
+            {s === "ALL" ? t("filterAll") : t(`applicantStatus.${s}`)}
+          </Link>
+        ))}
       </div>
 
       {bookings.length === 0 ? (
