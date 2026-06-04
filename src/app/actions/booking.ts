@@ -5,8 +5,24 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { newApplicationEmail, bookingResponseEmail } from "@/lib/email";
+import { newApplicationEmail, applicationReceivedEmail, bookingResponseEmail } from "@/lib/email";
+import { tgEventActivity } from "@/lib/telegram";
 import { parseForm, isMultiValue, isDisplayField } from "@/lib/forms/types";
+
+const LOCALES = ["en", "ru", "de", "es"] as const;
+/** Normalise an arbitrary locale hint (e.g. a hidden form field) to a supported one. */
+function asLocale(x: FormDataEntryValue | null | undefined): string {
+  const s = typeof x === "string" ? x : "";
+  return (LOCALES as readonly string[]).includes(s) ? s : "en";
+}
+/** Pick the event title for a locale, falling back to EN then slug. */
+function titleFor(translations: { locale: string; title: string }[], locale: string, slug: string): string {
+  return (
+    translations.find((t) => t.locale === locale)?.title ??
+    translations.find((t) => t.locale === "en")?.title ??
+    slug
+  );
+}
 
 const applySchema = z.object({
   eventId:         z.string().min(1),
@@ -47,7 +63,13 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
   }
   const d = parsed.data;
 
-  const event = await db.event.findUnique({ where: { id: d.eventId }, include: { organizer: true } });
+  const event = await db.event.findUnique({
+    where: { id: d.eventId },
+    include: {
+      organizer: { include: { user: { select: { preferredLocale: true } } } },
+      translations: { select: { locale: true, title: true } },
+    },
+  });
   if (!event) return { error: "Event not found" };
   if (!event.acceptsBookings) return { error: "This event doesn't accept applications via the platform" };
   if (event.status !== "PUBLISHED") return { error: "This event is not published" };
@@ -109,8 +131,11 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
     },
   });
 
-  // Notify organizer (fire-and-forget — graceful no-op if RESEND_API_KEY not set)
-  const en = await db.eventTranslation.findFirst({ where: { eventId: d.eventId, locale: "en" } });
+  // Localised titles: applicant gets their own language, organizer gets theirs.
+  const applicantLocale = asLocale(formData.get("locale"));
+  const organizerLocale = event.organizer.user?.preferredLocale ?? "en";
+  const titleForApplicant = titleFor(event.translations, applicantLocale, event.slug);
+  const titleForOrganizer = titleFor(event.translations, organizerLocale, event.slug);
 
   // Create messaging thread for this booking (best-effort; never blocks the booking).
   try {
@@ -121,7 +146,7 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
         data: {
           eventId: event.id,
           bookingId: booking.id,
-          subject: en?.title ?? event.slug,
+          subject: titleFor(event.translations, "en", event.slug),
           participants: {
             create: [
               { userId: applicantUserId },
@@ -134,15 +159,28 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
   } catch (e) {
     console.error("[booking] thread create failed", e);
   }
+
+  // Notify organizer (in their language) + confirm to applicant (in theirs).
+  // Fire-and-forget — graceful no-op if RESEND_API_KEY not set.
   void newApplicationEmail({
     organizerEmail: event.organizer.email,
     organizerName: event.organizer.name,
-    eventTitle: en?.title ?? event.slug,
+    eventTitle: titleForOrganizer,
     applicantName: d.participantName,
     applicantEmail: d.contactEmail,
     comment: d.comment,
-    eventId: event.id,
+    locale: organizerLocale,
   });
+  void applicationReceivedEmail({
+    applicantEmail: d.contactEmail,
+    applicantName: d.participantName,
+    eventTitle: titleForApplicant,
+    eventSlug: event.slug,
+    organizerName: event.organizer.name,
+    locale: applicantLocale,
+  });
+  // Public marketing signal to the Telegram channels (no personal details).
+  void tgEventActivity({ title: titleFor(event.translations, "en", event.slug), slug: event.slug });
 
   revalidatePath(`/events/${event.slug}`);
   revalidatePath("/me/applications");
@@ -171,7 +209,13 @@ export async function submitPublicRegistrationAction(_prev: BookingFormState, fo
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
   const d = parsed.data;
 
-  const event = await db.event.findUnique({ where: { id: d.eventId }, include: { organizer: true } });
+  const event = await db.event.findUnique({
+    where: { id: d.eventId },
+    include: {
+      organizer: { include: { user: { select: { preferredLocale: true } } } },
+      translations: { select: { locale: true, title: true } },
+    },
+  });
   if (!event) return { error: "Event not found" };
   if (!event.acceptsBookings) return { error: "This event doesn't accept applications" };
   if (event.status !== "PUBLISHED") return { error: "This event is not published" };
@@ -224,16 +268,26 @@ export async function submitPublicRegistrationAction(_prev: BookingFormState, fo
     },
   });
 
-  const en = await db.eventTranslation.findFirst({ where: { eventId: d.eventId, locale: "en" } });
+  const applicantLocale = asLocale(formData.get("locale"));
+  const organizerLocale = event.organizer.user?.preferredLocale ?? "en";
   void newApplicationEmail({
     organizerEmail: event.organizer.email,
     organizerName: event.organizer.name,
-    eventTitle: en?.title ?? event.slug,
+    eventTitle: titleFor(event.translations, organizerLocale, event.slug),
     applicantName: d.participantName,
     applicantEmail: d.contactEmail,
     comment: d.comment,
-    eventId: event.id,
+    locale: organizerLocale,
   });
+  void applicationReceivedEmail({
+    applicantEmail: d.contactEmail,
+    applicantName: d.participantName,
+    eventTitle: titleFor(event.translations, applicantLocale, event.slug),
+    eventSlug: event.slug,
+    organizerName: event.organizer.name,
+    locale: applicantLocale,
+  });
+  void tgEventActivity({ title: titleFor(event.translations, "en", event.slug), slug: event.slug });
   revalidatePath("/organizer/bookings");
   return { ok: true };
 }
@@ -260,7 +314,10 @@ export async function respondBookingAction(formData: FormData) {
 
   const booking = await db.booking.findUnique({
     where: { id: bookingId },
-    include: { event: true },
+    include: {
+      event: { include: { translations: { select: { locale: true, title: true } } } },
+      user: { select: { preferredLocale: true } },
+    },
   });
   if (!booking || booking.event.organizerId !== organizer.id) return;
 
@@ -273,16 +330,17 @@ export async function respondBookingAction(formData: FormData) {
     },
   });
 
-  const en = await db.eventTranslation.findFirst({ where: { eventId: booking.eventId, locale: "en" } });
+  const applicantLocale = booking.user?.preferredLocale ?? "en";
   void bookingResponseEmail({
     applicantEmail: booking.contactEmail,
     applicantName: booking.participantName,
-    eventTitle: en?.title ?? booking.event.slug,
+    eventTitle: titleFor(booking.event.translations, applicantLocale, booking.event.slug),
     eventSlug: booking.event.slug,
     decision,
     organizerName: organizer.name,
     organizerEmail: organizer.email,
     note,
+    locale: applicantLocale,
   });
 
   // Post a system message into the booking's thread (best-effort).

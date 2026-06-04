@@ -23,6 +23,8 @@ on:
     - cron: "0 10 * * *"
     # Daily 06:00 UTC: ingest WC2026 + general football news (RSS+NewsAPI → AI rewrite → publish/draft)
     - cron: "0 6 * * *"
+    # Daily 11:00 UTC: remind organizers about applications unanswered for 3+ days
+    - cron: "0 11 * * *"
   workflow_dispatch: # manual trigger from the Actions tab
 
 jobs:
@@ -77,3 +79,13 @@ jobs:
           curl -fsS --max-time 360 -X POST \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             "${{ secrets.SITE_URL }}/api/cron/ingest-news"
+
+  booking-reminders:
+    if: github.event.schedule == '0 11 * * *' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit /api/cron/booking-reminders
+        run: |
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.SITE_URL }}/api/cron/booking-reminders"

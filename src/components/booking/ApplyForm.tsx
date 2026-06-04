@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useLocale } from "next-intl";
 import { applyEventAction, type BookingFormState } from "@/app/actions/booking";
 import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
@@ -33,6 +34,7 @@ export function ApplyForm({
   fields?: FormField[];
 }) {
   const [state, action] = useActionState<BookingFormState, FormData>(applyEventAction, null);
+  const locale = useLocale();
 
   if (state?.ok) {
     return (
@@ -52,6 +54,7 @@ export function ApplyForm({
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="eventId" value={eventId} />
+      <input type="hidden" name="locale" value={locale} />
       {/* Custom form (built by the organizer) fully replaces the standard fields.
           Name + email come from the signed-in account server-side. */}
       {fields.length > 0 ? (

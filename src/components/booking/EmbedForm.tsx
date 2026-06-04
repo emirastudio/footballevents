@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { useLocale } from "next-intl";
 import { submitPublicRegistrationAction, type BookingFormState } from "@/app/actions/booking";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle2 } from "lucide-react";
@@ -19,6 +20,7 @@ type Labels = {
 
 export function EmbedForm({ eventId, fields, labels }: { eventId: string; fields: FormField[]; labels: Labels }) {
   const [state, action] = useActionState<BookingFormState, FormData>(submitPublicRegistrationAction, null);
+  const locale = useLocale();
 
   if (state?.ok) {
     return (
@@ -35,6 +37,7 @@ export function EmbedForm({ eventId, fields, labels }: { eventId: string; fields
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="eventId" value={eventId} />
+      <input type="hidden" name="locale" value={locale} />
       {/* Honeypot — hidden from humans, bots fill it and get silently dropped. */}
       <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
 

@@ -154,6 +154,24 @@ export function tgEventPublished(opts: {
   ).then(() => {});
 }
 
+/** 🔥 Registration activity — public marketing signal to the channels.
+ *  Deliberately NO personal details (who / what they filled): just a "people are
+ *  signing up for this event" nudge to drive traffic. */
+export function tgEventActivity(opts: {
+  title: string;
+  slug: string;
+  city?: string | null;
+}) {
+  const url = `${SITE()}/en/events/${opts.slug}`;
+  const text =
+    `🔥 <b>New activity!</b>\n` +
+    `Someone just signed up for <b>${esc(opts.title)}</b>` +
+    (opts.city ? ` in ${esc(opts.city)}` : "") +
+    ` 🎉\n\n` +
+    `👉 <a href="${url}">Join them on footballevents.eu</a>`;
+  return Promise.all(CHANNEL_TARGETS.map((t) => post(t.chatId, text, t.threadId))).then(() => {});
+}
+
 function fmtDateRange(start?: Date | null, end?: Date | null): string {
   if (!start) return "";
   const f = (d: Date) =>

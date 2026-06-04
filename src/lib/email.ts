@@ -142,6 +142,29 @@ export function welcomeEmail(opts: { to: string; name: string }) {
   return sendEmail({ to: opts.to, subject: "Welcome to FootballEvents.eu", html });
 }
 
+// ──────────────────────────────────────────────
+// Localised application/booking emails
+// Each recipient gets the email in *their* language:
+//  · applicant emails → the locale the applicant used on the site
+//  · organizer emails → the organizer's preferredLocale
+// Self-contained dictionaries (no request context) so they also work in crons.
+// ──────────────────────────────────────────────
+
+type EmailLocale = "en" | "ru" | "de" | "es";
+function loc(x?: string | null): EmailLocale {
+  return x === "ru" || x === "de" || x === "es" ? x : "en";
+}
+
+function btn(url: string, label: string, primary = false) {
+  const bg = primary ? "#00d26a" : "#0a1628";
+  const fg = primary ? "#0a1628" : "#ffffff";
+  return `<p style="margin:24px 0"><a href="${url}" style="display:inline-block;background:${bg};color:${fg};padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:600">${escape(label)}</a></p>`;
+}
+function noteBlock(label: string, text: string, color = "#00d26a") {
+  return `<p style="background:#fafbfc;border-left:4px solid ${color};padding:12px;border-radius:4px"><strong>${escape(label)}:</strong> ${escape(text)}</p>`;
+}
+
+/** 📋 New application landed — to the ORGANIZER, in the organizer's language. */
 export function newApplicationEmail(opts: {
   organizerEmail: string;
   organizerName: string;
@@ -149,23 +172,64 @@ export function newApplicationEmail(opts: {
   applicantName: string;
   applicantEmail: string;
   comment?: string | null;
-  eventId: string;
+  eventId?: string;
+  locale?: string;
 }) {
+  const L = loc(opts.locale);
+  const T = {
+    en: { subj: `New application: ${opts.eventTitle}`, title: "New application 📋", hi: `Hi ${escape(opts.organizerName)},`,
+      line: `<strong>${escape(opts.applicantName)}</strong> applied to <strong>${escape(opts.eventTitle)}</strong>.`,
+      btn: "Review application", hint: "Tip: accept or decline applications so candidates always know where they stand." },
+    ru: { subj: `Новая заявка: ${opts.eventTitle}`, title: "Новая заявка 📋", hi: `Здравствуйте, ${escape(opts.organizerName)}!`,
+      line: `<strong>${escape(opts.applicantName)}</strong> подал(а) заявку на <strong>${escape(opts.eventTitle)}</strong>.`,
+      btn: "Посмотреть заявку", hint: "Совет: принимайте или отклоняйте заявки, чтобы кандидаты всегда знали статус." },
+    de: { subj: `Neue Bewerbung: ${opts.eventTitle}`, title: "Neue Bewerbung 📋", hi: `Hallo ${escape(opts.organizerName)},`,
+      line: `<strong>${escape(opts.applicantName)}</strong> hat sich für <strong>${escape(opts.eventTitle)}</strong> beworben.`,
+      btn: "Bewerbung ansehen", hint: "Tipp: Nimm Bewerbungen an oder lehne sie ab, damit Kandidaten Bescheid wissen." },
+    es: { subj: `Nueva solicitud: ${opts.eventTitle}`, title: "Nueva solicitud 📋", hi: `Hola ${escape(opts.organizerName)},`,
+      line: `<strong>${escape(opts.applicantName)}</strong> se ha inscrito en <strong>${escape(opts.eventTitle)}</strong>.`,
+      btn: "Ver solicitud", hint: "Consejo: acepta o rechaza las solicitudes para que los candidatos sepan su estado." },
+  }[L];
   const html = shell(
-    `New application: ${opts.eventTitle}`,
-    `<p>Hi ${escape(opts.organizerName)},</p>
-     <p><strong>${escape(opts.applicantName)}</strong> applied to <strong>${escape(opts.eventTitle)}</strong>.</p>
+    T.title,
+    `<p>${T.hi}</p>
+     <p>${T.line}</p>
      ${opts.comment ? `<p style="background:#fafbfc;border-left:4px solid #00d26a;padding:12px;border-radius:4px"><em>${escape(opts.comment)}</em></p>` : ""}
-     <p><a href="${SITE}/organizer/bookings" style="display:inline-block;background:#0a1628;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">Review application</a></p>`,
+     ${btn(`${SITE}/${L}/organizer/bookings`, T.btn)}
+     <p style="font-size:12px;color:#64748b">${T.hint}</p>`,
   );
-  return sendEmail({
-    to: opts.organizerEmail,
-    subject: `New application: ${opts.eventTitle}`,
-    html,
-    replyTo: opts.applicantEmail,
-  });
+  return sendEmail({ to: opts.organizerEmail, subject: T.subj, html, replyTo: opts.applicantEmail });
 }
 
+/** ✅ Application received — to the APPLICANT, in the applicant's language. */
+export function applicationReceivedEmail(opts: {
+  applicantEmail: string;
+  applicantName: string;
+  eventTitle: string;
+  eventSlug: string;
+  organizerName?: string;
+  locale?: string;
+}) {
+  const L = loc(opts.locale);
+  const T = {
+    en: { subj: `Application received: ${opts.eventTitle}`, title: "Application received ✅", hi: `Hi ${escape(opts.applicantName)},`,
+      p1: `Thanks for applying to <strong>${escape(opts.eventTitle)}</strong>! Your application has been sent to the organizer and you're now on the candidate list.`,
+      p2: "We'll email you as soon as the organizer reviews your application — no action is needed from you right now.", btn: "View event" },
+    ru: { subj: `Заявка получена: ${opts.eventTitle}`, title: "Заявка получена ✅", hi: `Здравствуйте, ${escape(opts.applicantName)}!`,
+      p1: `Спасибо за заявку на <strong>${escape(opts.eventTitle)}</strong>! Ваша заявка отправлена организатору, и теперь вы в списке кандидатов на участие.`,
+      p2: "Мы напишем вам, как только организатор рассмотрит заявку. Сейчас от вас ничего не требуется.", btn: "Открыть событие" },
+    de: { subj: `Bewerbung erhalten: ${opts.eventTitle}`, title: "Bewerbung erhalten ✅", hi: `Hallo ${escape(opts.applicantName)},`,
+      p1: `Danke für deine Bewerbung zu <strong>${escape(opts.eventTitle)}</strong>! Sie wurde an den Veranstalter gesendet und du stehst jetzt auf der Kandidatenliste.`,
+      p2: "Wir benachrichtigen dich per E-Mail, sobald der Veranstalter deine Bewerbung geprüft hat. Du musst gerade nichts tun.", btn: "Event ansehen" },
+    es: { subj: `Solicitud recibida: ${opts.eventTitle}`, title: "Solicitud recibida ✅", hi: `Hola ${escape(opts.applicantName)},`,
+      p1: `¡Gracias por inscribirte en <strong>${escape(opts.eventTitle)}</strong>! Tu solicitud se ha enviado al organizador y ahora estás en la lista de candidatos.`,
+      p2: "Te escribiremos en cuanto el organizador revise tu solicitud. Por ahora no tienes que hacer nada.", btn: "Ver evento" },
+  }[L];
+  const html = shell(T.title, `<p>${T.hi}</p><p>${T.p1}</p><p>${T.p2}</p>${btn(`${SITE}/${L}/events/${opts.eventSlug}`, T.btn, true)}`);
+  return sendEmail({ to: opts.applicantEmail, subject: T.subj, html });
+}
+
+/** 🎉 Organizer accepted/declined — to the APPLICANT, in the applicant's language. */
 export function bookingResponseEmail(opts: {
   applicantEmail: string;
   applicantName: string;
@@ -175,21 +239,71 @@ export function bookingResponseEmail(opts: {
   organizerName: string;
   organizerEmail: string;
   note?: string | null;
+  locale?: string;
 }) {
+  const L = loc(opts.locale);
   const accepted = opts.decision === "accept";
+  const ev = `<strong>${escape(opts.eventTitle)}</strong>`;
+  const org = `<strong>${escape(opts.organizerName)}</strong>`;
+  const T = {
+    en: {
+      subj: accepted ? `You're in! ${opts.eventTitle}` : `Update on your application: ${opts.eventTitle}`,
+      title: accepted ? "You're in! 🎉" : "Application update",
+      body: accepted ? `Great news — ${org} accepted your application to ${ev}. Welcome aboard, ${escape(opts.applicantName)}!`
+                     : `Hi ${escape(opts.applicantName)}, unfortunately ${org} couldn't accept your application to ${ev} this time.`,
+      note: "Note from the organizer", btn: accepted ? "View event" : "Find other events" },
+    ru: {
+      subj: accepted ? `Вас приняли! ${opts.eventTitle}` : `Статус вашей заявки: ${opts.eventTitle}`,
+      title: accepted ? "Вас приняли! 🎉" : "Обновление по заявке",
+      body: accepted ? `Отличные новости — ${org} принял(а) вашу заявку на ${ev}. Добро пожаловать, ${escape(opts.applicantName)}!`
+                     : `Здравствуйте, ${escape(opts.applicantName)}. К сожалению, ${org} не смог(ла) принять вашу заявку на ${ev} в этот раз.`,
+      note: "Сообщение от организатора", btn: accepted ? "Открыть событие" : "Найти другие события" },
+    de: {
+      subj: accepted ? `Du bist dabei! ${opts.eventTitle}` : `Update zu deiner Bewerbung: ${opts.eventTitle}`,
+      title: accepted ? "Du bist dabei! 🎉" : "Bewerbungs-Update",
+      body: accepted ? `Gute Nachrichten — ${org} hat deine Bewerbung zu ${ev} angenommen. Willkommen, ${escape(opts.applicantName)}!`
+                     : `Hallo ${escape(opts.applicantName)}, leider konnte ${org} deine Bewerbung zu ${ev} diesmal nicht annehmen.`,
+      note: "Nachricht vom Veranstalter", btn: accepted ? "Event ansehen" : "Andere Events finden" },
+    es: {
+      subj: accepted ? `¡Estás dentro! ${opts.eventTitle}` : `Novedades sobre tu solicitud: ${opts.eventTitle}`,
+      title: accepted ? "¡Estás dentro! 🎉" : "Actualización de solicitud",
+      body: accepted ? `Buenas noticias: ${org} ha aceptado tu solicitud para ${ev}. ¡Bienvenido/a, ${escape(opts.applicantName)}!`
+                     : `Hola ${escape(opts.applicantName)}, lamentablemente ${org} no ha podido aceptar tu solicitud para ${ev} esta vez.`,
+      note: "Mensaje del organizador", btn: accepted ? "Ver evento" : "Buscar otros eventos" },
+  }[L];
+  const url = accepted ? `${SITE}/${L}/events/${opts.eventSlug}` : `${SITE}/${L}/events`;
   const html = shell(
-    accepted ? `Application accepted: ${opts.eventTitle}` : `Application declined: ${opts.eventTitle}`,
-    `<p>Hi ${escape(opts.applicantName)},</p>
-     <p><strong>${escape(opts.organizerName)}</strong> ${accepted ? "accepted" : "declined"} your application to <strong>${escape(opts.eventTitle)}</strong>.</p>
-     ${opts.note ? `<p style="background:#fafbfc;border-left:4px solid #00d26a;padding:12px;border-radius:4px">${escape(opts.note)}</p>` : ""}
-     <p><a href="${SITE}/events/${opts.eventSlug}" style="display:inline-block;background:#0a1628;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-weight:600">View event</a></p>`,
+    T.title,
+    `<p>${T.body}</p>
+     ${opts.note ? noteBlock(T.note, opts.note, accepted ? "#00d26a" : "#dc2626") : ""}
+     ${btn(url, T.btn, accepted)}`,
   );
-  return sendEmail({
-    to: opts.applicantEmail,
-    subject: accepted ? `Accepted: ${opts.eventTitle}` : `Declined: ${opts.eventTitle}`,
-    html,
-    replyTo: opts.organizerEmail,
-  });
+  return sendEmail({ to: opts.applicantEmail, subject: T.subj, html, replyTo: opts.organizerEmail });
+}
+
+/** ⏳ Application still unanswered after 3 days — to the ORGANIZER, in their language. */
+export function bookingReminderEmail(opts: {
+  organizerEmail: string;
+  organizerName: string;
+  applicantName: string;
+  eventTitle: string;
+  locale?: string;
+}) {
+  const L = loc(opts.locale);
+  const ev = `<strong>${escape(opts.eventTitle)}</strong>`;
+  const ap = `<strong>${escape(opts.applicantName)}</strong>`;
+  const T = {
+    en: { subj: `Reminder: application waiting — ${opts.eventTitle}`, title: "Application still waiting ⏳", hi: `Hi ${escape(opts.organizerName)},`,
+      p1: `${ap}'s application to ${ev} has been waiting for 3 days.`, p2: "Please accept or decline it so the candidate knows where they stand.", btn: "Review application" },
+    ru: { subj: `Напоминание: заявка ждёт ответа — ${opts.eventTitle}`, title: "Заявка ждёт ответа ⏳", hi: `Здравствуйте, ${escape(opts.organizerName)}!`,
+      p1: `Заявка от ${ap} на ${ev} ждёт ответа уже 3 дня.`, p2: "Пожалуйста, примите или отклоните её, чтобы кандидат знал статус.", btn: "Посмотреть заявку" },
+    de: { subj: `Erinnerung: Bewerbung wartet — ${opts.eventTitle}`, title: "Bewerbung wartet ⏳", hi: `Hallo ${escape(opts.organizerName)},`,
+      p1: `Die Bewerbung von ${ap} zu ${ev} wartet seit 3 Tagen.`, p2: "Bitte nimm sie an oder lehne sie ab, damit der Kandidat Bescheid weiß.", btn: "Bewerbung ansehen" },
+    es: { subj: `Recordatorio: solicitud pendiente — ${opts.eventTitle}`, title: "Solicitud pendiente ⏳", hi: `Hola ${escape(opts.organizerName)},`,
+      p1: `La solicitud de ${ap} para ${ev} lleva 3 días esperando.`, p2: "Acéptala o recházala para que el candidato sepa su estado.", btn: "Ver solicitud" },
+  }[L];
+  const html = shell(T.title, `<p>${T.hi}</p><p>${T.p1}</p><p>${T.p2}</p>${btn(`${SITE}/${L}/organizer/bookings`, T.btn, true)}`);
+  return sendEmail({ to: opts.organizerEmail, subject: T.subj, html });
 }
 
 export function newMessageNotification(opts: {
