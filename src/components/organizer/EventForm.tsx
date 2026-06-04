@@ -918,20 +918,20 @@ function SlugField({ name, defaultValue, error }: { name: string; defaultValue: 
 // ── Co-organizers & partners editor ──────────────────────────────
 const PARTNER_L: Record<string, {
   title: string; hint: string; coorganizer: string; partner: string;
-  namePh: string; urlPh: string; logo: string; logoBusy: string; addCo: string; addPartner: string; remove: string;
+  namePh: string; urlPh: string; logo: string; logoBusy: string; addCo: string; addPartner: string; remove: string; searching: string;
 }> = {
-  en: { title: "Co-organizers & partners", hint: "Show partner / co-organizer logos on the public event page.",
+  en: { title: "Co-organizers & partners", hint: "Start typing a name — we search organizers already on FootballEvents. No match? It's added just to this event.",
     coorganizer: "Co-organizer", partner: "Partner", namePh: "Name", urlPh: "Website (optional)",
-    logo: "Upload logo", logoBusy: "Uploading…", addCo: "Add co-organizer", addPartner: "Add partner", remove: "Remove" },
-  ru: { title: "Со-организаторы и партнёры", hint: "Покажите логотипы партнёров / со-организаторов на странице турнира.",
+    logo: "Upload logo", logoBusy: "Uploading…", addCo: "Add co-organizer", addPartner: "Add partner", remove: "Remove", searching: "Searching…" },
+  ru: { title: "Со-организаторы и партнёры", hint: "Начните вводить название — мы ищем среди организаторов FootballEvents. Нет совпадения? Добавится только в этот эвент.",
     coorganizer: "Со-организатор", partner: "Партнёр", namePh: "Название", urlPh: "Сайт (необязательно)",
-    logo: "Загрузить лого", logoBusy: "Загрузка…", addCo: "Добавить со-организатора", addPartner: "Добавить партнёра", remove: "Удалить" },
-  de: { title: "Co-Organisatoren & Partner", hint: "Zeige Partner-/Co-Organisator-Logos auf der Event-Seite.",
+    logo: "Загрузить лого", logoBusy: "Загрузка…", addCo: "Добавить со-организатора", addPartner: "Добавить партнёра", remove: "Удалить", searching: "Поиск…" },
+  de: { title: "Co-Organisatoren & Partner", hint: "Tippe einen Namen — wir suchen unter FootballEvents-Organisatoren. Kein Treffer? Wird nur zu diesem Event hinzugefügt.",
     coorganizer: "Co-Organisator", partner: "Partner", namePh: "Name", urlPh: "Website (optional)",
-    logo: "Logo hochladen", logoBusy: "Lädt…", addCo: "Co-Organisator hinzufügen", addPartner: "Partner hinzufügen", remove: "Entfernen" },
-  es: { title: "Coorganizadores y socios", hint: "Muestra logos de socios / coorganizadores en la página del evento.",
+    logo: "Logo hochladen", logoBusy: "Lädt…", addCo: "Co-Organisator hinzufügen", addPartner: "Partner hinzufügen", remove: "Entfernen", searching: "Suche…" },
+  es: { title: "Coorganizadores y socios", hint: "Empieza a escribir un nombre — buscamos entre organizadores de FootballEvents. ¿Sin coincidencia? Se añade solo a este evento.",
     coorganizer: "Coorganizador", partner: "Socio", namePh: "Nombre", urlPh: "Sitio web (opcional)",
-    logo: "Subir logo", logoBusy: "Subiendo…", addCo: "Añadir coorganizador", addPartner: "Añadir socio", remove: "Quitar" },
+    logo: "Subir logo", logoBusy: "Subiendo…", addCo: "Añadir coorganizador", addPartner: "Añadir socio", remove: "Quitar", searching: "Buscando…" },
 };
 
 function FormPartnersEditor({ name, defaultValue }: { name: string; defaultValue?: string }) {
@@ -959,7 +959,13 @@ function FormPartnersEditor({ name, defaultValue }: { name: string; defaultValue
                   <option value="coorganizer">{t.coorganizer}</option>
                   <option value="partner">{t.partner}</option>
                 </select>
-                <input value={it.name} onChange={(e) => update(i, { name: e.target.value })} placeholder={t.namePh} className={inputCls} />
+                <PartnerNameField
+                  value={it.name}
+                  placeholder={t.namePh}
+                  searchingLabel={t.searching}
+                  onText={(nm) => update(i, { name: nm, organizerId: undefined })}
+                  onPick={(o) => update(i, { name: o.name, logoUrl: o.logoUrl, url: o.url, organizerId: o.organizerId })}
+                />
                 <button type="button" onClick={() => remove(i)} className="rounded p-1.5 text-red-500 hover:bg-red-50" aria-label={t.remove}><Trash2 className="h-4 w-4" /></button>
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -1012,6 +1018,83 @@ function PartnerLogoUpload({ url, onChange, label, busyLabel }: { url?: string; 
         {busy ? busyLabel : label}
       </button>
       <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp" onChange={onFile} className="sr-only" />
+    </div>
+  );
+}
+
+type OrgHit = { id: string; name: string; slug: string; logoUrl: string | null };
+
+/** Name field that searches existing platform organizers as you type. Pick a hit
+ *  to link it (fills logo + link to /org/<slug>); otherwise it's free text. */
+function PartnerNameField({ value, placeholder, searchingLabel, onText, onPick }: {
+  value: string;
+  placeholder: string;
+  searchingLabel: string;
+  onText: (name: string) => void;
+  onPick: (o: { name: string; logoUrl?: string; url: string; organizerId: string }) => void;
+}) {
+  const [hits, setHits] = useState<OrgHit[]>([]);
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const seq = useRef(0);
+
+  function onChange(v: string) {
+    onText(v);
+    if (timer.current) clearTimeout(timer.current);
+    const q = v.trim();
+    if (q.length < 2) { setHits([]); setOpen(false); return; }
+    setBusy(true);
+    timer.current = setTimeout(async () => {
+      const mine = ++seq.current;
+      try {
+        const r = await fetch(`/api/search/organizers?q=${encodeURIComponent(q)}`);
+        const j = r.ok ? await r.json() : { items: [] };
+        if (mine !== seq.current) return; // a newer keystroke won
+        setHits(j.items ?? []);
+        setOpen(true);
+      } catch {
+        setHits([]);
+      } finally {
+        if (mine === seq.current) setBusy(false);
+      }
+    }, 250);
+  }
+
+  const inputCls = "min-w-0 flex-1 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)]";
+
+  return (
+    <div className="relative min-w-0 flex-1">
+      <input
+        value={value}
+        placeholder={placeholder}
+        autoComplete="off"
+        spellCheck={false}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => hits.length > 0 && setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className={inputCls}
+      />
+      {open && (hits.length > 0 || busy) && (
+        <ul className="absolute z-30 mt-1 max-h-60 w-full overflow-auto rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] py-1 shadow-[var(--shadow-md)]">
+          {busy && hits.length === 0 && <li className="px-3 py-2 text-xs text-[var(--color-muted)]">{searchingLabel}</li>}
+          {hits.map((o) => (
+            <li key={o.id}>
+              <button
+                type="button"
+                onMouseDown={(e) => { e.preventDefault(); onPick({ name: o.name, logoUrl: o.logoUrl ?? undefined, url: `/org/${o.slug}`, organizerId: o.id }); setOpen(false); }}
+                className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-[var(--color-bg-muted)]"
+              >
+                <span
+                  className="h-7 w-7 shrink-0 rounded-[var(--radius-sm)] border border-[var(--color-border)] bg-white bg-contain bg-center bg-no-repeat"
+                  style={o.logoUrl ? { backgroundImage: `url(${o.logoUrl})` } : undefined}
+                />
+                <span className="truncate font-medium text-[var(--color-foreground)]">{o.name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
