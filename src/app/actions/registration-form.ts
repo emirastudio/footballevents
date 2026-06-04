@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getOrgForAction } from "@/lib/organizer-access";
 import { revalidatePath } from "next/cache";
 import { parseForm, type FormField, type FieldI18n } from "@/lib/forms/types";
 import { translateBatch } from "@/lib/translate";
@@ -16,8 +17,9 @@ export async function saveRegistrationFormAction(
 ): Promise<FormBuilderState> {
   const session = await auth();
   if (!session?.user?.id) return { error: "unauthorized" };
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) return { error: "notOrganizer" };
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) return { error: "notOrganizer" };
+  const organizer = access.organizer;
 
   const eventId = String(formData.get("eventId") ?? "");
   if (!eventId) return { error: "missingEvent" };

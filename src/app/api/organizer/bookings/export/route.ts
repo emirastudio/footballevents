@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { parseForm, fieldLabel } from "@/lib/forms/types";
+import { getOrgForAction } from "@/lib/organizer-access";
 
 function csvCell(v: unknown): string {
   let s: string;
@@ -15,8 +16,9 @@ function csvCell(v: unknown): string {
 export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user?.id) return new Response("Unauthorized", { status: 401 });
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) return new Response("Not an organizer", { status: 403 });
+  const access = await getOrgForAction(session.user.id, "bookings");
+  if (!access) return new Response("Forbidden", { status: 403 });
+  const organizer = access.organizer;
 
   const eventId = new URL(req.url).searchParams.get("eventId");
   if (!eventId) return new Response("Missing eventId", { status: 400 });

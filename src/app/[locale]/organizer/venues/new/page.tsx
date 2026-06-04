@@ -1,7 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { db } from "@/lib/db";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft } from "lucide-react";
 import { getCountries } from "@/lib/countries";
@@ -14,8 +14,7 @@ export default async function NewVenuePage({ params }: { params: Promise<{ local
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "venues");
 
   const t = await getTranslations("organizer.venuesPage");
   const tForm = await getTranslations("venueForm");

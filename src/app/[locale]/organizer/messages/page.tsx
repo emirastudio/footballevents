@@ -1,8 +1,8 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { db } from "@/lib/db";
 import { getInboxThreads } from "@/lib/messages";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { ThreadList } from "@/components/messages/ThreadList";
 
 export default async function OrganizerMessagesPage({
@@ -16,11 +16,7 @@ export default async function OrganizerMessagesPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const organizer = await db.organizer.findUnique({
-    where: { userId: session.user.id },
-    select: { userId: true },
-  });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "messages");
 
   const t = await getTranslations("messages");
   const threads = await getInboxThreads(organizer.userId);

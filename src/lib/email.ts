@@ -370,6 +370,25 @@ export function bookingReminderEmail(opts: {
   return sendEmail({ to: opts.organizerEmail, subject: T.subj, html });
 }
 
+/** 🤝 Invitation to join an organizer's team (sent to the invitee, EN). */
+export function teamInviteEmail(opts: {
+  to: string;
+  organizerName: string;
+  inviterName: string;
+  role: "MANAGER" | "STAFF";
+  url: string;
+}) {
+  const roleLabel = opts.role === "MANAGER" ? "Manager (full event operations)" : "Staff (applications & messages)";
+  const html = shell(
+    "You've been invited 🤝",
+    `<p>Hi,</p>
+     <p><strong>${escape(opts.inviterName)}</strong> invited you to join <strong>${escape(opts.organizerName)}</strong> on FootballEvents.eu as <strong>${escape(roleLabel)}</strong>.</p>
+     ${btn(opts.url, "Accept invitation", true)}
+     <p style="font-size:12px;color:#64748b">If you don't have an account yet, you can create one with this email when you open the link.</p>`,
+  );
+  return sendEmail({ to: opts.to, subject: `You're invited to join ${opts.organizerName}`, html });
+}
+
 export function newMessageNotification(opts: {
   recipientEmail: string;
   recipientName: string;

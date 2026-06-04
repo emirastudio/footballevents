@@ -2,8 +2,10 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { getCountries } from "@/lib/countries";
 import { OrganizerSettingsForm } from "@/components/organizer/OrganizerSettingsForm";
+import { TeamManager } from "@/components/organizer/TeamManager";
 
 export default async function OrganizerSettingsPage({
   params,
@@ -15,10 +17,12 @@ export default async function OrganizerSettingsPage({
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
+  // Settings (profile, team, billing) is OWNER-only.
+  await requireOrgPage(session.user.id, "settings");
 
   const organizer = await db.organizer.findUnique({
     where: { userId: session.user.id },
-    include: { translations: true },
+    include: { translations: true, members: { include: { user: { select: { name: true, email: true } } } }, invites: { where: { acceptedAt: null } } },
   });
   if (!organizer) redirect("/onboarding/organizer");
 
@@ -126,6 +130,13 @@ export default async function OrganizerSettingsPage({
             manageBilling:      t("manageBilling"),
             upgradePlan:        t("upgradePlan"),
           }}
+        />
+      </div>
+
+      <div className="mt-6">
+        <TeamManager
+          members={organizer.members.map((m) => ({ id: m.id, role: m.role, user: { name: m.user.name, email: m.user.email } }))}
+          invites={organizer.invites.map((i) => ({ id: i.id, email: i.email, role: i.role as "MANAGER" | "STAFF" }))}
         />
       </div>
     </div>

@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { countUnreadThreads } from "@/lib/messages";
+import { getOrganizerForUser, can, type PermKey } from "@/lib/organizer-access";
 import { LayoutDashboard, Calendar, Inbox, MessageSquare, Star, Settings as Cog, MapPin, Megaphone, BarChart3 } from "lucide-react";
 
 export default async function OrganizerLayout({
@@ -20,11 +21,9 @@ export default async function OrganizerLayout({
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const organizer = await db.organizer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true, slug: true, name: true, logoUrl: true, subscriptionTier: true },
-  });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrganizerForUser(session.user.id);
+  if (!access) redirect("/onboarding/organizer");
+  const { organizer, role } = access;
 
   const t = await getTranslations("organizer");
   const [unreadMessages, newBookings] = await Promise.all([
@@ -32,17 +31,19 @@ export default async function OrganizerLayout({
     db.booking.count({ where: { event: { organizerId: organizer.id }, status: "NEW" } }),
   ]);
 
-  const nav = [
+  // Each item carries the permission it needs; STAFF/MANAGER see a filtered nav.
+  const navAll: { href: string; icon: typeof LayoutDashboard; label: string; badge: number; perm?: PermKey }[] = [
     { href: "/organizer/dashboard", icon: LayoutDashboard, label: t("dashboard"), badge: 0 },
-    { href: "/organizer/events", icon: Calendar, label: t("myEvents"), badge: 0 },
-    { href: "/organizer/venues", icon: MapPin, label: t("venues"), badge: 0 },
-    { href: "/organizer/bookings", icon: Inbox, label: t("applications"), badge: newBookings },
-    { href: "/organizer/messages", icon: MessageSquare, label: t("messages"), badge: unreadMessages },
-    { href: "/organizer/marketing", icon: Megaphone, label: t("marketing"), badge: 0 },
-    { href: "/organizer/analytics", icon: BarChart3, label: t("analyticsNav"), badge: 0 },
-    { href: "/organizer/reviews", icon: Star, label: t("reviewsMod"), badge: 0 },
-    { href: "/organizer/settings", icon: Cog, label: t("settings"), badge: 0 },
+    { href: "/organizer/events", icon: Calendar, label: t("myEvents"), badge: 0, perm: "events" },
+    { href: "/organizer/venues", icon: MapPin, label: t("venues"), badge: 0, perm: "venues" },
+    { href: "/organizer/bookings", icon: Inbox, label: t("applications"), badge: newBookings, perm: "bookings" },
+    { href: "/organizer/messages", icon: MessageSquare, label: t("messages"), badge: unreadMessages, perm: "messages" },
+    { href: "/organizer/marketing", icon: Megaphone, label: t("marketing"), badge: 0, perm: "marketing" },
+    { href: "/organizer/analytics", icon: BarChart3, label: t("analyticsNav"), badge: 0, perm: "analytics" },
+    { href: "/organizer/reviews", icon: Star, label: t("reviewsMod"), badge: 0, perm: "reviews" },
+    { href: "/organizer/settings", icon: Cog, label: t("settings"), badge: 0, perm: "settings" },
   ];
+  const nav = navAll.filter((n) => !n.perm || can(role, n.perm));
 
   return (
     <Container className="py-8">
@@ -58,7 +59,7 @@ export default async function OrganizerLayout({
             />
             <div className="min-w-0">
               <div className="truncate text-sm font-semibold text-[var(--color-foreground)]">{organizer.name}</div>
-              <div className="text-xs uppercase tracking-wider text-[var(--color-muted)]">{organizer.subscriptionTier}</div>
+              <div className="text-xs uppercase tracking-wider text-[var(--color-muted)]">{role === "OWNER" ? organizer.subscriptionTier : role}</div>
             </div>
           </Link>
           <nav className="flex flex-col gap-0.5">

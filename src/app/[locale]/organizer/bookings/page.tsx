@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { respondBookingAction } from "@/app/actions/booking";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { parseForm, localizeFields, isDisplayField, fieldLabel, type FormField } from "@/lib/forms/types";
 import { Check, X, ChevronRight, Download } from "lucide-react";
 
@@ -36,8 +37,7 @@ export default async function BookingsPage({
   const sp = await searchParams;
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "bookings");
 
   const t = await getTranslations("bookings");
   const tOrg = await getTranslations("organizer");

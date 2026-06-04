@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Star } from "lucide-react";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { Link } from "@/i18n/navigation";
 import { ReviewModerationCard } from "@/components/reviews/ReviewModerationCard";
 import {
@@ -30,11 +31,7 @@ export default async function OrganizerReviewsPage({
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const organizer = await db.organizer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "reviews");
 
   // Counts per status, for the filter tabs
   const grouped = await db.review.groupBy({

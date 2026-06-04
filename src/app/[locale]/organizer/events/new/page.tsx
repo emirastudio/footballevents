@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { getCountries } from "@/lib/countries";
 import { EventWizard } from "@/components/organizer/EventWizard";
 import type { Tier } from "@/lib/tier";
@@ -14,8 +15,7 @@ export default async function NewEventWizardPage({ params }: { params: Promise<{
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "events");
 
   const t = await getTranslations("eventForm");
   const tWizard = await getTranslations("eventWizard");

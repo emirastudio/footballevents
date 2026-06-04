@@ -27,6 +27,16 @@ enum UserRole {
   ADMIN
 }
 
+// Role of a user within an organizer "team".
+// OWNER   = the account that created the organizer (implicit, via Organizer.userId)
+// MANAGER = full event operations (events, applications, messages, venues, marketing) — no billing / team
+// STAFF   = applications + messages only
+enum OrgRole {
+  OWNER
+  MANAGER
+  STAFF
+}
+
 enum EventType {
   TOURNAMENT
   CAMP
@@ -166,6 +176,7 @@ model User {
   eventSaves           EventSave[]
   emailChange          EmailChangeRequest?
   savedSearches        SavedSearch[]
+  orgMemberships       OrganizerMember[]
 
   @@index([email])
 }
@@ -310,9 +321,43 @@ model Organizer {
   followers    OrganizerFollow[]
   boostCredits BoostCredit[]
   createdVenues Venue[]               @relation("VenueCreator")
+  members      OrganizerMember[]
+  invites      OrganizerInvite[]
 
   @@index([slug])
   @@index([countryCode])
+}
+
+// A staff member with access to an organizer's cabinet (besides the OWNER).
+model OrganizerMember {
+  id          String   @id @default(cuid())
+  organizerId String
+  userId      String
+  role        OrgRole  @default(STAFF)
+  createdAt   DateTime @default(now())
+
+  organizer Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizerId, userId])
+  @@index([userId])
+}
+
+// A pending email invitation to join an organizer's team.
+model OrganizerInvite {
+  id          String    @id @default(cuid())
+  organizerId String
+  email       String
+  role        OrgRole   @default(STAFF)
+  token       String    @unique
+  invitedById String?
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  organizer Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@index([organizerId])
+  @@index([email])
 }
 
 model OrganizerTranslation {

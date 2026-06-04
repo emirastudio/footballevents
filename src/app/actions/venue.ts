@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getOrgForAction } from "@/lib/organizer-access";
 import { nanoid } from "nanoid";
 import { slugify } from "@/lib/slug";
 
@@ -35,8 +36,9 @@ async function ensureCountry(code: string) {
 export async function saveVenueAction(_prev: VenueFormState, formData: FormData): Promise<VenueFormState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "venues");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
 
   const parsed = schema.safeParse({
     id:          formData.get("id") || undefined,

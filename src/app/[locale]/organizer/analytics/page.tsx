@@ -3,6 +3,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { BarChart3, Eye, Users, Star, TrendingUp, MailCheck } from "lucide-react";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { Link } from "@/i18n/navigation";
 
 type Row = {
@@ -31,11 +32,7 @@ export default async function AnalyticsPage({ params }: { params: Promise<{ loca
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({
-    where: { userId: session.user.id },
-    select: { id: true },
-  });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "analytics");
 
   const events = await db.event.findMany({
     where: { organizerId: organizer.id },

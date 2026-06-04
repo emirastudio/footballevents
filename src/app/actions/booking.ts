@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { newApplicationEmail, applicationReceivedEmail, bookingResponseEmail } from "@/lib/email";
 import { tgEventActivity } from "@/lib/telegram";
+import { getOrgForAction } from "@/lib/organizer-access";
 import { parseForm, isMultiValue, isDisplayField } from "@/lib/forms/types";
 
 const LOCALES = ["en", "ru", "de", "es"] as const;
@@ -302,8 +303,9 @@ const respondSchema = z.object({
 export async function respondBookingAction(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "bookings");
+  if (!access) redirect("/organizer/bookings");
+  const organizer = access.organizer;
 
   const parsed = respondSchema.safeParse({
     bookingId: formData.get("bookingId"),

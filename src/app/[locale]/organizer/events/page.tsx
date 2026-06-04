@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { Plus, Pencil, ExternalLink } from "lucide-react";
 
 export default async function OrganizerEventsListPage({
@@ -19,8 +20,7 @@ export default async function OrganizerEventsListPage({
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "events");
 
   const t = await getTranslations("organizer");
   const tCommon = await getTranslations("common");

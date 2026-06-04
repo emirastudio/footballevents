@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getOrganizerForUser } from "@/lib/organizer-access";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { Plus, Calendar as CalIcon, Inbox, Bell, MessageSquare, Sparkles, Star, Gift } from "lucide-react";
@@ -18,8 +19,10 @@ export default async function OrganizerDashboardPage({
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
+  const access = await getOrganizerForUser(session.user.id);
+  if (!access) redirect("/onboarding/organizer");
   const organizer = await db.organizer.findUnique({
-    where: { userId: session.user.id },
+    where: { id: access.organizer.id },
     include: { _count: { select: { followers: true, events: true } } },
   });
   if (!organizer) redirect("/onboarding/organizer");

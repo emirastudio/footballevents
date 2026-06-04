@@ -2,6 +2,7 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { requireOrgPage } from "@/lib/organizer-access";
 import { Link } from "@/i18n/navigation";
 import { Gift, Sparkles, Star } from "lucide-react";
 import { redeemBoostCredit } from "@/app/actions/billing";
@@ -16,8 +17,7 @@ export default async function OrganizerCreditsPage({
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const { organizer } = await requireOrgPage(session.user.id, "billing");
 
   const t = await getTranslations("organizer.credits");
   const tCommon = await getTranslations("common");

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { getOrgForAction } from "@/lib/organizer-access";
 import { tierAllows, ACTIVE_EVENTS_LIMIT, type Tier } from "@/lib/tier";
 import { slugify } from "@/lib/slug";
 
@@ -242,8 +243,9 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
 
   const limit = await activeEventsLimitReached(organizer.id, organizer.subscriptionTier);
   if (limit !== null) return { error: `eventLimitReached:${limit}:${organizer.subscriptionTier}` };
@@ -407,8 +409,9 @@ export async function updateEventAction(_prev: EventFormState, formData: FormDat
 async function _updateEventActionInner(_prev: EventFormState, formData: FormData): Promise<EventFormState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
 
   const id = formData.get("id") as string;
   if (!id) return { error: "Missing event id" };
@@ -585,8 +588,9 @@ export async function deleteEventAction(formData: FormData) {
 async function _deleteEventActionInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
   const id = formData.get("id") as string;
   if (!id) return;
   const existing = await db.event.findUnique({ where: { id } });
@@ -610,8 +614,9 @@ export async function archiveEventAction(formData: FormData) {
 async function _archiveEventActionInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
   const id = formData.get("id") as string;
   if (!id) return;
   const existing = await db.event.findUnique({ where: { id } });
@@ -638,8 +643,9 @@ export async function duplicateEventAction(formData: FormData) {
 async function _duplicateEventActionInner(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
 
   const id = formData.get("id") as string;
   if (!id) return;
@@ -803,8 +809,9 @@ export async function wizardSaveAction(_prev: WizardState, formData: FormData): 
 async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): Promise<WizardState> {
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const organizer = await db.organizer.findUnique({ where: { userId: session.user.id } });
-  if (!organizer) redirect("/onboarding/organizer");
+  const access = await getOrgForAction(session.user.id, "events");
+  if (!access) redirect("/organizer/dashboard");
+  const organizer = access.organizer;
 
   const step = Number(formData.get("step") ?? 1);
   const eventId = (formData.get("eventId") as string) || null;
