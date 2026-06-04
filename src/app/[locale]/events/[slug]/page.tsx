@@ -467,10 +467,6 @@ export default async function EventDetailPage({
             </section>
 
             {/* Fan merch promo (Goalbazza) */}
-            {partners.length > 0 && (
-              <PartnersSection coorganizers={coorganizers} partners={partnersOnly} locale={locale} />
-            )}
-
             <div className="mt-12">
               <MerchPromoBanner />
             </div>
@@ -574,6 +570,10 @@ export default async function EventDetailPage({
               </div>
             )}
 
+            {partners.length > 0 && (
+              <PartnersSidebar coorganizers={coorganizers} partners={partnersOnly} locale={locale} />
+            )}
+
             {venue && (
               <Link
                 href={`/stadiums/${venue.slug}`}
@@ -603,44 +603,45 @@ const PARTNER_HEADINGS: Record<string, { co: string; partners: string }> = {
   es: { co: "Coorganizadores", partners: "Socios" },
 };
 
-function PartnersSection({ coorganizers, partners, locale }: { coorganizers: Partner[]; partners: Partner[]; locale: string }) {
+// Compact sidebar card (sits with the Organizer / Venue cards on the right).
+function PartnersSidebar({ coorganizers, partners, locale }: { coorganizers: Partner[]; partners: Partner[]; locale: string }) {
   const h = PARTNER_HEADINGS[locale] ?? PARTNER_HEADINGS.en;
   return (
-    <section className="mt-12 space-y-8">
+    <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
       {coorganizers.length > 0 && <PartnerGroup title={h.co} items={coorganizers} />}
-      {partners.length > 0 && <PartnerGroup title={h.partners} items={partners} />}
-    </section>
+      {partners.length > 0 && <div className={coorganizers.length > 0 ? "mt-4" : ""}><PartnerGroup title={h.partners} items={partners} /></div>}
+    </div>
   );
 }
 
 function PartnerGroup({ title, items }: { title: string; items: Partner[] }) {
+  const isInternal = (u?: string) => !!u && u.startsWith("/");
   return (
     <div>
-      <h2 className="mb-4 font-[family-name:var(--font-manrope)] text-2xl font-bold tracking-tight text-[var(--color-foreground)]">{title}</h2>
-      <div className="flex flex-wrap gap-3">
+      <div className="text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{title}</div>
+      <div className="mt-3 space-y-2">
         {items.map((p, i) => {
           const inner = (
             <>
               {p.logoUrl ? (
                 <div
-                  className="h-12 w-12 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-white bg-contain bg-center bg-no-repeat"
+                  className="h-9 w-9 shrink-0 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-white bg-contain bg-center bg-no-repeat"
                   style={{ backgroundImage: `url(${p.logoUrl})` }}
                 />
               ) : (
-                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-pitch-50)] text-sm font-bold text-[var(--color-pitch-700)]">
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[var(--radius-md)] bg-[var(--color-pitch-50)] text-xs font-bold text-[var(--color-pitch-700)]">
                   {p.name.slice(0, 2).toUpperCase()}
                 </div>
               )}
-              <span className="text-sm font-semibold text-[var(--color-foreground)]">{p.name}</span>
+              <span className="truncate text-sm font-semibold text-[var(--color-foreground)]">{p.name}</span>
             </>
           );
-          const cls = "flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3";
-          return p.url ? (
-            <a key={i} href={p.url} target="_blank" rel="noopener noreferrer nofollow" className={`${cls} transition hover:border-[var(--color-pitch-300)] hover:shadow-[var(--shadow-sm)]`}>
-              {inner}
-            </a>
+          const cls = "flex items-center gap-2.5 transition-colors";
+          if (!p.url) return <div key={i} className={cls}>{inner}</div>;
+          return isInternal(p.url) ? (
+            <Link key={i} href={p.url} className={`${cls} hover:text-[var(--color-pitch-700)]`}>{inner}</Link>
           ) : (
-            <div key={i} className={cls}>{inner}</div>
+            <a key={i} href={p.url} target="_blank" rel="noopener noreferrer nofollow" className={`${cls} hover:text-[var(--color-pitch-700)]`}>{inner}</a>
           );
         })}
       </div>
