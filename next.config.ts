@@ -5,6 +5,12 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   output: "standalone", // produces a self-contained .next/standalone for Docker
+  // Next's tracer doesn't follow the world-countries data file by default, so
+  // it gets stripped from the standalone bundle and every country hub crashes
+  // with "Cannot find module" in production. Force-include the whole package.
+  outputFileTracingIncludes: {
+    "/*": ["./node_modules/world-countries/**/*"],
+  },
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost" },
