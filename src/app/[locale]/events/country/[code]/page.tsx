@@ -16,6 +16,7 @@ import { BreadcrumbJsonLd, ItemListJsonLd } from "@/components/seo/JsonLd";
 import { getEventsByCountry, getCountryCodesWithEvents } from "@/lib/queries";
 import { findCountry, getCountries } from "@/lib/countries";
 import { locales } from "@/i18n/config";
+import { tgServerError } from "@/lib/telegram";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 export const revalidate = 3600;
@@ -71,6 +72,22 @@ export default async function EventsByCountryPage({
 }) {
   const { locale, code } = await params;
   setRequestLocale(locale);
+  try {
+    return await renderCountryPage(locale, code);
+  } catch (err) {
+    // Production has been silently 500-ing this route since 4f0fd8b — relay
+    // the actual error to Telegram so we finally see the stack instead of a
+    // bare "Internal Server Error" body. Best-effort; never blocks rethrow.
+    const e = err as Error;
+    void tgServerError({
+      url: `/${locale}/events/country/${code}`,
+      message: `${e?.name ?? "Error"}: ${e?.message ?? String(err)}\n${(e?.stack ?? "").slice(0, 800)}`,
+    });
+    throw err;
+  }
+}
+
+async function renderCountryPage(locale: string, code: string) {
   const country = findCountry(code);
   if (!country) notFound();
 
