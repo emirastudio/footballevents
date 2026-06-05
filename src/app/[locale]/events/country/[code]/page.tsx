@@ -16,7 +16,6 @@ import { BreadcrumbJsonLd, ItemListJsonLd } from "@/components/seo/JsonLd";
 import { getEventsByCountry, getCountryCodesWithEvents } from "@/lib/queries";
 import { findCountry, getCountries } from "@/lib/countries";
 import { locales } from "@/i18n/config";
-import { tgServerError } from "@/lib/telegram";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
 export const revalidate = 3600;
@@ -72,30 +71,20 @@ export default async function EventsByCountryPage({
 }) {
   const { locale, code } = await params;
   setRequestLocale(locale);
-  try {
-    return await renderCountryPage(locale, code);
-  } catch (err) {
-    // Production has been silently 500-ing this route since 4f0fd8b — relay
-    // the actual error to Telegram so we finally see the stack instead of a
-    // bare "Internal Server Error" body. Best-effort; never blocks rethrow.
-    const e = err as Error;
-    void tgServerError({
-      url: `/${locale}/events/country/${code}`,
-      message: `${e?.name ?? "Error"}: ${e?.message ?? String(err)}\n${(e?.stack ?? "").slice(0, 800)}`,
-    });
-    throw err;
-  }
-}
 
-async function renderCountryPage(locale: string, code: string) {
   const country = findCountry(code);
   if (!country) notFound();
 
   const tNav = await getTranslations("nav");
   const tCommon = await getTranslations("common");
 
+  // Empty list is NOT a 404 — render a clean "no events yet" state. Two
+  // reasons: (a) Next 16 deep-route notFound() was bubbling as a bare 500
+  // on this route (NEXT_HTTP_ERROR_FALLBACK;404 escaped the locale layout's
+  // not-found.tsx and Next served the plain-text fallback instead);
+  // (b) SEO — keep the country hub indexed with helpful copy, don't 404
+  // every page just because the catalog momentarily has no published events.
   const events = await getEventsByCountry(country.code, locale);
-  if (events.length === 0) notFound();
 
   const countries = getCountries(locale);
   const localizedName = countries.find((c) => c.code === country.code)?.name ?? country.name;
@@ -169,11 +158,29 @@ async function renderCountryPage(locale: string, code: string) {
           </nav>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {events.map((e) => (
-            <EventCard key={e.id} event={e} locale={locale} labels={cardLabels} size="sm" />
-          ))}
-        </div>
+        {events.length === 0 ? (
+          <div className="rounded-[var(--radius-xl)] border-2 border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-12 text-center">
+            <div className="text-5xl">{country.flag}</div>
+            <h2 className="mt-4 font-[family-name:var(--font-manrope)] text-xl font-bold text-[var(--color-foreground)]">
+              No published events in {localizedName} yet
+            </h2>
+            <p className="mt-2 text-sm text-[var(--color-muted-strong)]">
+              Organizers are getting ready — check back soon, or explore other countries.
+            </p>
+            <Link
+              href="/events"
+              className="mt-6 inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-pitch-600)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--color-pitch-700)]"
+            >
+              Browse all events
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {events.map((e) => (
+              <EventCard key={e.id} event={e} locale={locale} labels={cardLabels} size="sm" />
+            ))}
+          </div>
+        )}
       </Container>
     </>
   );

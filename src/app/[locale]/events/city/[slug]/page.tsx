@@ -78,8 +78,10 @@ export default async function EventsByCityPage({
   const tNav = await getTranslations("nav");
   const tCommon = await getTranslations("common");
 
+  // Empty list is NOT a 404 — see the country hub for the rationale (Next 16
+  // deep-route notFound() escapes the locale not-found.tsx and 500s instead).
+  // Render a clean empty-state below.
   const events = await getEventsByCity(slug, locale);
-  if (events.length === 0) notFound();
 
   const country = findCountry(city.countryCode);
   const countries = getCountries(locale);
@@ -150,11 +152,29 @@ export default async function EventsByCityPage({
           </nav>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {events.map((e) => (
-            <EventCard key={e.id} event={e} locale={locale} labels={cardLabels} size="sm" />
-          ))}
-        </div>
+        {events.length === 0 ? (
+          <div className="rounded-[var(--radius-xl)] border-2 border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-12 text-center">
+            <div className="text-5xl">{country?.flag ?? "🏟"}</div>
+            <h2 className="mt-4 font-[family-name:var(--font-manrope)] text-xl font-bold text-[var(--color-foreground)]">
+              No published events in {city.nameEn} yet
+            </h2>
+            <p className="mt-2 text-sm text-[var(--color-muted-strong)]">
+              Organizers are getting ready — check back soon, or explore other cities.
+            </p>
+            <Link
+              href="/events"
+              className="mt-6 inline-flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-pitch-600)] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[var(--color-pitch-700)]"
+            >
+              Browse all events
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {events.map((e) => (
+              <EventCard key={e.id} event={e} locale={locale} labels={cardLabels} size="sm" />
+            ))}
+          </div>
+        )}
       </Container>
     </>
   );
