@@ -127,7 +127,7 @@ export default async function OrganizerEventsListPage({
                       </Button>
                     )}
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/organizer/events/${e.slug}/applications`}>
+                      <Link href={`/organizer/events/${e.id}/applications`}>
                         <Inbox className="h-3.5 w-3.5" /> {t("applications")}
                       </Link>
                     </Button>

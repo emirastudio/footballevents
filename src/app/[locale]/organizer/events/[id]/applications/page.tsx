@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { requireEventAccessBySlug } from "@/lib/organizer-access";
+import { canAccessEvent, getOrganizerForUser, can, landingFor } from "@/lib/organizer-access";
 import { ApplicationsTable, type ApplicationRow } from "@/components/organizer/applications/ApplicationsTable";
 import { EventTeamAccess, type TeamMember } from "@/components/organizer/applications/EventTeamAccess";
 import { ChevronLeft } from "lucide-react";
@@ -11,19 +11,26 @@ import { ChevronLeft } from "lucide-react";
 export default async function EventApplicationsPage({
   params,
 }: {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }) {
-  const { locale, slug } = await params;
+  const { locale, id } = await params;
   setRequestLocale(locale);
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
 
-  // requireEventAccessBySlug applies BOTH org-level perm AND per-event ACL.
-  // STAFF without explicit grants still sees the page (back-compat); STAFF
-  // with explicit grants gets a 302 to their landing page if the URL slug
-  // wasn't on their list.
-  const { access, eventId } = await requireEventAccessBySlug(session.user.id, slug, "bookings");
+  // Per-event guard: caller's org must own this event AND any per-event ACL
+  // (STAFF with explicit grants) must allow it. Sibling of /[id]/page.tsx and
+  // /[id]/setup so the URL space stays consistent — all event-scoped pages
+  // address the event by id.
+  const ok = await canAccessEvent(session.user.id, id);
+  if (!ok) {
+    const fallback = await getOrganizerForUser(session.user.id);
+    if (!fallback) redirect("/onboarding/organizer");
+    redirect(landingFor(fallback.role));
+  }
+  const { access, eventId } = ok;
+  if (!can(access.role, "bookings")) redirect(landingFor(access.role));
 
   const event = await db.event.findUnique({
     where: { id: eventId },

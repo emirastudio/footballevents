@@ -21,7 +21,7 @@ export async function toggleEventAccessAction(memberId: string, eventId: string)
   if (!access || access.role !== "OWNER") return;
 
   // Event must belong to the caller's organizer.
-  const event = await db.event.findUnique({ where: { id: eventId }, select: { organizerId: true, slug: true } });
+  const event = await db.event.findUnique({ where: { id: eventId }, select: { organizerId: true } });
   if (!event || event.organizerId !== access.organizer.id) return;
 
   // Member must belong to the same organizer.
@@ -47,6 +47,6 @@ export async function toggleEventAccessAction(memberId: string, eventId: string)
     }
   }
 
-  revalidatePath(`/organizer/events/${event.slug}/applications`);
+  revalidatePath(`/organizer/events/${eventId}/applications`);
   revalidatePath("/organizer/bookings");
 }

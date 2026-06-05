@@ -119,11 +119,11 @@ export async function bulkRespondBookingsAction(formData: FormData) {
   );
 
   revalidatePath("/organizer/bookings");
-  // Per-event applications page lives at /organizer/events/[slug]/applications;
-  // revalidate any that contain these bookings (cheap to fan out by event).
-  const slugs = new Set(allowed.map((x) => x.booking.event.slug));
-  for (const slug of slugs) {
-    revalidatePath(`/organizer/events/${slug}/applications`);
+  // Per-event applications page lives at /organizer/events/[id]/applications;
+  // revalidate the page for each event touched by the bulk action.
+  const eventIds = new Set(allowed.map((x) => x.booking.eventId));
+  for (const id of eventIds) {
+    revalidatePath(`/organizer/events/${id}/applications`);
   }
   revalidatePath("/me/applications");
   revalidatePath("/club/applications");
@@ -256,9 +256,9 @@ export async function messageApplicantsAction(
   );
 
   revalidatePath("/organizer/messages");
-  const slugs = new Set(allowed.map((x) => x.booking.event.slug));
-  for (const slug of slugs) {
-    revalidatePath(`/organizer/events/${slug}/applications`);
+  const eventIds = new Set(allowed.map((x) => x.booking.eventId));
+  for (const id of eventIds) {
+    revalidatePath(`/organizer/events/${id}/applications`);
   }
   return { ok: true, delivered: { withAccount, emailOnly } };
 }
