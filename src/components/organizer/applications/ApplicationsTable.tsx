@@ -275,7 +275,7 @@ export function ApplicationsTable({
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--color-border)] bg-[var(--color-bg-muted)] text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">
             <tr>
-              <th className="w-10 px-3 py-2.5">
+              <th className="sticky left-0 z-10 w-10 bg-[var(--color-bg-muted)] px-3 py-2.5">
                 <input
                   type="checkbox"
                   checked={allOnPageSelected}
@@ -284,17 +284,22 @@ export function ApplicationsTable({
                   className="h-4 w-4 rounded border-[var(--color-border-strong)] text-[var(--color-pitch-600)] focus:ring-[var(--color-pitch-500)]"
                 />
               </th>
-              <SortableHeader label={labels.colApplicant} dir={sortBy === "name" ? sortDir : null} onClick={() => toggleSort("name")} />
-              {isVisible("team") && <th className="px-3 py-2.5 text-left">{labels.colTeam}</th>}
-              {isVisible("contact") && <th className="px-3 py-2.5 text-left">{labels.colContact}</th>}
-              {isVisible("party") && <SortableHeader label={labels.colParty} dir={sortBy === "party" ? sortDir : null} onClick={() => toggleSort("party")} className="w-16" />}
-              {isVisible("status") && <SortableHeader label={labels.colStatus} dir={sortBy === "status" ? sortDir : null} onClick={() => toggleSort("status")} className="w-28" />}
-              {isVisible("date") && <SortableHeader label={labels.colDate} dir={sortBy === "date" ? sortDir : null} onClick={() => toggleSort("date")} className="w-28" />}
-              {isVisible("age") && <th className="px-3 py-2.5 text-left w-16">{labels.columnsAge}</th>}
+              <SortableHeader
+                label={labels.colApplicant}
+                dir={sortBy === "name" ? sortDir : null}
+                onClick={() => toggleSort("name")}
+                className="sticky left-10 z-10 bg-[var(--color-bg-muted)] shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)] whitespace-nowrap"
+              />
+              {isVisible("team") && <th className="px-3 py-2.5 text-left whitespace-nowrap">{labels.colTeam}</th>}
+              {isVisible("contact") && <th className="px-3 py-2.5 text-left whitespace-nowrap">{labels.colContact}</th>}
+              {isVisible("party") && <SortableHeader label={labels.colParty} dir={sortBy === "party" ? sortDir : null} onClick={() => toggleSort("party")} className="w-16 whitespace-nowrap" />}
+              {isVisible("status") && <SortableHeader label={labels.colStatus} dir={sortBy === "status" ? sortDir : null} onClick={() => toggleSort("status")} className="w-28 whitespace-nowrap" />}
+              {isVisible("date") && <SortableHeader label={labels.colDate} dir={sortBy === "date" ? sortDir : null} onClick={() => toggleSort("date")} className="w-28 whitespace-nowrap" />}
+              {isVisible("age") && <th className="px-3 py-2.5 text-left w-16 whitespace-nowrap">{labels.columnsAge}</th>}
               {customColumns.map((c) => isVisible(`cf:${c.id}`) && (
-                <th key={c.id} className="px-3 py-2.5 text-left">{c.label}</th>
+                <th key={c.id} className="px-3 py-2.5 text-left whitespace-nowrap">{c.label}</th>
               ))}
-              <th className="px-3 py-2.5 text-right">{labels.colActions}</th>
+              <th className="px-3 py-2.5 text-right whitespace-nowrap">{labels.colActions}</th>
             </tr>
           </thead>
           <tbody>
@@ -461,7 +466,7 @@ function Row({
   return (
     <>
       <tr className={`border-b border-[var(--color-border)] last:border-0 transition ${selected ? "bg-[var(--color-pitch-50)]/40" : "hover:bg-[var(--color-surface-muted)]"}`}>
-        <td className="px-3 py-3">
+        <td className={`sticky left-0 z-10 px-3 py-3 ${selected ? "bg-[var(--color-pitch-50)]" : "bg-[var(--color-surface)]"}`}>
           <input
             type="checkbox"
             checked={selected}
@@ -470,8 +475,8 @@ function Row({
             aria-label={labels.colSelect}
           />
         </td>
-        <td className="px-3 py-3">
-          <div className="flex items-center gap-2">
+        <td className={`sticky left-10 z-10 px-3 py-3 shadow-[2px_0_4px_-2px_rgba(0,0,0,0.08)] ${selected ? "bg-[var(--color-pitch-50)]" : "bg-[var(--color-surface)]"}`}>
+          <div className="flex items-center gap-2 whitespace-nowrap">
             {row.clubLogo && (
               <span
                 className="h-6 w-6 shrink-0 rounded-full bg-cover bg-center bg-[var(--color-bg-muted)]"

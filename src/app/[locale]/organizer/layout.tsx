@@ -47,7 +47,7 @@ export default async function OrganizerLayout({
 
   return (
     <Container className="py-8">
-      <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <Link
             href={`/org/${organizer.slug}`}
@@ -81,7 +81,9 @@ export default async function OrganizerLayout({
           </nav>
         </aside>
 
-        <div>{children}</div>
+        {/* min-w-0 lets wide tables hand the scrollbar off to their own
+            overflow-x-auto wrapper instead of stretching the grid column. */}
+        <div className="min-w-0">{children}</div>
       </div>
     </Container>
   );
