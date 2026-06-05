@@ -16,6 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locales = routing.locales;
   const staticPaths = [
     "", "/events", "/org", "/stadiums", "/pricing", "/advertise", "/contact", "/world-cup-2026", "/blog",
+    "/rfqs",
     // About / informational landing pages (linked from the footer)
     "/about", "/about/tournaments", "/about/camps", "/about/festivals", "/about/match-tours",
     "/about/for-organizers", "/about/for-clubs", "/about/academy-trials",
@@ -29,17 +30,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let venues: Array<{ slug: string; updatedAt: Date }> = [];
   let categories: Array<{ slug: string }> = [];
   let articles: Array<{ slug: string; updatedAt: Date }> = [];
+  let clubs: Array<{ slug: string; updatedAt: Date }> = [];
+  let openRfqs: Array<{ id: string; updatedAt: Date }> = [];
   // pSEO hub data — only emit URLs that have at least one event,
   // so we never publish empty hubs in the sitemap.
   let cityRows: Array<{ slug: string; countryCode: string; eventCount: number }> = [];
   let countryRows: Array<{ countryCode: string; eventCount: number }> = [];
   try {
-    [events, organizers, venues, categories, articles] = await Promise.all([
+    [events, organizers, venues, categories, articles, clubs, openRfqs] = await Promise.all([
       db.event.findMany({ where, select: { slug: true, updatedAt: true }, take: 5000 }),
       db.organizer.findMany({ select: { slug: true, updatedAt: true } }),
       db.venue.findMany({ select: { slug: true, updatedAt: true } }),
       db.category.findMany({ select: { slug: true } }),
       db.article.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true }, take: 5000 }),
+      db.club.findMany({ select: { slug: true, updatedAt: true }, take: 5000 }),
+      db.rfq.findMany({ where: { status: "OPEN" }, select: { id: true, updatedAt: true }, take: 2000 }),
     ]);
     const [cities, countries] = await Promise.all([
       db.city.findMany({
@@ -148,6 +153,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: a.updatedAt,
         changeFrequency: "weekly",
         priority: 0.7,
+      });
+    }
+    for (const c of clubs) {
+      out.push({
+        url: `${SITE}/${locale}/club/${c.slug}`,
+        lastModified: c.updatedAt,
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
+    for (const r of openRfqs) {
+      out.push({
+        url: `${SITE}/${locale}/rfqs/${r.id}`,
+        lastModified: r.updatedAt,
+        changeFrequency: "daily",
+        priority: 0.55,
       });
     }
   }

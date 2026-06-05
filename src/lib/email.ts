@@ -594,6 +594,71 @@ export function savedSearchAlertEmail(opts: {
   });
 }
 
+/**
+ * 🛎️ A club just posted an RFQ that matches what this organizer covers.
+ * Fire-and-forget — best-effort, never blocks the RFQ creation flow.
+ */
+export function rfqNewToOrganizerEmail(opts: {
+  organizerEmail: string;
+  organizerName: string;
+  clubName: string;
+  rfqId: string;
+  what: string;        // localized one-liner: "U-13 tournament, 8x8, 1-3 days"
+  region?: string;     // free-text region/country hint
+  dateRange?: string;  // optional human dates
+  locale?: string;
+}) {
+  const L = loc(opts.locale);
+  const T = {
+    en: {
+      subj: `Club looking for ${opts.what}`,
+      title: "A club is searching 🛎️",
+      hi: `Hi ${escape(opts.organizerName)},`,
+      line: `<strong>${escape(opts.clubName)}</strong> just posted a request matching what you organize:`,
+      btn: "See the request",
+      hint: "Reply directly to the club via the email shown on the request page — there is no chat on the platform.",
+    },
+    ru: {
+      subj: `Клуб ищет: ${opts.what}`,
+      title: "Клуб ищет 🛎️",
+      hi: `Здравствуйте, ${escape(opts.organizerName)}!`,
+      line: `<strong>${escape(opts.clubName)}</strong> опубликовал(а) запрос, подходящий под ваши эвенты:`,
+      btn: "Открыть запрос",
+      hint: "Напишите клубу напрямую на email со страницы запроса — чата на платформе нет.",
+    },
+    de: {
+      subj: `Klub sucht: ${opts.what}`,
+      title: "Ein Klub sucht 🛎️",
+      hi: `Hallo ${escape(opts.organizerName)},`,
+      line: `<strong>${escape(opts.clubName)}</strong> hat eine Anfrage veröffentlicht, die zu Ihren Events passt:`,
+      btn: "Anfrage ansehen",
+      hint: "Antworten Sie dem Klub direkt per E-Mail (auf der Anfrage-Seite zu sehen) — es gibt keinen Chat auf der Plattform.",
+    },
+    es: {
+      subj: `Un club busca: ${opts.what}`,
+      title: "Un club busca 🛎️",
+      hi: `Hola ${escape(opts.organizerName)},`,
+      line: `<strong>${escape(opts.clubName)}</strong> ha publicado una solicitud que encaja con tus eventos:`,
+      btn: "Ver la solicitud",
+      hint: "Responde directamente al club por email (visible en la página de la solicitud) — no hay chat en la plataforma.",
+    },
+  }[L];
+  const details = [
+    `<strong>${escape(opts.what)}</strong>`,
+    opts.region ? escape(opts.region) : null,
+    opts.dateRange ? escape(opts.dateRange) : null,
+  ].filter(Boolean).join(" · ");
+  const html = shell(
+    T.title,
+    `<p>${T.hi}</p>
+     <p>${T.line}</p>
+     <p style="background:#fafbfc;border-left:4px solid #00d26a;padding:12px;border-radius:4px">${details}</p>
+     ${btn(`${SITE}/${L}/rfqs/${opts.rfqId}`, T.btn)}
+     <p style="font-size:12px;color:#64748b">${T.hint}</p>`,
+  );
+  return sendEmail({ to: opts.organizerEmail, subject: T.subj, html });
+}
+
 export function eventModerationEmail(opts: {
   organizerEmail: string;
   organizerName: string;

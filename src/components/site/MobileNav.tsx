@@ -5,11 +5,12 @@ import { MobileNavClient, type MobileNavUser } from "./MobileNavClient";
 type NavLink = { href: string; label: string };
 
 export async function MobileNav({ links }: { links: NavLink[] }) {
-  const [session, t, tAuth, tOrg] = await Promise.all([
+  const [session, t, tAuth, tOrg, tClub] = await Promise.all([
     auth(),
     getTranslations("nav"),
     getTranslations("auth"),
     getTranslations("organizer"),
+    getTranslations("club"),
   ]);
 
   let user: MobileNavUser = null;
@@ -27,6 +28,10 @@ export async function MobileNav({ links }: { links: NavLink[] }) {
       image: session.user.image,
       role: session.user.role,
       initials,
+      // Dual-hat capability flags — relation presence is source of truth.
+      // See ADR 0001 §D1.
+      hasOrganizer: !!session.user.organizerId,
+      hasClub: !!session.user.clubId,
     };
   }
 
@@ -40,6 +45,7 @@ export async function MobileNav({ links }: { links: NavLink[] }) {
         signOut: tAuth("signOut"),
         becomeOrganizer: tOrg("becomeOrganizer"),
         openCabinet: tOrg("openCabinet"),
+        myClub: tClub("myClubMenuLabel"),
       }}
     />
   );

@@ -17,6 +17,8 @@ export type MobileNavUser = {
   image?: string | null;
   role?: string | null;
   initials: string;
+  hasOrganizer?: boolean;
+  hasClub?: boolean;
 } | null;
 
 type NavLink = { href: string; label: string };
@@ -30,6 +32,7 @@ type Props = {
     signOut: string;
     becomeOrganizer: string;
     openCabinet: string;
+    myClub: string;
   };
 };
 
@@ -40,7 +43,9 @@ export function MobileNavClient({ links, user, labels }: Props) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
-  const isOrganizer = user?.role === "ORGANIZER" || user?.role === "ADMIN";
+  // Capability source of truth = relation presence. role stays for ADMIN only.
+  const hasOrganizer = !!user?.hasOrganizer;
+  const hasClub = !!user?.hasClub;
   const isAdmin = user?.role === "ADMIN";
 
   function changeLocale(next: Locale) {
@@ -154,17 +159,41 @@ export function MobileNavClient({ links, user, labels }: Props) {
                   </div>
                 </div>
 
-                <Link
-                  href={isOrganizer ? "/organizer/dashboard" : "/onboarding/organizer"}
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-[var(--radius-lg)] bg-[var(--color-pitch-700)] px-4 py-3.5 text-sm font-semibold text-white hover:bg-[var(--color-pitch-800)] transition"
-                >
-                  <LayoutDashboard className="h-4 w-4 shrink-0" />
-                  <span className="flex-1">
-                    {isOrganizer ? labels.openCabinet : labels.becomeOrganizer}
-                  </span>
-                  <ChevronRight className="h-4 w-4 opacity-60" />
-                </Link>
+                {/* Club cabinet — shown before Organizer on dual-hat. */}
+                {hasClub && (
+                  <Link
+                    href="/club/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-pitch-300)] bg-[var(--color-pitch-50)] px-4 py-3.5 text-sm font-semibold text-[var(--color-pitch-800)] transition hover:bg-[var(--color-pitch-100)]"
+                  >
+                    <LayoutDashboard className="h-4 w-4 shrink-0" />
+                    <span className="flex-1">{labels.myClub}</span>
+                    <ChevronRight className="h-4 w-4 opacity-60" />
+                  </Link>
+                )}
+                {/* Organizer cabinet OR "Become organizer" upsell (suppressed
+                    when user already runs a club). */}
+                {hasOrganizer ? (
+                  <Link
+                    href="/organizer/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-[var(--radius-lg)] bg-[var(--color-pitch-700)] px-4 py-3.5 text-sm font-semibold text-white hover:bg-[var(--color-pitch-800)] transition"
+                  >
+                    <LayoutDashboard className="h-4 w-4 shrink-0" />
+                    <span className="flex-1">{labels.openCabinet}</span>
+                    <ChevronRight className="h-4 w-4 opacity-60" />
+                  </Link>
+                ) : !hasClub && (
+                  <Link
+                    href="/onboarding/organizer"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-[var(--radius-lg)] bg-[var(--color-pitch-700)] px-4 py-3.5 text-sm font-semibold text-white hover:bg-[var(--color-pitch-800)] transition"
+                  >
+                    <LayoutDashboard className="h-4 w-4 shrink-0" />
+                    <span className="flex-1">{labels.becomeOrganizer}</span>
+                    <ChevronRight className="h-4 w-4 opacity-60" />
+                  </Link>
+                )}
 
                 {isAdmin && (
                   <Link

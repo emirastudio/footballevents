@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
 import { signOutAction } from "@/app/actions/auth";
-import { LogOut, User, LayoutDashboard } from "lucide-react";
+import { LogOut, User, LayoutDashboard, Users } from "lucide-react";
 
 export async function UserMenu({
   signInLabel,
@@ -11,12 +11,14 @@ export async function UserMenu({
   signOutLabel,
   becomeOrganizerLabel,
   openCabinetLabel,
+  myClubLabel,
 }: {
   signInLabel: string;
   signUpLabel: string;
   signOutLabel: string;
   becomeOrganizerLabel: string;
   openCabinetLabel: string;
+  myClubLabel: string;
 }) {
   const session = await auth();
 
@@ -33,7 +35,11 @@ export async function UserMenu({
     );
   }
 
-  const isOrganizer = session.user.role === "ORGANIZER" || session.user.role === "ADMIN";
+  // Capability is the SOURCE OF TRUTH, not `role` — dual-hat (ORGANIZER + CLUB)
+  // means relying on role would hide one of the two cabinets. session.user
+  // carries the IDs (populated in src/auth.ts callback). See ADR 0001 §D1.
+  const hasOrganizer = !!session.user.organizerId;
+  const hasClub = !!session.user.clubId;
   const isAdmin = session.user.role === "ADMIN";
 
   const initials = (session.user.name ?? session.user.email ?? "U")
@@ -50,14 +56,35 @@ export async function UserMenu({
           <Link href="/admin/dashboard">Admin</Link>
         </Button>
       )}
-      <Button asChild variant={isOrganizer ? "outline" : "primary"} size="sm">
-        <Link href={isOrganizer ? "/organizer/dashboard" : "/onboarding/organizer"}>
-          <LayoutDashboard className="h-4 w-4" />
-          <span className="hidden sm:inline">
-            {isOrganizer ? openCabinetLabel : becomeOrganizerLabel}
-          </span>
-        </Link>
-      </Button>
+      {/* Club cabinet — only when the user runs a club. Sits before Organizer
+          on dual-hat so the more recent addition is the first thing they reach. */}
+      {hasClub && (
+        <Button asChild variant="outline" size="sm">
+          <Link href="/club/dashboard">
+            <Users className="h-4 w-4" />
+            <span className="hidden sm:inline">{myClubLabel}</span>
+          </Link>
+        </Button>
+      )}
+      {/* Organizer cabinet — present for active organizers; for everyone else we
+          keep the "Become organizer" CTA exactly as before (no churn for solo users). */}
+      {hasOrganizer ? (
+        <Button asChild variant="outline" size="sm">
+          <Link href="/organizer/dashboard">
+            <LayoutDashboard className="h-4 w-4" />
+            <span className="hidden sm:inline">{openCabinetLabel}</span>
+          </Link>
+        </Button>
+      ) : !hasClub ? (
+        // No hats at all → show the upsell CTA. Hide it when the user already
+        // runs a club, to avoid two competing CTAs in the header.
+        <Button asChild variant="primary" size="sm">
+          <Link href="/onboarding/organizer">
+            <LayoutDashboard className="h-4 w-4" />
+            <span className="hidden sm:inline">{becomeOrganizerLabel}</span>
+          </Link>
+        </Button>
+      ) : null}
       <Link
         href="/me"
         className="flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1 text-sm transition hover:border-[var(--color-pitch-300)]"

@@ -11,6 +11,7 @@ export async function SiteHeader() {
   const t = await getTranslations("nav");
   const tAuth = await getTranslations("auth");
   const tOrg = await getTranslations("organizer");
+  const tClub = await getTranslations("club");
   const tCommon = await getTranslations("common");
 
   // Try locale-specific labels with sensible English fallbacks so missing
@@ -72,6 +73,7 @@ export async function SiteHeader() {
                 signOutLabel={tAuth("signOut")}
                 becomeOrganizerLabel={tOrg("becomeOrganizer")}
                 openCabinetLabel={tOrg("openCabinet")}
+                myClubLabel={tClub("myClubMenuLabel")}
               />
             </div>
 
