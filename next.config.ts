@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost" },
+      // Our own CDN — goal.footballevents.eu is the public S3_PUBLIC_URL where
+      // organizer-uploaded event covers/logos live. Wildcard covers any future
+      // subdomain (cdn.*, img.*, …) without another config tweak.
+      { protocol: "https", hostname: "**.footballevents.eu" },
       { protocol: "https", hostname: "**.r2.dev" },
       { protocol: "https", hostname: "**.amazonaws.com" },
       { protocol: "https", hostname: "**.r2.cloudflarestorage.com" },
