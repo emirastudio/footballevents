@@ -25,6 +25,15 @@ export default async function ApplyPage({
   });
   if (!event) notFound();
 
+  // Surface a club-apply switch when the user happens to also run a club —
+  // we don't auto-redirect (they might genuinely want to apply individually,
+  // e.g. as a parent for one child). One discreet banner above the form.
+  const clubHat = await db.club.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true, name: true, _count: { select: { teams: { where: { isActive: true } } } } },
+  });
+  const hasClubWithTeams = !!clubHat && clubHat._count.teams > 0;
+
   const en = event.translations.find((tr) => tr.locale === locale) ?? event.translations.find((tr) => tr.locale === "en");
   const eventTitle = en?.title ?? slug;
 
@@ -56,6 +65,24 @@ export default async function ApplyPage({
           {t("title", { eventTitle })}
         </h1>
         <p className="mt-2 text-[var(--color-muted-strong)]">{t("subtitle")}</p>
+
+        {hasClubWithTeams && clubHat && (
+          <div className="mt-6 flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--color-pitch-200)] bg-[var(--color-pitch-50)] px-4 py-3">
+            <p className="text-sm text-[var(--color-pitch-800)]">
+              <span className="font-semibold">{clubHat.name}</span> ·{" "}
+              {locale === "ru" ? "Подать заявку от имени клуба?" :
+               locale === "de" ? "Stattdessen als Klub anmelden?" :
+               locale === "es" ? "¿Inscribirse como club?" :
+               "Apply on behalf of your club?"}
+            </p>
+            <Link
+              href={`/events/${slug}/apply/club`}
+              className="shrink-0 rounded-[var(--radius-md)] bg-[var(--color-pitch-600)] px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-[var(--color-pitch-700)]"
+            >
+              {locale === "ru" ? "Перейти" : locale === "de" ? "Wechseln" : locale === "es" ? "Cambiar" : "Switch"}
+            </Link>
+          </div>
+        )}
 
         <div className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-sm)]">
           {isOwn ? (

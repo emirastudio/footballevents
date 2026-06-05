@@ -191,6 +191,178 @@ export async function applyEventAction(_prev: BookingFormState, formData: FormDa
 }
 
 /**
+ * Apply to an event on behalf of a registered club's team.
+ *
+ * Differences from applyEventAction:
+ * - Caller must own a Club + an active ClubTeam (ownership checked here).
+ * - Booking is stamped with clubId + clubTeamId so the organizer sees a
+ *   club-tagged application in their dashboard.
+ * - Quota counter (ClubUsage.applicationsThisMonth) increments atomically
+ *   via ensureCanApplyAndCount BEFORE the booking is created — a quota
+ *   breach short-circuits before any side effect.
+ * - Same email + thread + capacity + telegram side effects as the
+ *   individual flow (organizers get one inbox, not two).
+ */
+export async function applyClubToEventAction(_prev: BookingFormState, formData: FormData): Promise<BookingFormState> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    const eventId = formData.get("eventId");
+    redirect(`/sign-in?next=/events/${eventId}/apply/club`);
+  }
+
+  const club = await db.club.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true, name: true, slug: true },
+  });
+  if (!club) redirect("/onboarding/club");
+
+  const clubApplySchema = z.object({
+    eventId:     z.string().min(1),
+    clubTeamId:  z.string().min(1, "Pick a team"),
+    partySize:   z.coerce.number().int().positive().default(1),
+    contactEmail: z.string().email(),
+    contactPhone: z.string().optional(),
+    comment:     z.string().trim().optional(),
+  });
+
+  const parsed = clubApplySchema.safeParse({
+    eventId:      formData.get("eventId"),
+    clubTeamId:   formData.get("clubTeamId"),
+    partySize:    formData.get("partySize") || 1,
+    contactEmail: formData.get("contactEmail") || session.user.email,
+    contactPhone: formData.get("contactPhone") || undefined,
+    comment:      formData.get("comment") || undefined,
+  });
+  if (!parsed.success) {
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of parsed.error.issues) fieldErrors[issue.path.join(".")] = issue.message;
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input", fieldErrors };
+  }
+  const d = parsed.data;
+
+  // Ownership + active check on the team. Archived teams can't apply — but
+  // existing bookings to that team are unaffected (soft-delete preserves history).
+  const team = await db.clubTeam.findFirst({
+    where: { id: d.clubTeamId, clubId: club.id, isActive: true },
+    select: { id: true, name: true, ageGroup: true, format: true },
+  });
+  if (!team) return { error: "Team not found or archived", fieldErrors: { clubTeamId: "Invalid team" } };
+
+  const event = await db.event.findUnique({
+    where: { id: d.eventId },
+    include: {
+      organizer: { include: { user: { select: { preferredLocale: true } } } },
+      translations: { select: { locale: true, title: true } },
+    },
+  });
+  if (!event) return { error: "Event not found" };
+  if (!event.acceptsBookings) return { error: "This event doesn't accept applications via the platform" };
+  if (event.status !== "PUBLISHED") return { error: "This event is not published" };
+  if (event.organizer.userId === session.user.id) return { error: "You can't apply to your own event" };
+
+  // Capacity check — same logic as individual flow. If full, route to WAITLIST.
+  let initialStatus: "NEW" | "WAITLIST" = "NEW";
+  if (event.maxParticipants != null) {
+    const agg = await db.booking.aggregate({
+      where: { eventId: d.eventId, status: { in: ["ACCEPTED", "COMPLETED"] } },
+      _sum: { partySize: true },
+    });
+    const confirmed = agg._sum.partySize ?? 0;
+    if (confirmed + d.partySize > event.maxParticipants) initialStatus = "WAITLIST";
+  }
+
+  // Quota check + atomic increment. Throws ClubQuotaError → we surface as form error.
+  // Lives in src/lib/permissions/club.ts so flipping monetization later is
+  // a config change, not edits here.
+  const { ensureCanApplyAndCount, ClubQuotaError } = await import("@/lib/permissions/club");
+  try {
+    await ensureCanApplyAndCount(club.id);
+  } catch (err) {
+    if (err instanceof ClubQuotaError) {
+      return { error: "Monthly application quota exceeded. Upgrade or wait for next month." };
+    }
+    throw err;
+  }
+
+  // Snapshot team metadata into the booking participantName/teamName so the
+  // organizer's dashboard reads naturally even if the team is later renamed.
+  const teamLabel = `${team.name} (${team.ageGroup}${team.format ? ` · ${team.format}` : ""})`;
+
+  const booking = await db.booking.create({
+    data: {
+      eventId: d.eventId,
+      userId: session.user.id,
+      clubId: club.id,
+      clubTeamId: team.id,
+      participantName: club.name,
+      teamName: teamLabel,
+      partySize: d.partySize,
+      contactEmail: d.contactEmail,
+      contactPhone: d.contactPhone ?? null,
+      comment: d.comment ?? null,
+      status: initialStatus,
+      // priority/visibleToOrganizer keep their schema defaults (0 / true).
+      // When PRO clubs land, the permissions helper will set priority=1.
+    },
+  });
+
+  const applicantLocale = asLocale(formData.get("locale"));
+  const organizerLocale = event.organizer.user?.preferredLocale ?? "en";
+  const titleForApplicant = titleFor(event.translations, applicantLocale, event.slug);
+  const titleForOrganizer = titleFor(event.translations, organizerLocale, event.slug);
+
+  // Thread for organizer ↔ club correspondence about this booking.
+  try {
+    if (session.user.id !== event.organizer.userId) {
+      await db.thread.create({
+        data: {
+          eventId: event.id,
+          bookingId: booking.id,
+          subject: titleFor(event.translations, "en", event.slug),
+          participants: {
+            create: [
+              { userId: session.user.id },
+              { userId: event.organizer.userId },
+            ],
+          },
+        },
+      });
+    }
+  } catch (e) {
+    console.error("[club-apply] thread create failed", e);
+  }
+
+  // Reuse the same email + telegram side effects as individual applications —
+  // organizer's inbox shouldn't fork by source.
+  void newApplicationEmail({
+    organizerEmail: event.organizer.email,
+    organizerName: event.organizer.name,
+    eventTitle: titleForOrganizer,
+    applicantName: `${club.name} — ${teamLabel}`,
+    applicantEmail: d.contactEmail,
+    comment: d.comment,
+    locale: organizerLocale,
+  });
+  void applicationReceivedEmail({
+    applicantEmail: d.contactEmail,
+    applicantName: club.name,
+    eventTitle: titleForApplicant,
+    eventSlug: event.slug,
+    organizerName: event.organizer.name,
+    eventStart: event.startDate,
+    eventEnd: event.endDate,
+    locale: applicantLocale,
+  });
+  void tgEventActivity({ title: titleFor(event.translations, "en", event.slug), slug: event.slug });
+
+  revalidatePath(`/events/${event.slug}`);
+  revalidatePath("/club/applications");
+  revalidatePath("/club/dashboard");
+  revalidatePath("/organizer/bookings");
+  return { ok: true };
+}
+
+/**
  * Anonymous registration from an embedded form on a third-party site.
  * No session required — a lightweight guest user is created/reused by email.
  * Honeypot (`website` field) silently absorbs bots.
@@ -377,4 +549,8 @@ export async function respondBookingAction(formData: FormData) {
   revalidatePath("/me/applications");
   revalidatePath("/me/messages");
   revalidatePath("/organizer/messages");
+  // Club-side bookings live at a different URL — revalidate too so the
+  // status flip is reflected immediately on the club dashboard.
+  revalidatePath("/club/applications");
+  revalidatePath("/club/dashboard");
 }
