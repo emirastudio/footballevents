@@ -2902,6 +2902,18 @@
     "teamRoleManager": "Manager",
     "teamRoleStaff": "Staff",
     "teamGrant": "Grant access",
-    "teamRevoke": "Has access"
+    "teamRevoke": "Has access",
+    "columnsButton": "Columns",
+    "columnsPickerTitle": "Show / hide columns",
+    "columnsAge": "Age",
+    "columnsComment": "Comment / reply",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "bookingsHub": {
+    "subtitle": "Pick an event to see its applications. Each event keeps its own table — no mixing across events.",
+    "emptyTitle": "No events yet",
+    "emptyBody": "Create an event to start receiving applications.",
+    "totalCount": "{n, plural, =0 {No applications} =1 {# total} other {# total}}"
   }
 }

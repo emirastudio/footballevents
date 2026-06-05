@@ -2881,6 +2881,18 @@
     "teamRoleManager": "Manager",
     "teamRoleStaff": "Mitarbeiter",
     "teamGrant": "Zugriff erteilen",
-    "teamRevoke": "Hat Zugriff"
+    "teamRevoke": "Hat Zugriff",
+    "columnsButton": "Spalten",
+    "columnsPickerTitle": "Anzeigen / ausblenden",
+    "columnsAge": "Alter",
+    "columnsComment": "Kommentar / Antwort",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "bookingsHub": {
+    "subtitle": "Wählen Sie ein Event, um dessen Anmeldungen zu sehen. Jedes Event hat seine eigene Tabelle — keine Vermischung.",
+    "emptyTitle": "Noch keine Events",
+    "emptyBody": "Legen Sie ein Event an, um Anmeldungen zu erhalten.",
+    "totalCount": "{n, plural, =0 {Keine Anmeldungen} =1 {# gesamt} other {# gesamt}}"
   }
 }

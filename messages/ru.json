@@ -2902,6 +2902,18 @@
     "teamRoleManager": "Менеджер",
     "teamRoleStaff": "Сотрудник",
     "teamGrant": "Дать доступ",
-    "teamRevoke": "Есть доступ"
+    "teamRevoke": "Есть доступ",
+    "columnsButton": "Колонки",
+    "columnsPickerTitle": "Показать / скрыть",
+    "columnsAge": "Возраст",
+    "columnsComment": "Комментарий / ответ",
+    "yes": "Да",
+    "no": "Нет"
+  },
+  "bookingsHub": {
+    "subtitle": "Выберите эвент, чтобы увидеть его заявки. У каждого эвента своя таблица — без смешивания.",
+    "emptyTitle": "Эвентов пока нет",
+    "emptyBody": "Создайте эвент, чтобы начать получать заявки.",
+    "totalCount": "{n, plural, =0 {Нет заявок} one {# всего} few {# всего} many {# всего} other {# всего}}"
   }
 }

@@ -4,8 +4,9 @@ import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { canAccessEvent, getOrganizerForUser, can, landingFor } from "@/lib/organizer-access";
-import { ApplicationsTable, type ApplicationRow } from "@/components/organizer/applications/ApplicationsTable";
+import { ApplicationsTable, type ApplicationRow, type CustomColumn } from "@/components/organizer/applications/ApplicationsTable";
 import { EventTeamAccess, type TeamMember } from "@/components/organizer/applications/EventTeamAccess";
+import { parseForm, localizeFields, isDisplayField, fieldLabel } from "@/lib/forms/types";
 import { ChevronLeft } from "lucide-react";
 
 export default async function EventApplicationsPage({
@@ -38,10 +39,18 @@ export default async function EventApplicationsPage({
       id: true, slug: true,
       translations: { select: { locale: true, title: true } },
       startDate: true, endDate: true,
+      registrationForm: true,
       _count: { select: { bookings: true } },
     },
   });
   if (!event) redirect("/organizer/events");
+
+  // Custom fields the organizer authored on this event's registration form,
+  // localized to the organizer's UI locale. Drives the dynamic columns of
+  // the table. Display-only fields (heading / info) carry no answers.
+  const customColumns: CustomColumn[] = localizeFields(parseForm(event.registrationForm), locale)
+    .filter((f) => !isDisplayField(f.type))
+    .map((f) => ({ id: f.id, label: fieldLabel(f.label), type: f.type as CustomColumn["type"] }));
 
   const bookings = await db.booking.findMany({
     where: {
@@ -56,6 +65,7 @@ export default async function EventApplicationsPage({
       teamName: true, partySize: true,
       contactEmail: true, contactPhone: true,
       comment: true, organizerNote: true,
+      customFields: true,
       club: { select: { slug: true, name: true, logoUrl: true } },
     },
   });
@@ -70,6 +80,7 @@ export default async function EventApplicationsPage({
     partySize: b.partySize,
     contactEmail: b.contactEmail,
     contactPhone: b.contactPhone,
+    customFields: (b.customFields ?? {}) as Record<string, unknown>,
     comment: b.comment,
     organizerNote: b.organizerNote,
     isClub: !!b.club,
@@ -147,12 +158,20 @@ export default async function EventApplicationsPage({
 
       <ApplicationsTable
         rows={rows}
+        customColumns={customColumns}
+        storageKey={`fe.cols.${event.id}`}
         exportHrefBase={`/api/organizer/bookings/export?eventId=${event.id}`}
         labels={{
           searchPlaceholder: t("searchPlaceholder"),
           exportSelected: t("exportSelected"),
           exportAll: t("exportAll"),
           noResults: t("noResults"),
+          columnsButton: t("columnsButton"),
+          columnsPickerTitle: t("columnsPickerTitle"),
+          columnsAge: t("columnsAge"),
+          columnsComment: t("columnsComment"),
+          yes: t("yes"),
+          no: t("no"),
           colSelect: t("colSelect"),
           colApplicant: t("colApplicant"),
           colTeam: t("colTeam"),

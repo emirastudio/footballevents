@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useMemo, useState, useTransition } from "react";
+import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import {
   bulkRespondBookingsAction,
@@ -9,8 +9,18 @@ import {
 } from "@/app/actions/organizerBookings";
 import {
   Check, X, Mail, Phone, Users, Download, MessageSquare,
-  CheckCheck, Search, ChevronUp, ChevronDown, ChevronsUpDown,
+  CheckCheck, Search, ChevronUp, ChevronDown, ChevronsUpDown, Plus,
 } from "lucide-react";
+
+export type CustomColumn = {
+  id: string;        // matches Booking.customFields key
+  label: string;     // localized field label
+  type:
+    | "text" | "textarea" | "email" | "phone" | "number" | "date"
+    | "select" | "multiselect" | "checkboxes" | "radio"
+    | "consent" | "rules" | "file" | "size"
+    | "country" | "countrycity" | "yesno";
+};
 
 export type ApplicationRow = {
   id: string;
@@ -28,6 +38,10 @@ export type ApplicationRow = {
   clubSlug: string | null;
   clubName: string | null;
   clubLogo: string | null;
+  // Answers to the organizer's custom registration form for this booking,
+  // keyed by FormField.id. Values can be strings, numbers, booleans or arrays
+  // depending on the field type. Rendered into the dynamic columns.
+  customFields: Record<string, unknown>;
 };
 
 type Labels = {
@@ -36,6 +50,10 @@ type Labels = {
   exportSelected: string;
   exportAll: string;
   noResults: string;
+  columnsButton: string; // "+ Columns"
+  columnsPickerTitle: string;
+  columnsAge: string; columnsComment: string;
+  yes: string; no: string;
   // Columns
   colSelect: string; colApplicant: string; colTeam: string; colContact: string;
   colParty: string; colStatus: string; colDate: string; colActions: string;
@@ -54,17 +72,26 @@ type Labels = {
   statuses: Record<string, string>;
 };
 
+// Built-in columns the operator can hide/show. The Applicant column itself
+// stays mandatory — without it the row has no identity.
+const BUILTIN_COLUMNS = ["team", "contact", "party", "status", "date", "age", "comment"] as const;
+type BuiltinKey = (typeof BUILTIN_COLUMNS)[number];
+
 type SortBy = "date" | "name" | "status" | "party";
 type SortDir = "asc" | "desc";
 
 export function ApplicationsTable({
   rows,
+  customColumns,
   labels,
   exportHrefBase,
+  storageKey,
 }: {
   rows: ApplicationRow[];
+  customColumns: CustomColumn[];   // event-specific extra columns (organizer's form fields)
   labels: Labels;
-  exportHrefBase: string; // e.g. /api/organizer/bookings/export?eventId=evt_…
+  exportHrefBase: string;          // e.g. /api/organizer/bookings/export?eventId=evt_…
+  storageKey: string;              // namespaced per event so each table remembers its columns
 }) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -72,6 +99,40 @@ export function ApplicationsTable({
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [msgOpen, setMsgOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<null | "accept" | "decline">(null);
+  const [colsOpen, setColsOpen] = useState(false);
+
+  // Column visibility. Hidden by default for noisy/optional columns; the
+  // mandatory Applicant column has no toggle. Custom-form columns are
+  // visible by default (organizer wants to see what they collected) but can
+  // be hidden via the picker.
+  const allKeys: string[] = [
+    ...BUILTIN_COLUMNS,
+    ...customColumns.map((c) => `cf:${c.id}`),
+  ];
+  const defaultHidden = new Set<string>(["age", "comment"]);
+
+  const [hidden, setHidden] = useState<Set<string>>(() => new Set(defaultHidden));
+  // Restore from localStorage after mount (avoids SSR hydration mismatch).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (raw) setHidden(new Set(JSON.parse(raw) as string[]));
+    } catch {/* corrupt JSON or quota — fall back to defaults */}
+  }, [storageKey]);
+  // Persist whenever the selection changes (skip the initial empty mount).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try { window.localStorage.setItem(storageKey, JSON.stringify(Array.from(hidden))); } catch {/* quota */}
+  }, [hidden, storageKey]);
+
+  const isVisible = (key: string) => !hidden.has(key);
+  const toggleColumn = (key: string) =>
+    setHidden((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -156,6 +217,50 @@ export function ApplicationsTable({
             className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] py-2 pl-9 pr-3 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
           />
         </label>
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setColsOpen((o) => !o)}
+            className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-xs font-bold text-[var(--color-foreground)] transition hover:border-[var(--color-pitch-300)] hover:text-[var(--color-pitch-700)]"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            {labels.columnsButton}
+          </button>
+          {colsOpen && (
+            <>
+              {/* Click-away catcher */}
+              <div className="fixed inset-0 z-30" onClick={() => setColsOpen(false)} />
+              <div className="absolute right-0 top-full z-40 mt-1 w-60 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-2 shadow-[var(--shadow-lg)]">
+                <p className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">
+                  {labels.columnsPickerTitle}
+                </p>
+                {/* Built-ins */}
+                <ColumnToggle k="team" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.colTeam} />
+                <ColumnToggle k="contact" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.colContact} />
+                <ColumnToggle k="party" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.colParty} />
+                <ColumnToggle k="status" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.colStatus} />
+                <ColumnToggle k="date" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.colDate} />
+                <ColumnToggle k="age" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.columnsAge} />
+                <ColumnToggle k="comment" labels={labels} hidden={hidden} onToggle={toggleColumn} label={labels.columnsComment} />
+                {customColumns.length > 0 && (
+                  <>
+                    <div className="my-1 border-t border-[var(--color-border)]" />
+                    {customColumns.map((c) => (
+                      <ColumnToggle
+                        key={c.id}
+                        k={`cf:${c.id}`}
+                        labels={labels}
+                        hidden={hidden}
+                        onToggle={toggleColumn}
+                        label={c.label}
+                      />
+                    ))}
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </div>
         <a
           href={exportHref}
           className="inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-xs font-bold text-[var(--color-foreground)] transition hover:border-[var(--color-pitch-300)] hover:text-[var(--color-pitch-700)]"
@@ -180,18 +285,22 @@ export function ApplicationsTable({
                 />
               </th>
               <SortableHeader label={labels.colApplicant} dir={sortBy === "name" ? sortDir : null} onClick={() => toggleSort("name")} />
-              <th className="px-3 py-2.5 text-left">{labels.colTeam}</th>
-              <th className="px-3 py-2.5 text-left">{labels.colContact}</th>
-              <SortableHeader label={labels.colParty} dir={sortBy === "party" ? sortDir : null} onClick={() => toggleSort("party")} className="w-16" />
-              <SortableHeader label={labels.colStatus} dir={sortBy === "status" ? sortDir : null} onClick={() => toggleSort("status")} className="w-28" />
-              <SortableHeader label={labels.colDate} dir={sortBy === "date" ? sortDir : null} onClick={() => toggleSort("date")} className="w-28" />
+              {isVisible("team") && <th className="px-3 py-2.5 text-left">{labels.colTeam}</th>}
+              {isVisible("contact") && <th className="px-3 py-2.5 text-left">{labels.colContact}</th>}
+              {isVisible("party") && <SortableHeader label={labels.colParty} dir={sortBy === "party" ? sortDir : null} onClick={() => toggleSort("party")} className="w-16" />}
+              {isVisible("status") && <SortableHeader label={labels.colStatus} dir={sortBy === "status" ? sortDir : null} onClick={() => toggleSort("status")} className="w-28" />}
+              {isVisible("date") && <SortableHeader label={labels.colDate} dir={sortBy === "date" ? sortDir : null} onClick={() => toggleSort("date")} className="w-28" />}
+              {isVisible("age") && <th className="px-3 py-2.5 text-left w-16">{labels.columnsAge}</th>}
+              {customColumns.map((c) => isVisible(`cf:${c.id}`) && (
+                <th key={c.id} className="px-3 py-2.5 text-left">{c.label}</th>
+              ))}
               <th className="px-3 py-2.5 text-right">{labels.colActions}</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-3 py-12 text-center text-sm text-[var(--color-muted)]">
+                <td colSpan={8 + customColumns.length} className="px-3 py-12 text-center text-sm text-[var(--color-muted)]">
                   {labels.noResults}
                 </td>
               </tr>
@@ -203,6 +312,17 @@ export function ApplicationsTable({
                   selected={selected.has(r.id)}
                   onToggle={() => toggleRow(r.id)}
                   labels={labels}
+                  customColumns={customColumns}
+                  visibility={{
+                    team: isVisible("team"),
+                    contact: isVisible("contact"),
+                    party: isVisible("party"),
+                    status: isVisible("status"),
+                    date: isVisible("date"),
+                    age: isVisible("age"),
+                    comment: isVisible("comment"),
+                  }}
+                  hidden={hidden}
                 />
               ))
             )}
@@ -285,9 +405,47 @@ function SortableHeader({
   );
 }
 
+function ColumnToggle({
+  k, label, hidden, onToggle,
+}: { k: string; label: string; hidden: Set<string>; onToggle: (k: string) => void; labels: Labels }) {
+  const shown = !hidden.has(k);
+  return (
+    <button
+      type="button"
+      onClick={() => onToggle(k)}
+      className={`flex w-full items-center gap-2 rounded-[var(--radius-sm)] px-2 py-1.5 text-left text-xs transition ${
+        shown ? "bg-[var(--color-pitch-50)] text-[var(--color-pitch-800)]" : "text-[var(--color-muted-strong)] hover:bg-[var(--color-bg-muted)]"
+      }`}
+    >
+      <span className={`grid h-3.5 w-3.5 shrink-0 place-items-center rounded border ${shown ? "border-[var(--color-pitch-500)] bg-[var(--color-pitch-500)] text-white" : "border-[var(--color-border-strong)]"}`}>
+        {shown && <Check className="h-2.5 w-2.5" />}
+      </span>
+      <span className="truncate">{label}</span>
+    </button>
+  );
+}
+
+function formatCustomCell(value: unknown, yes: string, no: string): string {
+  if (value == null) return "—";
+  if (Array.isArray(value)) return value.map(String).join(", ");
+  if (typeof value === "boolean") return value ? yes : no;
+  const s = String(value).trim();
+  if (s === "yes") return yes;
+  if (s === "no") return no;
+  return s || "—";
+}
+
+type RowVisibility = {
+  team: boolean; contact: boolean; party: boolean;
+  status: boolean; date: boolean; age: boolean; comment: boolean;
+};
+
 function Row({
-  row, selected, onToggle, labels,
-}: { row: ApplicationRow; selected: boolean; onToggle: () => void; labels: Labels }) {
+  row, selected, onToggle, labels, customColumns, visibility, hidden,
+}: {
+  row: ApplicationRow; selected: boolean; onToggle: () => void; labels: Labels;
+  customColumns: CustomColumn[]; visibility: RowVisibility; hidden: Set<string>;
+}) {
   const [singleMsgOpen, setSingleMsgOpen] = useState(false);
   const dateStr = new Date(row.createdAt).toISOString().slice(0, 10);
   const STATUS_STYLE: Record<string, string> = {
@@ -298,6 +456,7 @@ function Row({
     COMPLETED:  "bg-sky-100 text-sky-800",
     WAITLIST:   "bg-violet-100 text-violet-800",
   };
+  const isUrl = (v: unknown) => typeof v === "string" && /^https?:\/\//.test(v);
 
   return (
     <>
@@ -341,32 +500,62 @@ function Row({
             </div>
           </div>
         </td>
-        <td className="px-3 py-3 text-xs text-[var(--color-muted-strong)]">
-          {row.teamName ?? "—"}
-        </td>
-        <td className="px-3 py-3">
-          <div className="flex flex-col gap-0.5 text-xs">
-            <a href={`mailto:${row.contactEmail}`} className="inline-flex items-center gap-1 text-[var(--color-foreground)] hover:text-[var(--color-pitch-700)]">
-              <Mail className="h-3 w-3 text-[var(--color-muted)]" />
-              <span className="truncate">{row.contactEmail}</span>
-            </a>
-            {row.contactPhone && (
-              <a href={`tel:${row.contactPhone}`} className="inline-flex items-center gap-1 text-[var(--color-muted-strong)] hover:text-[var(--color-foreground)]">
-                <Phone className="h-3 w-3 text-[var(--color-muted)]" />
-                <span className="truncate">{row.contactPhone}</span>
+        {visibility.team && (
+          <td className="px-3 py-3 text-xs text-[var(--color-muted-strong)]">
+            {row.teamName ?? "—"}
+          </td>
+        )}
+        {visibility.contact && (
+          <td className="px-3 py-3">
+            <div className="flex flex-col gap-0.5 text-xs">
+              <a href={`mailto:${row.contactEmail}`} className="inline-flex items-center gap-1 text-[var(--color-foreground)] hover:text-[var(--color-pitch-700)]">
+                <Mail className="h-3 w-3 text-[var(--color-muted)]" />
+                <span className="truncate">{row.contactEmail}</span>
               </a>
-            )}
-          </div>
-        </td>
-        <td className="px-3 py-3 text-center text-sm font-semibold text-[var(--color-foreground)]">
-          {row.partySize}
-        </td>
-        <td className="px-3 py-3">
-          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLE[row.status]}`}>
-            {labels.statuses[row.status]}
-          </span>
-        </td>
-        <td className="px-3 py-3 text-xs text-[var(--color-muted)]">{dateStr}</td>
+              {row.contactPhone && (
+                <a href={`tel:${row.contactPhone}`} className="inline-flex items-center gap-1 text-[var(--color-muted-strong)] hover:text-[var(--color-foreground)]">
+                  <Phone className="h-3 w-3 text-[var(--color-muted)]" />
+                  <span className="truncate">{row.contactPhone}</span>
+                </a>
+              )}
+            </div>
+          </td>
+        )}
+        {visibility.party && (
+          <td className="px-3 py-3 text-center text-sm font-semibold text-[var(--color-foreground)]">
+            {row.partySize}
+          </td>
+        )}
+        {visibility.status && (
+          <td className="px-3 py-3">
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLE[row.status]}`}>
+              {labels.statuses[row.status]}
+            </span>
+          </td>
+        )}
+        {visibility.date && (
+          <td className="px-3 py-3 text-xs text-[var(--color-muted)]">{dateStr}</td>
+        )}
+        {visibility.age && (
+          <td className="px-3 py-3 text-xs text-[var(--color-muted-strong)]">
+            {row.participantAge ?? "—"}
+          </td>
+        )}
+        {customColumns.map((c) => {
+          if (hidden.has(`cf:${c.id}`)) return null;
+          const v = row.customFields[c.id];
+          return (
+            <td key={c.id} className="px-3 py-3 text-xs text-[var(--color-muted-strong)]">
+              {isUrl(v) ? (
+                <a href={String(v)} target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-pitch-700)] hover:underline">
+                  {c.type === "file" ? "📎 file" : String(v)}
+                </a>
+              ) : (
+                <span className="line-clamp-2">{formatCustomCell(v, labels.yes, labels.no)}</span>
+              )}
+            </td>
+          );
+        })}
         <td className="px-3 py-3">
           <div className="flex items-center justify-end gap-1">
             {row.status === "NEW" && (
@@ -385,9 +574,9 @@ function Row({
           </div>
         </td>
       </tr>
-      {(row.comment || row.organizerNote) && (
+      {visibility.comment && (row.comment || row.organizerNote) && (
         <tr className="border-b border-[var(--color-border)] last:border-0 bg-[var(--color-bg-muted)]/40">
-          <td colSpan={8} className="px-3 py-2">
+          <td colSpan={8 + customColumns.length} className="px-3 py-2">
             {row.comment && (
               <p className="text-xs text-[var(--color-muted-strong)]">
                 <span className="font-bold uppercase tracking-wider text-[var(--color-muted)]">Note:</span> {row.comment}
@@ -403,7 +592,7 @@ function Row({
       )}
       {singleMsgOpen && (
         <tr>
-          <td colSpan={8} className="p-0">
+          <td colSpan={8 + customColumns.length} className="p-0">
             <MessageModal
               rows={[row]}
               labels={labels}

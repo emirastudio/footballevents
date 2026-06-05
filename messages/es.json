@@ -2910,6 +2910,18 @@
     "teamRoleManager": "Gestor",
     "teamRoleStaff": "Personal",
     "teamGrant": "Conceder acceso",
-    "teamRevoke": "Tiene acceso"
+    "teamRevoke": "Tiene acceso",
+    "columnsButton": "Columnas",
+    "columnsPickerTitle": "Mostrar / ocultar",
+    "columnsAge": "Edad",
+    "columnsComment": "Comentario / respuesta",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "bookingsHub": {
+    "subtitle": "Elige un evento para ver sus inscripciones. Cada evento tiene su propia tabla — sin mezclar.",
+    "emptyTitle": "Aún no hay eventos",
+    "emptyBody": "Crea un evento para empezar a recibir inscripciones.",
+    "totalCount": "{n, plural, =0 {Sin inscripciones} =1 {# en total} other {# en total}}"
   }
 }
