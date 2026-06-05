@@ -921,15 +921,45 @@ async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): P
       update.maxParticipants = data.maxParticipants ?? null;
 
       // Parse divisions from formData directly (Zod schema strips them).
+      // Per-stage fields (startDate/endDate/priceFrom/externalUrl) are optional;
+      // when ≥2 divisions have a startDate the public page renders the multi-
+      // stage schedule table + month calendar + per-stage SportsEvent JSON-LD.
       const divCount = Math.min(parseInt(String(formData.get("div_count") ?? "0"), 10) || 0, 20);
-      const divRows: { ageGroup: string; format: string; maxTeams: number | null }[] = [];
+      type DivPayload = {
+        ageGroup: string;
+        format: string;
+        maxTeams: number | null;
+        startDate: Date | null;
+        endDate: Date | null;
+        priceFrom: number | null;
+        externalUrl: string | null;
+      };
+      const isoDay = (s: string): Date | null => {
+        // Accept "YYYY-MM-DD" only — what <input type="date"> emits.
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+        const d = new Date(`${s}T00:00:00Z`);
+        return Number.isNaN(d.getTime()) ? null : d;
+      };
+      const divRows: DivPayload[] = [];
       for (let i = 0; i < divCount; i++) {
         const ag = String(formData.get(`div_${i}_ageGroup`) ?? "").trim();
         const fmt = String(formData.get(`div_${i}_format`) ?? "").trim();
-        if (ag && fmt) {
-          const mt = parseInt(String(formData.get(`div_${i}_maxTeams`) ?? ""), 10);
-          divRows.push({ ageGroup: ag, format: fmt, maxTeams: Number.isNaN(mt) || mt < 1 ? null : mt });
-        }
+        if (!ag || !fmt) continue;
+        const mt = parseInt(String(formData.get(`div_${i}_maxTeams`) ?? ""), 10);
+        const sd = isoDay(String(formData.get(`div_${i}_startDate`) ?? "").trim());
+        const ed = isoDay(String(formData.get(`div_${i}_endDate`) ?? "").trim()) ?? sd;
+        const pfRaw = String(formData.get(`div_${i}_priceFrom`) ?? "").trim();
+        const pf = pfRaw === "" ? null : Number(pfRaw);
+        const url = String(formData.get(`div_${i}_externalUrl`) ?? "").trim();
+        divRows.push({
+          ageGroup: ag,
+          format: fmt,
+          maxTeams: Number.isNaN(mt) || mt < 1 ? null : mt,
+          startDate: sd,
+          endDate: ed,
+          priceFrom: pf != null && Number.isFinite(pf) && pf >= 0 ? pf : null,
+          externalUrl: url && /^https?:\/\//i.test(url) ? url : null,
+        });
       }
 
       // Sync divisions: delete all, then re-create in order.
@@ -943,6 +973,12 @@ async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): P
             format: d.format,
             maxTeams: d.maxTeams,
             order: i,
+            startDate: d.startDate,
+            endDate: d.endDate,
+            // Currency on the division mirrors the event-level currency for now.
+            priceFrom: d.priceFrom,
+            isFree: d.priceFrom === 0,
+            externalUrl: d.externalUrl,
           })),
         });
         // When divisions exist, derive top-level fields from them.
@@ -1063,13 +1099,25 @@ function parseStepInput(step: WizardStep, formData: FormData) {
     };
     case 3: {
       const divCount = Math.min(parseInt(String(formData.get("div_count") ?? "0"), 10) || 0, 20);
-      const divisions: { ageGroup: string; format: string; maxTeams: number | null }[] = [];
+      type DraftDiv = {
+        ageGroup: string; format: string; maxTeams: number | null;
+        startDate: string; endDate: string; priceFrom: string; externalUrl: string;
+      };
+      const divisions: DraftDiv[] = [];
       for (let i = 0; i < divCount; i++) {
         const ag = String(formData.get(`div_${i}_ageGroup`) ?? "").trim();
         const fmt = String(formData.get(`div_${i}_format`) ?? "").trim();
         if (ag && fmt) {
           const mt = parseInt(String(formData.get(`div_${i}_maxTeams`) ?? ""), 10);
-          divisions.push({ ageGroup: ag, format: fmt, maxTeams: isNaN(mt) || mt < 1 ? null : mt });
+          divisions.push({
+            ageGroup: ag,
+            format: fmt,
+            maxTeams: isNaN(mt) || mt < 1 ? null : mt,
+            startDate:   String(formData.get(`div_${i}_startDate`)   ?? ""),
+            endDate:     String(formData.get(`div_${i}_endDate`)     ?? ""),
+            priceFrom:   String(formData.get(`div_${i}_priceFrom`)   ?? ""),
+            externalUrl: String(formData.get(`div_${i}_externalUrl`) ?? ""),
+          });
         }
       }
       return {

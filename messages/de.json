@@ -720,6 +720,19 @@
     "englishRequiredHint": "Englisch ist Pflicht — internationale Besucher sehen es standardmäßig.",
     "langEn": "Englisch",
     "uploadBlockedMessage": "Warte auf den Bild-Upload oder klicke „Save crop“, sonst geht das Bild verloren.",
+    "divisionsTitle": "Klassen / Etappen (optional)",
+    "divisionsHint": "Mehrere Altersgruppen, Formate oder Saisonetappen? Füge pro Klasse eine Zeile hinzu — Alter, Format, max. Teams, und (für Multi-Etappen-Turniere) Datum, Startgeld und Anmelde-Link pro Etappe.",
+    "addDivision": "Klasse hinzufügen",
+    "divAgeGroup": "Altersgruppe",
+    "divFormat": "Format",
+    "divMaxTeams": "Max. Teams",
+    "divRemove": "Entfernen",
+    "divStartDate": "Startdatum",
+    "divEndDate": "Enddatum",
+    "divPriceFrom": "Startgeld",
+    "divExternalUrl": "Anmelde-Link",
+    "divStageHint": "Mit Datum bei ≥2 Klassen wird das Event zu einem Saisonkalender (Jahresplan + Monatskalender + Etappen-SEO).",
+    "ageAdult": "Erwachsene",
     "errors": {
       "datesRequired": "Datum vor Veröffentlichung wählen"
     }

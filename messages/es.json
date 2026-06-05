@@ -741,13 +741,18 @@
     "englishRequiredHint": "El inglés es obligatorio — lo ven los visitantes internacionales por defecto.",
     "langEn": "Inglés",
     "uploadBlockedMessage": "Espera a que termine la subida o pulsa «Save crop» para confirmar la imagen — si no, se perderá.",
-    "divisionsTitle": "Divisiones (opcional)",
-    "divisionsHint": "¿Varios grupos de edad o formatos? Añade una fila por cada división: grupo de edad, formato y máximo de equipos.",
+    "divisionsTitle": "Divisiones / fases (opcional)",
+    "divisionsHint": "¿Varios grupos de edad, formatos o fases de temporada? Añade una fila por cada — edad, formato, máx. equipos, y (para torneos multi-fase) la fecha de la fase, inscripción y enlace de registro.",
     "addDivision": "Añadir división",
     "divAgeGroup": "Grupo de edad",
     "divFormat": "Formato",
     "divMaxTeams": "Máx. equipos",
     "divRemove": "Eliminar",
+    "divStartDate": "Fecha de inicio",
+    "divEndDate": "Fecha de fin",
+    "divPriceFrom": "Inscripción",
+    "divExternalUrl": "Enlace de registro",
+    "divStageHint": "Añade una fecha a ≥2 divisiones para convertir el evento en un calendario de temporada (tabla anual + calendario + SEO por fase).",
     "errors": {
       "datesRequired": "Selecciona fechas antes de publicar"
     }

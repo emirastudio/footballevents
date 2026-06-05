@@ -137,6 +137,14 @@ export type DivisionDefault = {
   ageGroup: string;
   format: string;
   maxTeams?: number;
+  // Per-stage scheduling fields. When ≥2 divisions have startDate, the public
+  // page renders the EventScheduleTable + month calendar + sub-event JSON-LD.
+  // All four are optional — leaving them blank keeps the legacy "single-stage
+  // tournament with multiple brackets" semantics.
+  startDate?: string;   // "YYYY-MM-DD"
+  endDate?: string;     // "YYYY-MM-DD"
+  priceFrom?: number;
+  externalUrl?: string;
 };
 
 export type WizardLabels = {
@@ -166,6 +174,8 @@ export type WizardLabels = {
   ageAdult: string;
   divisionsTitle: string; divisionsHint: string; addDivision: string;
   divAgeGroup: string; divFormat: string; divMaxTeams: string; divRemove: string;
+  divStartDate: string; divEndDate: string; divPriceFrom: string; divExternalUrl: string;
+  divStageHint: string;
   // Step 4
   isFree: string; priceFrom: string; priceTo: string; currency: string;
   externalUrl: string; externalUrlHint: string;
@@ -712,7 +722,19 @@ function FormatPicker({ legend, defaultValues }: { legend: string; defaultValues
 // ─────────────────────────────────────────────────────────────
 // Divisions builder — optional section in Step 3
 // ─────────────────────────────────────────────────────────────
-type DivRow = { key: number; ageGroup: string; format: string; maxTeams: string };
+type DivRow = {
+  key: number;
+  ageGroup: string;
+  format: string;
+  maxTeams: string;
+  // Per-stage schedule + pricing fields. Optional. When ≥2 rows have a startDate,
+  // the public event page activates the multi-stage Year Schedule table + month
+  // calendar + per-stage SportsEvent JSON-LD.
+  startDate: string;
+  endDate: string;
+  priceFrom: string;
+  externalUrl: string;
+};
 
 const fieldInputCls =
   "w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3 py-2 text-sm outline-none focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20";
@@ -730,12 +752,28 @@ function DivisionsBuilder({
       ageGroup: normaliseAge(d.ageGroup),
       format: d.format,
       maxTeams: d.maxTeams?.toString() ?? "",
+      startDate: d.startDate ?? "",
+      endDate: d.endDate ?? "",
+      priceFrom: d.priceFrom != null ? String(d.priceFrom) : "",
+      externalUrl: d.externalUrl ?? "",
     }))
   );
   const nextKey = useRef(defaults.length);
 
   const add = () => {
-    setRows((prev) => [...prev, { key: nextKey.current++, ageGroup: String(CY - 13), format: "11x11", maxTeams: "" }]);
+    setRows((prev) => [
+      ...prev,
+      {
+        key: nextKey.current++,
+        ageGroup: String(CY - 13),
+        format: "11x11",
+        maxTeams: "",
+        startDate: "",
+        endDate: "",
+        priceFrom: "",
+        externalUrl: "",
+      },
+    ]);
   };
   const remove = (key: number) => setRows((prev) => prev.filter((r) => r.key !== key));
   const update = (key: number, patch: Partial<DivRow>) =>
@@ -752,9 +790,13 @@ function DivisionsBuilder({
       <input type="hidden" name="div_count" value={rows.length} />
       {rows.map((row, idx) => (
         <span key={row.key}>
-          <input type="hidden" name={`div_${idx}_ageGroup`} value={row.ageGroup} />
-          <input type="hidden" name={`div_${idx}_format`}   value={row.format} />
-          <input type="hidden" name={`div_${idx}_maxTeams`} value={row.maxTeams} />
+          <input type="hidden" name={`div_${idx}_ageGroup`}     value={row.ageGroup} />
+          <input type="hidden" name={`div_${idx}_format`}       value={row.format} />
+          <input type="hidden" name={`div_${idx}_maxTeams`}     value={row.maxTeams} />
+          <input type="hidden" name={`div_${idx}_startDate`}    value={row.startDate} />
+          <input type="hidden" name={`div_${idx}_endDate`}      value={row.endDate} />
+          <input type="hidden" name={`div_${idx}_priceFrom`}    value={row.priceFrom} />
+          <input type="hidden" name={`div_${idx}_externalUrl`}  value={row.externalUrl} />
         </span>
       ))}
 
@@ -764,68 +806,120 @@ function DivisionsBuilder({
           {rows.map((row, idx) => (
             <div
               key={row.key}
-              className="grid grid-cols-[auto_1fr_1fr_1fr_auto] items-end gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4"
+              className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-4"
             >
-              {/* Index badge */}
-              <div className="flex h-9 w-7 items-center justify-center text-sm font-bold text-[var(--color-muted)]">
-                {idx + 1}
-              </div>
+              {/* Row 1 — identity (age / format / max teams) */}
+              <div className="grid grid-cols-[auto_1fr_1fr_1fr_auto] items-end gap-3">
+                {/* Index badge */}
+                <div className="flex h-9 w-7 items-center justify-center text-sm font-bold text-[var(--color-muted)]">
+                  {idx + 1}
+                </div>
 
-              {/* Age group */}
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divAgeGroup}</label>
-                <select
-                  value={row.ageGroup}
-                  onChange={(e) => update(row.key, { ageGroup: e.target.value })}
-                  className={fieldInputCls}
+                {/* Age group */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divAgeGroup}</label>
+                  <select
+                    value={row.ageGroup}
+                    onChange={(e) => update(row.key, { ageGroup: e.target.value })}
+                    className={fieldInputCls}
+                  >
+                    {YEAR_GRID.map((val) => (
+                      <option key={val} value={val}>
+                        {val === "ADULT" ? labels.ageAdult : val}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Format */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divFormat}</label>
+                  <select
+                    value={row.format}
+                    onChange={(e) => update(row.key, { format: e.target.value })}
+                    className={fieldInputCls}
+                  >
+                    {FORMATS.map((f) => (
+                      <option key={f.value} value={f.value}>{f.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Max teams */}
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divMaxTeams}</label>
+                  <input
+                    type="number"
+                    min={2}
+                    max={256}
+                    placeholder="—"
+                    value={row.maxTeams}
+                    onChange={(e) => update(row.key, { maxTeams: e.target.value })}
+                    className={fieldInputCls}
+                  />
+                </div>
+
+                {/* Remove */}
+                <button
+                  type="button"
+                  onClick={() => remove(row.key)}
+                  aria-label={labels.divRemove}
+                  className="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
                 >
-                  {YEAR_GRID.map((val) => (
-                    <option key={val} value={val}>
-                      {val === "ADULT" ? labels.ageAdult : val}
-                    </option>
-                  ))}
-                </select>
+                  <Trash2 className="h-4 w-4" />
+                </button>
               </div>
 
-              {/* Format */}
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divFormat}</label>
-                <select
-                  value={row.format}
-                  onChange={(e) => update(row.key, { format: e.target.value })}
-                  className={fieldInputCls}
-                >
-                  {FORMATS.map((f) => (
-                    <option key={f.value} value={f.value}>{f.label}</option>
-                  ))}
-                </select>
+              {/* Row 2 — per-stage schedule + price + registration URL.
+                  All optional. Filling startDate on ≥2 divisions activates the
+                  Year Schedule table + month calendar on the public page. */}
+              <div className="mt-3 grid grid-cols-[auto_1fr_1fr_1fr_auto] items-end gap-3 sm:grid-cols-[auto_1fr_1fr_1fr_2fr_auto]">
+                <div className="hidden sm:block sm:w-7" />
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divStartDate}</label>
+                  <input
+                    type="date"
+                    value={row.startDate}
+                    onChange={(e) => update(row.key, { startDate: e.target.value })}
+                    className={fieldInputCls}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divEndDate}</label>
+                  <input
+                    type="date"
+                    value={row.endDate}
+                    onChange={(e) => update(row.key, { endDate: e.target.value })}
+                    className={fieldInputCls}
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divPriceFrom}</label>
+                  <input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    placeholder="—"
+                    value={row.priceFrom}
+                    onChange={(e) => update(row.key, { priceFrom: e.target.value })}
+                    className={fieldInputCls}
+                  />
+                </div>
+                <div className="col-span-3 sm:col-span-1">
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divExternalUrl}</label>
+                  <input
+                    type="url"
+                    placeholder="https://…"
+                    value={row.externalUrl}
+                    onChange={(e) => update(row.key, { externalUrl: e.target.value })}
+                    className={fieldInputCls}
+                  />
+                </div>
+                <div className="hidden sm:block sm:w-9" />
               </div>
-
-              {/* Max teams */}
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">{labels.divMaxTeams}</label>
-                <input
-                  type="number"
-                  min={2}
-                  max={256}
-                  placeholder="—"
-                  value={row.maxTeams}
-                  onChange={(e) => update(row.key, { maxTeams: e.target.value })}
-                  className={fieldInputCls}
-                />
-              </div>
-
-              {/* Remove */}
-              <button
-                type="button"
-                onClick={() => remove(row.key)}
-                aria-label={labels.divRemove}
-                className="grid h-9 w-9 place-items-center rounded-[var(--radius-md)] text-[var(--color-muted)] transition hover:bg-red-50 hover:text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
             </div>
           ))}
+          <p className="text-xs text-[var(--color-muted)]">{labels.divStageHint}</p>
         </div>
       )}
 

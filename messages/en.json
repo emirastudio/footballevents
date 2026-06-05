@@ -741,13 +741,18 @@
     "englishRequiredHint": "English is required — international visitors see it by default.",
     "langEn": "English",
     "uploadBlockedMessage": "Wait for the image upload to finish or click 'Save crop' to confirm it — otherwise it'll be lost.",
-    "divisionsTitle": "Divisions (optional)",
-    "divisionsHint": "Multiple age groups or formats? Add a division row for each — age group, format, and max teams.",
+    "divisionsTitle": "Divisions / stages (optional)",
+    "divisionsHint": "Multiple age groups, formats or season stages? Add a row for each — age, format, max teams, and (for multi-stage tournaments) the per-stage date, entry fee and registration link.",
     "addDivision": "Add division",
     "divAgeGroup": "Age group",
     "divFormat": "Format",
     "divMaxTeams": "Max teams",
     "divRemove": "Remove division",
+    "divStartDate": "Start date",
+    "divEndDate": "End date",
+    "divPriceFrom": "Entry fee",
+    "divExternalUrl": "Registration URL",
+    "divStageHint": "Add a date to ≥2 divisions to turn this event into a season schedule (year table + month calendar + per-stage SEO).",
     "errors": {
       "datesRequired": "Pick dates before publishing"
     }
