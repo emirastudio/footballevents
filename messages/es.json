@@ -1925,7 +1925,11 @@
     "searching": "Buscando…",
     "advertising": "Publicidad",
     "comingSoon": "Próximamente",
-    "website": "Web"
+    "website": "Web",
+    "event": "evento",
+    "viewAll": "Ver todo",
+    "city": "ciudad",
+    "cities": "ciudades"
   },
   "filters": {
     "title": "Filtros",

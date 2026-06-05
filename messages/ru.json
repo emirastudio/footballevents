@@ -1007,7 +1007,11 @@
     "searching": "Ищем…",
     "advertising": "Реклама",
     "comingSoon": "Скоро",
-    "website": "Сайт"
+    "website": "Сайт",
+    "event": "эвент",
+    "viewAll": "Все",
+    "city": "город",
+    "cities": "городов"
   },
   "filters": {
     "title": "Фильтры",

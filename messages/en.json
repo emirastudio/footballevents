@@ -1007,7 +1007,11 @@
     "searching": "Searching…",
     "advertising": "Advertising",
     "comingSoon": "Coming soon",
-    "website": "Website"
+    "website": "Website",
+    "event": "event",
+    "viewAll": "View all",
+    "city": "city",
+    "cities": "cities"
   },
   "filters": {
     "title": "Filters",

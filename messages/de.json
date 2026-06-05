@@ -1897,7 +1897,11 @@
     "searching": "Suche…",
     "advertising": "Werbung",
     "comingSoon": "Demnächst",
-    "website": "Website"
+    "website": "Website",
+    "event": "Event",
+    "viewAll": "Alle anzeigen",
+    "city": "Stadt",
+    "cities": "Städte"
   },
   "filters": {
     "title": "Filter",
