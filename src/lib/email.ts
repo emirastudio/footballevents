@@ -595,6 +595,92 @@ export function savedSearchAlertEmail(opts: {
 }
 
 /**
+ * 💬 An organizer is messaging an applicant (single or bulk) from the
+ * per-event applications table. Hybrid delivery:
+ *  - hasAccount=true: this email mirrors the in-app message that also lands
+ *    in the recipient's inbox at /me/messages.
+ *  - hasAccount=false: this email is the ONLY channel, so we append a
+ *    sign-up CTA with pre-filled email so the next account auto-links.
+ */
+export function organizerMessageEmail(opts: {
+  recipientEmail: string;
+  recipientName: string;
+  eventTitle: string;
+  eventSlug: string;
+  organizerName: string;
+  organizerEmail: string;
+  subject: string;
+  body: string;
+  hasAccount: boolean;
+  locale?: string;
+}) {
+  const L = loc(opts.locale);
+  const T = {
+    en: {
+      subj: opts.subject,
+      title: `Message from ${escape(opts.organizerName)} 💬`,
+      hi: `Hi ${escape(opts.recipientName)},`,
+      re: `Re: <strong>${escape(opts.eventTitle)}</strong>`,
+      inboxLine: `This message is also waiting in your inbox.`,
+      inboxBtn: "Open inbox",
+      signupLine: `Get a free account so future messages land in your inbox on the site — and so we can auto-link your past applications.`,
+      signupBtn: "Create my account",
+    },
+    ru: {
+      subj: opts.subject,
+      title: `Сообщение от ${escape(opts.organizerName)} 💬`,
+      hi: `Здравствуйте, ${escape(opts.recipientName)}!`,
+      re: `По заявке на <strong>${escape(opts.eventTitle)}</strong>`,
+      inboxLine: `Это сообщение также ждёт во входящих на сайте.`,
+      inboxBtn: "Открыть инбокс",
+      signupLine: `Создайте бесплатный аккаунт — следующие сообщения будут приходить во входящие на сайте, а прошлые заявки автоматически привяжутся.`,
+      signupBtn: "Создать аккаунт",
+    },
+    de: {
+      subj: opts.subject,
+      title: `Nachricht von ${escape(opts.organizerName)} 💬`,
+      hi: `Hallo ${escape(opts.recipientName)},`,
+      re: `Re: <strong>${escape(opts.eventTitle)}</strong>`,
+      inboxLine: `Diese Nachricht wartet auch in Ihrem Posteingang.`,
+      inboxBtn: "Posteingang öffnen",
+      signupLine: `Erstellen Sie ein kostenloses Konto — künftige Nachrichten landen im Posteingang, und Ihre bisherigen Anmeldungen werden automatisch verknüpft.`,
+      signupBtn: "Konto erstellen",
+    },
+    es: {
+      subj: opts.subject,
+      title: `Mensaje de ${escape(opts.organizerName)} 💬`,
+      hi: `Hola ${escape(opts.recipientName)},`,
+      re: `Re: <strong>${escape(opts.eventTitle)}</strong>`,
+      inboxLine: `Este mensaje también te espera en tu bandeja de entrada en el sitio.`,
+      inboxBtn: "Abrir bandeja",
+      signupLine: `Crea una cuenta gratis — los próximos mensajes llegarán a tu bandeja en el sitio y tus inscripciones anteriores se vincularán automáticamente.`,
+      signupBtn: "Crear cuenta",
+    },
+  }[L];
+  const cta = opts.hasAccount
+    ? `<p style="margin-top:24px;color:#64748b;font-size:13px">${T.inboxLine}</p>
+       ${btn(`${SITE}/${L}/me/messages`, T.inboxBtn)}`
+    : `<p style="margin-top:24px;color:#64748b;font-size:13px">${T.signupLine}</p>
+       ${btn(`${SITE}/${L}/sign-up?email=${encodeURIComponent(opts.recipientEmail)}&next=/me/applications`, T.signupBtn)}`;
+  const html = shell(
+    T.title,
+    `<p>${T.hi}</p>
+     <p style="color:#64748b;font-size:13px;margin-top:-8px">${T.re}</p>
+     <div style="background:#fafbfc;border-left:4px solid #00d26a;padding:14px 16px;border-radius:4px;margin-top:16px">
+       <p style="font-weight:600;margin:0 0 8px 0">${escape(opts.subject)}</p>
+       <p style="white-space:pre-line;margin:0;color:#0a1628">${escape(opts.body)}</p>
+     </div>
+     ${cta}`,
+  );
+  return sendEmail({
+    to: opts.recipientEmail,
+    subject: T.subj,
+    html,
+    replyTo: opts.organizerEmail,
+  });
+}
+
+/**
  * 🛎️ A club just posted an RFQ that matches what this organizer covers.
  * Fire-and-forget — best-effort, never blocks the RFQ creation flow.
  */
