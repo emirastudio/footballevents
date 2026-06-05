@@ -8,8 +8,23 @@ const monthMap: Record<string, string[]> = {
   en: monthNamesEn, ru: monthNamesRu, de: monthNamesDe, es: monthNamesEs,
 };
 
-export function formatDateRange(start: string, end: string, locale: string = "en") {
+export function formatDateRange(
+  start: string,
+  end: string,
+  locale: string = "en",
+  // "day-month" → compact schedule format "08.01 – 08.02" used by schedule table
+  style: "default" | "day-month" = "default",
+) {
   const s = new Date(start), e = new Date(end);
+
+  if (style === "day-month") {
+    // Zero-padded DD.MM format matching the schedule visual on the screenshot.
+    const fmt = (d: Date) =>
+      `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
+    if (s.toDateString() === e.toDateString()) return fmt(s);
+    return `${fmt(s)} – ${fmt(e)}`;
+  }
+
   const months = monthMap[locale] ?? monthNamesEn;
   const sM = months[s.getMonth()], eM = months[e.getMonth()];
   const sameMonth = s.getMonth() === e.getMonth();

@@ -1,6 +1,8 @@
 // JSON-LD helper components. Each renders a single <script type="application/ld+json">.
 // Keep these stateless and serialization-safe — no Date.now(), no client-only fields.
 
+import type { MockDivision } from "@/lib/mock-data";
+
 type Json = Record<string, unknown>;
 
 function emit(obj: Json) {
@@ -118,6 +120,76 @@ export function PlaceJsonLd(p: PlaceArgs) {
         }
       : undefined,
     maximumAttendeeCapacity: p.capacity,
+  });
+}
+
+// ── SubEvent JSON-LD for multi-stage tournaments ──
+// Each EventDivision with a date becomes a schema.org Event sub-event of the
+// parent. Google indexes these individually — users see every stage in SERPs.
+export function SubEventsJsonLd({
+  divisions,
+  parentEventName,
+  parentEventUrl,
+  locale,
+  locationName,
+  countryCode,
+}: {
+  divisions: MockDivision[];
+  parentEventName: string;
+  parentEventUrl: string;
+  locale: string;
+  locationName?: string;
+  countryCode?: string;
+}) {
+  const dated = divisions.filter((d) => d.startDate);
+  if (dated.length < 2) return null;
+
+  const subEvents = dated.map((d) => ({
+    "@type": "SportsEvent",
+    sport: "Soccer",
+    name: d.name || `${d.ageGroup}${d.format ? ` ${d.format}` : ""}`,
+    startDate: d.startDate,
+    endDate: d.endDate || d.startDate,
+    url: d.externalUrl || parentEventUrl,
+    inLanguage: locale,
+    ...(locationName || countryCode
+      ? {
+          location: {
+            "@type": "Place",
+            name: locationName || undefined,
+            address: countryCode ? { "@type": "PostalAddress", addressCountry: countryCode } : undefined,
+          },
+        }
+      : {}),
+    ...(d.priceFrom != null || d.isFree
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: d.isFree ? 0 : d.priceFrom,
+            priceCurrency: d.currency || "EUR",
+            availability: d.spotsLeft === 0
+              ? "https://schema.org/SoldOut"
+              : "https://schema.org/InStock",
+            url: d.externalUrl || parentEventUrl,
+          },
+        }
+      : {}),
+    superEvent: {
+      "@type": "SportsEvent",
+      name: parentEventName,
+      url: parentEventUrl,
+    },
+  }));
+
+  return emit({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${parentEventName} — Stages`,
+    itemListElement: subEvents.map((e, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: e,
+    })),
   });
 }
 

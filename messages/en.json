@@ -1092,7 +1092,18 @@
       "organizerReply": "Organizer's reply",
       "similarEvents": "Similar events",
       "registrationDeadline": "Registration until",
-      "ticketsComingSoon": "Tickets via platform — coming soon"
+      "ticketsComingSoon": "Tickets via platform — coming soon",
+      "scheduleTitle": "Year Schedule",
+      "scheduleColDate": "Date",
+      "scheduleColAgeGroup": "Age group",
+      "scheduleColFormat": "Format",
+      "scheduleColEntryFee": "Entry fee €",
+      "scheduleColSpots": "Spots",
+      "scheduleColRegister": "Register",
+      "scheduleSpotsLeft": "left",
+      "scheduleFull": "Full",
+      "scheduleNoDate": "TBD",
+      "calendarLabel": "Tournament calendar"
     }
   },
   "organizers": {

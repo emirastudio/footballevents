@@ -2010,7 +2010,18 @@
       "organizerReply": "Respuesta del organizador",
       "similarEvents": "Eventos similares",
       "registrationDeadline": "Inscripción hasta",
-      "ticketsComingSoon": "Entradas vía plataforma — próximamente"
+      "ticketsComingSoon": "Entradas vía plataforma — próximamente",
+      "scheduleTitle": "Calendario",
+      "scheduleColDate": "Fecha",
+      "scheduleColAgeGroup": "Categoría",
+      "scheduleColFormat": "Formato",
+      "scheduleColEntryFee": "Inscripción €",
+      "scheduleColSpots": "Plazas",
+      "scheduleColRegister": "Inscribirse",
+      "scheduleSpotsLeft": "libres",
+      "scheduleFull": "Completo",
+      "scheduleNoDate": "Por confirmar",
+      "calendarLabel": "Calendario de torneos"
     }
   },
   "organizers": {

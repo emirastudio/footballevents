@@ -1092,7 +1092,18 @@
       "organizerReply": "Ответ организатора",
       "similarEvents": "Похожие мероприятия",
       "registrationDeadline": "Регистрация до",
-      "ticketsComingSoon": "Билеты через платформу — скоро"
+      "ticketsComingSoon": "Билеты через платформу — скоро",
+      "scheduleTitle": "Расписание",
+      "scheduleColDate": "Дата",
+      "scheduleColAgeGroup": "Возраст",
+      "scheduleColFormat": "Формат",
+      "scheduleColEntryFee": "Взнос €",
+      "scheduleColSpots": "Места",
+      "scheduleColRegister": "Зарегистрироваться",
+      "scheduleSpotsLeft": "ост.",
+      "scheduleFull": "Мест нет",
+      "scheduleNoDate": "Уточняется",
+      "calendarLabel": "Календарь турниров"
     }
   },
   "organizers": {

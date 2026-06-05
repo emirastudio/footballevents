@@ -24,7 +24,9 @@ import { parsePartners, type Partner } from "@/lib/partners";
 import { RichText } from "@/components/ui/RichText";
 import { MerchPromoBanner } from "@/components/site/MerchPromoBanner";
 import { CapacityWidget } from "@/components/cards/CapacityWidget";
-import { BreadcrumbJsonLd, FaqJsonLd } from "@/components/seo/JsonLd";
+import { BreadcrumbJsonLd, FaqJsonLd, SubEventsJsonLd } from "@/components/seo/JsonLd";
+import { EventScheduleTable } from "@/components/events/EventScheduleTable";
+import { EventCalendarView } from "@/components/events/EventCalendarView";
 import {
   MapPin, Calendar, Users, Trophy, Tag, Star, ShieldCheck,
   ChevronRight, Clock, Building2, MessageSquare, Check, X as XIcon,
@@ -285,6 +287,16 @@ export default async function EventDetailPage({
         {event.faq && event.faq.length > 0 && tierAllows(organizer?.subscriptionTier, "faq") && (
           <FaqJsonLd items={event.faq} />
         )}
+        {event.divisions && event.divisions.length >= 2 && (
+          <SubEventsJsonLd
+            divisions={event.divisions}
+            parentEventName={event.title}
+            parentEventUrl={`${SITE_URL}/${locale}/events/${event.slug}`}
+            locale={locale}
+            locationName={venue?.name ?? event.city ?? undefined}
+            countryCode={event.countryCode || undefined}
+          />
+        )}
         <div className="grid gap-10 lg:grid-cols-[1fr_360px]">
           {/* Main column — on mobile it comes AFTER the apply sidebar (order-2) */}
           <div className="order-2 min-w-0 lg:order-1">
@@ -334,6 +346,35 @@ export default async function EventDetailPage({
                 label={t("share")}
               />
             </div>
+
+            {/* ── Schedule table (multi-stage events like season cups) ── */}
+            {event.divisions && event.divisions.length >= 2 && (
+              <>
+                <EventScheduleTable
+                  divisions={event.divisions}
+                  eventSlug={event.slug}
+                  locale={locale}
+                  labels={{
+                    title: t("scheduleTitle"),
+                    colDate: t("scheduleColDate"),
+                    colAgeGroup: t("scheduleColAgeGroup"),
+                    colFormat: t("scheduleColFormat"),
+                    colEntryFee: t("scheduleColEntryFee"),
+                    colSpots: t("scheduleColSpots"),
+                    colRegister: t("scheduleColRegister"),
+                    free: tCommon("free"),
+                    spotsLeft: t("scheduleSpotsLeft"),
+                    full: t("scheduleFull"),
+                    noDate: t("scheduleNoDate"),
+                  }}
+                />
+                <EventCalendarView
+                  divisions={event.divisions}
+                  locale={locale}
+                  label={t("calendarLabel")}
+                />
+              </>
+            )}
 
             {/* Programme */}
             {event.program && event.program.length > 0 && (

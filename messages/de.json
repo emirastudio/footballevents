@@ -1982,7 +1982,18 @@
       "organizerReply": "Antwort des Veranstalters",
       "similarEvents": "Ähnliche Events",
       "registrationDeadline": "Anmeldung bis",
-      "ticketsComingSoon": "Tickets über Plattform — bald verfügbar"
+      "ticketsComingSoon": "Tickets über Plattform — bald verfügbar",
+      "scheduleTitle": "Jahresplan",
+      "scheduleColDate": "Datum",
+      "scheduleColAgeGroup": "Altersgruppe",
+      "scheduleColFormat": "Format",
+      "scheduleColEntryFee": "Startgeld €",
+      "scheduleColSpots": "Plätze",
+      "scheduleColRegister": "Anmelden",
+      "scheduleSpotsLeft": "frei",
+      "scheduleFull": "Belegt",
+      "scheduleNoDate": "TBD",
+      "calendarLabel": "Turnierkalender"
     }
   },
   "organizers": {
