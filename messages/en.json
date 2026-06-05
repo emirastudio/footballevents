@@ -32,7 +32,14 @@
     "bannerTitle": "FIFA World Cup 2026 — follow the tournament",
     "bannerText": "USA · Canada · Mexico — 48 teams, 104 matches. Schedule, teams and live fixtures.",
     "bannerCta": "Follow the tournament",
-    "factLabels": { "hosts": "Hosts", "dates": "Dates", "teams": "Teams", "matches": "Matches", "format": "Format", "final": "Final" },
+    "factLabels": {
+      "hosts": "Hosts",
+      "dates": "Dates",
+      "teams": "Teams",
+      "matches": "Matches",
+      "format": "Format",
+      "final": "Final"
+    },
     "groupsHeading": "Group standings",
     "teamsHeading": "Teams ({count})",
     "colTeam": "Team",
@@ -65,7 +72,27 @@
   "formBuilder": {
     "back": "Back to event",
     "title": "Registration form",
-    "types": { "text": "Short text", "textarea": "Paragraph", "email": "Email", "phone": "Phone", "number": "Number", "date": "Date", "select": "Dropdown", "multiselect": "Multi-select", "checkboxes": "Checkboxes", "radio": "Single choice", "consent": "Consent checkbox", "rules": "Event rules (+ agree)", "size": "Size (with chart)", "country": "Country", "countrycity": "Country & city", "yesno": "Yes / No", "heading": "Section heading", "info": "Info text", "file": "File upload" },
+    "types": {
+      "text": "Short text",
+      "textarea": "Paragraph",
+      "email": "Email",
+      "phone": "Phone",
+      "number": "Number",
+      "date": "Date",
+      "select": "Dropdown",
+      "multiselect": "Multi-select",
+      "checkboxes": "Checkboxes",
+      "radio": "Single choice",
+      "consent": "Consent checkbox",
+      "rules": "Event rules (+ agree)",
+      "size": "Size (with chart)",
+      "country": "Country",
+      "countrycity": "Country & city",
+      "yesno": "Yes / No",
+      "heading": "Section heading",
+      "info": "Info text",
+      "file": "File upload"
+    },
     "subtitle": "Build the form applicants fill in. Reorder with the arrows — answers land in your applications table.",
     "addField": "Add field",
     "fieldLabel": "Label",
@@ -882,24 +909,32 @@
     }
   },
   "footer": {
-    "tagline": "From local tournaments to global camps — all in one place.",
     "explore": "Explore",
     "forBusiness": "For business",
-    "company": "Company",
     "legal": "Legal",
-    "rights": "All rights reserved.",
-    "language": "Language",
-    "pricing": "Pricing",
-    "api": "API",
-    "about": "About",
-    "contact": "Contact",
-    "blog": "Blog",
-    "terms": "Terms",
-    "privacy": "Privacy",
-    "refund": "Refunds",
-    "cookies": "Cookies",
+    "terms": "Terms of use",
+    "privacy": "Privacy policy",
+    "refund": "Refund policy",
+    "cookies": "Cookie policy",
     "imprint": "Imprint",
-    "madeFor": "Made for football fans worldwide ⚽"
+    "rights": "All rights reserved",
+    "tagline": "The premium catalog of football events worldwide",
+    "aboutSection": "About",
+    "aboutMore": "More",
+    "aboutHide": "Hide",
+    "aboutLinks": {
+      "about": "About the project",
+      "tournaments": "Tournaments",
+      "camps": "Camps",
+      "forOrganizers": "For organizers",
+      "forClubs": "For clubs",
+      "academyTrials": "Academy trials",
+      "forPlayers": "For players & parents",
+      "festivals": "Festivals",
+      "matchTours": "Match tours",
+      "trainingCamps": "Training camps",
+      "contact": "Contact"
+    }
   },
   "cookieBanner": {
     "text": "We use essential cookies for sign-in and security. With your consent we also use Google Analytics cookies to understand how the site is used.",
@@ -1098,14 +1133,38 @@
     }
   },
   "categoryHeaders": {
-    "tournaments":   { "title": "Football tournaments",  "subtitle": "Competitive cups and trophies for all ages and levels." },
-    "camps":         { "title": "Football camps",         "subtitle": "Multi-day training experiences hosted by elite coaches." },
-    "festivals":     { "title": "Football festivals",     "subtitle": "Celebrations of the game — fan zones, exhibitions and tournaments." },
-    "masterclasses": { "title": "Masterclasses",          "subtitle": "Skill-focused sessions with professional coaches and players." },
-    "match-tours":   { "title": "Match-day tours",        "subtitle": "Travel to top stadiums for unforgettable match experiences." },
-    "showcases":     { "title": "Showcases",              "subtitle": "Exposure events for players seeking the next level." },
-    "training-camps": { "title": "Training camps",        "subtitle": "Pre-season and in-season camps for clubs and academies." },
-    "tryouts":       { "title": "Tryouts",                "subtitle": "Individual scouting sessions and trial days." }
+    "tournaments": {
+      "title": "Football tournaments",
+      "subtitle": "Competitive cups and trophies for all ages and levels."
+    },
+    "camps": {
+      "title": "Football camps",
+      "subtitle": "Multi-day training experiences hosted by elite coaches."
+    },
+    "festivals": {
+      "title": "Football festivals",
+      "subtitle": "Celebrations of the game — fan zones, exhibitions and tournaments."
+    },
+    "masterclasses": {
+      "title": "Masterclasses",
+      "subtitle": "Skill-focused sessions with professional coaches and players."
+    },
+    "match-tours": {
+      "title": "Match-day tours",
+      "subtitle": "Travel to top stadiums for unforgettable match experiences."
+    },
+    "showcases": {
+      "title": "Showcases",
+      "subtitle": "Exposure events for players seeking the next level."
+    },
+    "training-camps": {
+      "title": "Training camps",
+      "subtitle": "Pre-season and in-season camps for clubs and academies."
+    },
+    "tryouts": {
+      "title": "Tryouts",
+      "subtitle": "Individual scouting sessions and trial days."
+    }
   },
   "advertise": {
     "eyebrow": "For organizers",
@@ -1113,7 +1172,6 @@
     "pageSubtitle": "Tournaments, camps, festivals, masterclasses and match tours. Free to start. Thousands of players, parents and coaches search the catalog every month for events just like yours.",
     "ctaPrimary": "Post an event",
     "ctaSecondary": "See pricing",
-
     "launchPromo": {
       "label": "Launch offer",
       "title": "First 50 organizers — 3 months of Premium free",
@@ -1121,21 +1179,30 @@
       "remaining": "Spots left",
       "cta": "Claim Premium"
     },
-
     "vision": {
       "eyebrow": "Why you need this",
       "title": "Right now, half your potential players never find you",
       "p1": "Tournaments and camps live on Instagram stories, outdated websites or in WhatsApp groups. If a person doesn't follow your account or know who to ask — they walk past. Money on ads goes out, applications stay low.",
       "p2": "FootballEvents brings all football events into one catalog. A dad in Berlin looking for a summer camp for his son comes to us, picks «10 years old, July, Austria» and sees your program in the top five. No ads needed — just because you're listed."
     },
-
     "audienceTitle": "A global football audience",
     "countriesLabel": "Countries",
-    "audience1": { "label": "Monthly visitors",     "value": "120k+" },
-    "audience2": { "label": "Countries reached",    "value": "60+"   },
-    "audience3": { "label": "Active organizers",    "value": "180+"  },
-    "audience4": { "label": "Avg. session",         "value": "3:42"  },
-
+    "audience1": {
+      "label": "Monthly visitors",
+      "value": "120k+"
+    },
+    "audience2": {
+      "label": "Countries reached",
+      "value": "60+"
+    },
+    "audience3": {
+      "label": "Active organizers",
+      "value": "180+"
+    },
+    "audience4": {
+      "label": "Avg. session",
+      "value": "3:42"
+    },
     "channelsTitle": "What you can do on the site",
     "channelsSubtitle": "Four options — from free to full premium. Pay only for what you need.",
     "channel1": {
@@ -1183,41 +1250,135 @@
         "From €290 per 1000 impressions"
       ]
     },
-
     "advantagesTitle": "Why this works better than ads",
-    "advantage1": { "title": "Players find you in 3 clicks", "desc": "Pick country, age, format — see matching events. No need to scroll 50 sites and Instagram flyers." },
-    "advantage2": { "title": "Multilingual site",             "desc": "Interface in 4 languages: English, Russian, German and Spanish. Write the description in your language + English (so foreigners understand). Dates, prices, photos — clear without translation." },
-    "advantage3": { "title": "Works on mobile",                "desc": "80% of applications come from phones. Site is fast, buttons are big, the form takes 30 seconds." },
-    "advantage4": { "title": "No spam reviews",                "desc": "You approve reviews yourself. Admin helps in disputes. Trolls simply don't get through." },
-    "advantage5": { "title": "Chat inside the site",           "desc": "All applicant questions in one place. No leads lost in email, WhatsApp or DMs. Full conversation visible from your dashboard." },
-    "advantage6": { "title": "Tickets — coming soon",          "desc": "We're adding ticket sales through the site. Money lands directly in your account via Stripe. Turn it on when you want — your data stays." },
-
+    "advantage1": {
+      "title": "Players find you in 3 clicks",
+      "desc": "Pick country, age, format — see matching events. No need to scroll 50 sites and Instagram flyers."
+    },
+    "advantage2": {
+      "title": "Multilingual site",
+      "desc": "Interface in 4 languages: English, Russian, German and Spanish. Write the description in your language + English (so foreigners understand). Dates, prices, photos — clear without translation."
+    },
+    "advantage3": {
+      "title": "Works on mobile",
+      "desc": "80% of applications come from phones. Site is fast, buttons are big, the form takes 30 seconds."
+    },
+    "advantage4": {
+      "title": "No spam reviews",
+      "desc": "You approve reviews yourself. Admin helps in disputes. Trolls simply don't get through."
+    },
+    "advantage5": {
+      "title": "Chat inside the site",
+      "desc": "All applicant questions in one place. No leads lost in email, WhatsApp or DMs. Full conversation visible from your dashboard."
+    },
+    "advantage6": {
+      "title": "Tickets — coming soon",
+      "desc": "We're adding ticket sales through the site. Money lands directly in your account via Stripe. Turn it on when you want — your data stays."
+    },
     "showcaseTitle": "How your event looks in the catalog",
     "showcaseSubtitle": "Standard, Featured and Premium — see the difference at a glance and in clicks.",
-    "showcaseRegular":  { "tag": "Free",      "title": "Standard card",                   "desc": "Shows in category, filters and search. Enough if you already have a name." },
-    "showcaseFeatured": { "tag": "Featured",  "title": "Green badge + top of category",    "desc": "Card at the top with «Featured» badge. On average 3× more click-throughs." },
-    "showcasePremium":  { "tag": "Premium",   "title": "Gold badge + homepage carousel",   "desc": "The most visible spot — homepage carousel. 7× more clicks. For your flagship event." },
-
+    "showcaseRegular": {
+      "tag": "Free",
+      "title": "Standard card",
+      "desc": "Shows in category, filters and search. Enough if you already have a name."
+    },
+    "showcaseFeatured": {
+      "tag": "Featured",
+      "title": "Green badge + top of category",
+      "desc": "Card at the top with «Featured» badge. On average 3× more click-throughs."
+    },
+    "showcasePremium": {
+      "tag": "Premium",
+      "title": "Gold badge + homepage carousel",
+      "desc": "The most visible spot — homepage carousel. 7× more clicks. For your flagship event."
+    },
     "placementsTitle": "Where your banner can sit",
     "placementsSubtitle": "12 placements across the site — from the homepage to specific event pages. Different formats for different goals.",
-    "placement1":  { "where": "Homepage",     "title": "Hero — top of homepage",      "size": "1280×400",  "desc": "Most visible spot. Seen by everyone who visits the site." },
-    "placement2":  { "where": "Homepage",     "title": "Mid-page slot",               "size": "1280×200",  "desc": "Between Featured and Top 50 blocks. Big reach without hero priority." },
-    "placement3":  { "where": "Catalog",      "title": "Above category list",         "size": "1200×200",  "desc": "For example, above all «Tournaments» or «Camps». Tight context." },
-    "placement4":  { "where": "Catalog",      "title": "In category feed",            "size": "970×250",   "desc": "Large native block every 12th position. Doesn't get lost in the flow." },
-    "placement5":  { "where": "Catalog",      "title": "Inside search results",       "size": "1200×120",  "desc": "Every 8th position — native banner. Looks like a card, marked as ad." },
-    "placement6":  { "where": "Event page",   "title": "Event page — top",            "size": "970×250",   "desc": "Right under the cover, before the description. 100% of page visitors see it." },
-    "placement7":  { "where": "Event page",   "title": "Event page — sidebar",        "size": "300×600",   "desc": "Sidebar next to description and «Apply now». Long-term presence." },
-    "placement8":  { "where": "Event page",   "title": "Event page — bottom",         "size": "728×250",   "desc": "Above «Similar events». Reaches already-engaged visitors." },
-    "placement9":  { "where": "Stadium",      "title": "Stadium page",                "size": "728×90",    "desc": "Want only the Spanish audience? Place on Spanish stadium pages." },
-    "placement10": { "where": "Organizer",    "title": "Organizer page",              "size": "970×90",    "desc": "Above the organizer's event list. Great for adjacent b2b services." },
-    "placement11": { "where": "Mobile",       "title": "Mobile sticky bottom",        "size": "320×100",   "desc": "Pinned to the bottom of the mobile screen. Always visible while scrolling." },
-    "placement12": { "where": "Global",       "title": "Site footer",                 "size": "1280×120",  "desc": "On every page bottom. Long-term presence for less money." },
-
+    "placement1": {
+      "where": "Homepage",
+      "title": "Hero — top of homepage",
+      "size": "1280×400",
+      "desc": "Most visible spot. Seen by everyone who visits the site."
+    },
+    "placement2": {
+      "where": "Homepage",
+      "title": "Mid-page slot",
+      "size": "1280×200",
+      "desc": "Between Featured and Top 50 blocks. Big reach without hero priority."
+    },
+    "placement3": {
+      "where": "Catalog",
+      "title": "Above category list",
+      "size": "1200×200",
+      "desc": "For example, above all «Tournaments» or «Camps». Tight context."
+    },
+    "placement4": {
+      "where": "Catalog",
+      "title": "In category feed",
+      "size": "970×250",
+      "desc": "Large native block every 12th position. Doesn't get lost in the flow."
+    },
+    "placement5": {
+      "where": "Catalog",
+      "title": "Inside search results",
+      "size": "1200×120",
+      "desc": "Every 8th position — native banner. Looks like a card, marked as ad."
+    },
+    "placement6": {
+      "where": "Event page",
+      "title": "Event page — top",
+      "size": "970×250",
+      "desc": "Right under the cover, before the description. 100% of page visitors see it."
+    },
+    "placement7": {
+      "where": "Event page",
+      "title": "Event page — sidebar",
+      "size": "300×600",
+      "desc": "Sidebar next to description and «Apply now». Long-term presence."
+    },
+    "placement8": {
+      "where": "Event page",
+      "title": "Event page — bottom",
+      "size": "728×250",
+      "desc": "Above «Similar events». Reaches already-engaged visitors."
+    },
+    "placement9": {
+      "where": "Stadium",
+      "title": "Stadium page",
+      "size": "728×90",
+      "desc": "Want only the Spanish audience? Place on Spanish stadium pages."
+    },
+    "placement10": {
+      "where": "Organizer",
+      "title": "Organizer page",
+      "size": "970×90",
+      "desc": "Above the organizer's event list. Great for adjacent b2b services."
+    },
+    "placement11": {
+      "where": "Mobile",
+      "title": "Mobile sticky bottom",
+      "size": "320×100",
+      "desc": "Pinned to the bottom of the mobile screen. Always visible while scrolling."
+    },
+    "placement12": {
+      "where": "Global",
+      "title": "Site footer",
+      "size": "1280×120",
+      "desc": "On every page bottom. Long-term presence for less money."
+    },
     "howItWorksTitle": "How to start — three steps",
-    "step1": { "title": "Sign up",            "desc": "Email + password, 60 seconds. No card needed." },
-    "step2": { "title": "Post your event",     "desc": "Name, description, dates, photos, price. English required (so everyone sees it), native language optional." },
-    "step3": { "title": "Receive applications","desc": "Applications come in. Chat with the participant, accept or decline — all in one place." },
-
+    "step1": {
+      "title": "Sign up",
+      "desc": "Email + password, 60 seconds. No card needed."
+    },
+    "step2": {
+      "title": "Post your event",
+      "desc": "Name, description, dates, photos, price. English required (so everyone sees it), native language optional."
+    },
+    "step3": {
+      "title": "Receive applications",
+      "desc": "Applications come in. Chat with the participant, accept or decline — all in one place."
+    },
     "finalCtaTitle": "Ready to give it a try?",
     "finalCtaSubtitle": "Free for 30 days. First 50 organizers get 3 months of Premium. No card, no commitment.",
     "finalCta1": "Sign up",
@@ -1251,16 +1412,44 @@
     "ctaButton": "Get started",
     "ctaContact": "Contact sales",
     "tiers": {
-      "free":       { "name": "Free",       "tagline": "Try it out, on us." },
-      "pro":        { "name": "Pro",        "tagline": "For organizers running multiple events." },
-      "premium":    { "name": "Premium",    "tagline": "For agencies and large operators." },
-      "enterprise": { "name": "Enterprise", "tagline": "Federations & white-label." }
+      "free": {
+        "name": "Free",
+        "tagline": "Try it out, on us."
+      },
+      "pro": {
+        "name": "Pro",
+        "tagline": "For organizers running multiple events."
+      },
+      "premium": {
+        "name": "Premium",
+        "tagline": "For agencies and large operators."
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "tagline": "Federations & white-label."
+      }
     },
     "tierPrice": {
-      "free":     { "monthly": "€0",  "annual": "€0",   "annualEq": "" },
-      "pro":      { "monthly": "€9.90", "annual": "€99", "annualEq": "€8.25/mo" },
-      "premium":  { "monthly": "€49", "annual": "€490", "annualEq": "€40.83/mo" },
-      "enterprise": { "monthly": "Talk to us", "annual": "Talk to us", "annualEq": "" }
+      "free": {
+        "monthly": "€0",
+        "annual": "€0",
+        "annualEq": ""
+      },
+      "pro": {
+        "monthly": "€9.90",
+        "annual": "€99",
+        "annualEq": "€8.25/mo"
+      },
+      "premium": {
+        "monthly": "€49",
+        "annual": "€490",
+        "annualEq": "€40.83/mo"
+      },
+      "enterprise": {
+        "monthly": "Talk to us",
+        "annual": "Talk to us",
+        "annualEq": ""
+      }
     },
     "compareTitle": "Compare plans",
     "feature": "Feature",
@@ -1322,39 +1511,110 @@
     "boostTitle": "Boost any event",
     "bundleBuyCta": "Buy bundle",
     "boostSubtitle": "One-time visibility upgrades. No subscription required.",
-    "boostBasic":    { "name": "Basic boost",    "price": "€9",   "desc": "7 days bumped in listings." },
-    "boostFeatured": { "name": "Featured",       "price": "€39",  "desc": "14 days at category top + 'Featured' badge." },
-    "boostPremium":  { "name": "Premium boost",  "price": "€119", "desc": "7 days on homepage hero rotation + featured + gold border." },
-    "boostBundle1":  { "name": "Bundle 3 + 1",   "price": "€89",  "desc": "3 Featured + 1 Premium boost. Save 23% vs buying separately." },
-    "boostBundle2":  { "name": "Bundle 5 + 2",   "price": "€199", "desc": "5 Featured + 2 Premium boosts. Best value — save 44%." },
+    "boostBasic": {
+      "name": "Basic boost",
+      "price": "€9",
+      "desc": "7 days bumped in listings."
+    },
+    "boostFeatured": {
+      "name": "Featured",
+      "price": "€39",
+      "desc": "14 days at category top + 'Featured' badge."
+    },
+    "boostPremium": {
+      "name": "Premium boost",
+      "price": "€119",
+      "desc": "7 days on homepage hero rotation + featured + gold border."
+    },
+    "boostBundle1": {
+      "name": "Bundle 3 + 1",
+      "price": "€89",
+      "desc": "3 Featured + 1 Premium boost. Save 23% vs buying separately."
+    },
+    "boostBundle2": {
+      "name": "Bundle 5 + 2",
+      "price": "€199",
+      "desc": "5 Featured + 2 Premium boosts. Best value — save 44%."
+    },
     "adsTitle": "Advertising for brands",
     "adsSubtitle": "Reach engaged football audiences. Negotiable rates — drop us a line.",
     "adsCta": "Talk to ad sales",
     "adsList": [
-      { "label": "Homepage hero",            "from": "from €350/wk" },
-      { "label": "Sidebar (sticky)",          "from": "from €120/wk" },
-      { "label": "Top-of-category banner",    "from": "from €90/wk" },
-      { "label": "Event / stadium sidebar",   "from": "from €60/wk" },
-      { "label": "Footer banner",             "from": "from €40/wk" },
-      { "label": "Sponsored category (1 mo)", "from": "from €1 200" },
-      { "label": "Sponsored search (CPC)",    "from": "from €0.30" }
+      {
+        "label": "Homepage hero",
+        "from": "from €350/wk"
+      },
+      {
+        "label": "Sidebar (sticky)",
+        "from": "from €120/wk"
+      },
+      {
+        "label": "Top-of-category banner",
+        "from": "from €90/wk"
+      },
+      {
+        "label": "Event / stadium sidebar",
+        "from": "from €60/wk"
+      },
+      {
+        "label": "Footer banner",
+        "from": "from €40/wk"
+      },
+      {
+        "label": "Sponsored category (1 mo)",
+        "from": "from €1 200"
+      },
+      {
+        "label": "Sponsored search (CPC)",
+        "from": "from €0.30"
+      }
     ],
     "ticketingTitle": "Ticketing fees (coming v3)",
     "ticketingSubtitle": "When we ship platform ticketing, organizers pay a service fee per ticket. Stripe processing passed through separately.",
     "ticketingRows": [
-      { "tier": "Free",       "fee": "6% + €0.49" },
-      { "tier": "Pro",        "fee": "4% + €0.49" },
-      { "tier": "Premium",    "fee": "2.5% + €0.49" },
-      { "tier": "Enterprise", "fee": "1.5% flat" }
+      {
+        "tier": "Free",
+        "fee": "6% + €0.49"
+      },
+      {
+        "tier": "Pro",
+        "fee": "4% + €0.49"
+      },
+      {
+        "tier": "Premium",
+        "fee": "2.5% + €0.49"
+      },
+      {
+        "tier": "Enterprise",
+        "fee": "1.5% flat"
+      }
     ],
     "faqTitle": "Frequently asked",
     "faqs": [
-      { "q": "Can I start free?",                              "a": "Yes — Free is forever, no credit card. You get 5 active events, gallery, programme, logo in hero. You can upgrade or downgrade any time." },
-      { "q": "What's the difference between a Boost and Premium?", "a": "Boost is a one-time push for a single event. Premium is a recurring subscription that unlocks features (FAQ, video, featured placement) across all your events plus monthly boosts included." },
-      { "q": "Can I cancel anytime?",                           "a": "Yes. Annual plans are non-refundable mid-cycle but your features stay active until the end of the period." },
-      { "q": "Do you charge VAT?",                              "a": "We invoice in EUR. EU businesses with a valid VAT number get reverse-charge. Consumers and EU businesses without VAT see VAT added at checkout." },
-      { "q": "How does the moderation SLA work?",               "a": "When you submit an event for review, our team approves or returns it within the SLA window for your tier (Free 48h, Pro 24h, Premium 4h)." },
-      { "q": "Can I switch from monthly to annual later?",      "a": "Yes — switch anytime, the annual price kicks in next billing cycle, with the ~17% savings." }
+      {
+        "q": "Can I start free?",
+        "a": "Yes — Free is forever, no credit card. You get 5 active events, gallery, programme, logo in hero. You can upgrade or downgrade any time."
+      },
+      {
+        "q": "What's the difference between a Boost and Premium?",
+        "a": "Boost is a one-time push for a single event. Premium is a recurring subscription that unlocks features (FAQ, video, featured placement) across all your events plus monthly boosts included."
+      },
+      {
+        "q": "Can I cancel anytime?",
+        "a": "Yes. Annual plans are non-refundable mid-cycle but your features stay active until the end of the period."
+      },
+      {
+        "q": "Do you charge VAT?",
+        "a": "We invoice in EUR. EU businesses with a valid VAT number get reverse-charge. Consumers and EU businesses without VAT see VAT added at checkout."
+      },
+      {
+        "q": "How does the moderation SLA work?",
+        "a": "When you submit an event for review, our team approves or returns it within the SLA window for your tier (Free 48h, Pro 24h, Premium 4h)."
+      },
+      {
+        "q": "Can I switch from monthly to annual later?",
+        "a": "Yes — switch anytime, the annual price kicks in next billing cycle, with the ~17% savings."
+      }
     ]
   },
   "admin": {
@@ -1470,34 +1730,6 @@
       }
     }
   },
-  "footer": {
-    "explore": "Explore",
-    "forBusiness": "For business",
-    "legal": "Legal",
-    "terms": "Terms of use",
-    "privacy": "Privacy policy",
-    "refund": "Refund policy",
-    "cookies": "Cookie policy",
-    "imprint": "Imprint",
-    "rights": "All rights reserved",
-    "tagline": "The premium catalog of football events worldwide",
-    "aboutSection": "About",
-    "aboutMore": "More",
-    "aboutHide": "Hide",
-    "aboutLinks": {
-      "about": "About the project",
-      "tournaments": "Tournaments",
-      "camps": "Camps",
-      "forOrganizers": "For organizers",
-      "forClubs": "For clubs",
-      "academyTrials": "Academy trials",
-      "forPlayers": "For players & parents",
-      "festivals": "Festivals",
-      "matchTours": "Match tours",
-      "trainingCamps": "Training camps",
-      "contact": "Contact"
-    }
-  },
   "aboutPage": {
     "metaTitle": "About | footballevents.eu — Premium Football Events Catalog",
     "metaDesc": "footballevents.eu — international catalog of football events: tournaments, camps, training camps, festivals, match tours and academy trials worldwide. For organizers, clubs and players.",
@@ -1516,25 +1748,67 @@
     "formatsTitle": "Six formats — one platform",
     "formatsSubtitle": "Find the right format or list your event in the relevant category",
     "categories": {
-      "0": { "label": "Tournaments", "desc": "Amateur, youth and professional competitions from all continents" },
-      "1": { "label": "Camps", "desc": "Football camps with top coaches for children, teenagers and adults" },
-      "2": { "label": "Festivals", "desc": "Multi-day football celebrations with tournaments, masterclasses and football culture" },
-      "3": { "label": "Match tours", "desc": "Organised trips to matches of top leagues: Premier League, La Liga, Champions League" },
-      "4": { "label": "Training camps", "desc": "Training camps for teams and clubs. Pre-season and tactical preparation" },
-      "5": { "label": "Academy trials", "desc": "Trials at football academies — a chance to enter the professional system" }
+      "0": {
+        "label": "Tournaments",
+        "desc": "Amateur, youth and professional competitions from all continents"
+      },
+      "1": {
+        "label": "Camps",
+        "desc": "Football camps with top coaches for children, teenagers and adults"
+      },
+      "2": {
+        "label": "Festivals",
+        "desc": "Multi-day football celebrations with tournaments, masterclasses and football culture"
+      },
+      "3": {
+        "label": "Match tours",
+        "desc": "Organised trips to matches of top leagues: Premier League, La Liga, Champions League"
+      },
+      "4": {
+        "label": "Training camps",
+        "desc": "Training camps for teams and clubs. Pre-season and tactical preparation"
+      },
+      "5": {
+        "label": "Academy trials",
+        "desc": "Trials at football academies — a chance to enter the professional system"
+      }
     },
     "forWhomTitle": "For whom",
     "forWhom": {
-      "0": { "title": "Organizers", "desc": "Post your event, accept applications online, promote through Featured and boosts — and attract participants from around the world.", "cta": "More for organizers" },
-      "1": { "title": "Clubs", "desc": "Register teams for tournaments, organise camps at the best venues in Europe, promote your own club events.", "cta": "More for clubs" },
-      "2": { "title": "Players & parents", "desc": "Find tournaments, camps and academy trials. Filter by age, level and country. Apply in one click.", "cta": "More for players" }
+      "0": {
+        "title": "Organizers",
+        "desc": "Post your event, accept applications online, promote through Featured and boosts — and attract participants from around the world.",
+        "cta": "More for organizers"
+      },
+      "1": {
+        "title": "Clubs",
+        "desc": "Register teams for tournaments, organise camps at the best venues in Europe, promote your own club events.",
+        "cta": "More for clubs"
+      },
+      "2": {
+        "title": "Players & parents",
+        "desc": "Find tournaments, camps and academy trials. Filter by age, level and country. Apply in one click.",
+        "cta": "More for players"
+      }
     },
     "benefitsTitle": "Why footballevents.eu",
     "benefits": {
-      "0": { "title": "50+ countries", "desc": "Events from all continents in one catalog" },
-      "1": { "title": "Online applications", "desc": "No calls or messengers — form, confirmation, tracking" },
-      "2": { "title": "Verified organizers", "desc": "Every organizer goes through platform moderation" },
-      "3": { "title": "Free for participants", "desc": "Registration and event search are always free" }
+      "0": {
+        "title": "50+ countries",
+        "desc": "Events from all continents in one catalog"
+      },
+      "1": {
+        "title": "Online applications",
+        "desc": "No calls or messengers — form, confirmation, tracking"
+      },
+      "2": {
+        "title": "Verified organizers",
+        "desc": "Every organizer goes through platform moderation"
+      },
+      "3": {
+        "title": "Free for participants",
+        "desc": "Registration and event search are always free"
+      }
     },
     "companyTitle": "About the company",
     "companyBody1": "The platform is developed by Goality Sport Group OÜ — a sports company from Tallinn, Estonia. We organise our own football camps and fully understand the challenges organizers face: scattered announcements, chaotic application collection, zero analytics.",
@@ -1560,17 +1834,45 @@
     "whyBody2": "footballevents.eu gathers tournaments from more than 50 countries — from local city cups to major international tournaments with teams from 20+ nations. Filter by age, level, format and country — find exactly what you or your team needs.",
     "typesTitle": "What tournaments you'll find in the catalog",
     "types": {
-      "0": { "title": "Youth tournaments", "desc": "Competitions from U7 to U21. Development formats, international championships, academic selections. For children and teenagers." },
-      "1": { "title": "Amateur cups", "desc": "Weekend leagues, city cups, corporate championships. Play without a professional contract — for the love of the game." },
-      "2": { "title": "International tournaments", "desc": "Invited teams from different countries. A true international experience — new opponents, new connections, a new level." },
-      "3": { "title": "Semi-professional", "desc": "Competitions for players with serious ambitions. High level of play, professional referees, match analysis." }
+      "0": {
+        "title": "Youth tournaments",
+        "desc": "Competitions from U7 to U21. Development formats, international championships, academic selections. For children and teenagers."
+      },
+      "1": {
+        "title": "Amateur cups",
+        "desc": "Weekend leagues, city cups, corporate championships. Play without a professional contract — for the love of the game."
+      },
+      "2": {
+        "title": "International tournaments",
+        "desc": "Invited teams from different countries. A true international experience — new opponents, new connections, a new level."
+      },
+      "3": {
+        "title": "Semi-professional",
+        "desc": "Competitions for players with serious ambitions. High level of play, professional referees, match analysis."
+      }
     },
     "howTitle": "How to find and apply",
     "how": {
-      "0": { "num": "01", "title": "Find a tournament", "desc": "Use filters by country, age group, level and dates" },
-      "1": { "num": "02", "title": "Check the details", "desc": "Schedule, rules, fees, venue — everything is on the event page" },
-      "2": { "num": "03", "title": "Apply", "desc": "Online form in 2 minutes. No calls, messengers or waiting" },
-      "3": { "num": "04", "title": "Get confirmation", "desc": "The organizer will review your application and contact you on the platform" }
+      "0": {
+        "num": "01",
+        "title": "Find a tournament",
+        "desc": "Use filters by country, age group, level and dates"
+      },
+      "1": {
+        "num": "02",
+        "title": "Check the details",
+        "desc": "Schedule, rules, fees, venue — everything is on the event page"
+      },
+      "2": {
+        "num": "03",
+        "title": "Apply",
+        "desc": "Online form in 2 minutes. No calls, messengers or waiting"
+      },
+      "3": {
+        "num": "04",
+        "title": "Get confirmation",
+        "desc": "The organizer will review your application and contact you on the platform"
+      }
     },
     "forOrgTitle": "For organizers",
     "forOrgHeadline": "List a tournament — get applications from 50+ countries",
@@ -1583,10 +1885,22 @@
       "4": "Verified badge — earns participants' trust"
     },
     "orgFeatures": {
-      "0": { "label": "Any country", "val": "Enter a city or country — participants will find you" },
-      "1": { "label": "Smart filters", "val": "Age, format, level — your tournament appears in exactly the right results" },
-      "2": { "label": "Applications in the dashboard", "val": "All requests, contacts and statuses — in one place" },
-      "3": { "label": "Live catalog", "val": "The event page updates in real time" }
+      "0": {
+        "label": "Any country",
+        "val": "Enter a city or country — participants will find you"
+      },
+      "1": {
+        "label": "Smart filters",
+        "val": "Age, format, level — your tournament appears in exactly the right results"
+      },
+      "2": {
+        "label": "Applications in the dashboard",
+        "val": "All requests, contacts and statuses — in one place"
+      },
+      "3": {
+        "label": "Live catalog",
+        "val": "The event page updates in real time"
+      }
     },
     "forOrgCta": "More for organizers",
     "ctaTitle": "Find your tournament",
@@ -1610,12 +1924,30 @@
     "openingBody2": "On footballevents.eu you will find camps from verified organizers worldwide: summer camps in Spain and Portugal, academy intensives, week-long programmes at the best pitches in Europe — and local camps in your own city for those who want to start close to home.",
     "typesTitle": "Camp formats in the catalog",
     "types": {
-      "0": { "title": "Summer camps", "desc": "The classic format: one or two weeks at a great venue. Training, games, friendships. For children aged 6 to 17." },
-      "1": { "title": "Intensive camps", "desc": "3–5 days of concentrated work on technique, tactics or physical conditioning. For seriously motivated players." },
-      "2": { "title": "International programmes", "desc": "Camps in Spain, Portugal, Germany, England. Training at top-club academies. Living in a professional environment." },
-      "3": { "title": "Academy camps", "desc": "Programmes at football academies with professional coaches and a chance to enter the club system." },
-      "4": { "title": "Team camps", "desc": "A camp for the whole team — combining training, team-building and matches against other groups." },
-      "5": { "title": "Family camps", "desc": "Formats involving parents: observation, lectures, training together. Sport as a family adventure." }
+      "0": {
+        "title": "Summer camps",
+        "desc": "The classic format: one or two weeks at a great venue. Training, games, friendships. For children aged 6 to 17."
+      },
+      "1": {
+        "title": "Intensive camps",
+        "desc": "3–5 days of concentrated work on technique, tactics or physical conditioning. For seriously motivated players."
+      },
+      "2": {
+        "title": "International programmes",
+        "desc": "Camps in Spain, Portugal, Germany, England. Training at top-club academies. Living in a professional environment."
+      },
+      "3": {
+        "title": "Academy camps",
+        "desc": "Programmes at football academies with professional coaches and a chance to enter the club system."
+      },
+      "4": {
+        "title": "Team camps",
+        "desc": "A camp for the whole team — combining training, team-building and matches against other groups."
+      },
+      "5": {
+        "title": "Family camps",
+        "desc": "Formats involving parents: observation, lectures, training together. Sport as a family adventure."
+      }
     },
     "whyTitle": "What a football camp gives you",
     "whyBody": "Players who regularly attend camps develop ahead of their peers — confirmed by academy coaches across Europe. The reason is simple: the intensity and concentration of experience that is unattainable in a normal training routine.",
@@ -1654,31 +1986,82 @@
     "whyBody2": "Match tours take away all the hard parts: finding official tickets (which are not freely available), booking a hotel, navigating an unfamiliar city, the language barrier. You simply arrive — and take home unforgettable emotions.",
     "leaguesTitle": "Leagues and competitions",
     "leagues": {
-      "0": { "label": "Champions League", "flag": "🏆" },
-      "1": { "label": "English Premier League", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
-      "2": { "label": "La Liga (Spain)", "flag": "🇪🇸" },
-      "3": { "label": "Bundesliga (Germany)", "flag": "🇩🇪" },
-      "4": { "label": "Serie A (Italy)", "flag": "🇮🇹" },
-      "5": { "label": "Ligue 1 (France)", "flag": "🇫🇷" },
-      "6": { "label": "Eredivisie (Netherlands)", "flag": "🇳🇱" },
-      "7": { "label": "Primeira Liga (Portugal)", "flag": "🇵🇹" }
+      "0": {
+        "label": "Champions League",
+        "flag": "🏆"
+      },
+      "1": {
+        "label": "English Premier League",
+        "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
+      },
+      "2": {
+        "label": "La Liga (Spain)",
+        "flag": "🇪🇸"
+      },
+      "3": {
+        "label": "Bundesliga (Germany)",
+        "flag": "🇩🇪"
+      },
+      "4": {
+        "label": "Serie A (Italy)",
+        "flag": "🇮🇹"
+      },
+      "5": {
+        "label": "Ligue 1 (France)",
+        "flag": "🇫🇷"
+      },
+      "6": {
+        "label": "Eredivisie (Netherlands)",
+        "flag": "🇳🇱"
+      },
+      "7": {
+        "label": "Primeira Liga (Portugal)",
+        "flag": "🇵🇹"
+      }
     },
     "leaguesNote": "Organizers also offer tours to domestic league and cup matches — check the catalog for details.",
     "includedTitle": "What a tour typically includes",
     "included": {
-      "0": { "title": "Match tickets", "desc": "The tour organizer handles finding and booking official tickets" },
-      "1": { "title": "Accommodation", "desc": "A hotel near the stadium or city centre — chosen together with the tour" },
-      "2": { "title": "Transfers", "desc": "Airport pickup and transfer to the stadium — no stress or navigation in an unfamiliar city" },
-      "3": { "title": "Excursions", "desc": "Stadium tour, club museum, training ground visit — depending on the tour" },
-      "4": { "title": "Guide & coordination", "desc": "A professional local guide, ready to answer questions and resolve issues" },
-      "5": { "title": "Group of like-minded fans", "desc": "You won't travel alone — fellow fans who already share a common passion" }
+      "0": {
+        "title": "Match tickets",
+        "desc": "The tour organizer handles finding and booking official tickets"
+      },
+      "1": {
+        "title": "Accommodation",
+        "desc": "A hotel near the stadium or city centre — chosen together with the tour"
+      },
+      "2": {
+        "title": "Transfers",
+        "desc": "Airport pickup and transfer to the stadium — no stress or navigation in an unfamiliar city"
+      },
+      "3": {
+        "title": "Excursions",
+        "desc": "Stadium tour, club museum, training ground visit — depending on the tour"
+      },
+      "4": {
+        "title": "Guide & coordination",
+        "desc": "A professional local guide, ready to answer questions and resolve issues"
+      },
+      "5": {
+        "title": "Group of like-minded fans",
+        "desc": "You won't travel alone — fellow fans who already share a common passion"
+      }
     },
     "includedNote": "* The exact tour package depends on the organizer and chosen programme. Check the event page for details.",
     "forWhomTitle": "Who is a match tour right for",
     "forWhom": {
-      "0": { "title": "For fans", "desc": "Always dreamed of seeing Real Madrid or Manchester United live? A tour takes care of all the complexity — visas, tickets, hotel — leaving only the emotions." },
-      "1": { "title": "For families", "desc": "Family tours with a thoughtful programme: match, stadium tour, club museum, city walk. Unforgettable memories for children." },
-      "2": { "title": "For corporates", "desc": "VIP tours to top-club matches — the best corporate event for your team or partners. Business networking + football = works perfectly." }
+      "0": {
+        "title": "For fans",
+        "desc": "Always dreamed of seeing Real Madrid or Manchester United live? A tour takes care of all the complexity — visas, tickets, hotel — leaving only the emotions."
+      },
+      "1": {
+        "title": "For families",
+        "desc": "Family tours with a thoughtful programme: match, stadium tour, club museum, city walk. Unforgettable memories for children."
+      },
+      "2": {
+        "title": "For corporates",
+        "desc": "VIP tours to top-club matches — the best corporate event for your team or partners. Business networking + football = works perfectly."
+      }
     },
     "testimonialQuote": "First time at Camp Nou — it was incredible. The tour organisers handled everything: tickets in the right section, a hotel 10 minutes' walk away, a stadium tour the day before the match. Already planning the next trip.",
     "testimonialAuthor": "Alexey, fan, Minsk",
@@ -1695,19 +2078,37 @@
     "breadcrumbHome": "Home",
     "breadcrumbAbout": "About",
     "breadcrumbCurrent": "Festivals",
-    "ctaView": "Browse festivals",
+    "ctaView": "Browse all festivals",
     "ctaPost": "List a festival",
     "openingTitle": "More than just a tournament",
     "openingBody1": "A football festival is when sport meets culture. Two or three days at a large venue, several concurrent tournaments, masterclasses, music, food — and a unifying atmosphere created by thousands of people who genuinely love the game.",
     "openingBody2": "In the footballevents.eu catalog you will find festivals of every format — from urban street-football celebrations to multi-day international events with teams from dozens of countries. All on one platform, with online registration.",
     "typesTitle": "Festival formats",
     "types": {
-      "0": { "title": "Street football", "desc": "Street ball, free-kick competitions, freestyle. Asphalt, small goals, big emotions. For those who grew up kicking a ball in the yard." },
-      "1": { "title": "Beach soccer", "desc": "Sand, sea, summer tournament. Beach soccer brings together professionals and amateurs — the same rules for everyone." },
-      "2": { "title": "Family festivals", "desc": "Formats for the whole family: kids play, parents cheer, everyone eats and has fun together. A celebration, not just a tournament." },
-      "3": { "title": "Football + culture", "desc": "Events where football is part of a larger cultural programme. Music, food, art, exhibitions. Atmosphere, not just the score." },
-      "4": { "title": "Multi-format events", "desc": "Several tournaments, age categories and formats in one venue. Three days — thousands of participants and spectators." },
-      "5": { "title": "Media festivals", "desc": "Competitions with full media production: broadcasts, photographers, YouTube. Your goals will make the highlights." }
+      "0": {
+        "title": "Street football",
+        "desc": "Street ball, free-kick competitions, freestyle. Asphalt, small goals, big emotions. For those who grew up kicking a ball in the yard."
+      },
+      "1": {
+        "title": "Beach soccer",
+        "desc": "Sand, sea, summer tournament. Beach soccer brings together professionals and amateurs — the same rules for everyone."
+      },
+      "2": {
+        "title": "Family festivals",
+        "desc": "Formats for the whole family: kids play, parents cheer, everyone eats and has fun together. A celebration, not just a tournament."
+      },
+      "3": {
+        "title": "Football + culture",
+        "desc": "Events where football is part of a larger cultural programme. Music, food, art, exhibitions. Atmosphere, not just the score."
+      },
+      "4": {
+        "title": "Multi-format events",
+        "desc": "Several tournaments, age categories and formats in one venue. Three days — thousands of participants and spectators."
+      },
+      "5": {
+        "title": "Media festivals",
+        "desc": "Competitions with full media production: broadcasts, photographers, YouTube. Your goals will make the highlights."
+      }
     },
     "whyTitle": "Why you should go to a festival",
     "whyBody": "A festival is an event that bonds a team, creates a shared story and stays in the memory for years. It is not just a competition — it is an experience.",
@@ -1723,7 +2124,6 @@
     "testimonialAuthor": "Captain of an amateur team, Berlin",
     "ctaTitle": "Find your festival",
     "ctaSubtitle": "Street football, beach soccer, family formats — all in the catalog",
-    "ctaView": "Browse all festivals",
     "ctaPost2": "List a festival"
   },
   "aboutTrainingCamps": {
@@ -1742,23 +2142,73 @@
     "whyBody2": "footballevents.eu brings together camp organizers from the best training bases in Europe and beyond. Filter by country, dates, capacity, facility level — and find the programme that suits your team.",
     "typesTitle": "Camp formats",
     "types": {
-      "0": { "title": "Pre-season camps", "desc": "The foundation of a successful season. 7–14 days of intensive training, friendly matches, building team chemistry." },
-      "1": { "title": "Tactical camps", "desc": "Working on a specific formation, set pieces, pressing or positional attack — a deep training focus." },
-      "2": { "title": "Physical camps", "desc": "Targeted work on physical fitness: endurance, speed, strength training. With professional fitness coaches." },
-      "3": { "title": "Team-building camps", "desc": "Team psychology, trust, communication. A blend of training, team activities and conflict-resolution sessions." },
-      "4": { "title": "Video-analysis camps", "desc": "Bases equipped with video recording systems. Every training session and match analysed with coaches. Accelerated progress through data." },
-      "5": { "title": "Youth camps", "desc": "Specialist development programmes for club academies. Working with U8–U21 groups using methods from leading European schools." }
+      "0": {
+        "title": "Pre-season camps",
+        "desc": "The foundation of a successful season. 7–14 days of intensive training, friendly matches, building team chemistry."
+      },
+      "1": {
+        "title": "Tactical camps",
+        "desc": "Working on a specific formation, set pieces, pressing or positional attack — a deep training focus."
+      },
+      "2": {
+        "title": "Physical camps",
+        "desc": "Targeted work on physical fitness: endurance, speed, strength training. With professional fitness coaches."
+      },
+      "3": {
+        "title": "Team-building camps",
+        "desc": "Team psychology, trust, communication. A blend of training, team activities and conflict-resolution sessions."
+      },
+      "4": {
+        "title": "Video-analysis camps",
+        "desc": "Bases equipped with video recording systems. Every training session and match analysed with coaches. Accelerated progress through data."
+      },
+      "5": {
+        "title": "Youth camps",
+        "desc": "Specialist development programmes for club academies. Working with U8–U21 groups using methods from leading European schools."
+      }
     },
     "destinationsTitle": "Popular destinations",
     "destinations": {
-      "0": { "flag": "🇪🇸", "country": "Spain", "note": "Malaga, Alicante, Barcelona" },
-      "1": { "flag": "🇵🇹", "country": "Portugal", "note": "Algarve, Lisbon" },
-      "2": { "flag": "🇹🇷", "country": "Turkey", "note": "Antalya — popular winter option" },
-      "3": { "flag": "🇦🇪", "country": "UAE", "note": "Dubai — January–February" },
-      "4": { "flag": "🇨🇿", "country": "Czech Republic", "note": "Prague and regions" },
-      "5": { "flag": "🇵🇱", "country": "Poland", "note": "Pomerania, Silesia" },
-      "6": { "flag": "🇭🇷", "country": "Croatia", "note": "Adriatic coast" },
-      "7": { "flag": "🇩🇪", "country": "Germany", "note": "Bavaria, North Rhine" }
+      "0": {
+        "flag": "🇪🇸",
+        "country": "Spain",
+        "note": "Malaga, Alicante, Barcelona"
+      },
+      "1": {
+        "flag": "🇵🇹",
+        "country": "Portugal",
+        "note": "Algarve, Lisbon"
+      },
+      "2": {
+        "flag": "🇹🇷",
+        "country": "Turkey",
+        "note": "Antalya — popular winter option"
+      },
+      "3": {
+        "flag": "🇦🇪",
+        "country": "UAE",
+        "note": "Dubai — January–February"
+      },
+      "4": {
+        "flag": "🇨🇿",
+        "country": "Czech Republic",
+        "note": "Prague and regions"
+      },
+      "5": {
+        "flag": "🇵🇱",
+        "country": "Poland",
+        "note": "Pomerania, Silesia"
+      },
+      "6": {
+        "flag": "🇭🇷",
+        "country": "Croatia",
+        "note": "Adriatic coast"
+      },
+      "7": {
+        "flag": "🇩🇪",
+        "country": "Germany",
+        "note": "Bavaria, North Rhine"
+      }
     },
     "destinationsNote": "These are just some of the destinations — new bases appear in the catalog regularly.",
     "forOrgTitle": "For camp organizers",
@@ -1772,10 +2222,22 @@
       "4": "Team application tools — multiple players in one form"
     },
     "orgFeatures": {
-      "0": { "label": "Flexible dates", "val": "Multiple programmes across different parts of the season" },
-      "1": { "label": "Team applications", "val": "One form for the whole team — not individual players" },
-      "2": { "label": "Map & facilities", "val": "Show pitches, halls, catering and accommodation" },
-      "3": { "label": "Analytics", "val": "Views, applications, conversion — in the organizer dashboard" }
+      "0": {
+        "label": "Flexible dates",
+        "val": "Multiple programmes across different parts of the season"
+      },
+      "1": {
+        "label": "Team applications",
+        "val": "One form for the whole team — not individual players"
+      },
+      "2": {
+        "label": "Map & facilities",
+        "val": "Show pitches, halls, catering and accommodation"
+      },
+      "3": {
+        "label": "Analytics",
+        "val": "Views, applications, conversion — in the organizer dashboard"
+      }
     },
     "forOrgCta": "List a programme",
     "ctaTitle": "Find a training camp for your team",
@@ -1798,21 +2260,57 @@
     "whyBody2": "footballevents.eu gathers trials from academies and clubs across Europe. There is no 'closed club' here — only open events with a clear format and online application. Every worthy player deserves a chance to be seen.",
     "typesTitle": "Trial formats",
     "types": {
-      "0": { "title": "International trials", "desc": "Top-club academies in Spain, Portugal, Germany and the Netherlands hold open selections for players from around the world." },
-      "1": { "title": "Academy programmes", "desc": "Extended programmes with full immersion in the academy environment. Not just a trial — a complete training period." },
-      "2": { "title": "Regional trials", "desc": "Lower-league clubs and regional academies looking for local talent. For those starting out on the professional path." },
-      "3": { "title": "Elite selections", "desc": "Closed trials from professional clubs. Require a video application or recommendation. High standard — high expectations." },
-      "4": { "title": "Scouting days", "desc": "Organised events to which professional scouts are invited. One day — hundreds of eyes on you." },
-      "5": { "title": "Online scouting", "desc": "Platforms with a video application: upload your footage, a scout evaluates remotely. If you impress — an invitation to an in-person trial." }
+      "0": {
+        "title": "International trials",
+        "desc": "Top-club academies in Spain, Portugal, Germany and the Netherlands hold open selections for players from around the world."
+      },
+      "1": {
+        "title": "Academy programmes",
+        "desc": "Extended programmes with full immersion in the academy environment. Not just a trial — a complete training period."
+      },
+      "2": {
+        "title": "Regional trials",
+        "desc": "Lower-league clubs and regional academies looking for local talent. For those starting out on the professional path."
+      },
+      "3": {
+        "title": "Elite selections",
+        "desc": "Closed trials from professional clubs. Require a video application or recommendation. High standard — high expectations."
+      },
+      "4": {
+        "title": "Scouting days",
+        "desc": "Organised events to which professional scouts are invited. One day — hundreds of eyes on you."
+      },
+      "5": {
+        "title": "Online scouting",
+        "desc": "Platforms with a video application: upload your footage, a scout evaluates remotely. If you impress — an invitation to an in-person trial."
+      }
     },
     "ageGroupsTitle": "Age groups",
     "ageGroups": {
-      "0": { "label": "U8–U10", "note": "First steps: assessing coordination, coachability and love of the game" },
-      "1": { "label": "U11–U13", "note": "Technical foundation and game understanding — the key criteria" },
-      "2": { "label": "U14–U16", "note": "Tactics, physical attributes, team play" },
-      "3": { "label": "U17–U19", "note": "Close to youth professional level. Serious selection" },
-      "4": { "label": "U20–U21", "note": "Last chance to enter the system. High requirements" },
-      "5": { "label": "Adults", "note": "Amateur clubs and semi-professional teams" }
+      "0": {
+        "label": "U8–U10",
+        "note": "First steps: assessing coordination, coachability and love of the game"
+      },
+      "1": {
+        "label": "U11–U13",
+        "note": "Technical foundation and game understanding — the key criteria"
+      },
+      "2": {
+        "label": "U14–U16",
+        "note": "Tactics, physical attributes, team play"
+      },
+      "3": {
+        "label": "U17–U19",
+        "note": "Close to youth professional level. Serious selection"
+      },
+      "4": {
+        "label": "U20–U21",
+        "note": "Last chance to enter the system. High requirements"
+      },
+      "5": {
+        "label": "Adults",
+        "note": "Amateur clubs and semi-professional teams"
+      }
     },
     "prepareTitle": "How to prepare for a trial",
     "prepareBody": "A good trial is not a matter of luck — it is the result of preparation. Academies and scouts watch dozens of players simultaneously. Physical readiness, the right self-presentation and a professional attitude to the process will help you stand out.",
@@ -1851,19 +2349,53 @@
     "problemBody2": "footballevents.eu replaces the entire chain. The event page works around the clock, accepts applications automatically, ranks in search engines — and shows your event to an audience that is already looking for exactly what you offer.",
     "featuresTitle": "What the platform gives organizers",
     "features": {
-      "0": { "title": "International audience", "desc": "Your event will be seen by participants from 50+ countries. Without targeted advertising or language barriers — the platform is multilingual." },
-      "1": { "title": "Online applications", "desc": "Participants apply directly on the site. You see all requests in the dashboard, respond and update statuses. Nothing superfluous." },
-      "2": { "title": "Boosts & Featured", "desc": "Want more views? Lift your event to the top position or into the homepage carousel — in one click." },
-      "3": { "title": "Analytics", "desc": "Page views, number of applications, traffic sources. Understand what works and improve your events every time." },
-      "4": { "title": "Verified profile", "desc": "The Verified badge shows participants that the organizer has passed moderation and is trustworthy. Trust = more applications." },
-      "5": { "title": "Gallery & media", "desc": "Add photos, a programme, YouTube videos (Premium plan). Your event page is your showcase, not just a row in a table." }
+      "0": {
+        "title": "International audience",
+        "desc": "Your event will be seen by participants from 50+ countries. Without targeted advertising or language barriers — the platform is multilingual."
+      },
+      "1": {
+        "title": "Online applications",
+        "desc": "Participants apply directly on the site. You see all requests in the dashboard, respond and update statuses. Nothing superfluous."
+      },
+      "2": {
+        "title": "Boosts & Featured",
+        "desc": "Want more views? Lift your event to the top position or into the homepage carousel — in one click."
+      },
+      "3": {
+        "title": "Analytics",
+        "desc": "Page views, number of applications, traffic sources. Understand what works and improve your events every time."
+      },
+      "4": {
+        "title": "Verified profile",
+        "desc": "The Verified badge shows participants that the organizer has passed moderation and is trustworthy. Trust = more applications."
+      },
+      "5": {
+        "title": "Gallery & media",
+        "desc": "Add photos, a programme, YouTube videos (Premium plan). Your event page is your showcase, not just a row in a table."
+      }
     },
     "stepsTitle": "How to get started in 10 minutes",
     "steps": {
-      "0": { "num": "01", "title": "Create a profile", "desc": "Name, description, logo. 5 minutes — and you are on the platform." },
-      "1": { "num": "02", "title": "Publish an event", "desc": "Date, venue, category, price, description. Draft before publishing." },
-      "2": { "num": "03", "title": "Receive applications", "desc": "Email and dashboard notification with every new application." },
-      "3": { "num": "04", "title": "Manage participants", "desc": "Confirm, decline, message — directly on the platform." }
+      "0": {
+        "num": "01",
+        "title": "Create a profile",
+        "desc": "Name, description, logo. 5 minutes — and you are on the platform."
+      },
+      "1": {
+        "num": "02",
+        "title": "Publish an event",
+        "desc": "Date, venue, category, price, description. Draft before publishing."
+      },
+      "2": {
+        "num": "03",
+        "title": "Receive applications",
+        "desc": "Email and dashboard notification with every new application."
+      },
+      "3": {
+        "num": "04",
+        "title": "Manage participants",
+        "desc": "Confirm, decline, message — directly on the platform."
+      }
     },
     "tiersTitle": "Pricing",
     "tiersSubtitle": "Free to start. Pay only when you want to grow faster.",
@@ -1949,19 +2481,53 @@
     "introBody2": "footballevents.eu covers the entire cycle: as a discovery tool (find tournaments and camps) and as a promotion tool (publish your own events and trials for an international audience).",
     "whoTitle": "Who it suits",
     "clubTypes": {
-      "0": { "icon": "🏆", "label": "Professional clubs", "desc": "Academies with a youth team system" },
-      "1": { "icon": "⚽", "label": "Amateur clubs", "desc": "City and district clubs with several squads" },
-      "2": { "icon": "🎓", "label": "Football schools", "desc": "Private schools and sections working with children" },
-      "3": { "icon": "🤝", "label": "Corporate teams", "desc": "Corporate leagues and company teams" }
+      "0": {
+        "icon": "🏆",
+        "label": "Professional clubs",
+        "desc": "Academies with a youth team system"
+      },
+      "1": {
+        "icon": "⚽",
+        "label": "Amateur clubs",
+        "desc": "City and district clubs with several squads"
+      },
+      "2": {
+        "icon": "🎓",
+        "label": "Football schools",
+        "desc": "Private schools and sections working with children"
+      },
+      "3": {
+        "icon": "🤝",
+        "label": "Corporate teams",
+        "desc": "Corporate leagues and company teams"
+      }
     },
     "useCasesTitle": "What a club does on the platform",
     "useCases": {
-      "0": { "title": "Find tournaments for teams", "desc": "Register one or several club teams for tournaments — from city cups to international competitions. Filter by age, level, country." },
-      "1": { "title": "Organise camps", "desc": "Find training bases and camp programmes — pre-season, tactical, international. One application form for the whole team." },
-      "2": { "title": "Hold trials", "desc": "Publish open trials for your academy or first team. Receive applications from players worldwide — with details, age and position." },
-      "3": { "title": "Promote club events", "desc": "Hosting a tournament, camp or open day? List it on the platform — and reach an audience from 50+ countries with no ad budget." },
-      "4": { "title": "Attract players", "desc": "Open trials and club events on footballevents.eu are the best way to get noticed by new players, especially international ones." },
-      "5": { "title": "Plan the season", "desc": "The events catalog helps you build the team calendar: tournaments, camps, festivals — all in one place with a date filter." }
+      "0": {
+        "title": "Find tournaments for teams",
+        "desc": "Register one or several club teams for tournaments — from city cups to international competitions. Filter by age, level, country."
+      },
+      "1": {
+        "title": "Organise camps",
+        "desc": "Find training bases and camp programmes — pre-season, tactical, international. One application form for the whole team."
+      },
+      "2": {
+        "title": "Hold trials",
+        "desc": "Publish open trials for your academy or first team. Receive applications from players worldwide — with details, age and position."
+      },
+      "3": {
+        "title": "Promote club events",
+        "desc": "Hosting a tournament, camp or open day? List it on the platform — and reach an audience from 50+ countries with no ad budget."
+      },
+      "4": {
+        "title": "Attract players",
+        "desc": "Open trials and club events on footballevents.eu are the best way to get noticed by new players, especially international ones."
+      },
+      "5": {
+        "title": "Plan the season",
+        "desc": "The events catalog helps you build the team calendar: tournaments, camps, festivals — all in one place with a date filter."
+      }
     },
     "benefitsTitle": "Club benefits",
     "benefits": {
@@ -1993,27 +2559,69 @@
     "catalogTitle": "What you'll find in the catalog",
     "catalogSubtitle": "All football event formats — in one place",
     "eventTypes": {
-      "0": { "label": "Tournaments", "desc": "Competitions from U7 to adults" },
-      "1": { "label": "Camps", "desc": "Summer camps and intensives" },
-      "2": { "label": "Trials", "desc": "At academies across Europe" },
-      "3": { "label": "Training camps", "desc": "For teams and groups" }
+      "0": {
+        "label": "Tournaments",
+        "desc": "Competitions from U7 to adults"
+      },
+      "1": {
+        "label": "Camps",
+        "desc": "Summer camps and intensives"
+      },
+      "2": {
+        "label": "Trials",
+        "desc": "At academies across Europe"
+      },
+      "3": {
+        "label": "Training camps",
+        "desc": "For teams and groups"
+      }
     },
     "featuresTitle": "Why searching on footballevents.eu is convenient",
     "features": {
-      "0": { "title": "Smart search", "desc": "Enter a city, age or format — the system shows relevant events. Without unnecessary noise." },
-      "1": { "title": "Precise filters", "desc": "Age group, level of play, event type, country, dates, cost. Find exactly what you need." },
-      "2": { "title": "One-click application", "desc": "No email threads or messengers. The on-site form — and the organizer receives the request automatically." },
-      "3": { "title": "Status tracking", "desc": "After applying, track the status in your personal account. The organizer replies directly on the platform." },
-      "4": { "title": "Favourites", "desc": "Save events you like. Come back when you are ready to sign up." },
-      "5": { "title": "The whole world in one place", "desc": "Local tournaments and international camps in Spain — side by side in one catalog. Choose your scale." }
+      "0": {
+        "title": "Smart search",
+        "desc": "Enter a city, age or format — the system shows relevant events. Without unnecessary noise."
+      },
+      "1": {
+        "title": "Precise filters",
+        "desc": "Age group, level of play, event type, country, dates, cost. Find exactly what you need."
+      },
+      "2": {
+        "title": "One-click application",
+        "desc": "No email threads or messengers. The on-site form — and the organizer receives the request automatically."
+      },
+      "3": {
+        "title": "Status tracking",
+        "desc": "After applying, track the status in your personal account. The organizer replies directly on the platform."
+      },
+      "4": {
+        "title": "Favourites",
+        "desc": "Save events you like. Come back when you are ready to sign up."
+      },
+      "5": {
+        "title": "The whole world in one place",
+        "desc": "Local tournaments and international camps in Spain — side by side in one catalog. Choose your scale."
+      }
     },
     "journeyTitle": "From search to participation — 4 steps",
     "journeyStep": "Step",
     "journey": {
-      "0": { "label": "Search", "desc": "Use the search and filters — by age, type, country, date" },
-      "1": { "label": "Apply", "desc": "Fill in the form directly on the event page" },
-      "2": { "label": "Wait for a reply", "desc": "The organizer reviews your application and replies in the dashboard" },
-      "3": { "label": "Participate", "desc": "Get your confirmation — and prepare for the event!" }
+      "0": {
+        "label": "Search",
+        "desc": "Use the search and filters — by age, type, country, date"
+      },
+      "1": {
+        "label": "Apply",
+        "desc": "Fill in the form directly on the event page"
+      },
+      "2": {
+        "label": "Wait for a reply",
+        "desc": "The organizer reviews your application and replies in the dashboard"
+      },
+      "3": {
+        "label": "Participate",
+        "desc": "Get your confirmation — and prepare for the event!"
+      }
     },
     "parentsTitle": "For parents: safe and transparent",
     "parentsBody": "Enrolling a child in a camp or tournament is a serious decision. footballevents.eu makes the process as straightforward as possible: verified organizers, full event information, secure payment and direct contact through the platform.",
@@ -2031,5 +2639,219 @@
     "ctaSubtitle": "Create an account — save events and track your applications",
     "ctaFind2": "Find an event",
     "ctaAccount": "Create an account"
+  },
+  "club": {
+    "onboardTitle": "Register your club",
+    "onboardSubtitle": "Tell us who you are. Your teams will be able to apply to tournaments, camps and festivals across Europe in one click.",
+    "name": "Club name",
+    "nameHint": "Public name shown on tournament dashboards and your profile.",
+    "slug": "Profile URL",
+    "slugHint": "Lowercase letters, numbers and hyphens. Used in links to your profile.",
+    "country": "Country",
+    "city": "City",
+    "foundedYear": "Founded",
+    "foundedYearHint": "Year your club was founded (optional).",
+    "englishSection": "About your club",
+    "englishSectionHint": "English is the base language — organisers across the continent will read this. Required.",
+    "secondSection": "Second language (optional)",
+    "secondSectionHint": "Add a second translation if your audience speaks another language. We will fall back to English when missing.",
+    "secondLanguagePicker": "Language",
+    "taglineEn": "Tagline (EN)",
+    "aboutEn": "About (EN)",
+    "taglineSecond": "Tagline (translated)",
+    "aboutSecond": "About (translated)",
+    "taglineHint": "One short line, up to 120 characters.",
+    "aboutHint": "A short paragraph — what your club is, where you train, the level you play at.",
+    "logoUrl": "Logo",
+    "coverUrl": "Cover image",
+    "website": "Website",
+    "phone": "Phone",
+    "submit": "Create club profile",
+    "loading": "Creating…",
+    "langRu": "Russian",
+    "langDe": "German",
+    "langEs": "Spanish",
+    "langNone": "— none —",
+    "dashboardEyebrow": "Club dashboard",
+    "dashboardWelcome": "Welcome. Your club is now on footballevents.eu — organisers can find you when you apply or post requests.",
+    "publicProfileLabel": "Public profile",
+    "notVerifiedHint": "Your club is not yet verified. Verification badge appears after we confirm the club is real (usually takes a couple of days).",
+    "moreSoon": "Teams, applications, favourites and requests will appear here in the coming days.",
+    "navDashboard": "Dashboard",
+    "navTeams": "Teams",
+    "navApplications": "Applications",
+    "navRfqs": "Requests",
+    "navFavorites": "Favorites",
+    "navSettings": "Settings",
+    "badgeVerified": "Verified",
+    "dashboardHello": "Welcome, {name}",
+    "dashboardSubtitle": "Manage your teams, applications and requests.",
+    "statTeams": "Teams",
+    "statApplications": "Applications",
+    "statRfqs": "Open requests",
+    "statFavorites": "Favorites",
+    "quotaTitle": "Usage this month",
+    "quotaApplications": "Applications",
+    "quotaRfq": "Requests",
+    "emptyTeamsTitle": "Add your first team",
+    "emptyTeamsBody": "Teams are reusable profiles (e.g. \"U-13 A\") — once added, one click registers them for any event.",
+    "emptyTeamsCta": "Add a team",
+    "recentApplicationsTitle": "Recent applications",
+    "seeAll": "See all",
+    "noApplicationsYet": "No applications yet.",
+    "browseEvents": "Browse events",
+    "applicationStatus": {
+      "NEW": "New",
+      "ACCEPTED": "Accepted",
+      "DECLINED": "Declined",
+      "CANCELLED": "Cancelled",
+      "COMPLETED": "Completed",
+      "WAITLIST": "Waitlist"
+    },
+    "comingSoon": "Coming soon. We are building this section.",
+    "settingsSubtitle": "Public club profile, contacts and social links.",
+    "settingsBasics": "Basic info",
+    "settingsSocials": "Social links",
+    "settingsEmail": "Public email",
+    "legalName": "Legal name",
+    "settingsSaved": "Saved.",
+    "settingsSubmit": "Save changes",
+    "teamsTitle": "Teams",
+    "teamsSubtitle": "Reusable team profiles — once created, apply to any event in one click.",
+    "teamsCreate": "Add team",
+    "backToTeams": "Back to teams",
+    "teamCreateTitle": "Add a team",
+    "teamCreateSubtitle": "Tell us about your team — age, format, level. You can edit it later.",
+    "teamEditSubtitle": "Update team details. Existing applications keep their original team data.",
+    "teamArchived": "Archived",
+    "teamArchive": "Archive",
+    "teamRestore": "Restore",
+    "teamArchiveConfirm": "Archive this team? Past applications stay on file; the team won't appear in pickers until restored.",
+    "teamEdit": "Edit",
+    "teamApplicationsCount": "{count, plural, =0 {No applications} =1 {# application} other {# applications}}",
+    "teamName": "Team name",
+    "teamNameHint": "Internal name — e.g. \"U-13 A\", \"FC Astana Girls U-15\".",
+    "teamAgeGroup": "Age group",
+    "teamAgeGroupHint": "Pick from suggestions or type your own (e.g. \"U-13\", \"Adult\").",
+    "teamGender": "Gender",
+    "teamFormat": "Format",
+    "teamFormatHint": "5x5, 8x8, 11x11…",
+    "teamSkillLevel": "Skill level",
+    "teamBirthYears": "Birth years (optional)",
+    "teamBirthYearsHint": "Helps organizers see if your team matches their age window.",
+    "teamBirthYearFromPlaceholder": "From (e.g. 2012)",
+    "teamBirthYearToPlaceholder": "To (e.g. 2013)",
+    "teamNotes": "Notes (optional)",
+    "teamNotesHint": "Private notes for your dashboard — not shown publicly.",
+    "teamSubmitCreate": "Create team",
+    "teamSubmitEdit": "Save changes",
+    "genderMale": "Boys",
+    "genderFemale": "Girls",
+    "genderMixed": "Mixed",
+    "skillAmateur": "Amateur",
+    "skillSemi": "Semi-pro",
+    "skillPro": "Professional",
+    "skillAll": "All levels",
+    "clubApplyEyebrow": "Apply as your club",
+    "clubApplySubtitle": "Submitting on behalf of {clubName}. Pick one of your teams.",
+    "clubApplyPickTeam": "Team",
+    "clubApplyPickTeamHint": "Only active teams are listed. Manage teams in the club dashboard.",
+    "clubApplyPartySize": "Players + staff travelling",
+    "clubApplyPartySizeHint": "Total head count — affects the organizer's capacity check.",
+    "clubApplyCommentHint": "Anything the organizer should know (specific requests, arrival time, etc.).",
+    "clubApplySubmit": "Submit application",
+    "clubApplySuccessTitle": "Application sent",
+    "clubApplySuccessBody": "The organizer has been notified. You'll see their response in your applications inbox.",
+    "clubApplyGoApplications": "Go to my applications",
+    "clubApplyGoEvent": "Back to event",
+    "clubApplyNoTeams": "No active teams. Add a team before applying.",
+    "applicationsSubtitle": "All applications your club has submitted, newest first.",
+    "applicationsEmptyTitle": "No applications yet",
+    "applicationsEmptyBody": "Once you apply your teams to events, they will appear here with live status.",
+    "applicationsPartySize": "{n, plural, =1 {# person} other {# people}}",
+    "applicationsSubmittedAt": "submitted {date}",
+    "favoritesSubtitle": "Events and organizers your club is watching. Save events to get update emails; follow organizers to hear about their new releases first.",
+    "favoritesSavedCount": "{n, plural, =0 {No saved events} =1 {# saved event} other {# saved events}}",
+    "favoritesFollowingCount": "{n, plural, =0 {No followed organizers} =1 {# followed organizer} other {# followed organizers}}",
+    "favoritesSavedEvents": "Saved events",
+    "favoritesFollowedOrganizers": "Followed organizers",
+    "favoritesNoSaved": "Nothing saved yet",
+    "favoritesNoSavedBody": "Hit the bookmark on any event to keep track of it here. We'll email when registration opens or details change.",
+    "favoritesNoFollowed": "Not following anyone yet",
+    "favoritesNoFollowedBody": "Follow organizers you trust to be the first to know when they publish new tournaments and camps.",
+    "favoritesBrowseOrganizers": "Browse organizers",
+    "rfqListTitle": "My requests",
+    "rfqListSubtitle": "Open requests are emailed to matching organizers. They reply by email directly.",
+    "rfqCreate": "Post a request",
+    "rfqEmptyTitle": "No requests posted yet",
+    "rfqEmptyBody": "Tell organizers what you're looking for — they'll come to you.",
+    "rfqBackToList": "Back to requests",
+    "rfqCreateTitle": "Post a request",
+    "rfqCreateSubtitle": "Describe the tournament or camp you're looking for. We'll email matching organizers automatically.",
+    "rfqEventType": "What are you looking for?",
+    "rfqEventTypeHint": "Pick one type. You can post separate requests for tournaments and camps if you're looking for both.",
+    "rfqTeam": "Team (optional)",
+    "rfqTeamHint": "Linking a team auto-fills age and format for the organizer.",
+    "rfqTeamNone": "— Not tied to a specific team —",
+    "rfqAudience": "Audience",
+    "rfqGenderAny": "Any",
+    "rfqWhereWhen": "Where and when",
+    "rfqTargetCountries": "Target countries",
+    "rfqTargetCountriesHint": "Pick the countries you're open to traveling to. Leave empty for «anywhere».",
+    "rfqTargetRegion": "Region note (optional)",
+    "rfqTargetRegionHint": "Free text: «Northern Europe», «within 4h flight from Paris»…",
+    "rfqDateFrom": "From",
+    "rfqDateTo": "To",
+    "rfqDurationDays": "Duration (days)",
+    "rfqDurationDaysHint": "How many days the event should last. Leave empty if flexible.",
+    "rfqBudget": "Budget (optional)",
+    "rfqBudgetAmount": "Per team",
+    "rfqBudgetAmountHint": "All-in budget per team, in cents (e.g. 80000 = 800,00).",
+    "rfqCurrency": "Currency",
+    "rfqDetails": "Anything else?",
+    "rfqCommentHint": "Up to 500 characters. Mention level, accommodation needs, deadlines, etc.",
+    "rfqSubmit": "Post request",
+    "rfqClose": "Close",
+    "rfqReopen": "Reopen",
+    "rfqCloseConfirm": "Close this request? It will be hidden from organizers. You can reopen it any time.",
+    "rfqStatus": {
+      "OPEN": "Open",
+      "CLOSED": "Closed",
+      "EXPIRED": "Expired"
+    },
+    "rfqAnywhere": "Anywhere",
+    "rfqDatesFlexible": "Flexible dates",
+    "rfqDurationLine": "{n, plural, =1 {# day} other {# days}}",
+    "rfqPostedAt": "posted {date}",
+    "rfqExpiresAt": "open until {date}",
+    "rfqPerTeam": "per team",
+    "rfqTypeClinic": "Clinic",
+    "rfqsPublicTitle": "Open requests from clubs",
+    "rfqsPublicSubtitle": "Clubs across Europe are looking for tournaments, camps and tours. If one matches what you organize, reach out.",
+    "rfqsPublicEmptyTitle": "No open requests right now",
+    "rfqsPublicEmptyBody": "Check back later — clubs post new requests every week.",
+    "rfqFilterAll": "All types",
+    "rfqsBackToList": "All requests",
+    "rfqDetailRegion": "Region",
+    "rfqDetailDates": "Dates",
+    "rfqDetailDuration": "Duration",
+    "rfqDetailTeam": "Team",
+    "rfqDetailBudget": "Budget",
+    "rfqDetailCountries": "Countries",
+    "rfqDetailComment": "From the club",
+    "rfqContactTitle": "Get in touch",
+    "rfqContactSubtitle": "Reply directly by email or phone — there is no chat on the platform.",
+    "rfqContactSignIn": "Sign in to see contacts",
+    "rfqContactViaProfile": "Contact via club profile",
+    "publicFoundedIn": "Founded {year}",
+    "publicTeamsCount": "{n, plural, =0 {No teams} =1 {# team} other {# teams}}",
+    "publicApplicationsCount": "{n, plural, =1 {# tournament} other {# tournaments}}",
+    "publicAboutSection": "About the club",
+    "publicTeamsSection": "Teams",
+    "publicNoTeams": "No teams listed yet.",
+    "publicRfqsSection": "Open requests",
+    "publicContactSection": "Contact",
+    "publicNoContacts": "No public contact details.",
+    "myClubMenuLabel": "My club"
   }
 }

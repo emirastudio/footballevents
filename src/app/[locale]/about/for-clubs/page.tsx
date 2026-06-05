@@ -88,7 +88,7 @@ export default async function ForClubsPage({
       >
         <div className="flex flex-wrap gap-3">
           <Button asChild variant="accent" size="lg">
-            <Link href="/onboarding">{t("ctaRegister")}</Link>
+            <Link href="/onboarding/club">{t("ctaRegister")}</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
             <Link href="/events">{t("ctaFind")}</Link>
@@ -175,7 +175,7 @@ export default async function ForClubsPage({
               </ul>
               <div className="mt-8">
                 <Button asChild variant="accent">
-                  <Link href="/onboarding">{t("ctaRegister")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
+                  <Link href="/onboarding/club">{t("ctaRegister")} <ArrowRight className="ml-1 h-4 w-4" /></Link>
                 </Button>
               </div>
             </div>
@@ -200,7 +200,7 @@ export default async function ForClubsPage({
             <p className="mt-3 text-white/70">{t("ctaSubtitle")}</p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Button asChild variant="accent" size="lg">
-                <Link href="/onboarding">{t("ctaCreate")}</Link>
+                <Link href="/onboarding/club">{t("ctaCreate")}</Link>
               </Button>
               <Button asChild variant="white" size="lg">
                 <Link href="/events">{t("ctaFind2")}</Link>

@@ -32,7 +32,14 @@
     "bannerTitle": "FIFA Fußball-WM 2026 — verfolge das Turnier",
     "bannerText": "USA · Kanada · Mexiko — 48 Teams, 104 Spiele. Spielplan, Teams und Live-Spiele.",
     "bannerCta": "Turnier verfolgen",
-    "factLabels": { "hosts": "Gastgeber", "dates": "Termine", "teams": "Teams", "matches": "Spiele", "format": "Format", "final": "Finale" },
+    "factLabels": {
+      "hosts": "Gastgeber",
+      "dates": "Termine",
+      "teams": "Teams",
+      "matches": "Spiele",
+      "format": "Format",
+      "final": "Finale"
+    },
     "groupsHeading": "Gruppentabellen",
     "teamsHeading": "Teams ({count})",
     "colTeam": "Team",
@@ -65,7 +72,27 @@
   "formBuilder": {
     "back": "Zurück zum Event",
     "title": "Anmeldeformular",
-    "types": { "text": "Kurztext", "textarea": "Absatz", "email": "E-Mail", "phone": "Telefon", "number": "Zahl", "date": "Datum", "select": "Dropdown", "multiselect": "Mehrfachauswahl", "checkboxes": "Checkboxen", "radio": "Einzelauswahl", "consent": "Einwilligung (Checkbox)", "rules": "Event-Regeln (+ Zustimmung)", "size": "Größe (+ Tabelle)", "country": "Land", "countrycity": "Land & Stadt", "yesno": "Ja / Nein", "heading": "Abschnittsüberschrift", "info": "Infotext", "file": "Datei-Upload" },
+    "types": {
+      "text": "Kurztext",
+      "textarea": "Absatz",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "number": "Zahl",
+      "date": "Datum",
+      "select": "Dropdown",
+      "multiselect": "Mehrfachauswahl",
+      "checkboxes": "Checkboxen",
+      "radio": "Einzelauswahl",
+      "consent": "Einwilligung (Checkbox)",
+      "rules": "Event-Regeln (+ Zustimmung)",
+      "size": "Größe (+ Tabelle)",
+      "country": "Land",
+      "countrycity": "Land & Stadt",
+      "yesno": "Ja / Nein",
+      "heading": "Abschnittsüberschrift",
+      "info": "Infotext",
+      "file": "Datei-Upload"
+    },
     "subtitle": "Erstelle das Formular für Bewerber. Reihenfolge mit den Pfeilen ändern — Antworten landen in deiner Bewerbungstabelle.",
     "addField": "Feld hinzufügen",
     "fieldLabel": "Bezeichnung",
@@ -907,25 +934,67 @@
     "formatsTitle": "Sechs Formate — eine Plattform",
     "formatsSubtitle": "Finde das richtige Format oder liste dein Event in der passenden Kategorie",
     "categories": {
-      "0": { "label": "Turniere", "desc": "Amateur-, Jugend- und Profiwettbewerbe von allen Kontinenten" },
-      "1": { "label": "Camps", "desc": "Fußballcamps mit Top-Trainern für Kinder, Jugendliche und Erwachsene" },
-      "2": { "label": "Festivals", "desc": "Mehrtägige Fußballfeste mit Turnieren, Masterclasses und Fußballkultur" },
-      "3": { "label": "Spielreisen", "desc": "Organisierte Reisen zu Spielen der Top-Ligen: Premier League, La Liga, Champions League" },
-      "4": { "label": "Trainingslager", "desc": "Trainingslager für Teams und Vereine. Vor- und Saisonvorbereitung" },
-      "5": { "label": "Akademie-Sichtungen", "desc": "Sichtungen an Fußballakademien — eine Chance, ins Profisystem einzusteigen" }
+      "0": {
+        "label": "Turniere",
+        "desc": "Amateur-, Jugend- und Profiwettbewerbe von allen Kontinenten"
+      },
+      "1": {
+        "label": "Camps",
+        "desc": "Fußballcamps mit Top-Trainern für Kinder, Jugendliche und Erwachsene"
+      },
+      "2": {
+        "label": "Festivals",
+        "desc": "Mehrtägige Fußballfeste mit Turnieren, Masterclasses und Fußballkultur"
+      },
+      "3": {
+        "label": "Spielreisen",
+        "desc": "Organisierte Reisen zu Spielen der Top-Ligen: Premier League, La Liga, Champions League"
+      },
+      "4": {
+        "label": "Trainingslager",
+        "desc": "Trainingslager für Teams und Vereine. Vor- und Saisonvorbereitung"
+      },
+      "5": {
+        "label": "Akademie-Sichtungen",
+        "desc": "Sichtungen an Fußballakademien — eine Chance, ins Profisystem einzusteigen"
+      }
     },
     "forWhomTitle": "Für wen",
     "forWhom": {
-      "0": { "title": "Veranstalter", "desc": "Dein Event posten, Anmeldungen online annehmen, über Featured und Boosts promoten — und Teilnehmer aus aller Welt gewinnen.", "cta": "Mehr für Veranstalter" },
-      "1": { "title": "Vereine", "desc": "Teams für Turniere anmelden, Camps an den besten Standorten Europas organisieren, eigene Vereinsevents promoten.", "cta": "Mehr für Vereine" },
-      "2": { "title": "Spieler & Eltern", "desc": "Turniere, Camps und Akademie-Sichtungen finden. Nach Alter, Niveau und Land filtern. In einem Klick bewerben.", "cta": "Mehr für Spieler" }
+      "0": {
+        "title": "Veranstalter",
+        "desc": "Dein Event posten, Anmeldungen online annehmen, über Featured und Boosts promoten — und Teilnehmer aus aller Welt gewinnen.",
+        "cta": "Mehr für Veranstalter"
+      },
+      "1": {
+        "title": "Vereine",
+        "desc": "Teams für Turniere anmelden, Camps an den besten Standorten Europas organisieren, eigene Vereinsevents promoten.",
+        "cta": "Mehr für Vereine"
+      },
+      "2": {
+        "title": "Spieler & Eltern",
+        "desc": "Turniere, Camps und Akademie-Sichtungen finden. Nach Alter, Niveau und Land filtern. In einem Klick bewerben.",
+        "cta": "Mehr für Spieler"
+      }
     },
     "benefitsTitle": "Warum footballevents.eu",
     "benefits": {
-      "0": { "title": "50+ Länder", "desc": "Events von allen Kontinenten in einem Katalog" },
-      "1": { "title": "Online-Anmeldungen", "desc": "Keine Anrufe oder Messenger — Formular, Bestätigung, Tracking" },
-      "2": { "title": "Verifizierte Veranstalter", "desc": "Jeder Veranstalter durchläuft die Plattform-Moderation" },
-      "3": { "title": "Kostenlos für Teilnehmer", "desc": "Registrierung und Event-Suche sind immer gratis" }
+      "0": {
+        "title": "50+ Länder",
+        "desc": "Events von allen Kontinenten in einem Katalog"
+      },
+      "1": {
+        "title": "Online-Anmeldungen",
+        "desc": "Keine Anrufe oder Messenger — Formular, Bestätigung, Tracking"
+      },
+      "2": {
+        "title": "Verifizierte Veranstalter",
+        "desc": "Jeder Veranstalter durchläuft die Plattform-Moderation"
+      },
+      "3": {
+        "title": "Kostenlos für Teilnehmer",
+        "desc": "Registrierung und Event-Suche sind immer gratis"
+      }
     },
     "companyTitle": "Über das Unternehmen",
     "companyBody1": "Die Plattform wird von Goality Sport Group OÜ entwickelt — einem Sportunternehmen aus Tallinn, Estland. Wir organisieren eigene Fußballcamps und kennen die Herausforderungen für Veranstalter genau: zersplitterte Ankündigungen, chaotische Anmeldungen, null Analytik.",
@@ -951,17 +1020,45 @@
     "whyBody2": "footballevents.eu vereint Turniere aus mehr als 50 Ländern — von lokalen Stadtcups bis zu großen internationalen Turnieren mit Teams aus 20+ Nationen. Nach Alter, Niveau, Format und Land filtern — finde genau das, was du oder dein Team braucht.",
     "typesTitle": "Welche Turniere du im Katalog findest",
     "types": {
-      "0": { "title": "Jugendturniere", "desc": "Wettbewerbe von U7 bis U21. Entwicklungsformate, internationale Meisterschaften, Akademieauswahlen. Für Kinder und Jugendliche." },
-      "1": { "title": "Amateur-Cups", "desc": "Wochenendligen, Stadtcups, Firmenchampionate. Spielen ohne Profivertrag — aus Liebe zum Spiel." },
-      "2": { "title": "Internationale Turniere", "desc": "Eingeladene Teams aus verschiedenen Ländern. Echte internationale Erfahrung — neue Gegner, neue Kontakte, ein neues Niveau." },
-      "3": { "title": "Halbprofessionell", "desc": "Wettbewerbe für Spieler mit ernsthaften Ambitionen. Hohes Spielniveau, professionelle Schiedsrichter, Matchanalyse." }
+      "0": {
+        "title": "Jugendturniere",
+        "desc": "Wettbewerbe von U7 bis U21. Entwicklungsformate, internationale Meisterschaften, Akademieauswahlen. Für Kinder und Jugendliche."
+      },
+      "1": {
+        "title": "Amateur-Cups",
+        "desc": "Wochenendligen, Stadtcups, Firmenchampionate. Spielen ohne Profivertrag — aus Liebe zum Spiel."
+      },
+      "2": {
+        "title": "Internationale Turniere",
+        "desc": "Eingeladene Teams aus verschiedenen Ländern. Echte internationale Erfahrung — neue Gegner, neue Kontakte, ein neues Niveau."
+      },
+      "3": {
+        "title": "Halbprofessionell",
+        "desc": "Wettbewerbe für Spieler mit ernsthaften Ambitionen. Hohes Spielniveau, professionelle Schiedsrichter, Matchanalyse."
+      }
     },
     "howTitle": "Wie du findest und dich anmeldest",
     "how": {
-      "0": { "num": "01", "title": "Turnier finden", "desc": "Nutze Filter nach Land, Altersgruppe, Niveau und Datum" },
-      "1": { "num": "02", "title": "Details prüfen", "desc": "Spielplan, Regeln, Gebühren, Austragungsort — alles auf der Event-Seite" },
-      "2": { "num": "03", "title": "Anmelden", "desc": "Online-Formular in 2 Minuten. Keine Anrufe, Messenger oder Wartezeiten" },
-      "3": { "num": "04", "title": "Bestätigung erhalten", "desc": "Der Veranstalter prüft deine Anmeldung und kontaktiert dich auf der Plattform" }
+      "0": {
+        "num": "01",
+        "title": "Turnier finden",
+        "desc": "Nutze Filter nach Land, Altersgruppe, Niveau und Datum"
+      },
+      "1": {
+        "num": "02",
+        "title": "Details prüfen",
+        "desc": "Spielplan, Regeln, Gebühren, Austragungsort — alles auf der Event-Seite"
+      },
+      "2": {
+        "num": "03",
+        "title": "Anmelden",
+        "desc": "Online-Formular in 2 Minuten. Keine Anrufe, Messenger oder Wartezeiten"
+      },
+      "3": {
+        "num": "04",
+        "title": "Bestätigung erhalten",
+        "desc": "Der Veranstalter prüft deine Anmeldung und kontaktiert dich auf der Plattform"
+      }
     },
     "forOrgTitle": "Für Veranstalter",
     "forOrgHeadline": "Turnier listen — Anmeldungen aus 50+ Ländern erhalten",
@@ -974,10 +1071,22 @@
       "4": "Verifiziertes Badge — schafft Vertrauen bei Teilnehmern"
     },
     "orgFeatures": {
-      "0": { "label": "Jedes Land", "val": "Stadt oder Land angeben — Teilnehmer finden dich" },
-      "1": { "label": "Smarte Filter", "val": "Alter, Format, Niveau — dein Turnier erscheint genau in den richtigen Ergebnissen" },
-      "2": { "label": "Anmeldungen im Dashboard", "val": "Alle Anfragen, Kontakte und Status — an einem Ort" },
-      "3": { "label": "Live-Katalog", "val": "Die Event-Seite aktualisiert sich in Echtzeit" }
+      "0": {
+        "label": "Jedes Land",
+        "val": "Stadt oder Land angeben — Teilnehmer finden dich"
+      },
+      "1": {
+        "label": "Smarte Filter",
+        "val": "Alter, Format, Niveau — dein Turnier erscheint genau in den richtigen Ergebnissen"
+      },
+      "2": {
+        "label": "Anmeldungen im Dashboard",
+        "val": "Alle Anfragen, Kontakte und Status — an einem Ort"
+      },
+      "3": {
+        "label": "Live-Katalog",
+        "val": "Die Event-Seite aktualisiert sich in Echtzeit"
+      }
     },
     "forOrgCta": "Mehr für Veranstalter",
     "ctaTitle": "Finde dein Turnier",
@@ -1001,12 +1110,30 @@
     "openingBody2": "Auf footballevents.eu findest du Camps von verifizierten Veranstaltern weltweit: Sommercamps in Spanien und Portugal, Akademie-Intensivprogramme, Wochenprogramme an den besten Plätzen Europas — und lokale Camps in deiner Stadt für alle, die nah starten möchten.",
     "typesTitle": "Camp-Formate im Katalog",
     "types": {
-      "0": { "title": "Sommercamps", "desc": "Das Klassiker-Format: eine oder zwei Wochen an einem tollen Standort. Training, Spiele, Freundschaften. Für Kinder von 6 bis 17 Jahren." },
-      "1": { "title": "Intensivcamps", "desc": "3–5 Tage konzentrierter Arbeit an Technik, Taktik oder Fitness. Für ernsthaft motivierte Spieler." },
-      "2": { "title": "Internationale Programme", "desc": "Camps in Spanien, Portugal, Deutschland, England. Training an Top-Klub-Akademien. Leben in einer professionellen Umgebung." },
-      "3": { "title": "Akademie-Camps", "desc": "Programme an Fußballakademien mit professionellen Trainern und der Chance, ins Klubsystem einzusteigen." },
-      "4": { "title": "Team-Camps", "desc": "Ein Camp für die ganze Mannschaft — Training, Teambuilding und Spiele gegen andere Gruppen kombiniert." },
-      "5": { "title": "Familien-Camps", "desc": "Formate mit Elternbeteiligung: Zuschauen, Vorträge, gemeinsames Training. Sport als Familienabenteuer." }
+      "0": {
+        "title": "Sommercamps",
+        "desc": "Das Klassiker-Format: eine oder zwei Wochen an einem tollen Standort. Training, Spiele, Freundschaften. Für Kinder von 6 bis 17 Jahren."
+      },
+      "1": {
+        "title": "Intensivcamps",
+        "desc": "3–5 Tage konzentrierter Arbeit an Technik, Taktik oder Fitness. Für ernsthaft motivierte Spieler."
+      },
+      "2": {
+        "title": "Internationale Programme",
+        "desc": "Camps in Spanien, Portugal, Deutschland, England. Training an Top-Klub-Akademien. Leben in einer professionellen Umgebung."
+      },
+      "3": {
+        "title": "Akademie-Camps",
+        "desc": "Programme an Fußballakademien mit professionellen Trainern und der Chance, ins Klubsystem einzusteigen."
+      },
+      "4": {
+        "title": "Team-Camps",
+        "desc": "Ein Camp für die ganze Mannschaft — Training, Teambuilding und Spiele gegen andere Gruppen kombiniert."
+      },
+      "5": {
+        "title": "Familien-Camps",
+        "desc": "Formate mit Elternbeteiligung: Zuschauen, Vorträge, gemeinsames Training. Sport als Familienabenteuer."
+      }
     },
     "whyTitle": "Was ein Fußballcamp bringt",
     "whyBody": "Spieler, die regelmäßig Camps besuchen, entwickeln sich schneller als ihre Altersgenossen — bestätigt von Akademietrainern in ganz Europa. Der Grund ist einfach: Intensität und Erfahrungskonzentration, die im normalen Training nicht erreichbar sind.",
@@ -1045,31 +1172,82 @@
     "whyBody2": "Spielreisen nehmen dir alles Schwierige ab: offizielle Tickets finden (die nicht frei erhältlich sind), ein Hotel buchen, sich in einer fremden Stadt zurechtfinden, die Sprachbarriere. Du kommst einfach an — und nimmst unvergessliche Eindrücke mit.",
     "leaguesTitle": "Ligen und Wettbewerbe",
     "leagues": {
-      "0": { "label": "Champions League", "flag": "🏆" },
-      "1": { "label": "Englische Premier League", "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿" },
-      "2": { "label": "La Liga (Spanien)", "flag": "🇪🇸" },
-      "3": { "label": "Bundesliga (Deutschland)", "flag": "🇩🇪" },
-      "4": { "label": "Serie A (Italien)", "flag": "🇮🇹" },
-      "5": { "label": "Ligue 1 (Frankreich)", "flag": "🇫🇷" },
-      "6": { "label": "Eredivisie (Niederlande)", "flag": "🇳🇱" },
-      "7": { "label": "Primeira Liga (Portugal)", "flag": "🇵🇹" }
+      "0": {
+        "label": "Champions League",
+        "flag": "🏆"
+      },
+      "1": {
+        "label": "Englische Premier League",
+        "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿"
+      },
+      "2": {
+        "label": "La Liga (Spanien)",
+        "flag": "🇪🇸"
+      },
+      "3": {
+        "label": "Bundesliga (Deutschland)",
+        "flag": "🇩🇪"
+      },
+      "4": {
+        "label": "Serie A (Italien)",
+        "flag": "🇮🇹"
+      },
+      "5": {
+        "label": "Ligue 1 (Frankreich)",
+        "flag": "🇫🇷"
+      },
+      "6": {
+        "label": "Eredivisie (Niederlande)",
+        "flag": "🇳🇱"
+      },
+      "7": {
+        "label": "Primeira Liga (Portugal)",
+        "flag": "🇵🇹"
+      }
     },
     "leaguesNote": "Veranstalter bieten auch Reisen zu nationalen Liga- und Pokalspielen an — Details im Katalog.",
     "includedTitle": "Was eine Reise typischerweise umfasst",
     "included": {
-      "0": { "title": "Spieltickets", "desc": "Der Reiseveranstalter kümmert sich um die Suche und Buchung offizieller Tickets" },
-      "1": { "title": "Unterkunft", "desc": "Ein Hotel stadionnah oder im Stadtzentrum — wird gemeinsam mit der Tour ausgewählt" },
-      "2": { "title": "Transfer", "desc": "Flughafentransfer und Fahrt zum Stadion — kein Stress und keine Navigation in einer fremden Stadt" },
-      "3": { "title": "Exkursionen", "desc": "Stadionführung, Klubmuseum, Trainingsstättenbesuch — je nach Reise" },
-      "4": { "title": "Guide & Betreuung", "desc": "Ein professioneller ortskundiger Guide, der Fragen beantwortet und Probleme löst" },
-      "5": { "title": "Gruppe Gleichgesinnter", "desc": "Du reist nicht allein — neben dir sind Fans, die bereits eine gemeinsame Leidenschaft teilen" }
+      "0": {
+        "title": "Spieltickets",
+        "desc": "Der Reiseveranstalter kümmert sich um die Suche und Buchung offizieller Tickets"
+      },
+      "1": {
+        "title": "Unterkunft",
+        "desc": "Ein Hotel stadionnah oder im Stadtzentrum — wird gemeinsam mit der Tour ausgewählt"
+      },
+      "2": {
+        "title": "Transfer",
+        "desc": "Flughafentransfer und Fahrt zum Stadion — kein Stress und keine Navigation in einer fremden Stadt"
+      },
+      "3": {
+        "title": "Exkursionen",
+        "desc": "Stadionführung, Klubmuseum, Trainingsstättenbesuch — je nach Reise"
+      },
+      "4": {
+        "title": "Guide & Betreuung",
+        "desc": "Ein professioneller ortskundiger Guide, der Fragen beantwortet und Probleme löst"
+      },
+      "5": {
+        "title": "Gruppe Gleichgesinnter",
+        "desc": "Du reist nicht allein — neben dir sind Fans, die bereits eine gemeinsame Leidenschaft teilen"
+      }
     },
     "includedNote": "* Das genaue Reisepaket hängt vom Veranstalter und dem gewählten Programm ab. Details auf der Event-Seite.",
     "forWhomTitle": "Für wen eine Spielreise geeignet ist",
     "forWhom": {
-      "0": { "title": "Für Fans", "desc": "Immer davon geträumt, Real Madrid oder Manchester United live zu sehen? Eine Reise nimmt dir alle Komplexität ab — Visa, Tickets, Hotel — und lässt nur Emotionen." },
-      "1": { "title": "Für Familien", "desc": "Familienreisen mit durchdachtem Programm: Spiel, Stadionführung, Klubmuseum, Stadtspaziergang. Unvergessliche Erinnerungen für Kinder." },
-      "2": { "title": "Für Unternehmen", "desc": "VIP-Reisen zu Top-Klub-Spielen — das beste Corporate Event für dein Team oder deine Partner. Business-Networking + Fußball = funktioniert perfekt." }
+      "0": {
+        "title": "Für Fans",
+        "desc": "Immer davon geträumt, Real Madrid oder Manchester United live zu sehen? Eine Reise nimmt dir alle Komplexität ab — Visa, Tickets, Hotel — und lässt nur Emotionen."
+      },
+      "1": {
+        "title": "Für Familien",
+        "desc": "Familienreisen mit durchdachtem Programm: Spiel, Stadionführung, Klubmuseum, Stadtspaziergang. Unvergessliche Erinnerungen für Kinder."
+      },
+      "2": {
+        "title": "Für Unternehmen",
+        "desc": "VIP-Reisen zu Top-Klub-Spielen — das beste Corporate Event für dein Team oder deine Partner. Business-Networking + Fußball = funktioniert perfekt."
+      }
     },
     "testimonialQuote": "Zum ersten Mal im Camp Nou — es war unglaublich. Die Reiseveranstalter haben alles organisiert: Tickets im richtigen Sektor, ein Hotel 10 Gehminuten entfernt, eine Stadionführung am Tag vor dem Spiel. Ich plane bereits die nächste Reise.",
     "testimonialAuthor": "Alexej, Fan, Minsk",
@@ -1086,19 +1264,37 @@
     "breadcrumbHome": "Start",
     "breadcrumbAbout": "Über uns",
     "breadcrumbCurrent": "Festivals",
-    "ctaView": "Festivals ansehen",
+    "ctaView": "Alle Festivals ansehen",
     "ctaPost": "Festival listen",
     "openingTitle": "Mehr als nur ein Turnier",
     "openingBody1": "Ein Fußballfestival ist, wenn Sport auf Kultur trifft. Zwei oder drei Tage an einem großen Veranstaltungsort, mehrere parallele Turniere, Masterclasses, Musik, Essen — und eine verbindende Atmosphäre, die Tausende von Menschen schaffen, die das Spiel wirklich lieben.",
     "openingBody2": "Im footballevents.eu-Katalog findest du Festivals aller Formate — von städtischen Straßenfußballfeiern bis zu mehrtägigen internationalen Events mit Teams aus Dutzenden Ländern. Alles auf einer Plattform, mit Online-Registrierung.",
     "typesTitle": "Festival-Formate",
     "types": {
-      "0": { "title": "Straßenfußball", "desc": "Streetball, Freistoßwettbewerbe, Freestyle. Asphalt, kleine Tore, große Emotionen. Für alle, die mit dem Ball auf dem Hof aufgewachsen sind." },
-      "1": { "title": "Beach Soccer", "desc": "Sand, Meer, Sommerturnier. Beach Soccer vereint Profis und Amateure — gleiche Regeln für alle." },
-      "2": { "title": "Familienfestivals", "desc": "Formate für die ganze Familie: Kinder spielen, Eltern jubeln, alle essen und feiern gemeinsam. Ein Fest, nicht nur ein Turnier." },
-      "3": { "title": "Fußball + Kultur", "desc": "Events, bei denen Fußball Teil eines größeren Kulturprogramms ist. Musik, Essen, Kunst, Ausstellungen. Atmosphäre, nicht nur das Ergebnis." },
-      "4": { "title": "Multi-Format-Events", "desc": "Mehrere Turniere, Altersgruppen und Formate an einem Ort. Drei Tage — Tausende Teilnehmer und Zuschauer." },
-      "5": { "title": "Medienfestivals", "desc": "Wettkämpfe mit vollständiger Medienproduktion: Übertragungen, Fotografen, YouTube. Deine Tore kommen in die Highlights." }
+      "0": {
+        "title": "Straßenfußball",
+        "desc": "Streetball, Freistoßwettbewerbe, Freestyle. Asphalt, kleine Tore, große Emotionen. Für alle, die mit dem Ball auf dem Hof aufgewachsen sind."
+      },
+      "1": {
+        "title": "Beach Soccer",
+        "desc": "Sand, Meer, Sommerturnier. Beach Soccer vereint Profis und Amateure — gleiche Regeln für alle."
+      },
+      "2": {
+        "title": "Familienfestivals",
+        "desc": "Formate für die ganze Familie: Kinder spielen, Eltern jubeln, alle essen und feiern gemeinsam. Ein Fest, nicht nur ein Turnier."
+      },
+      "3": {
+        "title": "Fußball + Kultur",
+        "desc": "Events, bei denen Fußball Teil eines größeren Kulturprogramms ist. Musik, Essen, Kunst, Ausstellungen. Atmosphäre, nicht nur das Ergebnis."
+      },
+      "4": {
+        "title": "Multi-Format-Events",
+        "desc": "Mehrere Turniere, Altersgruppen und Formate an einem Ort. Drei Tage — Tausende Teilnehmer und Zuschauer."
+      },
+      "5": {
+        "title": "Medienfestivals",
+        "desc": "Wettkämpfe mit vollständiger Medienproduktion: Übertragungen, Fotografen, YouTube. Deine Tore kommen in die Highlights."
+      }
     },
     "whyTitle": "Warum du zu einem Festival solltest",
     "whyBody": "Ein Festival ist ein Event, das ein Team zusammenschweißt, eine gemeinsame Geschichte schafft und jahrelang im Gedächtnis bleibt. Es ist nicht nur ein Wettbewerb — es ist ein Erlebnis.",
@@ -1114,7 +1310,6 @@
     "testimonialAuthor": "Kapitän einer Amateur-Mannschaft, Berlin",
     "ctaTitle": "Finde dein Festival",
     "ctaSubtitle": "Straßenfußball, Beach Soccer, Familienformate — alles im Katalog",
-    "ctaView": "Alle Festivals ansehen",
     "ctaPost2": "Festival listen"
   },
   "aboutTrainingCamps": {
@@ -1133,23 +1328,73 @@
     "whyBody2": "footballevents.eu bündelt Lagerveranstalter von den besten Trainingsstandorten in Europa und darüber hinaus. Nach Land, Datum, Kapazität, Ausstattungsniveau filtern — und das Programm finden, das zu deinem Team passt.",
     "typesTitle": "Lager-Formate",
     "types": {
-      "0": { "title": "Saisonvorbereitungslager", "desc": "Das Fundament einer erfolgreichen Saison. 7–14 Tage intensives Training, Freundschaftsspiele, Teamchemie aufbauen." },
-      "1": { "title": "Taktiklager", "desc": "Arbeit an einer bestimmten Formation, Standards, Pressing oder Positionsangriff — tiefer Trainingsfokus." },
-      "2": { "title": "Fitnesslager", "desc": "Gezieltes Ausdauer-, Schnelligkeits- und Krafttraining. Mit professionellen Fitness-Trainern." },
-      "3": { "title": "Teambuilding-Lager", "desc": "Team-Psychologie, Vertrauen, Kommunikation. Eine Mischung aus Training, Teamaktivitäten und Konfliktlösungseinheiten." },
-      "4": { "title": "Videoanalyse-Lager", "desc": "Stützpunkte mit Videoaufzeichnungssystemen ausgestattet. Jede Trainingseinheit und jedes Spiel mit Trainern analysiert. Beschleunigter Fortschritt durch Daten." },
-      "5": { "title": "Jugendlager", "desc": "Spezialisierte Entwicklungsprogramme für Klub-Akademien. Arbeit mit U8–U21-Gruppen nach Methoden führender europäischer Schulen." }
+      "0": {
+        "title": "Saisonvorbereitungslager",
+        "desc": "Das Fundament einer erfolgreichen Saison. 7–14 Tage intensives Training, Freundschaftsspiele, Teamchemie aufbauen."
+      },
+      "1": {
+        "title": "Taktiklager",
+        "desc": "Arbeit an einer bestimmten Formation, Standards, Pressing oder Positionsangriff — tiefer Trainingsfokus."
+      },
+      "2": {
+        "title": "Fitnesslager",
+        "desc": "Gezieltes Ausdauer-, Schnelligkeits- und Krafttraining. Mit professionellen Fitness-Trainern."
+      },
+      "3": {
+        "title": "Teambuilding-Lager",
+        "desc": "Team-Psychologie, Vertrauen, Kommunikation. Eine Mischung aus Training, Teamaktivitäten und Konfliktlösungseinheiten."
+      },
+      "4": {
+        "title": "Videoanalyse-Lager",
+        "desc": "Stützpunkte mit Videoaufzeichnungssystemen ausgestattet. Jede Trainingseinheit und jedes Spiel mit Trainern analysiert. Beschleunigter Fortschritt durch Daten."
+      },
+      "5": {
+        "title": "Jugendlager",
+        "desc": "Spezialisierte Entwicklungsprogramme für Klub-Akademien. Arbeit mit U8–U21-Gruppen nach Methoden führender europäischer Schulen."
+      }
     },
     "destinationsTitle": "Beliebte Reiseziele",
     "destinations": {
-      "0": { "flag": "🇪🇸", "country": "Spanien", "note": "Málaga, Alicante, Barcelona" },
-      "1": { "flag": "🇵🇹", "country": "Portugal", "note": "Algarve, Lissabon" },
-      "2": { "flag": "🇹🇷", "country": "Türkei", "note": "Antalya — beliebte Winteroption" },
-      "3": { "flag": "🇦🇪", "country": "VAE", "note": "Dubai — Januar–Februar" },
-      "4": { "flag": "🇨🇿", "country": "Tschechien", "note": "Prag und Regionen" },
-      "5": { "flag": "🇵🇱", "country": "Polen", "note": "Pommern, Schlesien" },
-      "6": { "flag": "🇭🇷", "country": "Kroatien", "note": "Adriatische Küste" },
-      "7": { "flag": "🇩🇪", "country": "Deutschland", "note": "Bayern, Nordrhein" }
+      "0": {
+        "flag": "🇪🇸",
+        "country": "Spanien",
+        "note": "Málaga, Alicante, Barcelona"
+      },
+      "1": {
+        "flag": "🇵🇹",
+        "country": "Portugal",
+        "note": "Algarve, Lissabon"
+      },
+      "2": {
+        "flag": "🇹🇷",
+        "country": "Türkei",
+        "note": "Antalya — beliebte Winteroption"
+      },
+      "3": {
+        "flag": "🇦🇪",
+        "country": "VAE",
+        "note": "Dubai — Januar–Februar"
+      },
+      "4": {
+        "flag": "🇨🇿",
+        "country": "Tschechien",
+        "note": "Prag und Regionen"
+      },
+      "5": {
+        "flag": "🇵🇱",
+        "country": "Polen",
+        "note": "Pommern, Schlesien"
+      },
+      "6": {
+        "flag": "🇭🇷",
+        "country": "Kroatien",
+        "note": "Adriatische Küste"
+      },
+      "7": {
+        "flag": "🇩🇪",
+        "country": "Deutschland",
+        "note": "Bayern, Nordrhein"
+      }
     },
     "destinationsNote": "Dies sind nur einige der Reiseziele — neue Stützpunkte erscheinen regelmäßig im Katalog.",
     "forOrgTitle": "Für Lagerveranstalter",
@@ -1163,10 +1408,22 @@
       "4": "Team-Anmeldetools — mehrere Spieler in einem Formular"
     },
     "orgFeatures": {
-      "0": { "label": "Flexible Daten", "val": "Mehrere Programme in verschiedenen Saisonabschnitten" },
-      "1": { "label": "Team-Anmeldungen", "val": "Ein Formular für das ganze Team — nicht einzelne Spieler" },
-      "2": { "label": "Karte & Einrichtungen", "val": "Plätze, Hallen, Verpflegung und Unterkunft zeigen" },
-      "3": { "label": "Analytik", "val": "Aufrufe, Anmeldungen, Conversion — im Veranstalter-Dashboard" }
+      "0": {
+        "label": "Flexible Daten",
+        "val": "Mehrere Programme in verschiedenen Saisonabschnitten"
+      },
+      "1": {
+        "label": "Team-Anmeldungen",
+        "val": "Ein Formular für das ganze Team — nicht einzelne Spieler"
+      },
+      "2": {
+        "label": "Karte & Einrichtungen",
+        "val": "Plätze, Hallen, Verpflegung und Unterkunft zeigen"
+      },
+      "3": {
+        "label": "Analytik",
+        "val": "Aufrufe, Anmeldungen, Conversion — im Veranstalter-Dashboard"
+      }
     },
     "forOrgCta": "Programm listen",
     "ctaTitle": "Trainingslager für dein Team finden",
@@ -1189,21 +1446,57 @@
     "whyBody2": "footballevents.eu bündelt Sichtungen von Akademien und Klubs aus ganz Europa. Es gibt kein 'geschlossenes System' hier — nur offene Events mit klarem Format und Online-Anmeldung. Jeder würdige Spieler verdient die Chance, gesehen zu werden.",
     "typesTitle": "Sichtungs-Formate",
     "types": {
-      "0": { "title": "Internationale Sichtungen", "desc": "Top-Klub-Akademien in Spanien, Portugal, Deutschland und den Niederlanden halten offene Auswahlverfahren für Spieler aus aller Welt ab." },
-      "1": { "title": "Akademie-Programme", "desc": "Erweiterte Programme mit vollständigem Eintauchen in die Akademie-Umgebung. Nicht nur eine Sichtung — ein vollständiger Trainingszeitraum." },
-      "2": { "title": "Regionale Sichtungen", "desc": "Unterliga-Klubs und regionale Akademien auf der Suche nach lokalem Talent. Für alle, die den professionellen Weg beginnen." },
-      "3": { "title": "Elite-Auswahlverfahren", "desc": "Geschlossene Sichtungen von Profiklubs. Erfordern eine Videobewerbung oder Empfehlung. Hoher Standard — hohe Erwartungen." },
-      "4": { "title": "Scout-Tage", "desc": "Organisierte Events, zu denen professionelle Scouts eingeladen werden. Ein Tag — Hunderte Augen auf dich." },
-      "5": { "title": "Online-Scouting", "desc": "Plattformen mit Videobewerbung: Video hochladen, Scout bewertet aus der Ferne. Bei Eindruck — Einladung zur Präsenzsichtung." }
+      "0": {
+        "title": "Internationale Sichtungen",
+        "desc": "Top-Klub-Akademien in Spanien, Portugal, Deutschland und den Niederlanden halten offene Auswahlverfahren für Spieler aus aller Welt ab."
+      },
+      "1": {
+        "title": "Akademie-Programme",
+        "desc": "Erweiterte Programme mit vollständigem Eintauchen in die Akademie-Umgebung. Nicht nur eine Sichtung — ein vollständiger Trainingszeitraum."
+      },
+      "2": {
+        "title": "Regionale Sichtungen",
+        "desc": "Unterliga-Klubs und regionale Akademien auf der Suche nach lokalem Talent. Für alle, die den professionellen Weg beginnen."
+      },
+      "3": {
+        "title": "Elite-Auswahlverfahren",
+        "desc": "Geschlossene Sichtungen von Profiklubs. Erfordern eine Videobewerbung oder Empfehlung. Hoher Standard — hohe Erwartungen."
+      },
+      "4": {
+        "title": "Scout-Tage",
+        "desc": "Organisierte Events, zu denen professionelle Scouts eingeladen werden. Ein Tag — Hunderte Augen auf dich."
+      },
+      "5": {
+        "title": "Online-Scouting",
+        "desc": "Plattformen mit Videobewerbung: Video hochladen, Scout bewertet aus der Ferne. Bei Eindruck — Einladung zur Präsenzsichtung."
+      }
     },
     "ageGroupsTitle": "Altersgruppen",
     "ageGroups": {
-      "0": { "label": "U8–U10", "note": "Erste Schritte: Koordination, Lernbereitschaft und Spielfreude bewerten" },
-      "1": { "label": "U11–U13", "note": "Technische Grundlage und Spielverständnis — die Schlüsselkriterien" },
-      "2": { "label": "U14–U16", "note": "Taktik, Athletik, Teamspiel" },
-      "3": { "label": "U17–U19", "note": "Nahe an der jungen Profiebene. Ernsthafte Auswahl" },
-      "4": { "label": "U20–U21", "note": "Letzte Chance ins System. Hohe Anforderungen" },
-      "5": { "label": "Erwachsene", "note": "Amateur-Klubs und Halbprofi-Teams" }
+      "0": {
+        "label": "U8–U10",
+        "note": "Erste Schritte: Koordination, Lernbereitschaft und Spielfreude bewerten"
+      },
+      "1": {
+        "label": "U11–U13",
+        "note": "Technische Grundlage und Spielverständnis — die Schlüsselkriterien"
+      },
+      "2": {
+        "label": "U14–U16",
+        "note": "Taktik, Athletik, Teamspiel"
+      },
+      "3": {
+        "label": "U17–U19",
+        "note": "Nahe an der jungen Profiebene. Ernsthafte Auswahl"
+      },
+      "4": {
+        "label": "U20–U21",
+        "note": "Letzte Chance ins System. Hohe Anforderungen"
+      },
+      "5": {
+        "label": "Erwachsene",
+        "note": "Amateur-Klubs und Halbprofi-Teams"
+      }
     },
     "prepareTitle": "Wie du dich auf eine Sichtung vorbereitest",
     "prepareBody": "Eine gute Sichtung ist kein Zufall — sie ist das Ergebnis der Vorbereitung. Akademien und Scouts beobachten Dutzende von Spielern gleichzeitig. Körperliche Bereitschaft, die richtige Selbstpräsentation und eine professionelle Einstellung helfen dir, aufzufallen.",
@@ -1242,19 +1535,53 @@
     "problemBody2": "footballevents.eu ersetzt die gesamte Kette. Die Event-Seite läuft rund um die Uhr, nimmt Anmeldungen automatisch an, rankt in Suchmaschinen — und zeigt dein Event einem Publikum, das bereits genau das sucht, was du anbietest.",
     "featuresTitle": "Was die Plattform Veranstaltern bietet",
     "features": {
-      "0": { "title": "Internationales Publikum", "desc": "Dein Event wird von Teilnehmern aus 50+ Ländern gesehen. Ohne zielgerichtete Werbung oder Sprachbarrieren — die Plattform ist mehrsprachig." },
-      "1": { "title": "Online-Anmeldungen", "desc": "Teilnehmer melden sich direkt auf der Seite an. Du siehst alle Anfragen im Dashboard, antwortest und aktualisierst Status. Nichts Überflüssiges." },
-      "2": { "title": "Boosts & Featured", "desc": "Willst du mehr Aufrufe? Hebe dein Event auf die Topposition oder ins Homepage-Karussell — mit einem Klick." },
-      "3": { "title": "Analytik", "desc": "Seitenaufrufe, Anzahl der Anmeldungen, Traffic-Quellen. Verstehe, was funktioniert und verbessere deine Events jedes Mal." },
-      "4": { "title": "Verifiziertes Profil", "desc": "Das Verified-Badge zeigt Teilnehmern, dass der Veranstalter die Moderation durchlaufen hat und vertrauenswürdig ist. Vertrauen = mehr Anmeldungen." },
-      "5": { "title": "Galerie & Medien", "desc": "Fotos, Programm, YouTube-Videos hinzufügen (Premium-Plan). Deine Event-Seite ist deine Vitrine, nicht nur eine Zeile in einer Tabelle." }
+      "0": {
+        "title": "Internationales Publikum",
+        "desc": "Dein Event wird von Teilnehmern aus 50+ Ländern gesehen. Ohne zielgerichtete Werbung oder Sprachbarrieren — die Plattform ist mehrsprachig."
+      },
+      "1": {
+        "title": "Online-Anmeldungen",
+        "desc": "Teilnehmer melden sich direkt auf der Seite an. Du siehst alle Anfragen im Dashboard, antwortest und aktualisierst Status. Nichts Überflüssiges."
+      },
+      "2": {
+        "title": "Boosts & Featured",
+        "desc": "Willst du mehr Aufrufe? Hebe dein Event auf die Topposition oder ins Homepage-Karussell — mit einem Klick."
+      },
+      "3": {
+        "title": "Analytik",
+        "desc": "Seitenaufrufe, Anzahl der Anmeldungen, Traffic-Quellen. Verstehe, was funktioniert und verbessere deine Events jedes Mal."
+      },
+      "4": {
+        "title": "Verifiziertes Profil",
+        "desc": "Das Verified-Badge zeigt Teilnehmern, dass der Veranstalter die Moderation durchlaufen hat und vertrauenswürdig ist. Vertrauen = mehr Anmeldungen."
+      },
+      "5": {
+        "title": "Galerie & Medien",
+        "desc": "Fotos, Programm, YouTube-Videos hinzufügen (Premium-Plan). Deine Event-Seite ist deine Vitrine, nicht nur eine Zeile in einer Tabelle."
+      }
     },
     "stepsTitle": "In 10 Minuten loslegen",
     "steps": {
-      "0": { "num": "01", "title": "Profil erstellen", "desc": "Name, Beschreibung, Logo. 5 Minuten — und du bist auf der Plattform." },
-      "1": { "num": "02", "title": "Event veröffentlichen", "desc": "Datum, Ort, Kategorie, Preis, Beschreibung. Entwurf vor Veröffentlichung." },
-      "2": { "num": "03", "title": "Anmeldungen empfangen", "desc": "E-Mail und Dashboard-Benachrichtigung bei jeder neuen Anmeldung." },
-      "3": { "num": "04", "title": "Teilnehmer verwalten", "desc": "Bestätigen, ablehnen, kommunizieren — direkt auf der Plattform." }
+      "0": {
+        "num": "01",
+        "title": "Profil erstellen",
+        "desc": "Name, Beschreibung, Logo. 5 Minuten — und du bist auf der Plattform."
+      },
+      "1": {
+        "num": "02",
+        "title": "Event veröffentlichen",
+        "desc": "Datum, Ort, Kategorie, Preis, Beschreibung. Entwurf vor Veröffentlichung."
+      },
+      "2": {
+        "num": "03",
+        "title": "Anmeldungen empfangen",
+        "desc": "E-Mail und Dashboard-Benachrichtigung bei jeder neuen Anmeldung."
+      },
+      "3": {
+        "num": "04",
+        "title": "Teilnehmer verwalten",
+        "desc": "Bestätigen, ablehnen, kommunizieren — direkt auf der Plattform."
+      }
     },
     "tiersTitle": "Preise",
     "tiersSubtitle": "Kostenlos starten. Nur zahlen, wenn du schneller wachsen möchtest.",
@@ -1340,19 +1667,53 @@
     "introBody2": "footballevents.eu deckt den gesamten Zyklus ab: als Suchtool (Turniere und Camps finden) und als Promotool (eigene Events und Sichtungen für ein internationales Publikum veröffentlichen).",
     "whoTitle": "Für wen es geeignet ist",
     "clubTypes": {
-      "0": { "icon": "🏆", "label": "Profivereine", "desc": "Akademien mit Jugendmannschaftssystem" },
-      "1": { "icon": "⚽", "label": "Amateurvereine", "desc": "Stadt- und Bezirksvereine mit mehreren Mannschaften" },
-      "2": { "icon": "🎓", "label": "Fußballschulen", "desc": "Private Schulen und Sektionen, die mit Kindern arbeiten" },
-      "3": { "icon": "🤝", "label": "Firmenteams", "desc": "Unternehmensligen und Firmenteams" }
+      "0": {
+        "icon": "🏆",
+        "label": "Profivereine",
+        "desc": "Akademien mit Jugendmannschaftssystem"
+      },
+      "1": {
+        "icon": "⚽",
+        "label": "Amateurvereine",
+        "desc": "Stadt- und Bezirksvereine mit mehreren Mannschaften"
+      },
+      "2": {
+        "icon": "🎓",
+        "label": "Fußballschulen",
+        "desc": "Private Schulen und Sektionen, die mit Kindern arbeiten"
+      },
+      "3": {
+        "icon": "🤝",
+        "label": "Firmenteams",
+        "desc": "Unternehmensligen und Firmenteams"
+      }
     },
     "useCasesTitle": "Was ein Verein auf der Plattform macht",
     "useCases": {
-      "0": { "title": "Turniere für Teams finden", "desc": "Eine oder mehrere Vereinsmannschaften für Turniere anmelden — von Stadtcups bis zu internationalen Wettbewerben. Filter nach Alter, Niveau, Land." },
-      "1": { "title": "Camps organisieren", "desc": "Trainingsstützpunkte und Lagerprogramme finden — Saisonvorbereitung, taktische, internationale. Ein Anmeldeformular für das ganze Team." },
-      "2": { "title": "Sichtungen abhalten", "desc": "Offene Sichtungen für Akademie oder erste Mannschaft veröffentlichen. Bewerbungen von Spielern weltweit erhalten — mit Details, Alter und Position." },
-      "3": { "title": "Vereinsevents promoten", "desc": "Du richtest ein Turnier, Camp oder Tag der offenen Tür aus? Auf der Plattform listen — und Publikum aus 50+ Ländern ohne Werbebudget erreichen." },
-      "4": { "title": "Spieler gewinnen", "desc": "Offene Sichtungen und Vereinsevents auf footballevents.eu sind der beste Weg, von neuen Spielern, besonders internationalen, entdeckt zu werden." },
-      "5": { "title": "Saison planen", "desc": "Der Ereigniskatalog hilft, den Teamkalender aufzubauen: Turniere, Camps, Festivals — alles an einem Ort mit Datumsfilter." }
+      "0": {
+        "title": "Turniere für Teams finden",
+        "desc": "Eine oder mehrere Vereinsmannschaften für Turniere anmelden — von Stadtcups bis zu internationalen Wettbewerben. Filter nach Alter, Niveau, Land."
+      },
+      "1": {
+        "title": "Camps organisieren",
+        "desc": "Trainingsstützpunkte und Lagerprogramme finden — Saisonvorbereitung, taktische, internationale. Ein Anmeldeformular für das ganze Team."
+      },
+      "2": {
+        "title": "Sichtungen abhalten",
+        "desc": "Offene Sichtungen für Akademie oder erste Mannschaft veröffentlichen. Bewerbungen von Spielern weltweit erhalten — mit Details, Alter und Position."
+      },
+      "3": {
+        "title": "Vereinsevents promoten",
+        "desc": "Du richtest ein Turnier, Camp oder Tag der offenen Tür aus? Auf der Plattform listen — und Publikum aus 50+ Ländern ohne Werbebudget erreichen."
+      },
+      "4": {
+        "title": "Spieler gewinnen",
+        "desc": "Offene Sichtungen und Vereinsevents auf footballevents.eu sind der beste Weg, von neuen Spielern, besonders internationalen, entdeckt zu werden."
+      },
+      "5": {
+        "title": "Saison planen",
+        "desc": "Der Ereigniskatalog hilft, den Teamkalender aufzubauen: Turniere, Camps, Festivals — alles an einem Ort mit Datumsfilter."
+      }
     },
     "benefitsTitle": "Vereinsvorteile",
     "benefits": {
@@ -1384,27 +1745,69 @@
     "catalogTitle": "Was du im Katalog findest",
     "catalogSubtitle": "Alle Fußball-Event-Formate — an einem Ort",
     "eventTypes": {
-      "0": { "label": "Turniere", "desc": "Wettbewerbe von U7 bis Erwachsene" },
-      "1": { "label": "Camps", "desc": "Sommercamps und Intensivprogramme" },
-      "2": { "label": "Sichtungen", "desc": "An Akademien in ganz Europa" },
-      "3": { "label": "Trainingslager", "desc": "Für Teams und Gruppen" }
+      "0": {
+        "label": "Turniere",
+        "desc": "Wettbewerbe von U7 bis Erwachsene"
+      },
+      "1": {
+        "label": "Camps",
+        "desc": "Sommercamps und Intensivprogramme"
+      },
+      "2": {
+        "label": "Sichtungen",
+        "desc": "An Akademien in ganz Europa"
+      },
+      "3": {
+        "label": "Trainingslager",
+        "desc": "Für Teams und Gruppen"
+      }
     },
     "featuresTitle": "Warum die Suche auf footballevents.eu komfortabel ist",
     "features": {
-      "0": { "title": "Smarte Suche", "desc": "Stadt, Alter oder Format eingeben — das System zeigt relevante Events. Ohne überflüssiges Rauschen." },
-      "1": { "title": "Präzise Filter", "desc": "Altersgruppe, Spielniveau, Event-Typ, Land, Datum, Kosten. Finde genau das, was du brauchst." },
-      "2": { "title": "Ein-Klick-Anmeldung", "desc": "Keine E-Mail-Korrespondenz oder Messenger. Das Formular auf der Seite — und der Veranstalter erhält die Anfrage automatisch." },
-      "3": { "title": "Status-Tracking", "desc": "Nach der Anmeldung Status im persönlichen Konto verfolgen. Der Veranstalter antwortet direkt auf der Plattform." },
-      "4": { "title": "Favoriten", "desc": "Gefundene Events speichern. Zurückkommen, wenn du bereit zur Anmeldung bist." },
-      "5": { "title": "Die ganze Welt an einem Ort", "desc": "Lokale Turniere und internationale Camps in Spanien — nebeneinander in einem Katalog. Wähle deinen Maßstab." }
+      "0": {
+        "title": "Smarte Suche",
+        "desc": "Stadt, Alter oder Format eingeben — das System zeigt relevante Events. Ohne überflüssiges Rauschen."
+      },
+      "1": {
+        "title": "Präzise Filter",
+        "desc": "Altersgruppe, Spielniveau, Event-Typ, Land, Datum, Kosten. Finde genau das, was du brauchst."
+      },
+      "2": {
+        "title": "Ein-Klick-Anmeldung",
+        "desc": "Keine E-Mail-Korrespondenz oder Messenger. Das Formular auf der Seite — und der Veranstalter erhält die Anfrage automatisch."
+      },
+      "3": {
+        "title": "Status-Tracking",
+        "desc": "Nach der Anmeldung Status im persönlichen Konto verfolgen. Der Veranstalter antwortet direkt auf der Plattform."
+      },
+      "4": {
+        "title": "Favoriten",
+        "desc": "Gefundene Events speichern. Zurückkommen, wenn du bereit zur Anmeldung bist."
+      },
+      "5": {
+        "title": "Die ganze Welt an einem Ort",
+        "desc": "Lokale Turniere und internationale Camps in Spanien — nebeneinander in einem Katalog. Wähle deinen Maßstab."
+      }
     },
     "journeyTitle": "Von der Suche zur Teilnahme — 4 Schritte",
     "journeyStep": "Schritt",
     "journey": {
-      "0": { "label": "Suchen", "desc": "Suche und Filter nutzen — nach Alter, Typ, Land, Datum" },
-      "1": { "label": "Anmelden", "desc": "Formular direkt auf der Event-Seite ausfüllen" },
-      "2": { "label": "Auf Antwort warten", "desc": "Der Veranstalter prüft deine Anmeldung und antwortet im Dashboard" },
-      "3": { "label": "Teilnehmen", "desc": "Bestätigung erhalten — und auf das Event vorbereiten!" }
+      "0": {
+        "label": "Suchen",
+        "desc": "Suche und Filter nutzen — nach Alter, Typ, Land, Datum"
+      },
+      "1": {
+        "label": "Anmelden",
+        "desc": "Formular direkt auf der Event-Seite ausfüllen"
+      },
+      "2": {
+        "label": "Auf Antwort warten",
+        "desc": "Der Veranstalter prüft deine Anmeldung und antwortet im Dashboard"
+      },
+      "3": {
+        "label": "Teilnehmen",
+        "desc": "Bestätigung erhalten — und auf das Event vorbereiten!"
+      }
     },
     "parentsTitle": "Für Eltern: sicher und transparent",
     "parentsBody": "Ein Kind in einem Camp oder Turnier anzumelden ist eine ernste Entscheidung. footballevents.eu macht den Prozess so unkompliziert wie möglich: verifizierte Veranstalter, vollständige Event-Informationen, sichere Zahlung und direkter Kontakt über die Plattform.",
@@ -2215,5 +2618,219 @@
         "submitted": "Eingegangen"
       }
     }
+  },
+  "club": {
+    "onboardTitle": "Klub registrieren",
+    "onboardSubtitle": "Stellen Sie sich vor. Ihre Mannschaften können sich mit einem Klick für Turniere, Camps und Festivals in ganz Europa anmelden.",
+    "name": "Klubname",
+    "nameHint": "Öffentlicher Name, der Veranstaltern und im Profil angezeigt wird.",
+    "slug": "Profil-URL",
+    "slugHint": "Kleinbuchstaben, Zahlen und Bindestriche. Wird in Links zum Profil verwendet.",
+    "country": "Land",
+    "city": "Stadt",
+    "foundedYear": "Gegründet",
+    "foundedYearHint": "Gründungsjahr (optional).",
+    "englishSection": "Über den Klub",
+    "englishSectionHint": "Englisch ist die Basissprache — Veranstalter in ganz Europa lesen das. Pflichtangabe.",
+    "secondSection": "Zweite Sprache (optional)",
+    "secondSectionHint": "Fügen Sie eine zweite Übersetzung hinzu, wenn Ihr Publikum eine andere Sprache spricht. Fehlt sie, zeigen wir Englisch.",
+    "secondLanguagePicker": "Sprache",
+    "taglineEn": "Slogan (EN)",
+    "aboutEn": "Über uns (EN)",
+    "taglineSecond": "Slogan (übersetzt)",
+    "aboutSecond": "Über uns (übersetzt)",
+    "taglineHint": "Eine kurze Zeile, bis zu 120 Zeichen.",
+    "aboutHint": "Ein kurzer Absatz — was der Klub ist, wo Sie trainieren, auf welchem Niveau Sie spielen.",
+    "logoUrl": "Logo",
+    "coverUrl": "Titelbild",
+    "website": "Webseite",
+    "phone": "Telefon",
+    "submit": "Klub-Profil anlegen",
+    "loading": "Wird erstellt…",
+    "langRu": "Russisch",
+    "langDe": "Deutsch",
+    "langEs": "Spanisch",
+    "langNone": "— keine —",
+    "dashboardEyebrow": "Klub-Dashboard",
+    "dashboardWelcome": "Willkommen. Ihr Klub ist jetzt auf footballevents.eu — Veranstalter finden Sie, wenn Sie sich anmelden oder eine Anfrage stellen.",
+    "publicProfileLabel": "Öffentliches Profil",
+    "notVerifiedHint": "Ihr Klub ist noch nicht verifiziert. Das Verifizierungsabzeichen erscheint, sobald wir bestätigt haben, dass der Klub echt ist (üblicherweise ein bis zwei Tage).",
+    "moreSoon": "Mannschaften, Anmeldungen, Favoriten und Anfragen erscheinen hier in den nächsten Tagen.",
+    "navDashboard": "Übersicht",
+    "navTeams": "Mannschaften",
+    "navApplications": "Anmeldungen",
+    "navRfqs": "Anfragen",
+    "navFavorites": "Favoriten",
+    "navSettings": "Einstellungen",
+    "badgeVerified": "Verifiziert",
+    "dashboardHello": "Willkommen, {name}",
+    "dashboardSubtitle": "Verwalten Sie Mannschaften, Anmeldungen und Anfragen.",
+    "statTeams": "Mannschaften",
+    "statApplications": "Anmeldungen",
+    "statRfqs": "Offene Anfragen",
+    "statFavorites": "Favoriten",
+    "quotaTitle": "Nutzung diesen Monat",
+    "quotaApplications": "Anmeldungen",
+    "quotaRfq": "Anfragen",
+    "emptyTeamsTitle": "Erste Mannschaft anlegen",
+    "emptyTeamsBody": "Mannschaften sind wiederverwendbare Profile (z. B. „U-13 A\"). Einmal angelegt, ein Klick für jede Anmeldung.",
+    "emptyTeamsCta": "Mannschaft anlegen",
+    "recentApplicationsTitle": "Letzte Anmeldungen",
+    "seeAll": "Alle anzeigen",
+    "noApplicationsYet": "Noch keine Anmeldungen.",
+    "browseEvents": "Events durchsuchen",
+    "applicationStatus": {
+      "NEW": "Neu",
+      "ACCEPTED": "Angenommen",
+      "DECLINED": "Abgelehnt",
+      "CANCELLED": "Storniert",
+      "COMPLETED": "Abgeschlossen",
+      "WAITLIST": "Warteliste"
+    },
+    "comingSoon": "Bald verfügbar. Wir arbeiten daran.",
+    "settingsSubtitle": "Öffentliches Klub-Profil, Kontakte und Social-Links.",
+    "settingsBasics": "Stammdaten",
+    "settingsSocials": "Social-Links",
+    "settingsEmail": "Öffentliche E-Mail",
+    "legalName": "Rechtlicher Name",
+    "settingsSaved": "Gespeichert.",
+    "settingsSubmit": "Änderungen speichern",
+    "teamsTitle": "Mannschaften",
+    "teamsSubtitle": "Wiederverwendbare Profile — einmal angelegt, mit einem Klick für jedes Event anmelden.",
+    "teamsCreate": "Mannschaft anlegen",
+    "backToTeams": "Zurück zu Mannschaften",
+    "teamCreateTitle": "Neue Mannschaft",
+    "teamCreateSubtitle": "Beschreiben Sie die Mannschaft — Alter, Format, Niveau. Lässt sich später bearbeiten.",
+    "teamEditSubtitle": "Daten der Mannschaft ändern. Bestehende Anmeldungen behalten ihre ursprünglichen Daten.",
+    "teamArchived": "Archiviert",
+    "teamArchive": "Archivieren",
+    "teamRestore": "Wiederherstellen",
+    "teamArchiveConfirm": "Mannschaft archivieren? Bisherige Anmeldungen bleiben erhalten; im Auswahlmenü erscheint sie erst nach Wiederherstellung.",
+    "teamEdit": "Bearbeiten",
+    "teamApplicationsCount": "{count, plural, =0 {Keine Anmeldungen} one {# Anmeldung} other {# Anmeldungen}}",
+    "teamName": "Mannschaftsname",
+    "teamNameHint": "Interner Name — z. B. „U-13 A\", „FC Astana Girls U-15\".",
+    "teamAgeGroup": "Altersklasse",
+    "teamAgeGroupHint": "Vorschlag wählen oder eigene Eingabe (z. B. „U-13\", „Adult\").",
+    "teamGender": "Geschlecht",
+    "teamFormat": "Format",
+    "teamFormatHint": "5x5, 8x8, 11x11…",
+    "teamSkillLevel": "Niveau",
+    "teamBirthYears": "Geburtsjahre (optional)",
+    "teamBirthYearsHint": "Hilft Veranstaltern zu prüfen, ob die Mannschaft ins Altersfenster passt.",
+    "teamBirthYearFromPlaceholder": "Von (z. B. 2012)",
+    "teamBirthYearToPlaceholder": "Bis (z. B. 2013)",
+    "teamNotes": "Notizen (optional)",
+    "teamNotesHint": "Private Notizen — nicht öffentlich sichtbar.",
+    "teamSubmitCreate": "Mannschaft anlegen",
+    "teamSubmitEdit": "Änderungen speichern",
+    "genderMale": "Jungen",
+    "genderFemale": "Mädchen",
+    "genderMixed": "Gemischt",
+    "skillAmateur": "Amateur",
+    "skillSemi": "Halbprofi",
+    "skillPro": "Profi",
+    "skillAll": "Alle Niveaus",
+    "clubApplyEyebrow": "Als Klub anmelden",
+    "clubApplySubtitle": "Anmeldung im Namen von {clubName}. Wählen Sie eine Ihrer Mannschaften.",
+    "clubApplyPickTeam": "Mannschaft",
+    "clubApplyPickTeamHint": "Es werden nur aktive Mannschaften aufgeführt. Verwaltung im Klub-Dashboard.",
+    "clubApplyPartySize": "Spieler + Betreuer (gesamt)",
+    "clubApplyPartySizeHint": "Gesamtpersonenzahl — fließt in die Kapazitätsprüfung des Veranstalters ein.",
+    "clubApplyCommentHint": "Was der Veranstalter wissen sollte (besondere Wünsche, Ankunftszeit usw.).",
+    "clubApplySubmit": "Anmeldung absenden",
+    "clubApplySuccessTitle": "Anmeldung gesendet",
+    "clubApplySuccessBody": "Der Veranstalter wurde benachrichtigt. Die Antwort erscheint in Ihrem Anmeldungs-Posteingang.",
+    "clubApplyGoApplications": "Zu meinen Anmeldungen",
+    "clubApplyGoEvent": "Zurück zum Event",
+    "clubApplyNoTeams": "Keine aktiven Mannschaften. Bitte zuerst eine Mannschaft anlegen.",
+    "applicationsSubtitle": "Alle Anmeldungen Ihres Klubs, neueste zuerst.",
+    "applicationsEmptyTitle": "Noch keine Anmeldungen",
+    "applicationsEmptyBody": "Sobald Sie Ihre Mannschaften für Events anmelden, erscheinen sie hier mit Live-Status.",
+    "applicationsPartySize": "{n, plural, =1 {# Person} other {# Personen}}",
+    "applicationsSubmittedAt": "gesendet am {date}",
+    "favoritesSubtitle": "Events und Veranstalter, die Ihr Klub beobachtet. Speichern Sie Events für Update-E-Mails; folgen Sie Veranstaltern, um Neuigkeiten zuerst zu erfahren.",
+    "favoritesSavedCount": "{n, plural, =0 {Keine gespeicherten Events} =1 {# gespeichertes Event} other {# gespeicherte Events}}",
+    "favoritesFollowingCount": "{n, plural, =0 {Keinen Veranstaltern gefolgt} =1 {# gefolgter Veranstalter} other {# gefolgte Veranstalter}}",
+    "favoritesSavedEvents": "Gespeicherte Events",
+    "favoritesFollowedOrganizers": "Gefolgte Veranstalter",
+    "favoritesNoSaved": "Noch nichts gespeichert",
+    "favoritesNoSavedBody": "Setzen Sie ein Lesezeichen bei einem Event, um es hier zu behalten. Wir mailen, sobald die Anmeldung öffnet oder sich Details ändern.",
+    "favoritesNoFollowed": "Folgen Sie noch niemandem",
+    "favoritesNoFollowedBody": "Folgen Sie vertrauenswürdigen Veranstaltern, um neue Turniere und Camps als Erste zu erfahren.",
+    "favoritesBrowseOrganizers": "Veranstalter ansehen",
+    "rfqListTitle": "Meine Anfragen",
+    "rfqListSubtitle": "Offene Anfragen werden automatisch an passende Veranstalter gemailt. Antworten gehen direkt per E-Mail.",
+    "rfqCreate": "Anfrage stellen",
+    "rfqEmptyTitle": "Noch keine Anfragen",
+    "rfqEmptyBody": "Sagen Sie den Veranstaltern, wonach Sie suchen — sie melden sich.",
+    "rfqBackToList": "Zurück zu Anfragen",
+    "rfqCreateTitle": "Neue Anfrage",
+    "rfqCreateSubtitle": "Beschreiben Sie das gesuchte Turnier oder Camp. Passende Veranstalter erhalten automatisch eine E-Mail.",
+    "rfqEventType": "Wonach suchen Sie?",
+    "rfqEventTypeHint": "Eine Art pro Anfrage. Für Turnier UND Camp bitte zwei Anfragen erstellen.",
+    "rfqTeam": "Mannschaft (optional)",
+    "rfqTeamHint": "Verknüpfte Mannschaft füllt Alter und Format automatisch aus.",
+    "rfqTeamNone": "— Keine konkrete Mannschaft —",
+    "rfqAudience": "Zielgruppe",
+    "rfqGenderAny": "Beliebig",
+    "rfqWhereWhen": "Wo und wann",
+    "rfqTargetCountries": "Zielländer",
+    "rfqTargetCountriesHint": "Länder, wohin Sie reisen können. Leer = „überall\".",
+    "rfqTargetRegion": "Region (frei)",
+    "rfqTargetRegionHint": "z. B. „Nordeuropa\", „nicht mehr als 4 Std. Flug von Berlin\"…",
+    "rfqDateFrom": "Von",
+    "rfqDateTo": "Bis",
+    "rfqDurationDays": "Dauer (Tage)",
+    "rfqDurationDaysHint": "Wie viele Tage das Event dauern soll. Leer = flexibel.",
+    "rfqBudget": "Budget (optional)",
+    "rfqBudgetAmount": "Pro Mannschaft",
+    "rfqBudgetAmountHint": "Gesamtbudget pro Mannschaft in Cents (z. B. 80000 = 800,00).",
+    "rfqCurrency": "Währung",
+    "rfqDetails": "Was noch?",
+    "rfqCommentHint": "Bis 500 Zeichen. Niveau, Unterkunft, Fristen, besondere Wünsche.",
+    "rfqSubmit": "Anfrage stellen",
+    "rfqClose": "Schließen",
+    "rfqReopen": "Wieder öffnen",
+    "rfqCloseConfirm": "Anfrage schließen? Sie wird für Veranstalter ausgeblendet. Jederzeit wieder öffenbar.",
+    "rfqStatus": {
+      "OPEN": "Offen",
+      "CLOSED": "Geschlossen",
+      "EXPIRED": "Abgelaufen"
+    },
+    "rfqAnywhere": "Überall",
+    "rfqDatesFlexible": "Flexible Daten",
+    "rfqDurationLine": "{n, plural, =1 {# Tag} other {# Tage}}",
+    "rfqPostedAt": "veröffentlicht am {date}",
+    "rfqExpiresAt": "offen bis {date}",
+    "rfqPerTeam": "pro Mannschaft",
+    "rfqTypeClinic": "Clinic",
+    "rfqsPublicTitle": "Offene Anfragen von Klubs",
+    "rfqsPublicSubtitle": "Klubs in ganz Europa suchen Turniere, Camps und Touren. Passt es zu Ihrem Angebot — melden Sie sich.",
+    "rfqsPublicEmptyTitle": "Aktuell keine offenen Anfragen",
+    "rfqsPublicEmptyBody": "Schauen Sie später wieder vorbei — Klubs posten jede Woche neue Anfragen.",
+    "rfqFilterAll": "Alle Arten",
+    "rfqsBackToList": "Alle Anfragen",
+    "rfqDetailRegion": "Region",
+    "rfqDetailDates": "Daten",
+    "rfqDetailDuration": "Dauer",
+    "rfqDetailTeam": "Mannschaft",
+    "rfqDetailBudget": "Budget",
+    "rfqDetailCountries": "Länder",
+    "rfqDetailComment": "Vom Klub",
+    "rfqContactTitle": "Kontakt aufnehmen",
+    "rfqContactSubtitle": "Antworten Sie direkt per E-Mail oder Telefon — es gibt keinen Chat auf der Plattform.",
+    "rfqContactSignIn": "Anmelden, um Kontakte zu sehen",
+    "rfqContactViaProfile": "Über Klub-Profil kontaktieren",
+    "publicFoundedIn": "Gegründet {year}",
+    "publicTeamsCount": "{n, plural, =0 {Keine Mannschaften} =1 {# Mannschaft} other {# Mannschaften}}",
+    "publicApplicationsCount": "{n, plural, =1 {# Turnier} other {# Turniere}}",
+    "publicAboutSection": "Über den Klub",
+    "publicTeamsSection": "Mannschaften",
+    "publicNoTeams": "Noch keine Mannschaften eingetragen.",
+    "publicRfqsSection": "Offene Anfragen",
+    "publicContactSection": "Kontakt",
+    "publicNoContacts": "Keine öffentlichen Kontaktdaten.",
+    "myClubMenuLabel": "Mein Klub"
   }
 }
