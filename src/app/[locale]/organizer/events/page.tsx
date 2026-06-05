@@ -4,8 +4,8 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/Button";
-import { requireOrgPage } from "@/lib/organizer-access";
-import { Plus, Pencil, ExternalLink } from "lucide-react";
+import { requireOrgPage, allowedEventIdsForUser } from "@/lib/organizer-access";
+import { Plus, Pencil, ExternalLink, Inbox } from "lucide-react";
 
 export default async function OrganizerEventsListPage({
   params,
@@ -20,7 +20,9 @@ export default async function OrganizerEventsListPage({
 
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const { organizer } = await requireOrgPage(session.user.id, "events");
+  const access = await requireOrgPage(session.user.id, "events");
+  const { organizer } = access;
+  const eventScope = await allowedEventIdsForUser(access, session.user.id);
 
   const t = await getTranslations("organizer");
   const tCommon = await getTranslations("common");
@@ -33,6 +35,7 @@ export default async function OrganizerEventsListPage({
     where: {
       organizerId: organizer.id,
       ...(activeStatus !== "ALL" ? { status: activeStatus as never } : {}),
+      ...(eventScope === "all" ? {} : { id: { in: eventScope } }),
     },
     include: {
       translations: true,
@@ -123,6 +126,11 @@ export default async function OrganizerEventsListPage({
                         </Link>
                       </Button>
                     )}
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/organizer/events/${e.slug}/applications`}>
+                        <Inbox className="h-3.5 w-3.5" /> {t("applications")}
+                      </Link>
+                    </Button>
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/organizer/events/${e.id}`}>
                         <Pencil className="h-3.5 w-3.5" /> Edit

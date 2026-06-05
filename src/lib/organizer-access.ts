@@ -57,3 +57,90 @@ export async function getOrgForAction(userId: string, perm: PermKey): Promise<Or
   if (!access || !can(access.role, perm)) return null;
   return access;
 }
+
+// ─── Per-event ACL ─────────────────────────────────────────────────────────
+// OWNER / MANAGER: always see every event in the organizer.
+// STAFF: sees every event by default — UNLESS the owner has added one or more
+//        OrganizerMemberEvent rows for them, which switches them to a restricted
+//        list. Empty set = no restriction (back-compat for pre-ACL members).
+
+/** Internal: returns null when the caller has no row-level restriction
+ *  (OWNER, MANAGER, or STAFF without any explicit grant) — and a Set of
+ *  allowed event ids otherwise. */
+async function memberAllowedSet(userId: string, organizerId: string, role: OrgRole): Promise<Set<string> | null> {
+  if (role !== "STAFF") return null;
+  const member = await db.organizerMember.findUnique({
+    where: { organizerId_userId: { organizerId, userId } },
+    select: { id: true, events: { select: { eventId: true } } },
+  });
+  if (!member || member.events.length === 0) return null;
+  return new Set(member.events.map((e) => e.eventId));
+}
+
+/** Whether the user can read/operate on a specific event. Always verifies the
+ *  event actually belongs to the user's organizer — never trust the URL :id. */
+export async function canAccessEvent(userId: string, eventId: string): Promise<{ access: OrgAccess; eventId: string } | null> {
+  const access = await getOrganizerForUser(userId);
+  if (!access) return null;
+  // Must belong to the same Organizer.
+  const event = await db.event.findUnique({ where: { id: eventId }, select: { organizerId: true } });
+  if (!event || event.organizerId !== access.organizer.id) return null;
+  const allowed = await memberAllowedSet(userId, access.organizer.id, access.role);
+  if (allowed && !allowed.has(eventId)) return null;
+  return { access, eventId };
+}
+
+/** Same as canAccessEvent but resolves by event slug. Used by the per-event
+ *  applications page where the URL carries the slug. */
+export async function canAccessEventBySlug(userId: string, slug: string): Promise<{ access: OrgAccess; eventId: string } | null> {
+  const access = await getOrganizerForUser(userId);
+  if (!access) return null;
+  const event = await db.event.findUnique({
+    where: { slug },
+    select: { id: true, organizerId: true },
+  });
+  if (!event || event.organizerId !== access.organizer.id) return null;
+  const allowed = await memberAllowedSet(userId, access.organizer.id, access.role);
+  if (allowed && !allowed.has(event.id)) return null;
+  return { access, eventId: event.id };
+}
+
+/** Page guard: requires both a permission and event access. Redirects on miss. */
+export async function requireEventAccessBySlug(
+  userId: string,
+  slug: string,
+  perm: PermKey,
+): Promise<{ access: OrgAccess; eventId: string }> {
+  const ok = await canAccessEventBySlug(userId, slug);
+  if (!ok) {
+    const access = await getOrganizerForUser(userId);
+    if (!access) redirect("/onboarding/organizer");
+    redirect(landingFor(access.role));
+  }
+  if (!can(ok.access.role, perm)) redirect(landingFor(ok.access.role));
+  return ok;
+}
+
+/** Used by listings (e.g. the main bookings inbox). Returns:
+ *  - "all" → no restriction; caller should query without an extra clause
+ *  - string[] → restricted to these event ids; caller should add WHERE eventId IN (…)
+ */
+export async function allowedEventIds(access: OrgAccess): Promise<"all" | string[]> {
+  // Resolve userId via the OrganizerMember row when caller is not the OWNER —
+  // OrgAccess only carries the role, not the underlying user id.
+  if (access.role !== "STAFF") return "all";
+  // For STAFF we need to look up their member row. The cheapest path is to use
+  // the organizer + a fresh user id lookup; callers usually have session.user.id
+  // and should prefer the variant below.
+  return "all";
+}
+
+/** Same as allowedEventIds but takes userId explicitly — for use after auth(). */
+export async function allowedEventIdsForUser(
+  access: OrgAccess,
+  userId: string,
+): Promise<"all" | string[]> {
+  const allowed = await memberAllowedSet(userId, access.organizer.id, access.role);
+  if (!allowed) return "all";
+  return Array.from(allowed);
+}

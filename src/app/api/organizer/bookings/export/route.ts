@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { parseForm, fieldLabel } from "@/lib/forms/types";
-import { getOrgForAction } from "@/lib/organizer-access";
+import { getOrgForAction, allowedEventIdsForUser } from "@/lib/organizer-access";
 
 function csvCell(v: unknown): string {
   let s: string;
@@ -20,8 +20,15 @@ export async function GET(req: Request) {
   if (!access) return new Response("Forbidden", { status: 403 });
   const organizer = access.organizer;
 
-  const eventId = new URL(req.url).searchParams.get("eventId");
+  const url = new URL(req.url);
+  const eventId = url.searchParams.get("eventId");
   if (!eventId) return new Response("Missing eventId", { status: 400 });
+
+  // Per-event ACL: STAFF with explicit grants can only export events they have.
+  const scope = await allowedEventIdsForUser(access, session.user.id);
+  if (scope !== "all" && !scope.includes(eventId)) {
+    return new Response("Not found", { status: 404 });
+  }
 
   const event = await db.event.findUnique({
     where: { id: eventId },
@@ -29,8 +36,18 @@ export async function GET(req: Request) {
   });
   if (!event || event.organizerId !== organizer.id) return new Response("Not found", { status: 404 });
 
+  // Optional ?ids=a,b,c — narrows the export to a selected subset of bookings
+  // (used by the per-event applications table's "Export selected" action).
+  const idsParam = url.searchParams.get("ids");
+  const idsFilter = idsParam
+    ? idsParam.split(",").map((s) => s.trim()).filter(Boolean)
+    : null;
+
   const bookings = await db.booking.findMany({
-    where: { eventId },
+    where: {
+      eventId,
+      ...(idsFilter ? { id: { in: idsFilter } } : {}),
+    },
     orderBy: { createdAt: "desc" },
   });
 

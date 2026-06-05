@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { Link } from "@/i18n/navigation";
 import { respondBookingAction } from "@/app/actions/booking";
-import { requireOrgPage } from "@/lib/organizer-access";
+import { requireOrgPage, allowedEventIdsForUser } from "@/lib/organizer-access";
 import { parseForm, localizeFields, isDisplayField, fieldLabel, type FormField } from "@/lib/forms/types";
 import { Check, X, ChevronRight, Download, ShieldCheck, Users } from "lucide-react";
 
@@ -75,7 +75,11 @@ export default async function BookingsPage({
   const sp = await searchParams;
   const session = await auth();
   if (!session?.user?.id) redirect("/sign-in");
-  const { organizer } = await requireOrgPage(session.user.id, "bookings");
+  const access = await requireOrgPage(session.user.id, "bookings");
+  const { organizer } = access;
+  // STAFF with explicit per-event grants only sees those events.
+  // OWNER/MANAGER and unrestricted STAFF get "all".
+  const eventScope = await allowedEventIdsForUser(access, session.user.id);
 
   const t = await getTranslations("bookings");
   const tOrg = await getTranslations("organizer");
@@ -86,7 +90,10 @@ export default async function BookingsPage({
 
   // The organizer's events drive the per-event filter + CSV export button.
   const events = await db.event.findMany({
-    where: { organizerId: organizer.id },
+    where: {
+      organizerId: organizer.id,
+      ...(eventScope === "all" ? {} : { id: { in: eventScope } }),
+    },
     select: { id: true, slug: true, translations: { select: { locale: true, title: true } } },
     orderBy: { createdAt: "desc" },
   });
@@ -98,7 +105,10 @@ export default async function BookingsPage({
 
   const bookings = await db.booking.findMany({
     where: {
-      event: { organizerId: organizer.id },
+      event: {
+        organizerId: organizer.id,
+        ...(eventScope === "all" ? {} : { id: { in: eventScope } }),
+      },
       ...(activeEvent ? { eventId: activeEvent.id } : {}),
       ...(activeStatus !== "ALL" ? { status: activeStatus as never } : {}),
       // "Clubs only" filter — narrows to applications that came from a registered Club.

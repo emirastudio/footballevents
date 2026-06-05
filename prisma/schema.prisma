@@ -336,6 +336,12 @@ model Organizer {
 }
 
 // A staff member with access to an organizer's cabinet (besides the OWNER).
+// Permissions: OWNER/MANAGER always see ALL events; STAFF sees ALL events
+// by default, unless one or more OrganizerMemberEvent rows exist for this
+// member — in which case access is restricted to that explicit set. This
+// keeps the simple "STAFF for everything" pattern working while letting
+// owners scope individual hires to a single event ("our intern only for
+// WC2026 applications").
 model OrganizerMember {
   id          String   @id @default(cuid())
   organizerId String
@@ -345,9 +351,26 @@ model OrganizerMember {
 
   organizer Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events    OrganizerMemberEvent[]
 
   @@unique([organizerId, userId])
   @@index([userId])
+}
+
+// Per-event ACL for staff members. Presence of ANY row for a member switches
+// their access from "all events" to "only listed events". An empty set means
+// "no restriction", preserving backward compatibility for existing rows.
+model OrganizerMemberEvent {
+  id        String   @id @default(cuid())
+  memberId  String
+  eventId   String
+  createdAt DateTime @default(now())
+
+  member OrganizerMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  event  Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, eventId])
+  @@index([eventId])
 }
 
 // A pending email invitation to join an organizer's team.
@@ -775,6 +798,7 @@ model Event {
 
   saves     EventSave[]
   divisions EventDivision[]
+  memberAccess OrganizerMemberEvent[]
 
   @@index([status, startDate])
   @@index([countryCode, startDate])
