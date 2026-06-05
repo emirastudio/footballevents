@@ -526,7 +526,8 @@
       "ACCEPTED": "Принята",
       "DECLINED": "Отклонена",
       "CANCELLED": "Отменена",
-      "COMPLETED": "Завершена"
+      "COMPLETED": "Завершена",
+      "WAITLIST": "Резерв"
     }
   },
   "myApplications": {

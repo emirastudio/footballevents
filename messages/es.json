@@ -526,7 +526,8 @@
       "ACCEPTED": "Aceptada",
       "DECLINED": "Rechazada",
       "CANCELLED": "Cancelada",
-      "COMPLETED": "Completada"
+      "COMPLETED": "Completada",
+      "WAITLIST": "Lista de espera"
     }
   },
   "myApplications": {

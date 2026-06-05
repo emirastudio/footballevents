@@ -526,7 +526,8 @@
       "ACCEPTED": "Accepted",
       "DECLINED": "Declined",
       "CANCELLED": "Cancelled",
-      "COMPLETED": "Completed"
+      "COMPLETED": "Completed",
+      "WAITLIST": "Waitlist"
     }
   },
   "myApplications": {
