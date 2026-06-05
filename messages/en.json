@@ -1011,7 +1011,8 @@
     "event": "event",
     "viewAll": "View all",
     "city": "city",
-    "cities": "cities"
+    "cities": "cities",
+    "social": "Social"
   },
   "filters": {
     "title": "Filters",

@@ -1929,7 +1929,8 @@
     "event": "evento",
     "viewAll": "Ver todo",
     "city": "ciudad",
-    "cities": "ciudades"
+    "cities": "ciudades",
+    "social": "Redes"
   },
   "filters": {
     "title": "Filtros",

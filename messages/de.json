@@ -1901,7 +1901,8 @@
     "event": "Event",
     "viewAll": "Alle anzeigen",
     "city": "Stadt",
-    "cities": "Städte"
+    "cities": "Städte",
+    "social": "Social"
   },
   "filters": {
     "title": "Filter",
