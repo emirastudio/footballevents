@@ -14,6 +14,26 @@ const eventInclude = {
 
 type EventRow = Prisma.EventGetPayload<{ include: typeof eventInclude }>;
 
+/**
+ * Best-effort city extractor for free-text addresses like
+ *   "Carretera Travessera, 46530, Puçol"  → "Puçol"
+ *   "46530 Puçol, Valencia, Spain"        → "Valencia"  (last non-country segment)
+ *   "Marienplatz 1, 80331 München"        → "München"
+ * Returns the last comma-separated segment, stripped of a leading postcode.
+ * Falls back to undefined if the result is empty or 1–2 chars.
+ */
+function extractCityFromAddress(address: string | null | undefined): string | undefined {
+  if (!address) return undefined;
+  const parts = address.split(",").map((s) => s.trim()).filter(Boolean);
+  if (parts.length === 0) return undefined;
+  // Walk segments from the end, skip anything that looks like just a postcode.
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const seg = parts[i].replace(/^\d{3,6}[-\s]*/, "").trim(); // strip leading postcode
+    if (seg && seg.length > 2 && !/^\d+$/.test(seg)) return seg;
+  }
+  return undefined;
+}
+
 /** For values stored as `{ en: [...], ru: [...] }` (or legacy plain array) — return the array for the requested locale, falling back to EN. */
 function pickLocalizedArray(value: unknown, locale: string): unknown[] | undefined {
   if (!value) return undefined;
@@ -59,7 +79,11 @@ function toMockEvent(e: EventRow, preferredLocale: string = "en"): MockEvent {
     organizerSlug: e.organizer.slug,
     venueSlug: e.venue?.slug,
     countryCode: e.countryCode ?? "",
-    city: e.city?.nameEn ?? e.venue?.city?.nameEn ?? e.organizer.city ?? "",
+    // City fallback chain — DO NOT fall through to organizer.city. The
+    // organizer's home city is almost always different from where the event
+    // is held (Tallinn-based organizer running a tournament in Valencia, etc).
+    // Extract from venue.address as a last resort if no City row is linked yet.
+    city: e.city?.nameEn ?? e.venue?.city?.nameEn ?? extractCityFromAddress(e.venue?.address) ?? extractCityFromAddress(e.customLocation) ?? "",
     startDate: e.startDate?.toISOString() ?? "",
     endDate: e.endDate?.toISOString() ?? "",
     ageGroups: e.ageGroups as unknown as string[],

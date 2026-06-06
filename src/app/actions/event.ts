@@ -101,7 +101,39 @@ async function ensureCountry(code: string): Promise<boolean> {
   return true;
 }
 
-async function upsertVenue(v: { name: string; countryCode: string; city: string | null; address: string | null }, organizerId?: string): Promise<string> {
+/**
+ * Find-or-create a City row for the given (countryCode, name). The City model
+ * is keyed by (countryCode, slug) — we slugify the typed name to match. Used
+ * by step 2 of the wizard so the event/venue get a real City relation instead
+ * of stranding the typed city in free-text fields. Returns null on empty input.
+ */
+async function upsertCity(name: string | null | undefined, countryCode: string): Promise<string | null> {
+  const trimmed = name?.trim();
+  if (!trimmed || !countryCode) return null;
+  const slug = slugify(trimmed) || "city";
+  const existing = await db.city.findUnique({
+    where: { countryCode_slug: { countryCode, slug } },
+    select: { id: true, nameEn: true },
+  });
+  if (existing) return existing.id;
+  // Backfill case-insensitive name match within the same country before we create —
+  // catches "Valencia" vs "valencia" without depending on slug equality alone.
+  const byName = await db.city.findFirst({
+    where: { countryCode, nameEn: { equals: trimmed, mode: "insensitive" } },
+    select: { id: true },
+  });
+  if (byName) return byName.id;
+  const created = await db.city.create({
+    data: { countryCode, nameEn: trimmed, slug },
+    select: { id: true },
+  });
+  return created.id;
+}
+
+async function upsertVenue(
+  v: { name: string; countryCode: string; city: string | null; address: string | null; cityId: string | null },
+  organizerId?: string,
+): Promise<string> {
   await ensureCountry(v.countryCode);
   const trimmedName = v.name.trim();
   // Match existing venue case-insensitively within the same country.
@@ -110,12 +142,15 @@ async function upsertVenue(v: { name: string; countryCode: string; city: string 
       countryCode: v.countryCode,
       name: { equals: trimmedName, mode: "insensitive" },
     },
-    select: { id: true, address: true },
+    select: { id: true, address: true, cityId: true },
   });
   if (existing) {
-    // Backfill address if it was missing.
-    if (!existing.address && v.address) {
-      await db.venue.update({ where: { id: existing.id }, data: { address: v.address } });
+    // Backfill address / cityId if they were missing.
+    const patch: { address?: string; cityId?: string } = {};
+    if (!existing.address && v.address) patch.address = v.address;
+    if (!existing.cityId && v.cityId)   patch.cityId  = v.cityId;
+    if (Object.keys(patch).length > 0) {
+      await db.venue.update({ where: { id: existing.id }, data: patch });
     }
     return existing.id;
   }
@@ -133,6 +168,7 @@ async function upsertVenue(v: { name: string; countryCode: string; city: string 
       name: trimmedName,
       countryCode: v.countryCode,
       address: v.address,
+      cityId: v.cityId,
       isStadium: false,
       // Record who created it so they keep edit rights even before linking an event.
       createdByOrganizerId: organizerId ?? null,
@@ -330,11 +366,14 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
   const baseSlug = slugify(d.titleEn) || "event";
   const slug = await uniqueEventSlug(baseSlug);
 
-  // Upsert Venue by (countryCode + lowercased name) — auto-publishes to /stadiums catalog.
+  // Upsert City + Venue. cityId binds the event to a real City row so the
+  // public card/detail page don't fall back to organizer.city.
+  const cityId = await upsertCity(d.city, d.countryCode);
   const venueId = await upsertVenue({
     name: d.venueName,
     countryCode: d.countryCode,
     city: d.city ?? null,
+    cityId,
     address: d.venueAddress ?? null,
   }, organizer.id);
 
@@ -350,6 +389,7 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
       registrationDeadline: d.registrationDeadline ? new Date(d.registrationDeadline) : null,
       timezone: d.timezone,
       countryCode: d.countryCode,
+      cityId,
       venueId,
       customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
@@ -499,6 +539,16 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
     resolvedSlug = d.customSlug;
   }
 
+  // Resolve City + Venue once each so we don't double-upsert the same row.
+  const editCityId = await upsertCity(d.city, d.countryCode);
+  const editVenueId = await upsertVenue({
+    name: d.venueName,
+    countryCode: d.countryCode,
+    city: d.city ?? null,
+    cityId: editCityId,
+    address: d.venueAddress ?? null,
+  }, organizer.id);
+
   await db.event.update({
     where: { id },
     data: {
@@ -511,12 +561,8 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
       registrationDeadline: d.registrationDeadline ? new Date(d.registrationDeadline) : null,
       timezone: d.timezone,
       countryCode: d.countryCode,
-      venueId: await upsertVenue({
-        name: d.venueName,
-        countryCode: d.countryCode,
-        city: d.city ?? null,
-        address: d.venueAddress ?? null,
-      }, organizer.id),
+      cityId: editCityId,
+      venueId: editVenueId,
       customLocation: d.venueAddress || null,
       ageGroups: d.ageGroups as never,
       gender: d.gender,
@@ -900,11 +946,21 @@ async function _wizardSaveActionInner(_prev: WizardState, formData: FormData): P
       update.endDate = data.endDate ? new Date(data.endDate) : null;
       update.registrationDeadline = data.registrationDeadline ? new Date(data.registrationDeadline) : null;
       update.countryCode = data.countryCode || null;
+      // Resolve the typed city into a proper City row so the Event has a real
+      // city relation. Without this, MockEvent.city falls back through the
+      // venue → organizer chain and ends up rendering the *organizer's* city
+      // on the card (e.g. event in Valencia displayed as "Tallinn" because the
+      // organizer is based in Tallinn).
+      const cityId = data.countryCode
+        ? await upsertCity(data.city, data.countryCode)
+        : null;
+      update.cityId = cityId;
       if (data.venueName && data.countryCode) {
         update.venueId = await upsertVenue({
           name: data.venueName,
           countryCode: data.countryCode,
           city: data.city ?? null,
+          cityId,
           address: data.venueAddress ?? null,
         }, organizer.id);
       } else {

@@ -206,6 +206,26 @@ export default async function EventDetailPage({
             <h1 className="text-balance font-[family-name:var(--font-manrope)] text-2xl font-bold text-[var(--color-foreground)] sm:text-4xl">
               {event.title}
             </h1>
+            {/* Small location strip — Flag + Country / City. Lets the reader
+                anchor the event geographically before reading the description.
+                Links to the country hub when we know the country. */}
+            {(country?.name || event.city) && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-[var(--color-muted-strong)] sm:text-sm">
+                {country?.flag && <span aria-hidden>{country.flag}</span>}
+                {event.countryCode && country?.name ? (
+                  <Link
+                    href={`/events/country/${event.countryCode.toLowerCase()}`}
+                    className="hover:text-[var(--color-pitch-700)] hover:underline"
+                  >
+                    {country.name}
+                  </Link>
+                ) : country?.name ? (
+                  <span>{country.name}</span>
+                ) : null}
+                {country?.name && event.city && <span aria-hidden>·</span>}
+                {event.city && <span>{event.city}</span>}
+              </p>
+            )}
             {event.shortDescription && (
               <p className="mt-2 text-sm text-[var(--color-muted-strong)] sm:text-base">{event.shortDescription}</p>
             )}
