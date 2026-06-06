@@ -47,6 +47,9 @@ export function buildWizardLabels(t: T, tw: T): WizardLabels {
     externalUrl: t("externalUrl"), externalUrlHint: t("externalUrlHint"),
     contactEmail: t("contactEmail"), contactPhone: t("contactPhone"),
     acceptsBookings: t("acceptsBookings"),
+    registrationTarget: tw("registrationTarget"),
+    regInternalTitle: tw("regInternalTitle"), regInternalHint: tw("regInternalHint"),
+    regExternalTitle: tw("regExternalTitle"), regExternalHint: tw("regExternalHint"),
 
     logo: t("logo"), cover: t("cover"),
     videoUrl: t("videoUrl"), videoUrlHint: t("videoUrlHint"),

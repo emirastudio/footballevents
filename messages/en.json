@@ -753,6 +753,11 @@
     "divPriceFrom": "Entry fee",
     "divExternalUrl": "Registration URL",
     "divStageHint": "Add a date to ≥2 divisions to turn this event into a season schedule (year table + month calendar + per-stage SEO).",
+    "registrationTarget": "Where do people register?",
+    "regInternalTitle": "On FootballEvents",
+    "regInternalHint": "Players hit \"Apply now\" on the event page and fill the platform's form. Applications land in your organizer dashboard.",
+    "regExternalTitle": "On an external site",
+    "regExternalHint": "We'll redirect players to your own registration link (your CMS, Google Form, Tilda, etc.). FootballEvents won't collect applications.",
     "errors": {
       "datesRequired": "Pick dates before publishing"
     }

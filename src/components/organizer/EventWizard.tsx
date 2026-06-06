@@ -181,6 +181,9 @@ export type WizardLabels = {
   externalUrl: string; externalUrlHint: string;
   contactEmail: string; contactPhone: string;
   acceptsBookings: string;
+  registrationTarget: string;
+  regInternalTitle: string; regInternalHint: string;
+  regExternalTitle: string; regExternalHint: string;
   // Step 5
   logo: string; cover: string; videoUrl: string; videoUrlHint: string;
   included: string; includedHint: string;
@@ -967,6 +970,14 @@ function Step4({
   isFree: boolean; setIsFree: (v: boolean) => void;
   fe: Record<string, string>; errMsg: (key?: string) => string | undefined;
 }) {
+  // Registration target: internal /apply form vs. external link.
+  // Default to internal unless the organizer explicitly opted out OR had an
+  // external URL persisted from before this UI existed — that's a strong
+  // signal they want external.
+  const [useExternal, setUseExternal] = useState<boolean>(
+    defaults.acceptsBookings === false || (defaults.acceptsBookings == null && !!defaults.externalUrl)
+  );
+
   return (
     <div className="space-y-6">
       <label className="flex cursor-pointer items-center gap-2 text-sm">
@@ -986,12 +997,54 @@ function Step4({
         <Field name="contactPhone" type="tel"   label={labels.contactPhone} placeholder="+49 …" defaultValue={defaults.contactPhone} />
       </div>
 
-      <UrlField name="externalUrl" label={labels.externalUrl} hint={labels.externalUrlHint} defaultValue={defaults.externalUrl} />
+      {/* Registration target — explicit Internal/External choice.
+          The single source of truth is `useExternal`. Hidden inputs drive the
+          two server-side fields (acceptsBookings + externalUrl) so the binary
+          choice is unambiguous: External wins → acceptsBookings=false, URL
+          required; Internal wins → externalUrl is cleared. No more "URL set
+          but acceptsBookings still true → URL silently ignored" UX trap. */}
+      <fieldset className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <legend className="px-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+          {labels.registrationTarget}
+        </legend>
 
-      <label className="flex cursor-pointer items-center gap-2 text-sm">
-        <input type="checkbox" name="acceptsBookings" defaultChecked={defaults.acceptsBookings ?? true} className="h-4 w-4 rounded border-[var(--color-border-strong)]" />
-        {labels.acceptsBookings}
-      </label>
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="radio"
+            name="_regTarget"
+            checked={!useExternal}
+            onChange={() => setUseExternal(false)}
+            className="mt-0.5 h-4 w-4 border-[var(--color-border-strong)] text-[var(--color-pitch-600)]"
+          />
+          <span className="flex-1">
+            <span className="block text-sm font-semibold text-[var(--color-foreground)]">{labels.regInternalTitle}</span>
+            <span className="mt-0.5 block text-xs text-[var(--color-muted)]">{labels.regInternalHint}</span>
+          </span>
+        </label>
+
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="radio"
+            name="_regTarget"
+            checked={useExternal}
+            onChange={() => setUseExternal(true)}
+            className="mt-0.5 h-4 w-4 border-[var(--color-border-strong)] text-[var(--color-pitch-600)]"
+          />
+          <span className="flex-1">
+            <span className="block text-sm font-semibold text-[var(--color-foreground)]">{labels.regExternalTitle}</span>
+            <span className="mt-0.5 block text-xs text-[var(--color-muted)]">{labels.regExternalHint}</span>
+            {useExternal && (
+              <span className="mt-3 block">
+                <UrlField name="externalUrl" label={labels.externalUrl} defaultValue={defaults.externalUrl} />
+              </span>
+            )}
+          </span>
+        </label>
+
+        {/* Hidden inputs — the actual submitted state. */}
+        <input type="hidden" name="acceptsBookings" value={useExternal ? "false" : "true"} />
+        {!useExternal && <input type="hidden" name="externalUrl" value="" />}
+      </fieldset>
     </div>
   );
 }

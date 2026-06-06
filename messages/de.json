@@ -732,6 +732,11 @@
     "divPriceFrom": "Startgeld",
     "divExternalUrl": "Anmelde-Link",
     "divStageHint": "Mit Datum bei ≥2 Klassen wird das Event zu einem Saisonkalender (Jahresplan + Monatskalender + Etappen-SEO).",
+    "registrationTarget": "Wo melden sich Teilnehmer an?",
+    "regInternalTitle": "Auf FootballEvents",
+    "regInternalHint": "Spieler klicken „Apply now“ auf der Event-Seite und füllen das Plattform-Formular aus. Anmeldungen landen in deinem Veranstalter-Dashboard.",
+    "regExternalTitle": "Auf einer externen Seite",
+    "regExternalHint": "Wir leiten Spieler zu deinem eigenen Anmelde-Link weiter (CMS, Google Form, Tilda usw.). FootballEvents sammelt keine Anmeldungen.",
     "ageAdult": "Erwachsene",
     "errors": {
       "datesRequired": "Datum vor Veröffentlichung wählen"

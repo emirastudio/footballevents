@@ -753,6 +753,11 @@
     "divPriceFrom": "Inscripción",
     "divExternalUrl": "Enlace de registro",
     "divStageHint": "Añade una fecha a ≥2 divisiones para convertir el evento en un calendario de temporada (tabla anual + calendario + SEO por fase).",
+    "registrationTarget": "¿Dónde se inscriben los participantes?",
+    "regInternalTitle": "En FootballEvents",
+    "regInternalHint": "Los jugadores pulsan «Apply now» en la página del evento y rellenan el formulario de la plataforma. Las inscripciones llegan a tu panel.",
+    "regExternalTitle": "En un sitio externo",
+    "regExternalHint": "Redirigiremos a los jugadores a tu enlace de registro (tu sitio, Google Form, Tilda, etc.). FootballEvents no recopila inscripciones.",
     "errors": {
       "datesRequired": "Selecciona fechas antes de publicar"
     }

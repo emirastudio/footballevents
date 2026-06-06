@@ -753,6 +753,11 @@
     "divPriceFrom": "Взнос",
     "divExternalUrl": "Ссылка для регистрации",
     "divStageHint": "Укажите дату ≥2 дивизионам — событие превратится в сезонное расписание (годовая таблица + календарь + per-stage SEO).",
+    "registrationTarget": "Где регистрируются участники?",
+    "regInternalTitle": "На FootballEvents",
+    "regInternalHint": "Игроки нажимают «Apply now» на странице события и заполняют форму платформы. Заявки попадают в твою панель организатора.",
+    "regExternalTitle": "На внешнем сайте",
+    "regExternalHint": "Мы перенаправим игроков по твоей ссылке (твой сайт, Google Form, Tilda и т. п.). FootballEvents заявки не собирает.",
     "errors": {
       "datesRequired": "Укажите даты, чтобы опубликовать"
     }
