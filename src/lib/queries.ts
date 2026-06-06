@@ -48,12 +48,21 @@ function pickLocalizedArray(value: unknown, locale: string): unknown[] | undefin
 
 /** For included/notIncluded which have a JSONB I18n column + a legacy String[] EN mirror. */
 function pickLocalizedLines(i18n: unknown, legacy: string[], locale: string): string[] {
+  // Accept either shape per locale: string[] (canonical, what the wizard
+  // writes) OR a newline-joined string (defensive — any direct backfill
+  // script that wrote strings stays renderable instead of silently falling
+  // back to the EN-only legacy mirror on every non-EN page).
+  const coerce = (v: unknown): string[] | null => {
+    if (Array.isArray(v)) return v.filter((x): x is string => typeof x === "string");
+    if (typeof v === "string") return v.split("\n").map((s) => s.trim()).filter(Boolean);
+    return null;
+  };
   if (i18n && typeof i18n === "object" && !Array.isArray(i18n)) {
     const obj = i18n as Record<string, unknown>;
-    const wanted = obj[locale];
-    if (Array.isArray(wanted)) return wanted.filter((x): x is string => typeof x === "string");
-    const en = obj.en;
-    if (Array.isArray(en)) return en.filter((x): x is string => typeof x === "string");
+    const wanted = coerce(obj[locale]);
+    if (wanted && wanted.length) return wanted;
+    const en = coerce(obj.en);
+    if (en && en.length) return en;
   }
   return legacy;
 }
