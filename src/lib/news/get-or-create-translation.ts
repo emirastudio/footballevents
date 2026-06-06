@@ -40,17 +40,34 @@ export async function getOrCreateTranslation(
   );
   if (!translated) return base; // graceful fallback — render in EN this visit
 
-  return db.articleTranslation.upsert({
-    where: { articleId_locale: { articleId, locale } },
-    create: {
-      articleId,
-      locale,
-      title: translated.title,
-      metaDescription: translated.metaDescription,
-      lead: translated.lead,
-      body: translated.body,
-      generatedByAi: true,
-    },
-    update: {}, // race-loser keeps the winner's row
-  });
+  // Atomic upsert isn't fully race-safe through Prisma when there's a long
+  // gap (the 2-3s AI call) between the initial findUnique and the upsert:
+  // two concurrent visitors on the same locale page can both pass the early
+  // null check, both finish their translations, and both reach this line. PG
+  // raises P2002 on the second insert. Catch it explicitly and return the
+  // winning row — the user gets a translation either way, no 500.
+  try {
+    return await db.articleTranslation.upsert({
+      where: { articleId_locale: { articleId, locale } },
+      create: {
+        articleId,
+        locale,
+        title: translated.title,
+        metaDescription: translated.metaDescription,
+        lead: translated.lead,
+        body: translated.body,
+        generatedByAi: true,
+      },
+      update: {}, // race-loser keeps the winner's row
+    });
+  } catch (err: unknown) {
+    const code = (err as { code?: string })?.code;
+    if (code === "P2002") {
+      const winner = await db.articleTranslation.findUnique({
+        where: { articleId_locale: { articleId, locale } },
+      });
+      if (winner) return winner;
+    }
+    throw err;
+  }
 }
