@@ -192,6 +192,12 @@ async function uniqueEventSlug(base: string): Promise<string> {
 
 function parseProgramme(raw?: string): { day: number; title: string; items: string[] }[] | null {
   if (!raw?.trim()) return null;
+  // Defensive: reject anything that starts with `{` — that's almost always an
+  // i18n container `{en:[...],ru:[...]}` that leaked here by accident (e.g.
+  // wizard hydration round-tripped the whole map). Without this guard the
+  // legacy text-path below treats the entire JSON dump as one Day's title and
+  // silently destroys the programme. Better to drop the write than corrupt.
+  if (raw.trim().startsWith("{")) return null;
   // Wizard sends JSON (array of {title, items[]}). Legacy form sent text. Accept both.
   if (raw.trim().startsWith("[")) {
     try {
@@ -229,6 +235,10 @@ function parseProgramme(raw?: string): { day: number; title: string; items: stri
 
 function parseFaq(raw?: string): { q: string; a: string }[] | null {
   if (!raw?.trim()) return null;
+  // Same defensive guard as parseProgramme: reject i18n containers that
+  // leaked here as plain text. Without it the legacy Q/A text path treats
+  // the whole JSON dump as a single question and silently corrupts the FAQ.
+  if (raw.trim().startsWith("{")) return null;
   if (raw.trim().startsWith("[")) {
     try {
       const parsed = JSON.parse(raw) as unknown;
