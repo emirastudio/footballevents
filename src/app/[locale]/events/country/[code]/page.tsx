@@ -18,7 +18,12 @@ import { findCountry, getCountries } from "@/lib/countries";
 import { locales } from "@/i18n/config";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
-export const revalidate = 3600;
+// `force-dynamic`, not `revalidate = N`. The locale layout reads `headers()`
+// (to detect embed paths) — in Next 16 that makes every child route inherently
+// dynamic, and combining it with `revalidate` throws DYNAMIC_SERVER_USAGE at
+// request time → bare 500 on every country hub. Until embed detection moves
+// out of the locale layout, ISR isn't an option here.
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   // Pre-render the top countries; the rest are still served via ISR.

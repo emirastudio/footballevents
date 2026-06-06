@@ -15,7 +15,10 @@ import { findCountry, getCountries } from "@/lib/countries";
 import { locales } from "@/i18n/config";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:6969";
-export const revalidate = 3600;
+// See country/[code] — locale layout reads headers(), so revalidate throws
+// DYNAMIC_SERVER_USAGE in Next 16. Force-dynamic until embed detection moves
+// out of the locale layout.
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   try {
