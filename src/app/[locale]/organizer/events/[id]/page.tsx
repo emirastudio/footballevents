@@ -50,9 +50,26 @@ export default async function EditEventPage({
       ? second.locale
       : (locale === "ru" || locale === "de" || locale === "es" ? locale : "");
 
-  // Pass programme/faq as JSON so the form builders can parse them directly
-  const programmeText = ev.program ? JSON.stringify(ev.program) : "";
-  const faqText = ev.faq ? JSON.stringify(ev.faq) : "";
+  // Pass programme/faq as JSON so the form builders can parse them directly.
+  // Both columns now hold an i18n object `{en:[...], ru:[...], …}` (written by
+  // the wizard). The legacy single-locale editor below expects a flat Day[] /
+  // FAQ[] array — feeding it the raw i18n container makes its parser fall
+  // into the text-path, swallow the JSON dump as one Day's title, and the
+  // next save destroys the i18n shape entirely. Always extract the current
+  // locale's array (EN fallback) before serializing.
+  const pickArray = (v: unknown): unknown[] => {
+    if (Array.isArray(v)) return v;
+    if (v && typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      const cand = o[locale] ?? o.en;
+      if (Array.isArray(cand)) return cand;
+    }
+    return [];
+  };
+  const programmeArr = pickArray(ev.program);
+  const faqArr = pickArray(ev.faq);
+  const programmeText = programmeArr.length ? JSON.stringify(programmeArr) : "";
+  const faqText       = faqArr.length       ? JSON.stringify(faqArr)       : "";
 
   const defaults: EventDefaults = {
     id: ev.id,

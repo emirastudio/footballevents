@@ -190,6 +190,35 @@ async function uniqueEventSlug(base: string): Promise<string> {
   return `${base}-${Date.now()}`;
 }
 
+/**
+ * Merge a freshly parsed single-locale array (Day[] / FAQ[]) into the existing
+ * i18n container shape stored in the column. Used by the legacy single-locale
+ * EventForm — it only edits EN content, so we keep RU/DE/ES intact instead of
+ * letting the save overwrite the whole JSON column with a plain array.
+ *
+ *   existing = {en:[...], ru:[...], de:[...], es:[...]}, next = [...]
+ *     → {en: next, ru:[...], de:[...], es:[...]}
+ *   existing = null / plain [], next = [...]
+ *     → {en: next}
+ *   existing = ..., next = null (cleared)
+ *     → drop EN slot; keep other locales; null if empty
+ */
+function mergeIntoEnSlot<T extends { [k: string]: unknown }>(
+  existing: unknown,
+  next: T[] | null,
+): Record<string, T[]> | null {
+  const out: Record<string, T[]> = {};
+  // Preserve non-EN locales from the existing i18n object when present.
+  if (existing && typeof existing === "object" && !Array.isArray(existing)) {
+    for (const [k, v] of Object.entries(existing as Record<string, unknown>)) {
+      if (k === "en") continue;
+      if (Array.isArray(v) && v.length) out[k] = v as T[];
+    }
+  }
+  if (next && next.length) out.en = next;
+  return Object.keys(out).length ? out : null;
+}
+
 function parseProgramme(raw?: string): { day: number; title: string; items: string[] }[] | null {
   if (!raw?.trim()) return null;
   // Defensive: reject anything that starts with `{` — that's almost always an
@@ -421,8 +450,10 @@ async function _createEventActionInner(_prev: EventFormState, formData: FormData
       acceptsBookings: d.acceptsBookings,
       included: includedClean,
       notIncluded: notIncludedClean,
-      program: parseProgramme(d.programme) as never,
-      faq: faqParsed as never,
+      // Wrap as i18n object so the public page (which reads program[locale]
+      // via pickLocalizedArray) finds the EN copy. Same shape the wizard writes.
+      program: mergeIntoEnSlot(null, parseProgramme(d.programme)) as never,
+      faq:     mergeIntoEnSlot(null, faqParsed)                   as never,
       partners: parsePartners(formData.get("partners")) as never,
       translations: {
         create: buildEventTranslations(d),
@@ -593,8 +624,13 @@ async function _updateEventActionInner(_prev: EventFormState, formData: FormData
       acceptsBookings: d.acceptsBookings,
       included: includedClean,
       notIncluded: notIncludedClean,
-      program: parseProgramme(d.programme) as never,
-      faq: faqParsed as never,
+      // program/faq columns hold an i18n object `{en:[...], ru:[...], …}`
+      // when the wizard wrote them. This single-locale legacy form only edits
+      // EN content, so MERGE into the EN slot and preserve other locales
+      // instead of overwriting the whole column (which would obliterate
+      // RU/DE/ES translations and corrupt the visible page).
+      program: mergeIntoEnSlot(existing.program, parseProgramme(d.programme)) as never,
+      faq:     mergeIntoEnSlot(existing.faq,     faqParsed)                   as never,
       partners: parsePartners(formData.get("partners")) as never,
     },
   });
