@@ -123,6 +123,20 @@ export async function runPipeline(): Promise<PipelineStats> {
     } catch (e) {
       stats.failed++;
       if (stats.failures.length < 5) stats.failures.push(item.url);
+      // P2002 on IngestedSource(externalId) means another row with this
+      // externalId raced in between dedupe() and the create — either a
+      // concurrent pipeline run, a leftover row from a prior crash mid-loop,
+      // or a same-batch dupe the dedupe layer should have caught but didn't.
+      // Either way, the source is already recorded; don't count as a real
+      // failure and don't page on it.
+      const code = (e as { code?: string })?.code;
+      if (code === "P2002") {
+        stats.skipped++;
+        console.warn(`[pipeline] dedup-race on ${item.url} — already ingested`);
+        continue;
+      }
+      stats.failed++;
+      if (stats.failures.length < 5) stats.failures.push(item.url);
       console.error(`[pipeline] item failed ${item.url}:`, e);
       void tgServerError({
         url: item.url,

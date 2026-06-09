@@ -41,13 +41,20 @@ export async function dedupe(items: RawItem[]): Promise<RawItem[]> {
   const hashSet = new Set(seenHashes.map((r) => r.titleHash));
 
   // Also dedup within this batch — multiple sources can carry the same story.
-  const seenInBatch = new Set<string>();
+  // Block on BOTH externalId and titleHash: a BBC article showing up in two
+  // RSS feeds yields identical externalIds but the display title can vary by
+  // a stray character ("· BBC Sport" suffix in one feed, none in the other),
+  // so the title-only guard let it through and the second create hit P2002.
+  const batchIds = new Set<string>();
+  const batchHashes = new Set<string>();
   return items.filter((it) => {
     const h = titleHash(it.title);
     if (idSet.has(it.externalId)) return false;
     if (hashSet.has(h)) return false;
-    if (seenInBatch.has(h)) return false;
-    seenInBatch.add(h);
+    if (batchIds.has(it.externalId)) return false;
+    if (batchHashes.has(h)) return false;
+    batchIds.add(it.externalId);
+    batchHashes.add(h);
     return true;
   });
 }
