@@ -3,7 +3,8 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
-import { Shield, Layers, Users, Inbox, Building2, Star, Megaphone, Newspaper } from "lucide-react";
+import { Shield, Layers, Users, Inbox, Building2, Star, Megaphone, Newspaper, Bug } from "lucide-react";
+import { db } from "@/lib/db";
 
 export default async function AdminLayout({
   children,
@@ -21,15 +22,18 @@ export default async function AdminLayout({
 
   const t = await getTranslations("admin");
 
+  const openBugCount = await db.bugReport.count({ where: { status: "OPEN" } });
+
   const nav = [
-    { href: "/admin/dashboard",   icon: Shield,    label: t("nav.overview") },
-    { href: "/admin/events",      icon: Layers,    label: t("nav.eventsQueue") },
-    { href: "/admin/bookings",    icon: Inbox,     label: t("nav.allBookings") },
-    { href: "/admin/organizers",  icon: Building2, label: t("nav.organizers") },
-    { href: "/admin/reviews",     icon: Star,      label: t("nav.reviews") },
-    { href: "/admin/news",        icon: Newspaper, label: "News drafts" },
-    { href: "/admin/users",       icon: Users,     label: t("nav.users") },
-    { href: "/admin/promotion",   icon: Megaphone, label: t("nav.promotion") },
+    { href: "/admin/dashboard",   icon: Shield,    label: t("nav.overview"), badge: 0 },
+    { href: "/admin/events",      icon: Layers,    label: t("nav.eventsQueue"), badge: 0 },
+    { href: "/admin/bookings",    icon: Inbox,     label: t("nav.allBookings"), badge: 0 },
+    { href: "/admin/organizers",  icon: Building2, label: t("nav.organizers"), badge: 0 },
+    { href: "/admin/reviews",     icon: Star,      label: t("nav.reviews"), badge: 0 },
+    { href: "/admin/news",        icon: Newspaper, label: "News drafts", badge: 0 },
+    { href: "/admin/users",       icon: Users,     label: t("nav.users"), badge: 0 },
+    { href: "/admin/bug-reports", icon: Bug,       label: "Bug reports", badge: openBugCount },
+    { href: "/admin/promotion",   icon: Megaphone, label: t("nav.promotion"), badge: 0 },
   ];
 
   return (
@@ -47,7 +51,12 @@ export default async function AdminLayout({
                 className="flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2 text-sm font-medium text-[var(--color-muted-strong)] transition hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-foreground)]"
               >
                 <n.icon className="h-4 w-4 text-[var(--color-pitch-600)]" />
-                {n.label}
+                <span className="flex-1">{n.label}</span>
+                {n.badge > 0 && (
+                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[10px] font-bold text-white">
+                    {n.badge}
+                  </span>
+                )}
               </Link>
             ))}
           </nav>

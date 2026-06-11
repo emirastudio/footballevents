@@ -124,6 +124,21 @@ enum ArticleCategory {
   GENERAL
 }
 
+enum BugReportCategory {
+  BUG
+  TRANSLATION
+  WRONG_INFO
+  FORM
+  OTHER
+}
+
+enum BugReportStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  WONT_FIX
+}
+
 enum ArticleStatus {
   DRAFT
   PUBLISHED
@@ -190,6 +205,7 @@ model User {
   emailChange          EmailChangeRequest?
   savedSearches        SavedSearch[]
   orgMemberships       OrganizerMember[]
+  bugReports           BugReport[]
 
   @@index([email])
 }
@@ -1218,6 +1234,45 @@ model ArticleTranslation {
 
   @@unique([articleId, locale])
   @@index([locale])
+}
+
+// User-submitted bug / feedback report. Submitted via the floating "Report an
+// issue" button. Authenticated users get their id auto-linked; anonymous
+// visitors fill in an email (optional — they can still submit without it).
+// Auto-captured forensics (page URL, locale, user-agent, console-error tail,
+// optional screenshot) attach to the row so triage doesn't need a back-and-
+// forth with the reporter.
+model BugReport {
+  id               String            @id @default(cuid())
+  userId           String?           // null if anonymous
+  reporterEmail    String?           // free-text fallback when no userId
+  category         BugReportCategory @default(BUG)
+  message          String            @db.Text
+  url              String            // the page where the button was clicked
+  locale           String            // EN/RU/DE/ES
+  userAgent        String?
+  // Tail of the most recent client-side console errors/warnings, captured by
+  // the in-browser ring buffer. JSON array of { ts, level, message }.
+  consoleErrors    Json?
+  // Sentry event id (if a JS error was captured in the session) — paste this
+  // into Sentry search to land on the stack trace + replay.
+  sentryEventId    String?
+  // Inline screenshot as a data:image/png;base64 URL. Capped client-side at
+  // ~300 KB after JPEG re-compression so a single report can't blow up the
+  // table. Null if the reporter didn't attach one.
+  screenshotData   String?           @db.Text
+  status           BugReportStatus   @default(OPEN)
+  adminNote        String?           @db.Text
+  resolvedAt       DateTime?
+  resolvedBy       String?           // admin user id who closed it
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  reporter User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@index([category])
 }
 
 model IngestedSource {

@@ -126,6 +126,31 @@ export function tgServerError(opts: {
   );
 }
 
+/** 🐛 User-submitted bug / feedback report from the floating button. */
+export function tgBugReport(opts: {
+  id: string;
+  category: string;
+  message: string;
+  url: string;
+  reporter: string; // "Name <email>" or "anon" or "anon <email>"
+  locale: string;
+  hasScreenshot: boolean;
+  consoleErrorCount: number;
+}) {
+  const truncated = opts.message.length > 600
+    ? opts.message.slice(0, 600) + "…"
+    : opts.message;
+  return sendTelegram(
+    `🐛 <b>Bug report</b> · ${esc(opts.category)}\n` +
+    `👤 ${esc(opts.reporter)} · ${esc(opts.locale)}\n` +
+    `📄 <code>${esc(opts.url)}</code>\n` +
+    `💬 ${esc(truncated)}\n` +
+    (opts.consoleErrorCount > 0 ? `⚠️ ${opts.consoleErrorCount} console errors\n` : "") +
+    (opts.hasScreenshot ? `📸 Screenshot attached\n` : "") +
+    `🔗 <a href="${SITE()}/admin/bug-reports/${opts.id}">Open in admin</a>`,
+  );
+}
+
 /** 🏆 Event approved & published — public post to the channel */
 export function tgEventPublished(opts: {
   title: string;

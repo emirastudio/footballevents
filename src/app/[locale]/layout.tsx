@@ -7,6 +7,7 @@ import { routing } from "@/i18n/routing";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CookieBanner } from "@/components/site/CookieBanner";
+import { BugReportButton } from "@/components/feedback/BugReportButton";
 import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
 import "../globals.css";
 
@@ -118,6 +119,37 @@ export default async function LocaleLayout({
   const pathname = (await headers()).get("x-pathname") ?? "";
   const isEmbed = /\/embed(\/|$)/.test(pathname);
 
+  const tBug = await getTranslations({ locale, namespace: "bugReport" });
+  const bugReportLabels = {
+    buttonLabel: tBug("buttonLabel"),
+    modal: {
+      title: tBug("title"),
+      subtitle: tBug("subtitle"),
+      categoryLabel: tBug("categoryLabel"),
+      categories: {
+        BUG: tBug("categoryBug"),
+        TRANSLATION: tBug("categoryTranslation"),
+        WRONG_INFO: tBug("categoryWrongInfo"),
+        FORM: tBug("categoryForm"),
+        OTHER: tBug("categoryOther"),
+      },
+      messageLabel: tBug("messageLabel"),
+      messagePlaceholder: tBug("messagePlaceholder"),
+      emailLabel: tBug("emailLabel"),
+      emailHint: tBug("emailHint"),
+      screenshotLabel: tBug("screenshotLabel"),
+      screenshotCapturing: tBug("screenshotCapturing"),
+      screenshotAttached: tBug("screenshotAttached"),
+      screenshotRemove: tBug("screenshotRemove"),
+      submit: tBug("submit"),
+      submitting: tBug("submitting"),
+      sentTitle: tBug("sentTitle"),
+      sentBody: tBug("sentBody"),
+      sentClose: tBug("sentClose"),
+      cancel: tBug("cancel"),
+    },
+  };
+
   return (
     <html lang={locale} className={`${inter.variable} ${manrope.variable}`}>
       <head>
@@ -210,6 +242,7 @@ export default async function LocaleLayout({
               <main className="flex-1">{children}</main>
               <SiteFooter />
               <CookieBanner />
+              <BugReportButton labels={bugReportLabels} locale={locale} />
             </>
           )}
         </NextIntlClientProvider>
