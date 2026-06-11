@@ -118,6 +118,15 @@ export async function acceptInviteAction(formData: FormData) {
   const invite = await db.organizerInvite.findUnique({ where: { token } });
   if (!invite || invite.acceptedAt) redirect("/organizer/bookings");
 
+  // Bind acceptance to the invited mailbox. The token alone is bearer auth, so
+  // a forwarded link must not let a stranger grant themselves a role. Bounce
+  // back to the join page — its UI shows a recoverable error (sign-out flow).
+  const sessionEmail = session.user.email?.toLowerCase();
+  const inviteEmail = invite.email.toLowerCase();
+  if (!sessionEmail || sessionEmail !== inviteEmail) {
+    redirect(`/en/join/${token}`);
+  }
+
   // The owner joining their own org is a no-op.
   const org = await db.organizer.findUnique({ where: { id: invite.organizerId }, select: { userId: true } });
   if (org && org.userId !== session.user.id) {
