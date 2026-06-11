@@ -5,7 +5,8 @@ import { Link } from "@/i18n/navigation";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { countUnreadThreads } from "@/lib/messages";
-import { getOrganizerForUser, can, type PermKey } from "@/lib/organizer-access";
+import { getOrganizerForUser, listOrganizersForUser, can, type PermKey } from "@/lib/organizer-access";
+import { OrgSwitcher, type OrgSwitcherItem } from "@/components/organizer/OrgSwitcher";
 import { LayoutDashboard, Calendar, Inbox, MessageSquare, Star, Settings as Cog, MapPin, Megaphone, BarChart3 } from "lucide-react";
 
 export default async function OrganizerLayout({
@@ -26,10 +27,29 @@ export default async function OrganizerLayout({
   const { organizer, role } = access;
 
   const t = await getTranslations("organizer");
-  const [unreadMessages, newBookings] = await Promise.all([
+  const [unreadMessages, newBookings, orgList] = await Promise.all([
     countUnreadThreads(session.user.id),
     db.booking.count({ where: { event: { organizerId: organizer.id }, status: "NEW" } }),
+    listOrganizersForUser(session.user.id),
   ]);
+
+  const switcherItems: OrgSwitcherItem[] = orgList.items.map((it) => ({
+    id: it.organizer.id,
+    name: it.organizer.name,
+    slug: it.organizer.slug,
+    logoUrl: it.organizer.logoUrl,
+    tier: it.organizer.subscriptionTier,
+    role: it.role,
+  }));
+  const activeItem: OrgSwitcherItem =
+    switcherItems.find((i) => i.id === organizer.id) ?? {
+      id: organizer.id,
+      name: organizer.name,
+      slug: organizer.slug,
+      logoUrl: organizer.logoUrl,
+      tier: organizer.subscriptionTier,
+      role,
+    };
 
   // Each item carries the permission it needs; STAFF/MANAGER see a filtered nav.
   const navAll: { href: string; icon: typeof LayoutDashboard; label: string; badge: number; perm?: PermKey }[] = [
@@ -49,19 +69,17 @@ export default async function OrganizerLayout({
     <Container className="py-8">
       <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <Link
-            href={`/org/${organizer.slug}`}
-            className="mb-5 flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 transition hover:border-[var(--color-pitch-300)]"
-          >
-            <div
-              className="h-10 w-10 shrink-0 rounded-[var(--radius-md)] bg-cover bg-center bg-[var(--color-bg-muted)]"
-              style={organizer.logoUrl ? { backgroundImage: `url(${organizer.logoUrl})` } : undefined}
-            />
-            <div className="min-w-0">
-              <div className="truncate text-sm font-semibold text-[var(--color-foreground)]">{organizer.name}</div>
-              <div className="text-xs uppercase tracking-wider text-[var(--color-muted)]">{role === "OWNER" ? organizer.subscriptionTier : role}</div>
-            </div>
-          </Link>
+          <OrgSwitcher
+            active={activeItem}
+            items={switcherItems}
+            labels={{
+              switchTo: t("switchTo"),
+              owner: t("roleOwner"),
+              manager: t("roleManager"),
+              staff: t("roleStaff"),
+              activeBadge: t("activeBadge"),
+            }}
+          />
           <nav className="flex flex-col gap-0.5">
             {nav.map((n) => (
               <Link

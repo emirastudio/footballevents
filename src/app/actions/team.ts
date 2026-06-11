@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { getOrgForAction } from "@/lib/organizer-access";
+import { getOrgForAction, setActiveOrganizer } from "@/lib/organizer-access";
 import { teamInviteEmail } from "@/lib/email";
 
 export type TeamState = { error?: string; ok?: boolean } | null;
@@ -137,5 +137,24 @@ export async function acceptInviteAction(formData: FormData) {
     });
   }
   await db.organizerInvite.update({ where: { id: invite.id }, data: { acceptedAt: new Date() } });
+  // Switch the user's active organizer to the one they just joined — otherwise
+  // the cabinet keeps showing their own org (or whatever was active before) and
+  // there's no obvious sign the invite landed.
+  await setActiveOrganizer(session.user.id, invite.organizerId);
   redirect("/organizer/bookings");
+}
+
+const switchSchema = z.object({ organizerId: z.string().min(1) });
+
+/** Pick which organizer's cabinet to render in /organizer/*. The action verifies
+ *  the user actually has access — silent no-op if they don't, so the form never
+ *  reveals organizer ids that don't belong to the caller. */
+export async function switchOrganizerAction(formData: FormData) {
+  const session = await auth();
+  if (!session?.user?.id) redirect("/sign-in");
+  const parsed = switchSchema.safeParse({ organizerId: formData.get("organizerId") });
+  if (!parsed.success) return;
+  await setActiveOrganizer(session.user.id, parsed.data.organizerId);
+  revalidatePath("/organizer", "layout");
+  redirect("/organizer/dashboard");
 }

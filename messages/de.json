@@ -213,6 +213,11 @@
     "messages": "Nachrichten",
     "reviewsMod": "Bewertungen",
     "settings": "Einstellungen",
+    "switchTo": "Wechseln zu",
+    "roleOwner": "Inhaber",
+    "roleManager": "Manager",
+    "roleStaff": "Mitarbeiter",
+    "activeBadge": "Aktuell",
     "venuesPage": {
       "title": "Standorte",
       "subtitle": "Orte, an denen deine Events stattfinden. Neu hinzufügen — erscheinen im öffentlichen Katalog.",

@@ -215,6 +215,11 @@
     "messages": "Messages",
     "reviewsMod": "Reviews",
     "settings": "Settings",
+    "switchTo": "Switch to",
+    "roleOwner": "Owner",
+    "roleManager": "Manager",
+    "roleStaff": "Staff",
+    "activeBadge": "Current",
     "venuesPage": {
       "title": "Locations",
       "subtitle": "Places where your events happen. Add new ones — they'll appear in the public catalog.",

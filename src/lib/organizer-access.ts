@@ -27,10 +27,45 @@ export function landingFor(role: OrgRole): string {
 
 export type OrgAccess = { organizer: Organizer; role: OrgRole };
 
-/** The organizer a user can act on: the one they own (OWNER), else the first
- *  team they're a member of. Returns null if neither. */
+/** Resolve the access tuple for a (user, organizer) pair, or null if the user
+ *  has no relationship to that organizer. Used by switcher / activeOrganizerId
+ *  validation; not exported because callers should go through the higher-level
+ *  helpers below. */
+async function resolveAccess(userId: string, organizerId: string): Promise<OrgAccess | null> {
+  const owned = await db.organizer.findFirst({ where: { id: organizerId, userId } });
+  if (owned) return { organizer: owned, role: "OWNER" };
+  const m = await db.organizerMember.findUnique({
+    where: { organizerId_userId: { organizerId, userId } },
+    include: { organizer: true },
+  });
+  if (m) return { organizer: m.organizer, role: m.role as OrgRole };
+  return null;
+}
+
+/** The organizer a user can act on. Resolution order:
+ *  1. User.activeOrganizerId (the one they picked in the switcher) — IF the
+ *     user still has access to it. Stale ids (org deleted, membership revoked)
+ *     are cleared lazily so the next request starts fresh.
+ *  2. Their owned org (the one they OWN).
+ *  3. The oldest organization they're a MEMBER of.
+ *  Returns null if none of the three resolve. */
 export async function getOrganizerForUser(userId: string): Promise<OrgAccess | null> {
-  const owned = await db.organizer.findUnique({ where: { userId } });
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { activeOrganizerId: true },
+  });
+
+  if (user?.activeOrganizerId) {
+    const active = await resolveAccess(userId, user.activeOrganizerId);
+    if (active) return active;
+    // The pinned organizer is no longer accessible — clear it so the lookup
+    // converges on a real one next time. Fire-and-forget; never block the read.
+    void db.user
+      .update({ where: { id: userId }, data: { activeOrganizerId: null } })
+      .catch(() => {});
+  }
+
+  const owned = await db.organizer.findFirst({ where: { userId } });
   if (owned) return { organizer: owned, role: "OWNER" };
   const m = await db.organizerMember.findFirst({
     where: { userId },
@@ -39,6 +74,43 @@ export async function getOrganizerForUser(userId: string): Promise<OrgAccess | n
   });
   if (m) return { organizer: m.organizer, role: m.role as OrgRole };
   return null;
+}
+
+/** All organizers a user can switch between: every one they own (OWNER), plus
+ *  every one they're a member of. Owned listed first, then memberships ordered
+ *  by acceptance. The currently-active id is included so the UI can mark it. */
+export async function listOrganizersForUser(userId: string): Promise<{
+  active: string | null;
+  items: { organizer: Organizer; role: OrgRole }[];
+}> {
+  const [user, owned, memberships] = await Promise.all([
+    db.user.findUnique({ where: { id: userId }, select: { activeOrganizerId: true } }),
+    db.organizer.findMany({ where: { userId }, orderBy: { createdAt: "asc" } }),
+    db.organizerMember.findMany({
+      where: { userId },
+      include: { organizer: true },
+      orderBy: { createdAt: "asc" },
+    }),
+  ]);
+  const ownedIds = new Set(owned.map((o) => o.id));
+  const items: { organizer: Organizer; role: OrgRole }[] = [
+    ...owned.map((o) => ({ organizer: o, role: "OWNER" as OrgRole })),
+    ...memberships
+      .filter((m) => !ownedIds.has(m.organizerId))
+      .map((m) => ({ organizer: m.organizer, role: m.role as OrgRole })),
+  ];
+  return { active: user?.activeOrganizerId ?? null, items };
+}
+
+/** Set the active organizer for a user, with an access check. Used by the
+ *  switcher and by acceptInviteAction (to land in the freshly-joined org).
+ *  Throws nothing; silently no-ops on missing access so callers can `await` it
+ *  without an extra try/catch. */
+export async function setActiveOrganizer(userId: string, organizerId: string): Promise<boolean> {
+  const ok = await resolveAccess(userId, organizerId);
+  if (!ok) return false;
+  await db.user.update({ where: { id: userId }, data: { activeOrganizerId: organizerId } });
+  return true;
 }
 
 /** For server-component pages: resolve the organizer and require a permission,

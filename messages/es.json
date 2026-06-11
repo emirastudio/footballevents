@@ -215,6 +215,11 @@
     "messages": "Mensajes",
     "reviewsMod": "Reseñas",
     "settings": "Ajustes",
+    "switchTo": "Cambiar a",
+    "roleOwner": "Propietario",
+    "roleManager": "Gestor",
+    "roleStaff": "Personal",
+    "activeBadge": "Actual",
     "venuesPage": {
       "title": "Ubicaciones",
       "subtitle": "Lugares donde se celebran tus eventos. Añade nuevos — aparecerán en el catálogo público.",

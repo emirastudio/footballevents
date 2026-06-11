@@ -166,6 +166,12 @@ model User {
   signupCountry   String? // ISO 3166-1 alpha-2, resolved from IP
   signupUserAgent String?
   signupMethod    String? // "credentials" | "google"
+  // Multi-org cabinet: when a user has access to several organizers (they own
+  // one and were invited to another), this points at the one currently shown
+  // in /organizer/*. NULL means "no preference yet" → access falls back to
+  // owned-first, then first membership. Not a FK by design; orphaned ids are
+  // detected at read-time and cleared lazily.
+  activeOrganizerId String?
   lastLoginAt     DateTime?
   lastLoginIp     String?
   createdAt       DateTime  @default(now())
