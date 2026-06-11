@@ -160,7 +160,9 @@
     "magicLinkSentTitle": "Postfach prüfen",
     "magicLinkSentBody": "Wir haben einen einmaligen Anmeldelink an deine E-Mail geschickt. Öffne ihn, um die Anmeldung abzuschließen.",
     "magicLinkExpiry": "Der Link läuft in 30 Minuten ab und ist nur einmal verwendbar.",
-    "backToSignIn": "Zurück zur Anmeldung"
+    "backToSignIn": "Zurück zur Anmeldung",
+    "inviteBannerTitle": "Du wurdest in ein Team eingeladen",
+    "inviteBannerBody": "Schließe die Registrierung ab (oder melde dich an) mit der eingeladenen E-Mail — danach landest du direkt auf der Annahmeseite."
   },
   "organizer": {
     "becomeOrganizer": "Veranstalter werden",

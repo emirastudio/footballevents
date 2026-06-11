@@ -22,7 +22,15 @@ function SubmitBtn({ labels }: { labels: Labels }) {
   );
 }
 
-export function MagicLinkForm({ labels, callbackUrl }: { labels: Labels; callbackUrl?: string }) {
+export function MagicLinkForm({
+  labels,
+  callbackUrl,
+  defaultEmail,
+}: {
+  labels: Labels;
+  callbackUrl?: string;
+  defaultEmail?: string;
+}) {
   const [state, action] = useActionState<MagicLinkState, FormData>(magicLinkAction, null);
   const startedAt = useMemo(() => Date.now(), []);
 
@@ -57,6 +65,7 @@ export function MagicLinkForm({ labels, callbackUrl }: { labels: Labels; callbac
           type="email"
           required
           autoComplete="email"
+          defaultValue={defaultEmail}
           className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
         />
       </label>

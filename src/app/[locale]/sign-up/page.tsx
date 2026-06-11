@@ -30,6 +30,13 @@ export default async function SignUpPage({
 
   const t = await getTranslations("auth");
 
+  // Honour ?email= and ?next= so invite landings pre-fill the form and round-trip
+  // back into the join flow after registration. `next` is restricted to relative
+  // paths by `safeCallbackUrl` on the server side.
+  const callbackUrl = typeof sp.next === "string" ? sp.next : undefined;
+  const defaultEmail = typeof sp.email === "string" ? sp.email : undefined;
+  const fromInvite = !!callbackUrl && callbackUrl.startsWith("/join/");
+
   return (
     <Container className="py-16">
       <div className="mx-auto max-w-md rounded-[var(--radius-2xl)] border border-[var(--color-border)] bg-[var(--color-surface)] p-8 shadow-[var(--shadow-sm)]">
@@ -38,13 +45,22 @@ export default async function SignUpPage({
         </h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">{t("signUpSubtitle")}</p>
 
+        {fromInvite && (
+          <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-pitch-200)] bg-[var(--color-pitch-50)] p-3 text-sm text-[var(--color-pitch-800)]">
+            <p className="font-semibold">{t("inviteBannerTitle")}</p>
+            <p className="mt-1 text-xs text-[var(--color-muted-strong)]">{t("inviteBannerBody")}</p>
+          </div>
+        )}
+
         <div className="mt-6 space-y-4">
-          <GoogleSignInButton label={t("continueWithGoogle")} />
+          <GoogleSignInButton label={t("continueWithGoogle")} callbackUrl={callbackUrl} />
           <div className="relative text-center text-xs uppercase tracking-wider text-[var(--color-muted)]">
             <span className="relative z-10 bg-[var(--color-surface)] px-3">{t("or")}</span>
             <span className="absolute inset-x-0 top-1/2 h-px bg-[var(--color-border)]" aria-hidden />
           </div>
           <SignUpForm
+            callbackUrl={callbackUrl}
+            defaultEmail={defaultEmail}
             labels={{
               name: t("name"),
               email: t("email"),
@@ -61,6 +77,8 @@ export default async function SignUpPage({
           </div>
 
           <MagicLinkForm
+            callbackUrl={callbackUrl}
+            defaultEmail={defaultEmail}
             labels={{
               email: t("email"),
               submit: t("magicLinkSubmit"),

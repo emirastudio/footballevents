@@ -90,7 +90,9 @@ export async function registerAction(_prev: AuthFormState, formData: FormData): 
     if (e instanceof AuthError) return { error: "Could not sign in after registration" };
     throw e;
   }
-  redirect("/");
+  // Honour ?next=… (e.g. an invite landing page) so users complete the flow
+  // they came from instead of landing on the homepage after registration.
+  redirect(safeCallbackUrl(formData.get("callbackUrl")));
 }
 
 const signInSchema = z.object({

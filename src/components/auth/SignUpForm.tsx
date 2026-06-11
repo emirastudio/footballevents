@@ -19,7 +19,15 @@ function SubmitBtn({ labels }: { labels: Labels }) {
   );
 }
 
-export function SignUpForm({ labels }: { labels: Labels }) {
+export function SignUpForm({
+  labels,
+  callbackUrl,
+  defaultEmail,
+}: {
+  labels: Labels;
+  callbackUrl?: string;
+  defaultEmail?: string;
+}) {
   const [state, action] = useActionState<AuthFormState, FormData>(registerAction, null);
   // Snapshot of when the form was first rendered — humans take >= 2s to fill, bots are faster.
   const startedAtRef = useRef<number>(Date.now());
@@ -33,9 +41,10 @@ export function SignUpForm({ labels }: { labels: Labels }) {
         </label>
       </div>
       <input type="hidden" name="startedAt" value={startedAtRef.current} />
+      {callbackUrl && <input type="hidden" name="callbackUrl" value={callbackUrl} />}
 
       <Field name="name" type="text" autoComplete="name" required label={labels.name} />
-      <Field name="email" type="email" autoComplete="email" required label={labels.email} />
+      <Field name="email" type="email" autoComplete="email" required label={labels.email} defaultValue={defaultEmail} />
       <Field
         name="password"
         type="password"
@@ -56,10 +65,10 @@ export function SignUpForm({ labels }: { labels: Labels }) {
 }
 
 function Field({
-  name, type, label, required, autoComplete, minLength, hint,
+  name, type, label, required, autoComplete, minLength, hint, defaultValue,
 }: {
   name: string; type: string; label: string; required?: boolean;
-  autoComplete?: string; minLength?: number; hint?: string;
+  autoComplete?: string; minLength?: number; hint?: string; defaultValue?: string;
 }) {
   return (
     <label className="block">
@@ -72,6 +81,7 @@ function Field({
         required={required}
         autoComplete={autoComplete}
         minLength={minLength}
+        defaultValue={defaultValue}
         className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
       />
       {hint && <span className="mt-1 block text-xs text-[var(--color-muted)]">{hint}</span>}

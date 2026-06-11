@@ -44,13 +44,32 @@ export default async function JoinPage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
   const t = L[locale] ?? L.en;
 
-  const session = await auth();
-  if (!session?.user?.id) redirect(`/sign-in?next=/join/${token}`);
-
+  // Resolve the invite first so the auth redirect can pre-fill the right email
+  // and pick sign-up vs sign-in based on whether the invitee already has an
+  // account. We avoid leaking whether the token is valid for unauthenticated
+  // visitors only when the invite is missing (generic redirect, same as before).
   const invite = await db.organizerInvite.findUnique({
     where: { token },
     include: { organizer: { select: { name: true } } },
   });
+
+  const session = await auth();
+  if (!session?.user?.id) {
+    if (!invite || invite.acceptedAt) {
+      redirect(`/sign-in?next=/join/${token}`);
+    }
+    // Steer the invitee straight to the correct flow with their email locked in.
+    const existing = await db.user.findUnique({
+      where: { email: invite.email },
+      select: { id: true },
+    });
+    const target = existing ? "sign-in" : "sign-up";
+    const q = new URLSearchParams({
+      email: invite.email,
+      next: `/join/${token}`,
+    });
+    redirect(`/${target}?${q.toString()}`);
+  }
 
   const invalid = !invite || invite.acceptedAt;
   const roleLabel = invite?.role === "MANAGER" ? t.manager : t.staff;

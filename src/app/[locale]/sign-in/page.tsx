@@ -10,13 +10,15 @@ export default async function SignInPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams?: Promise<{ next?: string }>;
+  searchParams?: Promise<{ next?: string; email?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("auth");
   const sp = await searchParams;
   const callbackUrl = sp?.next ?? undefined;
+  const defaultEmail = sp?.email ?? undefined;
+  const fromInvite = !!callbackUrl && callbackUrl.startsWith("/join/");
 
   return (
     <Container className="py-16">
@@ -26,6 +28,13 @@ export default async function SignInPage({
         </h1>
         <p className="mt-1 text-sm text-[var(--color-muted)]">{t("signInSubtitle")}</p>
 
+        {fromInvite && (
+          <div className="mt-4 rounded-[var(--radius-md)] border border-[var(--color-pitch-200)] bg-[var(--color-pitch-50)] p-3 text-sm text-[var(--color-pitch-800)]">
+            <p className="font-semibold">{t("inviteBannerTitle")}</p>
+            <p className="mt-1 text-xs text-[var(--color-muted-strong)]">{t("inviteBannerBody")}</p>
+          </div>
+        )}
+
         <div className="mt-6 space-y-4">
           <GoogleSignInButton label={t("continueWithGoogle")} callbackUrl={callbackUrl} />
           <div className="relative text-center text-xs uppercase tracking-wider text-[var(--color-muted)]">
@@ -34,6 +43,7 @@ export default async function SignInPage({
           </div>
           <SignInForm
             callbackUrl={callbackUrl}
+            defaultEmail={defaultEmail}
             labels={{
               email: t("email"),
               password: t("password"),
@@ -49,6 +59,7 @@ export default async function SignInPage({
 
           <MagicLinkForm
             callbackUrl={callbackUrl}
+            defaultEmail={defaultEmail}
             labels={{
               email: t("email"),
               submit: t("magicLinkSubmit"),

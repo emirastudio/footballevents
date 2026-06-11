@@ -160,7 +160,9 @@
     "magicLinkSentTitle": "Revisa tu bandeja",
     "magicLinkSentBody": "Hemos enviado un enlace de acceso de un solo uso a tu correo. Ábrelo para terminar de iniciar sesión.",
     "magicLinkExpiry": "El enlace caduca en 30 minutos y solo se puede usar una vez.",
-    "backToSignIn": "Volver al inicio de sesión"
+    "backToSignIn": "Volver al inicio de sesión",
+    "inviteBannerTitle": "Te han invitado a un equipo",
+    "inviteBannerBody": "Termina de crear (o iniciar sesión en) tu cuenta con el correo invitado y llegarás directamente a la página de aceptación."
   },
   "organizer": {
     "becomeOrganizer": "Hazte organizador",

@@ -16,12 +16,20 @@ function SubmitBtn({ labels }: { labels: Labels }) {
   );
 }
 
-export function SignInForm({ labels, callbackUrl }: { labels: Labels; callbackUrl?: string }) {
+export function SignInForm({
+  labels,
+  callbackUrl,
+  defaultEmail,
+}: {
+  labels: Labels;
+  callbackUrl?: string;
+  defaultEmail?: string;
+}) {
   const [state, action] = useActionState<AuthFormState, FormData>(signInAction, null);
   return (
     <form action={action} className="space-y-4">
       {callbackUrl && <input type="hidden" name="callbackUrl" value={callbackUrl} />}
-      <Field name="email" type="email" autoComplete="email" required label={labels.email} />
+      <Field name="email" type="email" autoComplete="email" required label={labels.email} defaultValue={defaultEmail} />
       <Field name="password" type="password" autoComplete="current-password" required label={labels.password} />
       {state?.error && (
         <p className="rounded-[var(--radius-md)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -34,9 +42,9 @@ export function SignInForm({ labels, callbackUrl }: { labels: Labels; callbackUr
 }
 
 function Field({
-  name, type, label, required, autoComplete,
+  name, type, label, required, autoComplete, defaultValue,
 }: {
-  name: string; type: string; label: string; required?: boolean; autoComplete?: string;
+  name: string; type: string; label: string; required?: boolean; autoComplete?: string; defaultValue?: string;
 }) {
   return (
     <label className="block">
@@ -48,6 +56,7 @@ function Field({
         type={type}
         required={required}
         autoComplete={autoComplete}
+        defaultValue={defaultValue}
         className="w-full rounded-[var(--radius-md)] border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-3.5 py-2.5 text-sm text-[var(--color-foreground)] outline-none transition focus:border-[var(--color-pitch-500)] focus:ring-2 focus:ring-[var(--color-pitch-500)]/20"
       />
     </label>
