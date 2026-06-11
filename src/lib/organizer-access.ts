@@ -59,16 +59,18 @@ export async function getOrgForAction(userId: string, perm: PermKey): Promise<Or
 }
 
 // ─── Per-event ACL ─────────────────────────────────────────────────────────
-// OWNER / MANAGER: always see every event in the organizer.
-// STAFF: sees every event by default — UNLESS the owner has added one or more
-//        OrganizerMemberEvent rows for them, which switches them to a restricted
-//        list. Empty set = no restriction (back-compat for pre-ACL members).
+// OWNER: always sees every event in the organizer (cannot be restricted).
+// MANAGER / STAFF: sees every event by default — UNLESS the owner has added
+//        one or more OrganizerMemberEvent rows for them, which switches them
+//        to a whitelist. Empty set = no restriction (back-compat for pre-ACL
+//        members). MANAGERs keep their elevated permissions on the events they
+//        do have access to — the ACL only narrows scope, not capability.
 
 /** Internal: returns null when the caller has no row-level restriction
- *  (OWNER, MANAGER, or STAFF without any explicit grant) — and a Set of
+ *  (OWNER always, MANAGER/STAFF without any explicit grant) — and a Set of
  *  allowed event ids otherwise. */
 async function memberAllowedSet(userId: string, organizerId: string, role: OrgRole): Promise<Set<string> | null> {
-  if (role !== "STAFF") return null;
+  if (role === "OWNER") return null;
   const member = await db.organizerMember.findUnique({
     where: { organizerId_userId: { organizerId, userId } },
     select: { id: true, events: { select: { eventId: true } } },
@@ -124,14 +126,13 @@ export async function requireEventAccessBySlug(
 /** Used by listings (e.g. the main bookings inbox). Returns:
  *  - "all" → no restriction; caller should query without an extra clause
  *  - string[] → restricted to these event ids; caller should add WHERE eventId IN (…)
+ *
+ *  Prefer the `*ForUser` variant — this stub-style version always returns
+ *  "all" because OrgAccess doesn't carry the user id needed for the lookup.
+ *  Kept for back-compat with callers that haven't migrated yet.
  */
 export async function allowedEventIds(access: OrgAccess): Promise<"all" | string[]> {
-  // Resolve userId via the OrganizerMember row when caller is not the OWNER —
-  // OrgAccess only carries the role, not the underlying user id.
-  if (access.role !== "STAFF") return "all";
-  // For STAFF we need to look up their member row. The cheapest path is to use
-  // the organizer + a fresh user id lookup; callers usually have session.user.id
-  // and should prefer the variant below.
+  if (access.role === "OWNER") return "all";
   return "all";
 }
 

@@ -31,10 +31,10 @@ export function EventTeamAccess({
     revoke: string;
   };
 }) {
-  // Only STAFF can be restricted per-event. OWNER and MANAGER always see all
-  // events by design; including them in the list would confuse the operator
-  // (they're not toggleable).
-  const restrictable = members.filter((m) => m.role === "STAFF");
+  // Anyone except the OWNER can be restricted per-event. MANAGERs keep their
+  // elevated permissions on the events they're granted; STAFF gets the same
+  // scoping. OWNER is excluded because they implicitly own everything.
+  const restrictable = members.filter((m) => m.role !== "OWNER");
 
   return (
     <details className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] open:shadow-[var(--shadow-xs)]">
