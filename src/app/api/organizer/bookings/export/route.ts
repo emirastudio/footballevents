@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { parseForm, fieldLabel } from "@/lib/forms/types";
+import { parseForm, fieldLabel, customFieldsToBase } from "@/lib/forms/types";
 import { getOrgForAction, allowedEventIdsForUser } from "@/lib/organizer-access";
 
 function csvCell(v: unknown): string {
@@ -51,7 +51,8 @@ export async function GET(req: Request) {
     orderBy: { createdAt: "desc" },
   });
 
-  const customFields = parseForm(event.registrationForm).fields.filter(
+  const form = parseForm(event.registrationForm);
+  const customFields = form.fields.filter(
     (f) => f.type !== "heading" && f.type !== "info",
   );
 
@@ -59,7 +60,12 @@ export async function GET(req: Request) {
   const header = [...baseCols, ...customFields.map((f) => fieldLabel(f.label))];
 
   const rows = bookings.map((b) => {
-    const cf = (b.customFields ?? {}) as Record<string, unknown>;
+    // Map localised option answers ("Мужской", "Männlich", …) back to the
+    // form's base language ("Male") so exports are language-stable.
+    const cf = customFieldsToBase(
+      b.customFields as Record<string, unknown> | null,
+      form,
+    );
     return [
       b.createdAt.toISOString().slice(0, 16).replace("T", " "),
       b.status,

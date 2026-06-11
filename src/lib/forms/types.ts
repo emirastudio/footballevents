@@ -114,6 +114,76 @@ export function parseForm(raw: unknown): RegistrationForm {
   return { fields: [] };
 }
 
+/** Field types whose stored answers are one of `options[]` (or an array of
+ *  them, for multi-value types). These are the only types where a submitted
+ *  value can be a localised string that needs mapping back to base. */
+const OPTION_ANSWER_TYPES: ReadonlySet<FieldType> = new Set([
+  "select",
+  "multiselect",
+  "checkboxes",
+  "radio",
+  "size",
+]);
+
+/**
+ * Map a submitted answer back to its base-locale option string.
+ *
+ * Why: when an applicant fills the form in a non-base locale, the value
+ * persisted on Booking.customFields is the localised option label (e.g.
+ * "Мужской"), not a stable code. Organiser views (table, CSV) want the
+ * neutral base label ("Male") regardless of submission locale.
+ *
+ * Strategy: if the value already matches a base option, return it. Otherwise
+ * walk every locale's `i18n[locale][fieldId].options`, find the index of the
+ * value, and return `fields[fieldId].options[index]`. Unmapped values
+ * (unknown locales, legacy or free-text answers) pass through unchanged.
+ */
+export function toBaseOption(
+  value: string,
+  fieldId: string,
+  form: RegistrationForm,
+): string {
+  if (!value) return value;
+  const base = form.fields.find((f) => f.id === fieldId);
+  if (!base || !OPTION_ANSWER_TYPES.has(base.type) || !base.options?.length) {
+    return value;
+  }
+  if (base.options.includes(value)) return value;
+  if (!form.i18n) return value;
+  for (const locale of Object.keys(form.i18n)) {
+    const opts = form.i18n[locale]?.[fieldId]?.options;
+    if (!opts) continue;
+    const idx = opts.indexOf(value);
+    if (idx >= 0 && idx < base.options.length) return base.options[idx];
+  }
+  return value;
+}
+
+/**
+ * Walk a booking's `customFields` and translate any localised option answers
+ * back to base. Non-option types are returned untouched. Returns a fresh
+ * object so callers can pass the result directly to client components.
+ */
+export function customFieldsToBase(
+  customFields: Record<string, unknown> | null | undefined,
+  form: RegistrationForm,
+): Record<string, unknown> {
+  if (!customFields) return {};
+  const out: Record<string, unknown> = { ...customFields };
+  for (const f of form.fields) {
+    if (!OPTION_ANSWER_TYPES.has(f.type)) continue;
+    const v = out[f.id];
+    if (typeof v === "string") {
+      out[f.id] = toBaseOption(v, f.id, form);
+    } else if (Array.isArray(v)) {
+      out[f.id] = v.map((item) =>
+        typeof item === "string" ? toBaseOption(item, f.id, form) : item,
+      );
+    }
+  }
+  return out;
+}
+
 /** Apply auto-translation overrides for `locale`, falling back to base text. */
 export function localizeFields(form: RegistrationForm, locale: string): FormField[] {
   if (!form.i18n || locale === form.baseLocale) return form.fields;

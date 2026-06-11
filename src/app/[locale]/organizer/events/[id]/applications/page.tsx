@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { canAccessEvent, getOrganizerForUser, can, landingFor } from "@/lib/organizer-access";
 import { ApplicationsTable, type ApplicationRow, type CustomColumn } from "@/components/organizer/applications/ApplicationsTable";
 import { EventTeamAccess, type TeamMember } from "@/components/organizer/applications/EventTeamAccess";
-import { parseForm, localizeFields, isDisplayField, fieldLabel } from "@/lib/forms/types";
+import { parseForm, localizeFields, isDisplayField, fieldLabel, customFieldsToBase } from "@/lib/forms/types";
 import { ChevronLeft } from "lucide-react";
 
 export default async function EventApplicationsPage({
@@ -48,7 +48,8 @@ export default async function EventApplicationsPage({
   // Custom fields the organizer authored on this event's registration form,
   // localized to the organizer's UI locale. Drives the dynamic columns of
   // the table. Display-only fields (heading / info) carry no answers.
-  const customColumns: CustomColumn[] = localizeFields(parseForm(event.registrationForm), locale)
+  const form = parseForm(event.registrationForm);
+  const customColumns: CustomColumn[] = localizeFields(form, locale)
     .filter((f) => !isDisplayField(f.type))
     .map((f) => ({ id: f.id, label: fieldLabel(f.label), type: f.type as CustomColumn["type"] }));
 
@@ -80,7 +81,10 @@ export default async function EventApplicationsPage({
     partySize: b.partySize,
     contactEmail: b.contactEmail,
     contactPhone: b.contactPhone,
-    customFields: (b.customFields ?? {}) as Record<string, unknown>,
+    // Normalise localised option answers (e.g. "Мужской") back to the base
+    // language ("Male") so the table renders the same neutral label regardless
+    // of which locale the applicant filled the form in. See `customFieldsToBase`.
+    customFields: customFieldsToBase(b.customFields as Record<string, unknown> | null, form),
     comment: b.comment,
     organizerNote: b.organizerNote,
     isClub: !!b.club,
