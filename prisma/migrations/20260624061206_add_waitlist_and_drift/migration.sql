@@ -4,11 +4,7 @@ CREATE TYPE "WaitlistRole" AS ENUM ('PARENT', 'COACH', 'CLUB_MANAGER', 'PLAYER',
 -- DropForeignKey
 ALTER TABLE "Event" DROP CONSTRAINT "Event_countryCode_fkey";
 
--- AlterTable
-ALTER TABLE "Event" ADD COLUMN     "isDemo" BOOLEAN NOT NULL DEFAULT false;
-
--- AlterTable
-ALTER TABLE "Organizer" ADD COLUMN     "stripeCustomerId" TEXT;
+-- Waitlist migration only
 
 -- CreateTable
 CREATE TABLE "Waitlist" (
@@ -28,8 +24,7 @@ CREATE INDEX "Waitlist_countryCode_idx" ON "Waitlist"("countryCode");
 -- CreateIndex
 CREATE INDEX "Waitlist_email_idx" ON "Waitlist"("email");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Organizer_stripeCustomerId_key" ON "Organizer"("stripeCustomerId");
+
 
 -- AddForeignKey
 ALTER TABLE "Event" ADD CONSTRAINT "Event_countryCode_fkey" FOREIGN KEY ("countryCode") REFERENCES "Country"("code") ON DELETE SET NULL ON UPDATE CASCADE;

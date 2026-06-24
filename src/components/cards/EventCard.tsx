@@ -124,11 +124,11 @@ export function EventCard({ event: e, locale, rank, size = "md", priority, label
                 <span className="font-semibold text-[var(--color-foreground)]">{e.rating.toFixed(1)}</span>
                 <span className="text-[var(--color-muted)]">({e.reviewsCount})</span>
               </>
-            ) : (
+            ) : !isPast ? (
               <span className="rounded-full bg-[var(--color-bg-muted)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-muted)]">
                 New
               </span>
-            )}
+            ) : null}
           </div>
           <div className="text-right">
             {e.isFree ? (
