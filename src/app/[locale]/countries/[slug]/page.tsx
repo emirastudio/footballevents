@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Link } from "@/i18n/navigation";
 import { EventCard } from "@/components/cards/EventCard";
 import { RichText } from "@/components/ui/RichText";
+import { WaitlistEmptyState } from "@/components/seo/WaitlistEmptyState";
 import { getEventsByCountry } from "@/lib/queries";
 import { getCountryContent } from "@/content/countries";
 import { locales, type Locale } from "@/i18n/config";
@@ -157,22 +158,7 @@ export default async function CountryPage({
               ))}
             </div>
           ) : (
-            <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface)] p-8 text-center">
-              <h3 className="font-[family-name:var(--font-manrope)] text-lg font-bold text-[var(--color-foreground)]">
-                {t("emptyTitle", { country: countryName })}
-              </h3>
-              <p className="mx-auto mt-2 max-w-md text-sm text-[var(--color-muted-strong)]">
-                {t("emptyText")}
-              </p>
-              <div className="mt-5 flex flex-wrap justify-center gap-3">
-                <Button variant="accent" size="lg" asChild>
-                  <Link href="/organizer/events/new"><PlusCircle className="h-4 w-4" /> {t("ctaList")}</Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <Link href="/events"><Search className="h-4 w-4" /> {t("ctaExplore")}</Link>
-                </Button>
-              </div>
-            </div>
+            <WaitlistEmptyState countryCode={country.countryCode} countryName={countryName} />
           )}
         </section>
 

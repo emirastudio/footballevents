@@ -600,6 +600,7 @@ model Country {
   venues    Venue[]
   events    Event[]
   clubs     Club[]
+  waitlists Waitlist[]
 
   @@index([nameEn])
 }
@@ -616,6 +617,7 @@ model City {
   venues  Venue[]
   events  Event[]
   clubs   Club[]
+  waitlists Waitlist[]
 
   @@unique([countryCode, slug])
   @@index([nameEn])
@@ -1287,4 +1289,31 @@ model IngestedSource {
 
   @@index([titleHash])
   @@index([fetchedAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// WAITLIST
+// ─────────────────────────────────────────────────────────────
+
+enum WaitlistRole {
+  PARENT
+  COACH
+  CLUB_MANAGER
+  PLAYER
+  OTHER
+}
+
+model Waitlist {
+  id          String       @id @default(cuid())
+  email       String
+  role        WaitlistRole
+  countryCode String?
+  cityId      String?
+  createdAt   DateTime     @default(now())
+
+  country Country? @relation(fields: [countryCode], references: [code])
+  city    City?    @relation(fields: [cityId], references: [id])
+
+  @@index([countryCode])
+  @@index([email])
 }
