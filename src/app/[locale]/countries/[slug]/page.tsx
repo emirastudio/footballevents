@@ -158,7 +158,7 @@ export default async function CountryPage({
               ))}
             </div>
           ) : (
-            <WaitlistEmptyState countryCode={country.countryCode} countryName={countryName} />
+            <WaitlistEmptyState countryCode={country.countryCode} locationName={countryName} />
           )}
         </section>
 

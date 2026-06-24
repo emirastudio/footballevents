@@ -9,10 +9,12 @@ import { PlusCircle, CheckCircle2 } from "lucide-react";
 
 export function WaitlistEmptyState({
   countryCode,
-  countryName,
+  locationName,
+  cityId,
 }: {
   countryCode?: string;
-  countryName: string;
+  locationName: string;
+  cityId?: string;
 }) {
   const t = useTranslations("countries");
   const [isPending, startTransition] = useTransition();
@@ -27,7 +29,7 @@ export function WaitlistEmptyState({
     const role = formData.get("role") as any;
 
     startTransition(async () => {
-      const res = await joinWaitlist({ email, role, countryCode });
+      const res = await joinWaitlist({ email, role, countryCode, cityId });
       if (res.success) {
         setSuccess(true);
       } else {
@@ -42,7 +44,7 @@ export function WaitlistEmptyState({
         {/* Left Side: Users */}
         <div className="p-8 sm:p-10">
           <h3 className="font-[family-name:var(--font-manrope)] text-xl font-bold tracking-tight text-[var(--color-foreground)]">
-            {t("waitlistTitle", { country: countryName })}
+            {t("waitlistTitle", { country: locationName })}
           </h3>
           <p className="mt-2 text-sm text-[var(--color-muted-strong)]">
             {t("waitlistSubtitle")}
@@ -106,7 +108,7 @@ export function WaitlistEmptyState({
             <PlusCircle className="h-6 w-6" />
           </div>
           <h3 className="font-[family-name:var(--font-manrope)] text-xl font-bold tracking-tight text-[var(--color-foreground)]">
-            {t("waitlistOrgTitle", { country: countryName })}
+            {t("waitlistOrgTitle", { country: locationName })}
           </h3>
           <p className="mx-auto mt-2 max-w-sm text-sm text-[var(--color-muted-strong)]">
             {t("waitlistOrgSubtitle")}
