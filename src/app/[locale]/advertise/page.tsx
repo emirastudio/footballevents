@@ -41,7 +41,7 @@ export default async function CapabilitiesPage({
     from: tCommon("from"),
     free: tCommon("free"),
     premium: tCommon("premium"),
-    featured: tCommon("featured"),
+    featured: tCommon("featured"), passed: tCommon("passed"),
   };
 
   const showcasePremium  = allEvents.find((e) => e.isPremium);

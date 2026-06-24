@@ -68,7 +68,7 @@ export default async function EventsPage({
     from:     tCommon("from"),
     free:     tCommon("free"),
     premium:  tCommon("premium"),
-    featured: tCommon("featured"),
+    featured: tCommon("featured"), passed: tCommon("passed"),
   };
 
   const session = await auth();

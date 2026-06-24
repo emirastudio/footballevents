@@ -55,7 +55,7 @@ export default async function StadiumDetailPage({
 
   const cardLabels = {
     from: tCommon("from"), free: tCommon("free"),
-    premium: tCommon("premium"), featured: tCommon("featured"),
+    premium: tCommon("premium"), featured: tCommon("featured"), passed: tCommon("passed"),
   };
 
   return (

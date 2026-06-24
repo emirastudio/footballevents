@@ -125,7 +125,7 @@ export default async function ClubFavoritesPage({
     from: tCommon("from"),
     free: tCommon("free"),
     premium: tCommon("premium"),
-    featured: tCommon("featured"),
+    featured: tCommon("featured"), passed: tCommon("passed"),
   };
   const orgLabels = {
     verified: tCommon("verified"),

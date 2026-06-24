@@ -17,12 +17,14 @@ type Props = {
     free: string;
     premium: string;
     featured: string;
+    passed?: string;
   };
 };
 
 export function EventCard({ event: e, locale, rank, size = "md", priority, labels }: Props) {
   const country = getCountry(e.countryCode);
   const isCompact = size === "sm";
+  const isPast = new Date(e.endDate) < new Date();
 
   // Premium boost gets a visible gold border (per pricing matrix). Featured
   // gets a green outline. Plain cards stay neutral.
@@ -63,9 +65,15 @@ export function EventCard({ event: e, locale, rank, size = "md", priority, label
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
-        {rank !== undefined && (
+        {rank !== undefined && !isPast && (
           <span className="absolute left-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white/95 text-[11px] font-bold text-[var(--color-foreground)] shadow-[var(--shadow-sm)]">
             {rank}
+          </span>
+        )}
+
+        {isPast && (
+          <span className="absolute left-2 top-2 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md shadow-sm">
+            {labels.passed || "Passed"}
           </span>
         )}
 

@@ -95,7 +95,7 @@ export default async function EventsByCityPage({
     from: tCommon("from"),
     free: tCommon("free"),
     premium: tCommon("premium"),
-    featured: tCommon("featured"),
+    featured: tCommon("featured"), passed: tCommon("passed"),
   };
 
   // Category breakdown for internal linking + scannability

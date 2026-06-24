@@ -67,7 +67,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     from: tCommon("from"),
     free: tCommon("free"),
     premium: tCommon("premium"),
-    featured: tCommon("featured"),
+    featured: tCommon("featured"), passed: tCommon("passed"),
   };
 
   const stats = eventCount > 0 ? [
