@@ -6,6 +6,11 @@ ARG PNPM_VERSION=10.4.1
 
 # ─── deps: install only production-ish deps with pnpm ────────────
 FROM node:${NODE_VERSION} AS deps
+# ARGs declared before the first FROM are OUTSIDE build stages; re-declare
+# empty inside each stage to inherit their default. Without this, `pnpm@`
+# expands to nothing and corepack fetches whatever `latest` is — which
+# tripped over the broken pnpm@12.0.0-rc.0 on 2026-08-06.
+ARG PNPM_VERSION
 ENV CI=true
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
@@ -18,6 +23,7 @@ RUN pnpm install --frozen-lockfile --prefer-offline --ignore-scripts && pnpm reb
 
 # ─── build: prisma generate + next build ─────────────────────────
 FROM node:${NODE_VERSION} AS builder
+ARG PNPM_VERSION
 ENV CI=true
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
