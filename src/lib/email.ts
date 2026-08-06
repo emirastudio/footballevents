@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { db } from "@/lib/db";
 
 const apiKey = process.env.RESEND_API_KEY;
 const FROM = process.env.EMAIL_FROM ?? "FootballEvents.eu <support@footballevents.eu>";
@@ -13,13 +14,59 @@ export type SendArgs = {
   text?: string;
   replyTo?: string;
   headers?: Record<string, string>;
+  // Optional context threaded into EmailLog so we can answer "did this
+  // booking's applicant receive the email?" without diffing Resend Dashboard.
+  bookingId?: string;
+  eventId?: string;
 };
 
-export async function sendEmail({ to, subject, html, text, replyTo, headers }: SendArgs) {
+// Resend's free/pro API is capped at 10 requests per second. On 429 we back
+// off (0.5s → 1.5s → 4s) instead of dropping the message on the floor — the
+// legacy behavior lost ~2/3 of a 42-recipient bulk send on 2026-08-05.
+const RETRY_BACKOFF_MS = [500, 1500, 4000];
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+// Best-effort insert into EmailLog. Non-blocking — if the DB is unhappy, the
+// email has already been accepted by Resend and the send return value is
+// unaffected. We catch and log, never throw.
+async function recordEmailLog(row: {
+  id: string;
+  toEmail: string;
+  subject: string;
+  bookingId?: string;
+  eventId?: string;
+}) {
+  try {
+    await db.emailLog.create({
+      data: {
+        id: row.id,
+        toEmail: row.toEmail,
+        subject: row.subject.slice(0, 8000),
+        status: "SENT",
+        bookingId: row.bookingId,
+        eventId: row.eventId,
+      },
+    });
+  } catch (e) {
+    // A duplicate id is expected if the webhook already inserted the row
+    // (rare — webhook usually lands after the API response, but not always).
+    // For any other failure, log and move on.
+    const msg = e instanceof Error ? e.message : String(e);
+    if (!msg.includes("Unique constraint")) {
+      console.error("[email:log] insert failed", { id: row.id, err: msg });
+    }
+  }
+}
+
+export async function sendEmail({ to, subject, html, text, replyTo, headers, bookingId, eventId }: SendArgs) {
   const finalReplyTo = replyTo ?? DEFAULT_REPLY_TO;
   // List-Unsubscribe is the single biggest deliverability signal for Gmail/iCloud
   // outside of DKIM/SPF/DMARC — even on transactional mail.
-  const listUnsubUrl = `${SITE}/api/unsubscribe?email=${encodeURIComponent(Array.isArray(to) ? to[0] : to)}`;
+  const primaryTo = Array.isArray(to) ? to[0] : to;
+  const listUnsubUrl = `${SITE}/api/unsubscribe?email=${encodeURIComponent(primaryTo)}`;
   const baseHeaders: Record<string, string> = {
     "List-Unsubscribe": `<${listUnsubUrl}>, <mailto:${DEFAULT_REPLY_TO}?subject=unsubscribe>`,
     "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
@@ -29,30 +76,64 @@ export async function sendEmail({ to, subject, html, text, replyTo, headers }: S
 
   if (!resend) {
     if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
       console.info("[email:dev] would send", { to, subject, replyTo: finalReplyTo, length: html.length });
     }
     return { ok: false as const, skipped: true as const };
   }
-  try {
-    const { data, error } = await resend.emails.send({
-      from: FROM,
-      to,
-      subject,
-      html,
-      text: finalText,
-      replyTo: finalReplyTo,
-      headers: finalHeaders,
-    });
-    if (error) {
-      console.error("[email] send failed", error);
-      return { ok: false as const, error: String(error) };
+
+  let lastError: unknown = null;
+  for (let attempt = 0; attempt <= RETRY_BACKOFF_MS.length; attempt++) {
+    try {
+      const { data, error } = await resend.emails.send({
+        from: FROM,
+        to,
+        subject,
+        html,
+        text: finalText,
+        replyTo: finalReplyTo,
+        headers: finalHeaders,
+      });
+      if (error) {
+        // 429 is retryable; everything else (invalid domain, blocked recipient,
+        // etc.) is terminal — no point spinning.
+        const isRateLimit =
+          (error as { statusCode?: number; name?: string }).statusCode === 429 ||
+          (error as { name?: string }).name === "rate_limit_exceeded";
+        if (isRateLimit && attempt < RETRY_BACKOFF_MS.length) {
+          const wait = RETRY_BACKOFF_MS[attempt];
+          console.warn(`[email] 429 rate limit, retry ${attempt + 1}/${RETRY_BACKOFF_MS.length} in ${wait}ms`);
+          await sleep(wait);
+          continue;
+        }
+        console.error("[email] send failed", error);
+        return { ok: false as const, error: String(error) };
+      }
+      if (data?.id) {
+        // Fire-and-forget — never make Resend wait on our DB.
+        void recordEmailLog({
+          id: data.id,
+          toEmail: primaryTo,
+          subject,
+          bookingId,
+          eventId,
+        });
+      }
+      return { ok: true as const, id: data?.id };
+    } catch (e) {
+      lastError = e;
+      // Network-level throws also get retried, since intermittent DNS/TLS
+      // hiccups look identical to 429 from our perspective.
+      if (attempt < RETRY_BACKOFF_MS.length) {
+        const wait = RETRY_BACKOFF_MS[attempt];
+        console.warn(`[email] threw, retry ${attempt + 1}/${RETRY_BACKOFF_MS.length} in ${wait}ms`, e);
+        await sleep(wait);
+        continue;
+      }
+      console.error("[email] threw", e);
+      return { ok: false as const, error: String(e) };
     }
-    return { ok: true as const, id: data?.id };
-  } catch (e) {
-    console.error("[email] threw", e);
-    return { ok: false as const, error: String(e) };
   }
+  return { ok: false as const, error: String(lastError ?? "unknown") };
 }
 
 function htmlToText(html: string): string {
@@ -613,6 +694,8 @@ export function organizerMessageEmail(opts: {
   body: string;
   hasAccount: boolean;
   locale?: string;
+  bookingId?: string;
+  eventId?: string;
 }) {
   const L = loc(opts.locale);
   const T = {
@@ -677,6 +760,8 @@ export function organizerMessageEmail(opts: {
     subject: T.subj,
     html,
     replyTo: opts.organizerEmail,
+    bookingId: opts.bookingId,
+    eventId: opts.eventId,
   });
 }
 
