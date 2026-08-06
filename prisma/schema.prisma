@@ -1109,11 +1109,12 @@ model AdSlot {
 // MONETIZATION — Payments (covers boost, subs, future tickets)
 // ─────────────────────────────────────────────────────────────
 
-// Idempotency log for inbound provider webhooks (Stripe, etc.). We insert
-// the event id BEFORE handling; a duplicate insert means we've already
+// Idempotency log for inbound provider webhooks (Stripe, Resend, etc.). We
+// insert the event id BEFORE handling; a duplicate insert means we've already
 // processed it and can safely return 200 without re-running side effects.
+// For Resend the id is the Svix `svix-id` header (msg_*).
 model WebhookEvent {
-  id          String   @id // Stripe event.id (evt_*)
+  id          String   @id // Stripe event.id (evt_*) or Svix msg_id (msg_*)
   provider    String   @default("stripe")
   type        String
   receivedAt  DateTime @default(now())
@@ -1122,6 +1123,49 @@ model WebhookEvent {
 
   @@index([type])
   @@index([receivedAt])
+}
+
+// Per-send record of outbound transactional email. The `id` is the Resend
+// email id we get back from resend.emails.send, which is also the correlator
+// used in inbound Resend webhook events — that's how we upsert delivery /
+// bounce / complaint state without needing an extra join table.
+//
+// Status is a rollup of the latest terminal signal from Resend (DELIVERED /
+// BOUNCED / COMPLAINED / FAILED). We keep every timestamp separately so we
+// can audit the full lifecycle even after the terminal event lands.
+enum EmailStatus {
+  SENT
+  DELIVERED
+  BOUNCED
+  COMPLAINED
+  FAILED
+}
+
+model EmailLog {
+  id           String      @id // Resend email id (uuid)
+  toEmail      String
+  subject      String?     @db.Text
+  status       EmailStatus @default(SENT)
+  sentAt       DateTime    @default(now())
+  deliveredAt  DateTime?
+  openedAt     DateTime?
+  clickedAt    DateTime?
+  bouncedAt    DateTime?
+  bounceType   String?
+  complainedAt DateTime?
+  failedAt     DateTime?
+  failReason   String?     @db.Text
+  // Optional context — set by the caller so we can answer "which recipients
+  // for booking/event X got the email?". Not FK'd to avoid cascade surprises
+  // when a booking is deleted; the log is an audit record and outlives rows.
+  bookingId    String?
+  eventId      String?
+  updatedAt    DateTime    @updatedAt
+
+  @@index([toEmail, sentAt])
+  @@index([bookingId])
+  @@index([eventId])
+  @@index([status])
 }
 
 model Payment {

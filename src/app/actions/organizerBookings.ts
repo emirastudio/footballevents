@@ -176,39 +176,55 @@ export async function messageApplicantsAction(
   let withAccount = 0;
   let emailOnly = 0;
 
+  // Throttled fan-out. Resend caps us at 10 rps and the old Promise.allSettled
+  // fire-hose lost ~2/3 of a 42-recipient send on 2026-08-05 to 429s. Batch of
+  // 8 concurrent sends, then wait 1.1s — comfortably under the cap with room
+  // for the client's connection latency variance. `sendEmail` also retries 429
+  // internally, so the batching is a first line of defence, not the only one.
+  const BATCH_SIZE = 8;
+  const BATCH_SLEEP_MS = 1100;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
   // Dedupe by booking.userId so the same user doesn't get the same message
   // twice when an organizer mass-selects. Keep the per-booking thread context
   // for the in-app message, though — that's where the conversation belongs.
-  await Promise.allSettled(
-    allowed.map(async ({ booking }) => {
-      const organizer = booking.event.organizer;
-      const applicantLocale = booking.user?.preferredLocale ?? "en";
-      const eventTitle = pickTitle(booking.event.translations, applicantLocale, booking.event.slug);
+  for (let i = 0; i < allowed.length; i += BATCH_SIZE) {
+    const chunk = allowed.slice(i, i + BATCH_SIZE);
+    await Promise.allSettled(
+      chunk.map(async ({ booking }) => {
+        const organizer = booking.event.organizer;
+        const applicantLocale = booking.user?.preferredLocale ?? "en";
+        const eventTitle = pickTitle(booking.event.translations, applicantLocale, booking.event.slug);
 
-      // Hybrid delivery decision: registered user vs guest. We detect by looking
-      // for a User row matching the contact email — Booking.userId is set when
-      // the applicant was signed in at submission, but a guest booking via the
-      // embed flow may have a userId pointing at a synthesized account; treat
-      // any "real" account (has a passwordHash OR has logged in) as registered.
-      const registered = await db.user.findFirst({
-        where: { email: booking.contactEmail },
-        select: { id: true, passwordHash: true, lastLoginAt: true, emailVerified: true },
-      });
-      const isRealAccount = !!(registered && (registered.passwordHash || registered.lastLoginAt || registered.emailVerified));
+        // Hybrid delivery decision: registered user vs guest. We detect by
+        // looking for a User row matching the contact email — Booking.userId
+        // is set when the applicant was signed in at submission, but a guest
+        // booking via the embed flow may have a userId pointing at a
+        // synthesized account; treat any "real" account (has a passwordHash
+        // OR has logged in) as registered.
+        const registered = await db.user.findFirst({
+          where: { email: booking.contactEmail },
+          select: { id: true, passwordHash: true, lastLoginAt: true, emailVerified: true },
+        });
+        const isRealAccount = !!(registered && (registered.passwordHash || registered.lastLoginAt || registered.emailVerified));
 
-      // Email — always, regardless of account. The in-app message is on top.
-      void organizerMessageEmail({
-        recipientEmail: booking.contactEmail,
-        recipientName: booking.participantName,
-        eventTitle,
-        eventSlug: booking.event.slug,
-        organizerName: organizer.name,
-        organizerEmail: organizer.email,
-        subject,
-        body,
-        locale: applicantLocale,
-        hasAccount: isRealAccount,
-      });
+        // Email — always, regardless of account. The in-app message is on top.
+        // Awaited (not fire-and-forget) so the 1.1s batch sleep actually rate-
+        // limits us; a `void` here would defeat the batching.
+        await organizerMessageEmail({
+          recipientEmail: booking.contactEmail,
+          recipientName: booking.participantName,
+          eventTitle,
+          eventSlug: booking.event.slug,
+          organizerName: organizer.name,
+          organizerEmail: organizer.email,
+          subject,
+          body,
+          locale: applicantLocale,
+          hasAccount: isRealAccount,
+          bookingId: booking.id,
+          eventId: booking.eventId,
+        });
 
       // In-app message into the booking's thread when there IS a real account.
       if (isRealAccount && registered) {
@@ -254,6 +270,10 @@ export async function messageApplicantsAction(
       emailOnly++;
     }),
   );
+    // Pause between batches so we stay under Resend's 10 rps cap. Skip the
+    // sleep after the final batch — no point waiting when there's no more work.
+    if (i + BATCH_SIZE < allowed.length) await sleep(BATCH_SLEEP_MS);
+  }
 
   revalidatePath("/organizer/messages");
   const eventIds = new Set(allowed.map((x) => x.booking.eventId));
